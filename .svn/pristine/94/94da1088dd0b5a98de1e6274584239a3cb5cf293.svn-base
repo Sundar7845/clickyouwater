@@ -1,0 +1,29 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\CustomerAddress;
+use App\Models\Order;
+use App\Models\OrderDet;
+use App\Traits\Common;
+use Illuminate\Http\Request;
+
+class invoicecontroller extends Controller
+{
+    use Common;
+    //for invoice testing pdf
+    public function invoice()
+    {
+        $order = Order::find(1);
+        $orderDet = OrderDet::select('order_dets.*', 'products.product_name')
+            ->join('products', 'products.id', 'order_dets.product_id')
+            ->where('order_id', $order->id)
+            ->get();
+        $companyDetails = $this->getAdminSetting();
+
+        $address = json_encode($order->delivery_address);
+        $deliveryAddress = json_decode($address, true);
+        // dd($deliveryAddress);
+        return view('invoice.invoice', compact('order', 'orderDet', 'companyDetails', 'deliveryAddress'));
+    }
+}

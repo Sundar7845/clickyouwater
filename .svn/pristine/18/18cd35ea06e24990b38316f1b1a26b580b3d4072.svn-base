@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class OfferCode extends Model
+{
+    use HasFactory, SoftDeletes;
+
+    protected $fillabel = [
+        'offer_id',
+        'offer_code',
+        'offer_code_type',
+        'created_by',
+        'upated_by',
+        'deleted_by'
+    ];
+}

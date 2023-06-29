@@ -1,0 +1,132 @@
+<?php
+
+namespace App\Http\Controllers\Admin\OrderManagement;
+
+use App\Enums\RoleTypes;
+use App\Http\Controllers\Controller;
+use App\Models\DeliveryPerson;
+use App\Models\Hub;
+use App\Models\OrderDelivery;
+use App\Models\User;
+use App\Traits\Common;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class HubOrdersController extends Controller
+{
+  use Common;
+  public function hubOrders()
+  {
+    $states = $this->getStates();
+    return view('admin.order_management.hub_orders.hub_orders', compact('states'));
+  }
+
+  public function getHubs(Request $request)
+  {
+    try {
+      $hubs = Hub::where('city_id', $request->city_id)->where('is_active', 1)->get();
+      return response()->json([
+        'hubs' => $hubs
+      ]);
+    } catch (\Exception $e) {
+      $this->Log(__FUNCTION__, 'GET', $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+    }
+  }
+
+  public function hubOrderData(Request $request)
+  {
+    try {
+
+      $hubOrder = "";
+
+      $query = Hub::where('is_active', 1);
+
+      if ($request->state_id > 0) {
+        $query = $query->where('state_id', $request->state_id);
+      }
+      if ($request->city_id > 0) {
+        $query = $query->where('city_id', $request->city_id);
+      }
+      if ($request->hub_id > 0) {
+        $query = $query->where('id', $request->hub_id);
+      }
+
+      $hubOrder = $query->get();
+      return datatables()->of($hubOrder)
+        ->addColumn('action', function ($row) {
+          $html = '<a href="/huborderlist/' . $row->id . '" class="btn btn-primary">View</a>';
+          return $html;
+        })
+        ->toJson();
+    } catch (\Exception $e) {
+      $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+    }
+  }
+
+  public function hubOrderList($id = null)
+  {
+    try {
+      if (Auth::user()->role_id == RoleTypes::Hub) {
+        $hub_id = User::where('id', Auth::user()->id)->value('ref_id');
+      }
+      $id = ($id ? $id : $hub_id);
+      $hubOrderDetail = Hub::where('id', $id)->where('is_active', 1)->first();
+      $deliveryPerson = DeliveryPerson::where('hub_id', $id)->where('is_active', 1)->where('is_online', 1)->get();
+      return view('admin.order_management.hub_orders.huborder_detail', compact('hubOrderDetail', 'deliveryPerson'));
+    } catch (\Exception $e) {
+      $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+    }
+  }
+
+  public function hubOrderDetail(Request $request)
+  {
+    try {
+      $hubAllOrder = "";
+
+      $query = $this->getAllOrders("Hub", 0, $request->hub_id);
+
+      $hubAllOrder = $query->get();
+      return datatables()->of($hubAllOrder)
+        ->addColumn('action', function ($row) {
+          $html = Auth::user()->role_id == RoleTypes::Hub
+            ? '<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#deliveryPersonPopup" onclick="assignOrder(' . $row['id'] . ')">Assign</button>'
+            : '<a href="/orderdetail/' . $row['id'] . '" class="btn btn-primary">View</a>';
+          return $html;
+        })
+        ->toJson();
+    } catch (\Exception $e) {
+      $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+    }
+  }
+
+
+  public function assignDeliveryPerson(Request $request)
+  {
+    $request->validate([
+      'ddlDeliveryPerson' => 'required'
+    ]);
+    DB::beginTransaction();
+    try {
+      $deliveyPerson = User::where('ref_id', $request->ddlDeliveryPerson)->value('id');
+      OrderDelivery::updateOrCreate([
+        'order_id' => $request->hdDelId,
+        'delivery_user_id' => $deliveyPerson
+      ]);
+      DB::commit();
+      $notification = array(
+        'message' => 'Delivery Person Assigned Successfully!',
+        'alert-type' => 'success'
+      );
+      return redirect()->back()->with($notification);
+    } catch (\Exception $e) {
+      DB::rollback();
+      $notification = array(
+        'message' => 'Something Went Wrong!',
+        'alert-type' => 'error'
+      );
+      $this->Log(__FUNCTION__, $request->method(), $e->getMessage(), Auth::user()->id, $request->ip(), gethostname());
+      return redirect()->back()->with($notification);
+    }
+  }
+}

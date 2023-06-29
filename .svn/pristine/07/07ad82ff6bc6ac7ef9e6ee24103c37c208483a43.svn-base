@@ -1,0 +1,291 @@
+@extends('layouts.main_master') @section('content')
+@section('title')
+    Dashboard | Generate Coupon
+@endsection
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-1 mb-4">
+        Generate Coupon
+    </h4>
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-12 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <form class="browser-default-validation">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="basic-default-name">Coupon Type <span
+                                                class="text-danger">*</span>
+                                        </label>
+                                        <select name="ddlCouponType" id="ddlCouponType" class="select2 form-select">
+                                            <option value="">SELECT Coupon Type</option>
+                                            <option value="1">First Order</option>
+                                            <option value="2">Order Qty/Week</option>
+                                            <option value="3">Order Qty/Month</option>
+                                            <option value="4">Order Qty/Year</option>
+                                        </select>
+                                        @if ($errors->has('ddlCouponType'))
+                                            <div class="text-danger">{{ $errors->first('ddlCouponType') }}</div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="basic-default-name">Coupon Name<span
+                                                class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" class="form-control" name="txtCouponName"
+                                            id="txtCouponName" placeholder="Coupon Name" required />
+                                        @if ($errors->has('txtCouponName'))
+                                            <div class="text-danger">{{ $errors->first('txtCouponName') }}</div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="basic-default-email">Coupon Code <span
+                                                class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" id="txtCouponCode" name="txtCouponCode"
+                                            class="form-control" placeholder="Enter Coupon Code" required />
+                                        @if ($errors->has('txtCouponCode'))
+                                            <div class="text-danger">{{ $errors->first('txtCouponCode') }}</div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="basic-default-email">Start Date<span
+                                                class="text-danger">*</span></label>
+                                        <input type="date" name="ddlStartDate" id="ddlStartDate" class="form-control"
+                                            required>
+                                    </div>
+                                    @if ($errors->has('ddlStartDate'))
+                                        <div class="text-danger">{{ $errors->first('ddlStartDate') }}</div>
+                                    @endif
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="basic-default-email">End Date<span
+                                                class="text-danger">*</span></label>
+                                        <input type="date" name="ddlEndDate" id="ddlEndDate" class="form-control"
+                                            required>
+                                    </div>
+                                    @if ($errors->has('ddlEndDate'))
+                                        <div class="text-danger">{{ $errors->first('ddlEndDate') }}</div>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="basic-default-name">Discount Type<span
+                                                class="text-danger">*</span>
+                                        </label>
+                                        <select name="ddlDiscountType" id="ddlDiscountType" class="select2 form-select">
+                                            <option value="">Select Discount Type</option>
+                                            <option value="1">Amount</option>
+                                            <option value="2">Percent</option>
+                                        </select>
+                                        @if ($errors->has('ddlDiscountType'))
+                                            <div class="text-danger">{{ $errors->first('ddlDiscountType') }}</div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="basic-default-name">Discount Value<span
+                                                class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" name="txtdiscount_value" id="txtdiscount_value"
+                                            class="form-control" placeholder="Enter Discount Value">
+                                        @if ($errors->has('txtdiscount_value'))
+                                            <div class="text-danger">{{ $errors->first('txtdiscount_value') }}</div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="basic-default-name">Max Discount<span
+                                                class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" name="txtMaxDiscount" id="txtMaxDiscount"
+                                            class="form-control" placeholder="Enter Max Discount">
+                                        @if ($errors->has('txtMaxDiscount'))
+                                            <div class="text-danger">{{ $errors->first('txtMaxDiscount') }}</div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="basic-default-name">Min Order Qty<span
+                                                class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" name="txtMinOrderQty" id="txtMinOrderQty"
+                                            class="form-control" placeholder="Enter Min Order Qty">
+                                        @if ($errors->has('txtMinOrderQty'))
+                                            <div class="text-danger">{{ $errors->first('txtMinOrderQty') }}</div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>&nbsp;</label>
+                                    <div class="mb-3">
+                                        <button type="submit" class="btn btn-success">Save</button>
+                                        <button type="button" class="btn btn-danger">Cancel</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+    <!-- DataTable with Buttons -->
+    <div class="col-lg-12 mb-4 mb-lg-0">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between">
+                <h5 class="card-title m-0 me-2">Coupon List</h5>
+            </div>
+            <div class="card-datatable table-responsive pt-0">
+                <table id="generatecoupon" class="table">
+                    <thead class="border-bottom">
+                        <tr>
+                            <th>S.No</th>
+                            <th>Coupon ID</th>
+                            <th>Coupon Name</th>
+                            <th>Order Qty</th>
+                            <th>Validity</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>COUPGLOB00130</td>
+                            <td>GLOBELWAT</td>
+                            <td>15</td>
+                            <td>01-02-2023 to 10-02-2023</td>
+                            <td>
+                                <div class="col-sm-6">
+                                    <label class="switch">
+                                        <input type="checkbox" class="switch-input" />
+                                        <span class="switch-toggle-slider">
+                                            <span class="switch-on"></span>
+                                            <span class="switch-off"></span>
+                                        </span>
+                                    </label>
+                                </div>
+                            </td>
+                            <td>
+                                <a>
+                                    <i class="text-primary ti ti-pencil me-1"></i>
+                                </a>
+                                <a>
+                                    <i class="text-danger ti ti-trash me-1"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>COUPGLOB00130</td>
+                            <td>GLOBELWAT</td>
+                            <td>15</td>
+                            <td>01-02-2023 to 10-02-2023</td>
+                            <td>
+                                <div class="col-sm-6">
+                                    <label class="switch">
+                                        <input type="checkbox" class="switch-input" />
+                                        <span class="switch-toggle-slider">
+                                            <span class="switch-on"></span>
+                                            <span class="switch-off"></span>
+                                        </span>
+                                    </label>
+                                </div>
+                            </td>
+                            <td>
+                                <a>
+                                    <i class="text-primary ti ti-pencil me-1"></i>
+                                </a>
+                                <a>
+                                    <i class="text-danger ti ti-trash me-1"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>COUPGLOB00130</td>
+                            <td>GLOBELWAT</td>
+                            <td>15</td>
+                            <td>01-02-2023 to 10-02-2023</td>
+                            <td>
+                                <div class="col-sm-6">
+                                    <label class="switch">
+                                        <input type="checkbox" class="switch-input" />
+                                        <span class="switch-toggle-slider">
+                                            <span class="switch-on"></span>
+                                            <span class="switch-off"></span>
+                                        </span>
+                                    </label>
+                                </div>
+                            </td>
+                            <td>
+                                <a>
+                                    <i class="text-primary ti ti-pencil me-1"></i>
+                                </a>
+                                <a>
+                                    <i class="text-danger ti ti-trash me-1"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>COUPGLOB00130</td>
+                            <td>GLOBELWAT</td>
+                            <td>15</td>
+                            <td>01-02-2023 to 10-02-2023</td>
+                            <td>
+                                <div class="col-sm-6">
+                                    <label class="switch">
+                                        <input type="checkbox" class="switch-input" />
+                                        <span class="switch-toggle-slider">
+                                            <span class="switch-on"></span>
+                                            <span class="switch-off"></span>
+                                        </span>
+                                    </label>
+                                </div>
+                            </td>
+                            <td>
+                                <a>
+                                    <i class="text-primary ti ti-pencil me-1"></i>
+                                </a>
+                                <a>
+                                    <i class="text-danger ti ti-trash me-1"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--/ DataTable with Buttons -->
+</div>
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/admin/discountmanagement/generatecoupon.js') }}"></script>
+@endsection

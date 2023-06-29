@@ -1,0 +1,210 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+/*==================================================ADMIN START==============================================================*/
+//Login
+Route::get('/', [App\Http\Controllers\Login\LoginController::class, 'loginForm'])->name('admin.login');
+Route::get('/forget-password', [App\Http\Controllers\Admin\Login\LoginController::class, 'forgetPassword'])->name('forget-password');
+
+//Dashboard
+Route::get('/dashboard', [App\Http\Controllers\Admin\Dashboard\DashboardController::class, 'dashboard'])->name('dashboard');
+
+//profile
+Route::get('/profile', [App\Http\Controllers\Admin\Dashboard\DashboardController::class, 'Profile'])->name('profile');
+
+
+//Order Management
+Route::get('/customerorders', [App\Http\Controllers\Admin\OrderManagement\CustomerOrdersController::class, 'customerOrders'])->name('customerorders');
+Route::get('/wholesaleorders', [App\Http\Controllers\Admin\OrderManagement\WholsesaleOrdersController::class, 'wholesaleOrders'])->name('wholesaleorders');
+Route::get('/manufacturerorders', [App\Http\Controllers\Admin\OrderManagement\ManufacturerOrdersController::class, 'manufacturerOrders'])->name('manufacturerorders');
+Route::get('/huborders', [App\Http\Controllers\Admin\OrderManagement\HubOrdersController::class, 'hubOrders'])->name('huborders');
+Route::get('/cancelledorders', [App\Http\Controllers\Admin\OrderManagement\CancelledOrdersController::class, 'cancelledOrders'])->name('cancelledorders');
+Route::get('/pendingorders', [App\Http\Controllers\Admin\OrderManagement\PendingOrdersController::class, 'pendingOrders'])->name('pendingorders');
+Route::get('/bulkorders', [App\Http\Controllers\Admin\OrderManagement\BulkOrdersController::class, 'bulkOrders'])->name('bulkorders');
+Route::get('/bulkorders-detail', [App\Http\Controllers\Admin\OrderManagement\BulkOrdersController::class, 'bulkOrderView'])->name('bulkorders-detail');
+Route::get('/bulkorders-form', [App\Http\Controllers\Admin\OrderManagement\BulkOrdersController::class, 'form'])->name('bulkorders-form');
+Route::get('/order-detail', [App\Http\Controllers\Admin\OrderManagement\OrderDetailController::class, 'orderDetail'])->name('order-detail');
+
+//Accounts
+Route::get('/creditnote', [App\Http\Controllers\Admin\Accounts\CreditNoteController::class, 'creditNote'])->name('creditnote');
+Route::get('/creditnotelist', [App\Http\Controllers\Admin\Accounts\CreditNoteController::class, 'creditNoteList'])->name('creditnotelist');
+Route::get('/debitnote', [App\Http\Controllers\Admin\Accounts\DebitNoteController::class, 'debitNote'])->name('debitnote');
+Route::get('/debitnotelist', [App\Http\Controllers\Admin\Accounts\DebitNoteController::class, 'debitNoteList'])->name('debitnotelist');
+Route::get('/payments', [App\Http\Controllers\Admin\Accounts\PaymentsController::class, 'payments'])->name('payments');
+Route::get('/paymentslist', [App\Http\Controllers\Admin\Accounts\PaymentsController::class, 'paymentsList'])->name('paymentslist');
+Route::get('/referralpayments', [App\Http\Controllers\Admin\Accounts\ReferralPaymentsController::class, 'referralPayments'])->name('referralpayments');
+Route::get('/receipt', [App\Http\Controllers\Admin\Accounts\ReceiptController::class, 'receipt'])->name('receipt');
+Route::get('/receiptlist', [App\Http\Controllers\Admin\Accounts\ReceiptController::class, 'receiptList'])->name('receiptlist');
+Route::get('/expenses', [App\Http\Controllers\Admin\Accounts\ExpenseController::class, 'expenses'])->name('expenses');
+Route::get('/expenselist', [App\Http\Controllers\Admin\Accounts\ExpenseController::class, 'expenseList'])->name('expenselist');
+
+//Discount Management
+Route::get('/generate-coupon', [App\Http\Controllers\Admin\DiscountManagement\CouponController::class, 'generateCoupon'])->name('generate-coupon');
+Route::get('/referral-history', [App\Http\Controllers\Admin\DiscountManagement\ReferralPointsController::class, 'referralHistory'])->name('referral-history');
+Route::get('/referral-code', [App\Http\Controllers\Admin\DiscountManagement\ReferralPointsController::class, 'referralCode'])->name('referral-code');
+//Offers
+Route::get('/offers', [App\Http\Controllers\Admin\DiscountManagement\OffersController::class, 'offers'])->name('offers');
+Route::get('/offers-allocate', [App\Http\Controllers\Admin\DiscountManagement\OffersController::class, 'offersAllocate'])->name('offers-allocate');
+
+//Purchase Management
+Route::get('/purchaseorder', [App\Http\Controllers\Admin\PurchaseManagement\PurchaseOrderController::class, 'purchaseOrder'])->name('purchaseorder');
+Route::get('/purchaseorderlist', [App\Http\Controllers\Admin\PurchaseManagement\PurchaseOrderController::class, 'purchaseOrderList'])->name('purchaseorderlist');
+Route::get('/purchaseinvoice', [App\Http\Controllers\Admin\PurchaseManagement\PurchaseInvoiceController::class, 'purchaseInvoice'])->name('purchaseinvoice');
+Route::get('/purchaseinvoicelist', [App\Http\Controllers\Admin\PurchaseManagement\PurchaseInvoiceController::class, 'purchaseInvoiceList'])->name('purchaseinvoicelist');
+Route::get('/purchasereturn', [App\Http\Controllers\Admin\PurchaseManagement\PurchaseReturnController::class, 'purchaseReturn'])->name('purchasereturn');
+Route::get('/purchasereturnlist', [App\Http\Controllers\Admin\PurchaseManagement\PurchaseReturnController::class, 'purchaseReturnList'])->name('purchasereturnlist');
+
+//Sales Management
+Route::get('/salesorder', [App\Http\Controllers\Admin\SalesManagement\SalesOrderController::class, 'salesOrder'])->name('salesorder');
+Route::get('/salesorderlist', [App\Http\Controllers\Admin\SalesManagement\SalesOrderController::class, 'salesOrderList'])->name('salesorderlist');
+Route::get('/salesinvoice', [App\Http\Controllers\Admin\SalesManagement\SalesInvoiceController::class, 'salesInvoice'])->name('salesinvoice');
+Route::get('/salesinvoicelist', [App\Http\Controllers\Admin\SalesManagement\SalesInvoiceController::class, 'salesInvoiceList'])->name('salesinvoicelist');
+Route::get('/salesreturn', [App\Http\Controllers\Admin\SalesManagement\SalesReturnController::class, 'salesReturn'])->name('salesreturn');
+Route::get('/salesreturnlist', [App\Http\Controllers\Admin\SalesManagement\SalesReturnController::class, 'salesReturnList'])->name('salesreturnlist');
+
+//Manufacturer Management
+Route::get('/manufacturer', [App\Http\Controllers\Admin\ManufacturerManagement\ManufacturerController::class, 'manufacturer'])->name('manufacturer');
+Route::get('/manufacturer-list', [App\Http\Controllers\Admin\ManufacturerManagement\ManufacturerController::class, 'manufacturerList'])->name('manufacturer-list');
+Route::get('/manufacturer-document', [App\Http\Controllers\Admin\ManufacturerManagement\ManufacturerController::class, 'manufacturerDocumentView'])->name('manufacturer-document-view');
+Route::get('/manufacturer-view', [App\Http\Controllers\Admin\ManufacturerManagement\ManufacturerController::class, 'view'])->name('manufacturer-view');
+
+//Hub Management
+Route::get('/hub', [App\Http\Controllers\Admin\HubManagement\HubController::class, 'hub'])->name('hub');
+Route::get('/hub-list', [App\Http\Controllers\Admin\HubManagement\HubController::class, 'hubList'])->name('hub-list');
+Route::get('/hub-document', [App\Http\Controllers\Admin\HubManagement\HubController::class, 'hubDocument'])->name('hub-document-view');
+
+//Delivery Person Management
+Route::get('/delivery-person', [App\Http\Controllers\Admin\DeliveryPersonManagement\DeliveryPersonController::class, 'deliveryPerson'])->name('delivery-person');
+Route::get('/delivery-person-list', [App\Http\Controllers\Admin\DeliveryPersonManagement\DeliveryPersonController::class, 'deliveryPersonList'])->name('delivery-person-list');
+
+//Logistic Management
+Route::get('/add-logistic', [App\Http\Controllers\Admin\LogisticManagement\LogisticController::class, 'addLogisticPartner'])->name('add-logistic');
+Route::get('/logistic-list', [App\Http\Controllers\Admin\LogisticManagement\LogisticController::class, 'logisticPartnerList'])->name('logistic-list');
+
+//Wholesale Partner
+Route::get('/wholesale-partner', [App\Http\Controllers\Admin\WholesalePartner\WholesalePartnerController::class, 'wholesalePartner'])->name('wholesale-partner');
+Route::get('/wholesale-partner-list', [App\Http\Controllers\Admin\WholesalePartner\WholesalePartnerController::class, 'wholesalePartnerList'])->name('wholesale-partner-list');
+
+
+//Customer Management
+Route::get('/customers', [App\Http\Controllers\Admin\CustomerManagement\CustomerController::class, 'customers'])->name('customers');
+Route::get('/customers-performance', [App\Http\Controllers\Admin\CustomerManagement\CustomerController::class, 'customersPerformance'])->name('customers-performance');
+Route::get('/customers-summary', [App\Http\Controllers\Admin\CustomerManagement\CustomerController::class, 'customersSummary'])->name('customers-summary');
+Route::get('/surrendercan', [App\Http\Controllers\Admin\CustomerManagement\CustomerController::class, 'SurrenderCan'])->name('surrender-can');
+
+//Stock Management
+Route::get('/stock-entry', [App\Http\Controllers\Admin\StockManagement\StockController::class, 'stockEntry'])->name('stock-entry');
+Route::get('/hub-stock', [App\Http\Controllers\Admin\StockManagement\HubStockController::class, 'hubStock'])->name('hub-stock');
+Route::get('/manufacturer-stock', [App\Http\Controllers\Admin\StockManagement\ManufacturerStockController::class, 'manufacturerStock'])->name('manufacturer-stock');
+
+//Performance Management
+Route::get('/manufacturer-performance', [App\Http\Controllers\Admin\Performance\PerformanceController::class, 'manufacturerPerformance'])->name('manufacturer-performance');
+Route::get('/hub-performance', [App\Http\Controllers\Admin\Performance\PerformanceController::class, 'hubPerformance'])->name('hub-performance');
+Route::get('/logistics-performance', [App\Http\Controllers\Admin\Performance\PerformanceController::class, 'logisticsPerformance'])->name('logistics-performance');
+Route::get('/delivery-person-performance', [App\Http\Controllers\Admin\Performance\PerformanceController::class, 'deliveryPerformance'])->name('delivery-person-performance');
+
+//Feedback Management
+Route::get('/feedback', [App\Http\Controllers\Admin\FeedBack\FeedBackController::class, 'feedBack'])->name('feedback');
+
+//Reports Management
+Route::get('/manufacturer-reports', [App\Http\Controllers\Admin\Reports\ReportsController::class, 'manufacturerReports'])->name('manufacturer-reports');
+Route::get('/hub-reports', [App\Http\Controllers\Admin\Reports\ReportsController::class, 'hubReports'])->name('hub-reports');
+Route::get('/delivery-reports', [App\Http\Controllers\Admin\Reports\ReportsController::class, 'deliveryReports'])->name('delivery-reports');
+Route::get('/products-reports', [App\Http\Controllers\Admin\Reports\ReportsController::class, 'productsReports'])->name('products-reports');
+Route::get('/orders-reports', [App\Http\Controllers\Admin\Reports\ReportsController::class, 'ordersReports'])->name('orders-reports');
+Route::get('/payments-reports', [App\Http\Controllers\Admin\Reports\ReportsController::class, 'paymentsReports'])->name('payments-reports');
+Route::get('/unavailable-reports', [App\Http\Controllers\Admin\Reports\ReportsController::class, 'unavailableReports'])->name('unavailable-reports');
+
+//Settings
+Route::get('/settings', [App\Http\Controllers\Admin\Settings\SettingsController::class, 'settings'])->name('settings');
+Route::get('/bill-no-settings', [App\Http\Controllers\Admin\Settings\SettingsController::class, 'BillSettings'])->name('bill-settings');
+Route::get('/referral-points', [App\Http\Controllers\Admin\Settings\SettingsController::class, 'referralPoints'])->name('referral-points');
+
+
+//User Rights Management
+Route::get('/users', [App\Http\Controllers\Admin\UserRightsManagement\UsersController::class, 'users'])->name('users');
+Route::get('/rights', [App\Http\Controllers\Admin\UserRightsManagement\UserRightsController::class, 'rights'])->name('rights');
+
+//Products Management
+Route::get('/category', [App\Http\Controllers\Admin\ProductsManagement\CategoryController::class, 'category'])->name('category');
+Route::get('/product-type', [App\Http\Controllers\Admin\ProductsManagement\ProductTypeController::class, 'prodctType'])->name('product-type');
+Route::get('/brands', [App\Http\Controllers\Admin\ProductsManagement\BrandsController::class, 'brands'])->name('brands');
+Route::get('/products', [App\Http\Controllers\Admin\ProductsManagement\ProductsController::class, 'products'])->name('products');
+
+//Masters
+Route::get('/state', [App\Http\Controllers\Admin\Masters\StateController::class, 'state'])->name('state');
+Route::get('/city', [App\Http\Controllers\Admin\Masters\CityController::class, 'city'])->name('city');
+Route::get('/area', [App\Http\Controllers\Admin\Masters\AreaController::class, 'area'])->name('area');
+Route::get('/tax', [App\Http\Controllers\Admin\Masters\TaxController::class, 'tax'])->name('tax');
+Route::get('/expensegroup', [App\Http\Controllers\Admin\Masters\ExpenseGroupController::class, 'expenseGroup'])->name('expensegroup');
+Route::get('/ledger', [App\Http\Controllers\Admin\Masters\LedgerController::class, 'ledger'])->name('ledger');
+Route::get('/allocation', [App\Http\Controllers\Admin\Masters\AllocationController::class, 'allocation'])->name('allocations');
+Route::get('/department', [App\Http\Controllers\Admin\Masters\DepartmentController::class, 'department'])->name('department');
+Route::get('/designation', [App\Http\Controllers\Admin\Masters\DesignationController::class, 'designation'])->name('designation');
+Route::get('/userrole', [App\Http\Controllers\Admin\Masters\RoleController::class, 'userrole'])->name('userrole');
+Route::get('/employee', [App\Http\Controllers\Admin\Masters\EmployeeController::class, 'employee'])->name('employee');
+Route::get('/employee-list', [App\Http\Controllers\Admin\Masters\EmployeeController::class, 'employeeList'])->name('employee-list');
+Route::get('/document', [App\Http\Controllers\Admin\Masters\DocumentController::class, 'document'])->name('document');
+
+//Approval
+Route::get('/manufacturer-approval', [App\Http\Controllers\Admin\Approval\ApprovalController::class, 'manufacturerApproval'])->name('manufacturer-approval');
+Route::get('/logistic-approval', [App\Http\Controllers\Admin\Approval\ApprovalController::class, 'logisticApproval'])->name('logistic-approval');
+Route::get('/hub-approval', [App\Http\Controllers\Admin\Approval\ApprovalController::class, 'hubApproval'])->name('hub-approval');
+
+
+/*==============================================ADMIN END===============================================*/
+
+/*==============================================MANuFACTURER START=======================================*/
+
+//Dashboard
+Route::get('manufactuerer-dashboard', [App\Http\Controllers\Manufacturer\Dashboard\DashboardController::class, 'manufacturerDashboard'])->name('manufacturer-dashboard');
+
+//Order
+Route::get('manufactuerer-orders', [App\Http\Controllers\Manufacturer\Orders\OrdersController::class, 'orders'])->name('manufacturer-orders');
+
+//Stock
+Route::get('manufactuerer-stocks', [App\Http\Controllers\Manufacturer\Stock\StockController::class, 'stock'])->name('manufacturer-stocks');
+
+//Documents
+Route::get('manufactuerer-documents', [App\Http\Controllers\Manufacturer\Document\DocumentController::class, 'documents'])->name('manufacturer-documents');
+
+//Reports
+Route::get('manufactuerer-report', [App\Http\Controllers\Manufacturer\Report\ReportController::class, 'reports'])->name('manufacturer-report');
+
+//Damage Can
+Route::get('manufactuerer-damage-can', [App\Http\Controllers\Manufacturer\DamageCan\DamageCanController::class, 'damageCan'])->name('manufacturer-damagecan');
+
+
+/*==============================================MANuFACTURER END=======================================*/
+
+
+/*==============================================HUB START=======================================*/
+
+//Dashboard
+Route::get('hub-dashboard', [App\Http\Controllers\Hub\Dashboard\DashboardController::class, 'dashboard'])->name('hub-dashboard');
+
+//Order
+Route::get('hub-orders', [App\Http\Controllers\Hub\Order\OrderController::class, 'order'])->name('hub-orders');
+
+//Stock
+Route::get('hub-stocks', [App\Http\Controllers\Hub\Stock\StockController::class, 'stock'])->name('hub-stocks');
+
+//Reports
+Route::get('hub-report', [App\Http\Controllers\Hub\Report\ReportController::class, 'report'])->name('hub-report');
+
+//Document
+Route::get('hub-documents', [App\Http\Controllers\Hub\Document\DocumentController::class, 'document'])->name('hub-document');
+
+//Damage Can
+Route::get('hub-damage-can', [App\Http\Controllers\Hub\DamageCan\DamageCanController::class, 'damageCan'])->name('hub-damagecan');

@@ -1,0 +1,26 @@
+$(document).ready(function () {
+    $("#tblAreaList").DataTable();
+    BindCity();
+});
+
+function doEdit(id) {
+    $("#hdAreaId").val(id);
+    $("#txtAreaName").val($("#trarea" + id + " td:eq(3)").text());
+    $("#ddlState")
+        .val($("#trarea" + id).attr("SID"))
+        .trigger("change");
+    setTimeout(function () {
+        $("#ddlCity")
+            .val($("#trarea" + id).attr("CID"))
+            .trigger("change");
+    }, 1500);
+    $("#txtAreaName").focus();
+}
+
+function cancel() {
+    $("#hdAreaId").val("");
+    $("#txtAreaName").val("");
+    $("#ddlState").val(0).trigger("change");
+    $("#ddlCity").val(0);
+    $("#ddlState").focus();
+}

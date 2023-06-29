@@ -1,0 +1,113 @@
+$(document).ready(function () {
+   
+});
+
+var RowIndex = 1;
+
+function addVehicleInfo() {
+
+    //Validate vehicle info
+    if (validateVehicleInfo()) {
+
+        var editRowIndex = $("#hdEditVehicleInfoRowId").val();
+        var vehicleinfodata = "";
+        var FUL = $("#ddlfueltype option:selected").val();
+        var FUT = $("#ddlfueltype option:selected").text();
+        var VHL = $("#ddlvehicletype option:selected").val();
+        var VHT = $("#ddlvehicletype option:selected").text();
+        var VHB = $("#ddlvehiclebrand option:selected").val();
+        var VBT = $("#ddlvehiclebrand option:selected").text();
+        var RNO = $("#txtregno").val();
+
+        if (($("tr[FUL=" + FUL + "]" + "[VHL=" + VHL + "]" + "[VHB=" + VHB + "]" + "[RNO=" + RNO + "]").length == 0)) {
+        if (editRowIndex == 0) {
+            vehicleinfodata += "<tr id='trvehicle" + RowIndex + "' FUL=" + FUL + " VHL=" + VHL + " VHB=" + VHB + " RNO=" + RNO + " >";
+            vehicleinfodata += "<td><input type='hidden' class ='vehicleinfo'  name='tabFuel[]' value=" + FUL + ">" + FUT + "</td>";
+            vehicleinfodata += "<td><input type='hidden' class ='vehicleinfo' name='tabVehicleType[]' value=" + VHL + ">" + VHT + "</td>";
+            vehicleinfodata += "<td><input type='hidden' class ='vehicleinfo' name='tabVehicleBrand[]' value=" + VHB + ">" + VBT + "</td>";
+            vehicleinfodata += "<td><input type='hidden' class ='vehicleinfo' name='tabRegNo[]' value=" + RNO + ">" + RNO + "</td>";
+            vehicleinfodata += "<td><a><i class='text-primary ti ti-pencil me-1' onclick = 'doEditVehicle(" + RowIndex + ");'></i></a><a><i class='text-danger ti ti-trash me-1' onclick ='removeRowVehicle(" + RowIndex + ");'></i></a></td>";
+            vehicleinfodata += "</tr>";
+            RowIndex++;
+            $("#tbodyVehicleType").append(vehicleinfodata);
+        }
+        else if (editRowIndex > 0) {
+            $("#trvehicle" + editRowIndex + " td:eq(0)").text(FUT);
+            $("#trvehicle" + editRowIndex + " td:eq(1)").text(VHT);
+            $("#trvehicle" + editRowIndex + " td:eq(2)").text(VBT);
+            $("#trvehicle" + editRowIndex + " td:eq(3)").text(RNO);
+            showAddImageVehicle();
+            $("#hdEditVehicleInfoRowId").val(0);
+        }
+        formClearVehicle();
+        // showEditImage();
+        }else{
+            alert('Item Alredy exist');
+        }
+    }
+}
+
+    function validateVehicleInfo() {
+        var ddlfueltype = document.forms["logistic_vehicle_info"]["ddlfueltype"];
+        var ddlvehicletype = document.forms["logistic_vehicle_info"]["ddlvehicletype"];
+        var ddlvehiclebrand = document.forms["logistic_vehicle_info"]["ddlvehiclebrand"];
+        var txtregno = document.forms["logistic_vehicle_info"]["txtregno"];
+    
+        if (ddlfueltype.value == "") {
+            alert('Select Fuel Type');
+            ddlfueltype.focus();
+            return false;
+        }
+    
+        if (ddlvehicletype.value == "") {
+            alert('Select Vehicle Type');
+            ddlvehicletype.focus();
+            return false;
+        }
+    
+        if (ddlvehiclebrand.value == "") {
+            alert('Select Vehicle Brand');
+            ddlvehiclebrand.focus();
+            return false;
+        }
+    
+        if (txtregno.value == "") {
+            alert('Select Register Number');
+            txtregno.focus();
+            return false;
+        }
+        return true;
+    }
+
+    function doEditVehicle(SID) {
+        $("#hdEditVehicleInfoRowId").val(SID);
+        $("#ddlfueltype").val($("#trvehicle" + SID).attr("FUL")).trigger("change");
+        $("#ddlvehicletype").val($("#trvehicle" + SID).attr("VHL")).trigger("change");
+        $("#ddlvehiclebrand").val($("#trvehicle" + SID).attr("VHB")).trigger("change");
+        $("#txtregno").val($("#trvehicle" + SID + " td:eq(3)").text());
+        showEditImageVehicle();
+    }
+
+    //for vehicle
+    function formClearVehicle() {
+        $("#ddlfueltype").val("");
+        $("#ddlvehicletype").val("");
+        $("#ddlvehiclebrand").val("").trigger('change');
+        $("#txtregno").val("");
+    }
+
+
+    function showAddImageVehicle() {
+        $("#btnUpdate").css("display", "none");
+        $("#btnAdd").css("display", "block");
+    }
+
+    function showEditImageVehicle() {
+        $("#btnUpdate").css("display", "block");
+        $("#btnAdd").css("display", "none");
+    }
+
+    function removeRowVehicle(SID) {
+        $("#trvehicle" + SID).remove();
+    }
+

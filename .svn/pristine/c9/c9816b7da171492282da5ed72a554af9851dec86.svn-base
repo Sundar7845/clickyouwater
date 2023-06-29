@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Http\Controllers\Admin\OrderManagement;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class WholsesaleOrdersController extends Controller
+{
+  public function wholesaleOrders()
+  {
+    return view('Admin.order_management.wholesale_orders.wholesale_orders');
+  }
+}

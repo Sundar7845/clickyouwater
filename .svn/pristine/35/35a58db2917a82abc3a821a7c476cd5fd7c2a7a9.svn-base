@@ -1,0 +1,56 @@
+@extends('layouts.main_master') @section('content')
+@section('title')
+    Referral Settings | Click Your Water | Dashboard
+@endsection
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-1 mb-4">
+        Referral Settings
+    </h4>
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-12 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <form name="referral_settings" action="{{ route('add.referralsettings') }}" method="POST">
+                        @csrf
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Points For Each Coin<span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <input type="hidden" name="id" id="id"
+                                            value="@if (isset($refferalsettings)) {{ $refferalsettings->id ? $refferalsettings->id : '' }}@else{{ 'new' }} @endif">
+                                    <input type="text" class="form-control" id="referral_content" name="referral_content"
+                                        placeholder="Enter Points" value="@if(isset($refferalsettings)){{ $refferalsettings->referral_content }}@endif" title="Enter Points for each coin" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Points For Each Referral<span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" id="earnpoints_per_referral" name="earnpoints_per_referral"
+                                        placeholder="Enter Referral Points" value="@if(isset($refferalsettings)){{ $refferalsettings->earnpoints_per_referral }}@endif" title="Enter Points for each referral" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mt-4 mb-3">
+                                    <button type="submit" class="btn btn-success">Update</button>
+                                    <button type="button" onclick="cancel();" class="btn btn-danger">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+</div>
+<!-- / Content -->
+@endsection
+@section('footer')
+    <script src="{{ asset('assets/js/admin/settings/refferal_points.js') }}"></script>
+@endsection

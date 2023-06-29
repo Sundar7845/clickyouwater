@@ -1,0 +1,86 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Masters;
+
+use App\Enums\MenuPermissionType;
+use App\Http\Controllers\Controller;
+use App\Models\Role;
+use App\Traits\Common;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class RoleController extends Controller
+{
+    use Common;
+    public function role()
+    {
+        try {
+            $roles = Role::get();
+            return view('admin.masters.userrole.role', compact('roles'));
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, 'GET', $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function updateRole(Request $request)
+    {
+        $request->validate([
+            'txtRoleName' => 'required'
+        ]);
+        DB::beginTransaction();
+        try {
+
+            Role::findorfail($request->hdRoleId)->update([
+                'role_name' => $request->txtRoleName
+            ]);
+
+            $notification = array(
+                'message' => 'Role Updated Successfully',
+                'alert-type' => 'success'
+            );
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            $notification = array(
+                'message' => 'Role Not Updated!',
+                'alert-type' => 'error'
+            );
+            $this->Log(__FUNCTION__, $request->method(), $e->getMessage(), Auth::user()->id, $request->ip(), gethostname());
+        }
+
+        return redirect()->route('role')->with($notification);
+    }
+
+    public function getRoleById($id)
+    {
+        try {
+            $role = Role::where('id', $id)->whereNull('deleted_at')->first();
+            return response()->json([
+                'role' => $role
+            ]);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, 'GET', $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function getRoleData()
+    {
+        try {
+            $roles = Role::get();
+            return datatables()->of($roles)
+                ->addColumn('action', function ($row) {
+                    $html = "";
+                    if ($this->isUserHavePermission(MenuPermissionType::Edit)) {
+                        $html = '<button type="button" data-bs-toggle="modal" 
+                data-bs-target="#addNewCCModal" onclick="doEdit(' . $row->id . ');" class="btn btn-xs btn-primary">
+                view</button> ';
+                    }
+                    return $html;
+                })->toJson();
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, 'GET', $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+}

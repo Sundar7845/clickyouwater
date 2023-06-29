@@ -1,0 +1,215 @@
+@extends('layouts.main_master') @section('content')
+@section('title')
+    Dashboard | Customers
+@endsection
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-1 mb-4">
+        Customers
+    </h4>
+    <div class="card">
+        <div class="card-body">
+            <form class="browser-default-validation">
+                <div class="row">
+                    <div class="col-md-2">
+                        <div class="mb-3">
+                            <strong class="form-label" for="basic-default-email">Customer Type</strong>
+                            <select name="" id="" class="form-select">
+                                <option value="">Select</option>
+                                <option value="App user">App user</option>
+                                <option value="Web User">Web User</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="mb-3">
+                            <strong class="form-label" for="basic-default-name">Status</strong>
+                            <select name="" id="" class="form-select">
+                                <option value="">Select</option>
+                                <option value="Active">Active</option>
+                                <option value="InActive">InActive</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="mb-3">
+                            <strong class="form-label">State Name</strong>
+                            <select name="" id="" class="select2 form-select form-select-lg">
+                                <option value="">SELECT HUB</option>
+                                <option value="TN">Tamil Nadu</option>
+                                <option value="KL">Kerala</option>
+                                <option value="AN">Andra</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="mb-3">
+                            <strong class="form-label">City Name</strong>
+                            <select name="" id="" class="select2 form-select form-select-lg">
+                                <option value="">SELECT HUB</option>
+                                <option value="CBE">Coimbatore</option>
+                                <option value="KN">Kannur</option>
+                                <option value="HS">Hosur</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="mb-3">
+                            <strong class="form-label">Area Name</strong>
+                            <select name="" id="" class="select2 form-select form-select-lg">
+                                <option value="">SELECT Area</option>
+                                <option value="1">saravanampatti</option>
+                                <option value="2">hopes</option>
+                                <option value="3">perur</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="mb-3">
+                            <strong class="form-label">Hub Name</strong>
+                            <select name="" id="" class="select2 form-select form-select-lg">
+                                <option value="">SELECT HUB</option>
+                                <option value="hub1">hub1</option>
+                                <option value="hub2">hub2</option>
+                                <option value="hub3">hub3</option>
+                            </select>
+                        </div>
+                    </div> 
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- DataTable with Buttons -->
+    <div class="col-lg-12 mt-5 mb-4 mb-lg-0">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between">
+                <h5 class="card-title m-0 me-2">Customer List</h5>
+            </div>
+            <div class="card-datatable table-responsive pt-0">
+                <table id="customer" class="table">
+                    <thead class="border-bottom">
+                        <tr>
+                            <th>S.No</th>
+                            <th>CUSTOMER NAME</th>
+                            <th>CUSTOMER CODE</th>
+                            <th>CUSTOMER TYPE</th>
+                            <th>EMAIL</th>
+                            <th>DATE OF REG</th>
+                            <th>STATUS</th>
+                            <th>SUMMARY</th>
+                            <th>ACTION</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Johny
+                                <div class="text-muted p-1">
+                                    <small class="bg-light p-1">9966210354</small>
+                                </div>
+                            </td>
+                            <td>370</td>
+                            <td>App User</td>
+                            <td>Johny@skglobal.com</td>
+                            <td>17/03/2023</td>
+                            <td>
+                                <div class="col-sm-6">
+                                    <label class="switch">
+                                        <input type="checkbox" class="switch-input" />
+                                        <span class="switch-toggle-slider">
+                                            <span class="switch-on"></span>
+                                            <span class="switch-off"></span>
+                                        </span>
+                                    </label>
+                                </div>
+                            </td>
+                            <td><a href="{{ route('customers-summary') }}" class="btn btn-primary">View</a></td>
+                            <td><a><i class="text-primary ti ti-pencil me-1"></i></a></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Raj
+                                <div class="text-muted p-1">
+                                    <small class="bg-light p-1">9967210354</small>
+                                </div>
+                            </td>
+                            <td>200</td>
+                            <td>App User</td>
+                            <td>raj@skglobal.com</td>
+                            <td>17/03/2023</td>
+                            <td>
+                                <div class="col-sm-6">
+                                    <label class="switch">
+                                        <input type="checkbox" class="switch-input" />
+                                        <span class="switch-toggle-slider">
+                                            <span class="switch-on"></span>
+                                            <span class="switch-off"></span>
+                                        </span>
+                                    </label>
+                                </div>
+                            </td>
+                            <td><a href="{{ route('customers-summary') }}" class="btn btn-primary">View</a></td>
+                            <td><a><i class="text-primary ti ti-pencil me-1"></i></a></td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Kiran
+                                <div class="text-muted p-1">
+                                    <small class="bg-light p-1">9866210354</small>
+                                </div>
+                            </td>
+                            <td>400</td>
+                            <td>Web User</td>
+                            <td>raj@skglobal.com</td>
+                            <td>17/03/2023</td>
+                            <td>
+                                <div class="col-sm-6">
+                                    <label class="switch">
+                                        <input type="checkbox" class="switch-input" />
+                                        <span class="switch-toggle-slider">
+                                            <span class="switch-on"></span>
+                                            <span class="switch-off"></span>
+                                        </span>
+                                    </label>
+                                </div>
+                            </td>
+                            <td><a href="{{ route('customers-summary') }}" class="btn btn-primary">View</a></td>
+                            <td><a><i class="text-primary ti ti-pencil me-1"></i></a></td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>John
+                                <div class="text-muted p-1">
+                                    <small class="bg-light p-1">9856210354</small>
+                                </div>
+                            </td>
+                            <td>180</td>
+                            <td>App User</td>
+                            <td>John@skglobal.com</td>
+                            <td>17/03/2023</td>
+                            <td>
+                                <div class="col-sm-6">
+                                    <label class="switch">
+                                        <input type="checkbox" class="switch-input" />
+                                        <span class="switch-toggle-slider">
+                                            <span class="switch-on"></span>
+                                            <span class="switch-off"></span>
+                                        </span>
+                                    </label>
+                                </div>
+                            </td>
+                            <td><a href="{{ route('customers-summary') }}" class="btn btn-primary">View</a></td>
+                            <td><a><i class="text-primary ti ti-pencil me-1"></i></a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--/ DataTable with Buttons -->
+</div>
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/admin/customermanagement/customer.js') }}"></script>
+@endsection

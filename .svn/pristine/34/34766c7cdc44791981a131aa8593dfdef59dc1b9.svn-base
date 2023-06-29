@@ -1,0 +1,47 @@
+<?php
+
+namespace App\Http\Resources;
+
+use App\Traits\Common;
+use DateTime;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class OrderResource extends JsonResource
+{
+    use Common;
+    /**
+     * Transform the resource into an array.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
+     */
+   
+    public function toArray($request)
+    {
+        return [
+            'order_id' => $this->id,
+            'order_no' => $this->order_no,
+            'invoice_no' => $this->invoice_no,
+            'delivery_address' => $this->delivery_address,
+            'delivery_desc' => $this->desc,
+            'total_qty' => $this->total_qty,
+            'status_id' => $this->status_id,
+            'status_name' => $this->status->status,
+            'status_msg' => $this->status->status_msg,
+            'is_cancel' => $this->is_cancel,
+            'exp_delivery_date' => DateTime::createFromFormat('Y-m-d H:i:s', $this->exp_delivery_date)->format('d M,y H:i A'),
+            'transaction_date' => DateTime::createFromFormat('Y-m-d H:i:s', $this->transaction_date)->format('d M,y'),
+            'transaction_amount' => $this->transaction_amount,
+            'transaction_status' => $this->transaction_status,
+            'is_elite' => $this->getOrderHasEliteItems($this->id),
+            'order_details' => $this->orderDets->map(function ($orderdet) {
+                return [
+                    'product_id' => $orderdet->product_id,
+                    'product_name' => $orderdet->products->product_name,
+                    'quantity' => $orderdet->qty,
+                    'return_empty_cans_qty' => $orderdet->return_empty_cans_qty,
+                ];
+            }),
+        ];
+    }
+}

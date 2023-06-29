@@ -1,0 +1,115 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Masters;
+
+use App\Http\Controllers\Controller;
+use App\Models\Department;
+use Illuminate\Database\QueryException;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class DepartmentController extends Controller
+{
+    public function department()
+    {
+        return view('admin.masters.department.department');
+    }
+
+    public function addDepartment(Request $request)
+    {
+        $request->validate([
+            'txtDepartmentName' => 'required'
+        ]);
+
+        DB::beginTransaction();
+        try{
+
+        if ($request->hdDepartmentId == null) {
+            Department::create([
+                'department' => $request->txtDepartmentName,
+                'created_by' => Auth::user()->id
+            ]);
+
+            $notification = array(
+                'message' => 'Department Created Successfully',
+                'alert-type' => 'success'
+            );
+        } else {
+            Department::findorfail($request->hdDepartmentId)->update([
+                'department_name' => $request->txtDepartmentName,
+                'updated_by' => Auth::user()->id
+            ]);
+
+            $notification = array(
+                'message' => 'Department Updated Successfully',
+                'alert-type' => 'success'
+            );
+        }
+        DB::commit();
+        }catch (\Exception $e) {
+        DB::rollback();
+        $notification = array(
+       'message' => 'Department Not Created!',
+       'alert-type' => 'error'
+        );
+        }
+        return redirect()->route('department')->with($notification);
+    }
+
+    public function deleteDepartment($id)
+    {
+        try {
+            $department = Department::findorfail($id);
+            $department->delete();
+            $department->update([
+                'deleted_by' => Auth::user()->id
+            ]);
+
+            $notification = array(
+                'message' => 'Department Deleted Successfully',
+                'alert' => 'success'
+            );
+            return response()->json([
+                'responseData' => $notification
+            ]);
+        } catch (QueryException $e) {
+
+            $notification = array(
+                'message' => 'Department Could Not Be Deleted!',
+                'alert' => 'error'
+            );
+            return response()->json([
+                'responseData' => $notification
+            ]);
+        }
+    }
+
+    public function getDepartmentById($id)
+    {
+        $department = Department::select('departments.*')->where('departments.id', $id)->first();
+        return response()->json([
+            'department' => $department
+        ]);
+    }
+
+    public function getDepartmentData(Request $request)
+    {
+        $departmentData = Department::select('departments.*')->get();
+        return datatables()->of($departmentData)
+            ->addColumn('action', function ($row) {
+                $html = '<i class="text-primary ti ti-pencil me-1"
+                onclick="doEdit(' . $row->id . ');"></i> ';
+                $html .= '<i class="text-danger ti ti-trash me-1" id="confrim-color(' . $row->id . ')" onclick="showDelete(' . $row->id . ');"></i>';
+                return $html;
+            })->toJson();
+    }
+
+    public function activeStatus($id, $status)
+    {
+        Department::findorfail($id)->update([
+            'is_active' => $status,
+            'updated_by' => Auth::user()->id
+        ]);
+    }
+}

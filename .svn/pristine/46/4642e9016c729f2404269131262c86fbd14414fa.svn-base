@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Order;
+use App\Models\OrderDet;
+use App\Traits\Common;
+use Illuminate\Http\Request;
+
+class invoicecontroller extends Controller
+{
+    use Common;
+    //for invoice testing pdf
+    public function invoice()
+    {
+        $order = Order::find(5);
+        $orderDet = OrderDet::select('order_dets.*', 'products.product_name')
+            ->join('products', 'products.id', 'order_dets.product_id')
+            ->where('order_id', $order->id)
+            ->get();
+        $companyDetails = $this->getAdminSetting();
+        // dd($order);
+        return view('invoice.invoice', compact('order', 'orderDet', 'companyDetails'));
+    }
+}

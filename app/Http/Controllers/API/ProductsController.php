@@ -1,0 +1,181 @@
+<?php
+
+namespace App\Http\Controllers\API;
+
+use App\Http\Controllers\Controller;
+use App\Http\Resources\ProductResource;
+use App\Http\Resources\ProductTypeResource;
+use App\Models\Cart;
+use App\Models\CustomerAddress;
+use App\Models\Products;
+use App\Models\ProductType;
+use App\Models\StateBrandAllocation;
+use App\Models\User;
+use App\Traits\Common;
+use App\Traits\ResponseAPI;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class ProductsController extends Controller
+{
+    use Common;
+    use ResponseAPI;
+    public function getProductTypes()
+    {
+        # code...
+        try {
+
+            $types = ProductType::where('is_active', 1)
+                ->whereNull('deleted_at')
+                ->get();
+            $producttypes = ProductTypeResource::collection($types);
+            $response = [
+                'status' => true,
+                'data' => $producttypes,
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            // return $this->error($e->getMessage(), 200);
+            $response = array(
+                'message' => $this->errorMessage,
+                'status' => false,
+            );
+            return response($response, 500);
+        }
+    }
+    public function checkProductStatus($product_id)
+    {
+        try {
+            $product_status = Products::where('id', $product_id)->pluck('is_active')->first();
+            $response = [
+                'status' => ($product_status == 0 ? false : true)
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            // return $this->error($e->getMessage(), 200);
+            $response = array(
+                'message' => $this->errorMessage,
+                'status' => false,
+            );
+            return response($response, 500);
+        }
+    }
+    public function getProducts(Request $request)
+    {
+        # code...
+        try {
+            $address_id = $request->address_id;
+            $category_id = $request->category_id;
+            $customer_address = CustomerAddress::where('id', $address_id)
+                ->select('state_id', 'city_id')
+                ->first();
+
+            $brands = StateBrandAllocation::where('state_id', $customer_address->state_id)
+                ->where('city_id', $customer_address->city_id)
+                ->value('brand_id');
+
+            // dd($brands);
+            $productsQuery = Products::with('brand', 'category', 'productType')
+                ->whereIn('brand_id', explode(",", $brands))
+                ->where('is_active', 1)
+                ->when($category_id, function ($query, $category_id) {
+                    return $query->where('category_id', $category_id);
+                })
+                ->whereHas('brand', function ($query) {
+                    $query->where('is_active', 1);
+                })
+                ->whereHas('category', function ($query) {
+                    $query->where('is_active', 1);
+                })
+                ->whereHas('productType', function ($query) {
+                    $query->where('is_active', 1);
+                });
+
+            $products = $productsQuery->paginate($this->recordsperpage);
+
+            $products = ProductResource::collection($products);
+
+            // Append base URL to product_image field
+            foreach ($products as $product) {
+                $cart = Cart::where('product_id', $product->id)->where('user_id', Auth::user()->id)->first();
+                $product->product_image = $this->getBaseUrl() . '/' . $product->product_image;
+                $return_empty_cans = $this->getCansInHand($product->id, $address_id);
+                $product->return_empty_cans = $return_empty_cans;
+                $product->is_cart = ($cart != null ? true : false);
+                $product->cart_id = ($cart != null ? $cart->id : 0);
+                $product->cart_qty = ($cart != null ? $cart->qty : ($return_empty_cans > 0 ? 1 : $product->productType->min_order_qty));
+                if ($return_empty_cans > 0) {
+                    $product->min_order_qty = 1;
+                } else {
+                    $product->min_order_qty = $product->productType->min_order_qty;
+                }
+            }
+
+
+            $response = [
+                'status' => true,
+                'data' => $products,
+                'pagination' => [
+                    'total' => $products->total(),
+                    'per_page' => $products->perPage(),
+                    'current_page' => $products->currentPage(),
+                    'last_page' => $products->lastPage(),
+                    'next_page_url' => $products->nextPageUrl(),
+                    'prev_page_url' => $products->previousPageUrl(),
+                ]
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            // return $this->error($e->getMessage(), 200);
+            $response = array(
+                'message' => $this->errorMessage,
+                'status' => false,
+            );
+            return response($response, 500);
+        }
+    }
+
+
+    public function getProductDetails(Request $request)
+    {
+        # code...
+        try {
+            $address_id = $request->address_id;
+            // $products = Products::where('id', $id)->get(["id", "product_name", "category_id", "product_image", "customer_price", "wholesale_price", "capacity", "desc", "is_emptycan_return", "CGST", "SGST"]);
+            $products = Products::with('brand', 'category', 'productType')->where('id', $request->id)->get();
+            $products = ProductResource::collection($products);
+            // Append base URL to product_image field
+            foreach ($products as $product) {
+                $cart = Cart::where('product_id', $product->id)->where('user_id', Auth::user()->id)->first();
+                $product->product_image = $this->getBaseUrl() . '/' . $product->product_image;
+                $return_empty_cans = $this->getCansInHand($product->id, $address_id);
+                $product->return_empty_cans = $return_empty_cans;
+                $product->is_cart = ($cart != null ? true : false);
+                $product->cart_id = ($cart != null ? $cart->id : 0);
+                $product->cart_qty = ($cart != null ? $cart->qty : ($return_empty_cans > 0 ? 1 : $product->productType->min_order_qty));
+                if ($return_empty_cans > 0) {
+                    $product->min_order_qty = 1;
+                } else {
+                    $product->min_order_qty = $product->productType->min_order_qty;
+                }
+            }
+
+            $response = [
+                'status' => true,
+                'data' => $products,
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            // return $this->error($e->getMessage(), 200);
+            $response = array(
+                'message' => $this->errorMessage,
+                'status' => false,
+            );
+            return response($response, 500);
+        }
+    }
+}

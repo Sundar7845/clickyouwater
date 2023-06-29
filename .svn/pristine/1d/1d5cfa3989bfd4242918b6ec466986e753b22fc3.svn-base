@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Http\Controllers\Manufacturer;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class DashboardController extends Controller
+{
+    public function ManufacturerDashboard()
+    {
+        return view('manufacturer_dashboard');
+    }
+}

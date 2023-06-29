@@ -1,0 +1,158 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Dashboard | Logistic Approval
+@endsection
+
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-1 mb-4">
+        Logistic Approval
+    </h4>
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-12 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <form class="browser-default-validation">
+                        <div class="row">
+                            <!-- DataTable with Buttons -->
+                            <div class="col-lg-12 mb-4 mb-lg-0">
+                                <div class="card-datatable table-responsive pt-0">
+                                    <table id="logisticapproval" class="table">
+                                        <thead class="border-bottom">
+                                            <tr>
+                                                <th>S.No</th>
+                                                <th>Logistic ID</th>
+                                                <th>Logistic Name</th>
+                                                <th>Manufacturer Name</th>
+                                                <th>Hub Name</th>
+                                                <th>Pincode</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>1</td>
+                                                <td>LOG001</td>
+                                                <td>Jagan Logistics
+                                                    <div class="text-muted p-1">
+                                                        <small class="bg-light p-1">9966332255</small>
+                                                    </div>
+                                                </td>
+                                                <td>GC Peelamedu
+                                                    <div class="text-muted p-1">
+                                                        <small class="bg-light p-1">8754213690</small>
+                                                    </div>
+                                                </td>
+                                                <td>Peelamedu
+                                                    <div class="text-muted p-1">
+                                                        <small class="bg-light p-1">9876542310</small>
+                                                    </div>
+                                                </td>
+                                                <td>643001</td>
+                                                <td>
+                                                    <div class="col-sm-6">
+                                                        <label class="switch">
+                                                            <input type="checkbox" class="switch-input" />
+                                                            <span class="switch-toggle-slider">
+                                                                <span class="switch-on"></span>
+                                                                <span class="switch-off"></span>
+                                                            </span>
+                                                        </label>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <a href="#" class="btn btn-success btn-sm">Approve</a>
+                                                    <a href="#" class="btn btn-danger btn-sm">Reject</a>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>2</td>
+                                                <td>LOG002</td>
+                                                <td>John Logistics
+                                                    <div class="text-muted p-1">
+                                                        <small class="bg-light p-1">9966210354</small>
+                                                    </div>
+                                                </td>
+                                                <td>Ganapathy
+                                                    <div class="text-muted p-1">
+                                                        <small class="bg-light p-1">9632587415</small>
+                                                    </div>
+                                                </td>
+                                                <td>Ganapathy
+                                                    <div class="text-muted p-1">
+                                                        <small class="bg-light p-1">9658742130</small>
+                                                    </div>
+                                                </td>
+                                                <td>643015</td>
+                                                <td>
+                                                    <div class="col-sm-6">
+                                                        <label class="switch">
+                                                            <input type="checkbox" class="switch-input" />
+                                                            <span class="switch-toggle-slider">
+                                                                <span class="switch-on"></span>
+                                                                <span class="switch-off"></span>
+                                                            </span>
+                                                        </label>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <a href="#" class="btn btn-success btn-sm">Approve</a>
+                                                    <a href="#" class="btn btn-danger btn-sm">Reject</a>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>4</td>
+                                                <td>LOG004</td>
+                                                <td>Rajan Logistics
+                                                    <div class="text-muted p-1">
+                                                        <small class="bg-light p-1">9668855774</small>
+                                                    </div>
+                                                </td>
+                                                <td>Gandhipuram
+                                                    <div class="text-muted p-1">
+                                                        <small class="bg-light p-1">9922858558</small>
+                                                    </div>
+                                                </td>
+                                                <td>Gandhipuram
+                                                    <div class="text-muted p-1">
+                                                        <small class="bg-light p-1">9024478522</small>
+                                                    </div>
+                                                </td>
+                                                <td>643085</td>
+                                                <td>
+                                                    <div class="col-sm-6">
+                                                        <label class="switch">
+                                                            <input type="checkbox" class="switch-input" />
+                                                            <span class="switch-toggle-slider">
+                                                                <span class="switch-on"></span>
+                                                                <span class="switch-off"></span>
+                                                            </span>
+                                                        </label>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <a href="#" class="btn btn-success btn-sm">Approve</a>
+                                                    <a href="#" class="btn btn-danger btn-sm">Reject</a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <!--/ DataTable with Buttons -->
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+</div>
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/admin/approval/logisticapproval.js') }}"></script>
+@endsection

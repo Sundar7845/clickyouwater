@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class AdminSettings extends Model
+{
+    use HasFactory, SoftDeletes;
+
+    protected $fillable = [
+        'otp_length',
+        'otp_expiry_duration',
+        'additional_delivery_charge',
+        'referral_code_length',
+        'is_maintenace_mode',
+        'updated_by'
+    ];
+}

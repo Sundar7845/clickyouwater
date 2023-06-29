@@ -1,0 +1,38 @@
+$(document).ready(function () {
+    $("#tblBrandAllocation").DataTable({
+        processing: true,
+        serverSide: true,
+        order: [[0, "ASC"]],
+        ajax: "brandallocate/data",
+        fnRowCallback: function (nRow, aData, iDisplayIndex) {
+            $("td:first", nRow).html(iDisplayIndex + 1);
+            return nRow;
+        },
+        columns: [{ data: "id" }, { data: "state_name" }, { data: "action" }],
+    });
+});
+
+function doEdit(id) {
+    $("#hdBrandAllocateId").val(id);
+    $("#ddlState").focus();
+    $("#btnallocate").text("Reallocate");
+    getBrandAllocateById(id);
+}
+
+function getBrandAllocateById(id) {
+    $.ajax({
+        type: "GET",
+        url: "getbrandallocate/" + id,
+        dataType: "json",
+        success: function (data) {
+            $("#ddlState").val(data.brandallocation.state_id).trigger("change");
+            $.each(data, function (key, val) {
+                $("#chkBrandName" + val.brand_id).attr("checked", true);
+            });
+        },
+    });
+}   
+
+function showDelete(id) {
+    confirmDelete(id, "delete/brandallocate/", "tblBrandAllocation");
+}

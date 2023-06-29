@@ -1,0 +1,97 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Settings;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\BillNoSetting;
+use Illuminate\Support\Facades\Auth;
+
+class BillSettingsController extends Controller
+{
+    public function BillSettings()
+    {
+        $data = BillNoSetting::first();
+        $length = str_pad(($data->manufacture_live ?? 0) + 1 ?? '', $data->txtManuLength ?? 0, "0", STR_PAD_LEFT);
+        $example = ($data->manufacture_prefix ?? '') . $length;
+        return view('admin.settings.bill_settings', compact('data', 'example'));
+    }
+    public function addMasterBillSettings(Request $request)
+    {
+        $request->validate([
+            'txtManuPrefix' => 'required',
+            'txtManuLength' => 'required',
+            'txtHubPrefix' => 'required',
+            'txtHubLength' => 'required',
+            'txtLogisticPrefix' => 'required',
+            'txtLogisticLength' => 'required',
+            'txtCusPrefix' => 'required',
+            'txtCusLength' => 'required',
+            'txtDlPrefix' => 'required',
+            'txtDlLength' => 'required',
+            'txtEmpPrefix' => 'required',
+            'txtEmpLength' => 'required'
+        ]);
+
+
+        $data = BillNoSetting::first();
+        $length = str_pad(($data->manufacture_live ?? 0) + 1 ?? '', $request->txtManuLength, "0", STR_PAD_LEFT);
+
+        if ($request->hdMasterId == null) {
+            BillNoSetting::create([
+                'manufacture_prefix' => $request->txtManuPrefix,
+                'manufacture_length' => $request->txtManuLength,
+                'manufacture_live' => $length,
+                'hub_prefix' => $request->txtHubPrefix,
+                'hub_length' => $request->txtHubLength,
+                'hub_live' => $request->txtHubLive ?? 0,
+                'logistics_prefix' => $request->txtLogisticPrefix,
+                'logistics_length' => $request->txtLogisticLength,
+                'logistics_live' => $request->txtLogisticLive ?? 0,
+                'customer_prefix' => $request->txtCusPrefix,
+                'customer_length' => $request->txtCusLength,
+                'customer_live' => $request->txtCusLive ?? 0,
+                'employee_prefix' => $request->txtEmpPrefix,
+                'employee_length' => $request->txtEmpLength,
+                'employee_live' => $request->txtEmpLive ?? 0,
+                'deliveryperson_prefix' => $request->txtDlPrefix,
+                'deliveryperson_length' => $request->txtDlLength,
+                'deliveryperson_live' => $request->txtDlLive ?? 0,
+                'created_by' => Auth::user()->id
+            ]);
+
+            $notification = array(
+                'message' => 'Manufacturer Created Successfully',
+                'alert-type' => 'success'
+            );
+        } else {
+            BillNoSetting::findorfail($request->hdMasterId)->update([
+                'manufacture_prefix' => $request->txtManuPrefix,
+                'manufacture_length' => $request->txtManuLength,
+                'manufacture_live' => $length,
+                'hub_prefix' => $request->txtHubPrefix,
+                'hub_length' => $request->txtHubLength,
+                'hub_live' => $request->txtHubLive,
+                'logistics_prefix' => $request->txtLogisticPrefix,
+                'logistics_length' => $request->txtLogisticLength,
+                'logistics_live' => $request->txtLogisticLive,
+                'customer_prefix' => $request->txtCusPrefix,
+                'customer_length' => $request->txtCusLength,
+                'customer_live' => $request->txtCusLive,
+                'employee_prefix' => $request->txtDlPrefix,
+                'employee_length' => $request->txtDlLength,
+                'employee_live' => $request->txtDlLive,
+                'deliveryperson_prefix' => $request->txtEmpPrefix,
+                'deliveryperson_length' => $request->txtEmpLength,
+                'deliveryperson_live' => $request->txtEmpLive,
+                'updated_by' => Auth::user()->id
+            ]);
+
+            $notification = array(
+                'message' => 'Manufacturer Updated Successfully',
+                'alert-type' => 'success'
+            );
+        }
+        return redirect()->route('bill-settings')->with($notification);
+    }
+}

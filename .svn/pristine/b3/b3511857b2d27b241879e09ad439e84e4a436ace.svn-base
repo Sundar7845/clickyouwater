@@ -1,0 +1,155 @@
+<?php
+
+namespace App\Http\Controllers\API\Hub;
+
+use App\Enums\StatusTypes;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\HubOrderResource;
+use App\Models\Order;
+use App\Models\OrderDelivery;
+use App\Traits\Common;
+use App\Traits\ResponseAPI;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class HubOrdersController extends Controller
+{
+    //
+    use ResponseAPI;
+    use Common;
+
+    public function getHubOrders(Request $request)
+    {
+        try {
+
+            $orders = $this->getOrders($request->status_id);
+            // dd($orders->get());
+
+                $userOrders = $orders->paginate($this->recordsperpage);
+
+                $response = array(
+                    'message' => "Success",
+                    'data' => HubOrderResource::collection($userOrders),
+                    'pagination' => [
+                        'total' => $userOrders->total(),
+                        'per_page' => $userOrders->perPage(),
+                        'current_page' => $userOrders->currentPage(),
+                        'last_page' => $userOrders->lastPage(),
+                        'next_page_url' => $userOrders->nextPageUrl(),
+                        'prev_page_url' => $userOrders->previousPageUrl(),
+                    ],
+                    'status' => true,
+                );
+
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+    public function searchHubOrders($order_no)
+    {
+        try {
+            $orders = $this->getOrders('',$order_no);
+
+                $userOrders = $orders->paginate($this->recordsperpage);
+
+                $response = array(
+                    'message' => "Success",
+                    'data' => HubOrderResource::collection($userOrders),
+                    'pagination' => [
+                        'total' => $userOrders->total(),
+                        'per_page' => $userOrders->perPage(),
+                        'current_page' => $userOrders->currentPage(),
+                        'last_page' => $userOrders->lastPage(),
+                        'next_page_url' => $userOrders->nextPageUrl(),
+                        'prev_page_url' => $userOrders->previousPageUrl(),
+                    ],
+                    'status' => true,
+                );
+
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+    public function assignOrder(Request $request)
+    {
+
+        $validator = $request->validate([
+            'order_id'=>'required',
+            'delivery_user_id'=>'required',
+
+        ]);
+        DB::beginTransaction();
+        try {
+
+
+                $this->addOrderStatusHistory($request->order_id, StatusTypes::AssignedToDelivery);
+                OrderDelivery::create([
+                    'order_id'=>$request->order_id,
+                    'delivery_user_id'=>$request->delivery_user_id,
+                ]);
+
+                $response = array(
+                    'message' => "Success",
+                    'data' => [],
+                    'status' => true,
+                );
+                DB::commit(); // Commit the transaction
+                return response($response, 200);
+            } catch (\Exception $e) {
+                DB::rollback();
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+    public function unassignOrder($order_id)
+    {
+        DB::beginTransaction();
+        try {
+            $unassignOrder=OrderDelivery::where('order_id',$order_id)->first();
+            if($unassignOrder){
+                $this->addOrderStatusHistory($order_id, StatusTypes::OrderPlaced);
+                $unassignOrder->delete();
+            }
+                $response = array(
+                    'message' => "Success",
+                    'data' => [],
+                    'status' => true,
+                );
+                DB::commit(); // Commit the transaction
+                return response($response, 200);
+            } catch (\Exception $e) {
+                DB::rollback();
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    public function unassignAllOrders($delivery_user_id)
+    {
+
+        DB::beginTransaction();
+        try {
+            $unassignOrder=OrderDelivery::where('delivery_user_id',$delivery_user_id)->get();
+            foreach ($unassignOrder as $key => $value) {
+                $this->unassignOrder($value->order_id);
+            }
+                $response = array(
+                    'message' => "Success",
+                    'data' => [],
+                    'status' => true,
+                );
+                DB::commit(); // Commit the transaction
+                return response($response, 200);
+            } catch (\Exception $e) {
+                DB::rollback();
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+}

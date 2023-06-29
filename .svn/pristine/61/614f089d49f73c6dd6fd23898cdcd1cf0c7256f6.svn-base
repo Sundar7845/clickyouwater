@@ -1,0 +1,283 @@
+$(document).ready(function () {
+    // $("#ddlCommCountry").val(1).trigger("change");
+    // $("#ddlPermCountry").val(1).trigger("change");
+    $("#tblEmployee").DataTable({
+        processing: true,
+        serverSide: true,
+        order: [[0, "ASC"]],
+        ajax: "employees/data",
+        fnRowCallback: function (nRow, aData, iDisplayIndex) {
+            $("td:first", nRow).html(iDisplayIndex + 1);
+            return nRow;
+        },
+        columns: [
+            { data: "id" },
+            { data: "employee_code" },
+            { data: "employee_name" },
+            { data: "mobile1" },
+            { data: "email1" },
+            { data: "department_name" },
+            { data: "designation_name" },
+            {
+                data: "is_active",
+                render: function (data, type, row) {
+                    return `<label class="switch">
+                        <input onclick="doStatus(${row.id});" id="chkEmployee${row.id
+                        }" type="checkbox" class="switch-input"
+                        name="chkEmployee" '  ${data == 1 ? "checked" : ""} ' />
+                        <span class="switch-toggle-slider">
+                            <span class="switch-on"></span>
+                            <span class="switch-off"></span>
+                        </span>
+                    </label>`;
+                },
+            },
+            { data: "action" },
+        ],
+    });
+});
+
+function doStatus(id) {
+    var status = $("#chkEmployee" + id).is(":checked");
+    confirmStatusChange(id, "employee/", "tblEmployee", (status == true ? 1 : 0), "chkEmployee");
+}
+
+function showDelete(id) {
+    confirmDelete(id, "delete/employee/", "tblEmployee");
+}
+
+$(document).ready(function () {
+    $(".mobilenumber").on("input", function () {
+        $(this).val(
+            $(this)
+                .val()
+                .replace(/[^0-9]/g, "")
+        );
+
+        var mobileNumber = $(this).val();
+        if (mobileNumber.length != 10 || isNaN(mobileNumber)) {
+            $(this).css("border-color", "red");
+        } else {
+            $(this).css("border-color", "green");
+        }
+    });
+    $(".acc_no").on("input", function () {
+        $(this).val(
+            $(this)
+                .val()
+                .replace(/[^0-9]/g, "")
+        );
+
+        var mobileNumber = $(this).val();
+        if (isNaN(mobileNumber)) {
+            $(this).css("border-color", "red");
+        } else {
+            $(this).css("border-color", "green");
+        }
+    });
+});
+const inputFiles = document.querySelectorAll('input[type="file"]');
+const previewImages = document.querySelectorAll('img[id^="previewImage"]');
+
+inputFiles.forEach(function (inputFile, index) {
+    inputFile.addEventListener("change", function () {
+        const file = this.files[0];
+        const reader = new FileReader();
+
+        reader.addEventListener("load", function () {
+            previewImages[index].setAttribute("src", this.result);
+        });
+
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    });
+});
+
+
+$(function () {
+    $("form[name='employee']").validate({
+        rules: {
+            txtEmployeeName: "required",
+            txtEmployeeCode: "required",
+            txtFatherSpouseName: "required",
+            rdGender: "required",
+            rdMarital: "required",
+            dtdob: "required",
+            txtNationality: "required",
+            txtNationalityStatus: "required",
+            fileProfileImg: "required",
+            txtPermAddress: "required",
+            ddlPermArea: "required",
+            ddlPermCity: "required",
+            ddlPermState: "required",
+            ddlPermCountry: "required",
+            txtPermPincode: "required",
+            txtCommAddress: "required",
+            ddlCommArea: "required",
+            ddlCommCity: "required",
+            ddlCommState: "required",
+            ddlCommCountry: "required",
+            txtCommPincode: "required",
+            txtMobile1: "required",
+            txtMobile2: "required",
+            txtPrevCompanyName: "required",
+            txtPrevCompanyRef: "required",
+            email1: "required",
+            email2: "required",
+            numPrevCompanyExp: {
+                required: true,
+                phone_regex: true,
+                minlength: 2,
+            },
+            // prev_company_name: "required",
+            // prev_company_ref_by: "   ",
+            txtAccountName: "required",
+            txtAccountNumber: "required",
+            txtBankName: "required",
+            txtBranchName: "required",
+            txtBranchIfsc: "required",
+            ddlDepartment: "required",
+            ddlDesignation: "required",
+            txtPackage: "required",
+            ddlReportingTo: {
+                required: true,
+                // phone_regex: true,
+            },
+            ddlRoleName: {
+                required: true,
+            },
+            dtDateOfJoin: "required",
+            CompanyMailId: "required",
+            txtCompanyMobile: "required",
+            ddlOriginalsVerified: {
+                required: true,
+                // phone_regex: true,
+            },
+            ddlOriginalReceived: {
+                required: true,
+                // phone_regex: true,
+            },
+            ddloriginalGiven: {
+                required: true,
+                // phone_regex: true,
+            },
+        },
+        messages: {
+            numPrevCompanyExp: "Please enter Integers",
+            password: {
+                required: "Please provide a password",
+                minlength: "Your password must be at least 6 characters long",
+            },
+            city: "Please enter your city",
+            gender: "This field is required",
+        },
+        errorPlacement: function (error, element) {
+            if (element.is(":radio")) {
+                error.appendTo(element.parents(".form-group"));
+            } else {
+                // This is the default behavior
+                // error.insertAfter(element);
+                if (element.siblings(".error").html() == undefined) {
+                    error.appendTo(element.parent().next(".error"));
+                } else {
+                    error.appendTo(element.siblings(".error"));
+                }
+            }
+        },
+        submitHandler: function (form) {
+            form.submit();
+        },
+    });
+});
+
+function setPermanentAddress() {
+    if ($("#chkSameAddress").is(":checked")) {
+        $("#ddlPermCountry").val($("#ddlCommCountry").val()).trigger("change");
+        setTimeout(function () {
+            $("#ddlPermState").val($("#ddlCommState").val()).trigger("change");
+        }, 1500);
+        setTimeout(function () {
+            $("#ddlPermCity").val($("#ddlCommCity").val()).trigger("change");
+        }, 2500);
+        setTimeout(function () {
+            $("#ddlPermArea").val($("#ddlCommArea").val()).trigger("change");
+        }, 3500);
+        $("#txtPermAddress").val($("#txtCommAddress").val());
+        $("#txtPermPincode").val($("#txtCommPincode").val());
+    } else {
+        $("#ddlPermCountry").val("").trigger("change");
+        $("#ddlPermState").val("").trigger("change");
+        $("#ddlPermCity").val("").trigger("change");
+        $("#ddlPermArea").val("").trigger("change");
+        $("#txtPermAddress").val("");
+        $("#txtPermPincode").val("");
+    }
+}
+
+$("#chkSameAddress").click(function () {
+    setPermanentAddress();
+});
+
+function cancel() {
+    $("#hdEmployeeId").val("");
+    $("#txtEmployeeName").val("");
+    $("#txtFatherSpouseName").val("");
+    $('input[name="rdGender"]').prop('checked', false);
+    $('input[name="rdMarital"]').prop('checked', false);
+    $("#dtdob").val("");
+    $("#txtNationality").val("");
+    $("#txtNationalityStatus").val("");
+    $("#txtPan").val("");
+    $("#txtAdhaarNo").val("");
+    $("#txtPassportNo").val("");
+    $("#txtPerMobile").val("");
+    $("#txtOffcialMobile").val("");
+    $("#email1").val("");
+    $("#email2").val("");
+    $("#fileProfileImg").val("");
+    $("#ddlCommCountry").val("").trigger("change");
+    $("#ddlCommState").val("").trigger("change");
+    $("#ddlCommCity").val("").trigger("change");
+    $("#ddlCommArea").val("").trigger("change");
+    $("#txtCommAddress").val("");
+    $("#txtCommPincode").val("");
+    $("#chkSameAddress").val("");
+    $("#ddlPermCountry").val("").trigger("change");
+    $("#ddlPermState").val("").trigger("change");
+    $("#ddlPermCity").val("").trigger("change");
+    $("#ddlPermArea").val("").trigger("change");
+    $("#txtPermAddress").val("");
+    $("#txtPermPincode").val("");
+    $("#txtMobile1").val("");
+    $("#txtRelation1").val("");
+    $("#txtMobile2").val("");
+    $("#txtRelation2").val("");
+    $("#numPrevCompanyExp").val("");
+    $("#txtPrevCompanyName").val("");
+    $("#txtPrevCompanyRef").val("");
+    $("#txtAccountName").val("");
+    $("#txtAccountNumber").val("");
+    $("#txtBankName").val("");
+    $("#txtBranchName").val("");
+    $("#txtBranchIfsc").val("");
+    // $("#inputFile2").val("");
+    // $("#inputFile3").val("");
+    // $("#inputFile4").val("");
+    $("#txtEmployeeCode").val("");
+    $("#ddlDepartment").val("").trigger("change");
+    $("#ddlDesignation").val("").trigger("change");
+    $("#ddlReportingTo").val("").trigger("change");
+    $("#ddlRoleName").val("").trigger("change");
+    $("#txtPackage").val("");
+    $("#dtDateOfJoin").val("");
+    $("#CompanyMailId").val("");
+    $("#txtCompanyMobile").val("");
+    $("#ddloriginalGiven").val("").trigger("change");
+    $("#ddlOriginalReceived").val("").trigger("change");
+    $("#ddlOriginalsVerified").val("").trigger("change");
+    $("#ddlVehicle").val("").trigger("change");
+    $("#ddlVehicleType").val("").trigger("change");
+    $("#ddlVehicleBrand").val("").trigger("change");
+    $("#btnSave").text("save");
+}

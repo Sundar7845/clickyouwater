@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Http\Controllers\Admin\PurchaseManagement;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class PurchaseOrderController extends Controller
+{
+    public function purchaseOrder()
+    {
+        return view('Admin.purchase_management.purchase_order.purchase_order');
+    }
+
+    public function purchaseOrderList()
+    {
+        return view('Admin.purchase_management.purchase_order.purchase_order_list');
+    }
+}

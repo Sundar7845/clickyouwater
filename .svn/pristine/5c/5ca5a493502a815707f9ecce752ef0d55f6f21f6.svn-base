@@ -1,0 +1,49 @@
+$(document).ready(function () {
+    $("#tblAreaList").DataTable({
+        processing: true,
+        serverSide: true,
+        order: [[0, "ASC"]],
+        ajax: "area/data",
+        fnRowCallback: function (nRow, aData, iDisplayIndex) {
+            $("td:first", nRow).html(iDisplayIndex + 1);
+            return nRow;
+        },
+        columns: [
+            { data: "id" },
+            { data: "state_name" },
+            { data: "city_name" },
+            { data: "area_name" },
+            { data: "action" },
+        ],
+    });
+    BindCity();
+});
+
+function doEdit(id) {
+    $("#hdAreaId").val(id);
+    $("#txtAreaName").focus();
+    getAreaById(id);
+}
+
+function getAreaById(id) {
+    $.ajax({
+        type: "GET",
+        url: "getarea/" + id,
+        dataType: "json",
+        success: function (data) {
+            $("#ddlState").val(data.area.state_id).trigger("change");
+            setTimeout(function () {
+                $("#ddlCity").val(data.area.city_id).trigger("change");
+            }, 1000);
+            $("#txtAreaName").val(data.area.area_name);
+        },
+    });
+}
+
+function cancel() {
+    $("#hdAreaId").val("");
+    $("#txtAreaName").val("");
+    $("#ddlState").val(0).trigger("change");
+    $("#ddlCity").val(0);
+    $("#ddlState").focus();
+}

@@ -1,0 +1,62 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class Employee extends Model
+{
+    use HasFactory, SoftDeletes;
+
+    // protected $fillable = [
+    //     'employee_code',
+    //     'employee_name',
+    //     'father_spouse_name',
+    //     'gender',
+    //     'dob',
+    //     'nationality',
+    //     'nationality_status',
+    //     'permanent_address1',
+    //     'permanent_address2',
+    //     'permanent_city',
+    //     'permanent_state',
+    //     'permanent_pincode',
+    //     'permanent_country',
+    //     'comm_address1',
+    //     'comm_address2',
+    //     'comm_city',
+    //     'comm_state',
+    //     'comm_pincode',
+    //     'comm_country',
+    //     'mobile1',
+    //     'mobile2',
+    //     'email1',
+    //     'email2',
+    //     'prev_company_exp_yrs',
+    //     'prev_company_name',
+    //     'prev_company_ref_by',
+    //     'account_name',
+    //     'account_number',
+    //     'account_type',
+    //     'bank_name',
+    //     'branch_name',
+    //     'ifsc_code',
+    //     'profile_img',
+    //     'department_id',
+    //     'designation_id',
+    //     'reporting_to',
+    //     'package',
+    //     'date_of_join',
+    //     'company_mail_id',
+    //     'company_mobile_no',
+    //     'originals_verified_by',
+    //     'authorised_by',
+    //     'is_active',
+    //     'created_by',
+    //     'updated_by',
+    //     'deleted_by'
+    // ];
+    protected $guarded=[];
+}

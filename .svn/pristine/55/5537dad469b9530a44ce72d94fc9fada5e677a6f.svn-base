@@ -1,0 +1,255 @@
+$(document).ready(function () {
+    $("#employee").DataTable();
+});
+
+$(document).ready(function () {
+    $(".mobilenumber").on("input", function () {
+        $(this).val(
+            $(this)
+                .val()
+                .replace(/[^0-9]/g, "")
+        );
+
+        var mobileNumber = $(this).val();
+        if (mobileNumber.length != 10 || isNaN(mobileNumber)) {
+            $(this).css("border-color", "red");
+        } else {
+            $(this).css("border-color", "green");
+        }
+    });
+    $(".acc_no").on("input", function () {
+        $(this).val(
+            $(this)
+                .val()
+                .replace(/[^0-9]/g, "")
+        );
+
+        var mobileNumber = $(this).val();
+        if (isNaN(mobileNumber)) {
+            $(this).css("border-color", "red");
+        } else {
+            $(this).css("border-color", "green");
+        }
+    });
+});
+const inputFiles = document.querySelectorAll('input[type="file"]');
+const previewImages = document.querySelectorAll('img[id^="previewImage"]');
+
+inputFiles.forEach(function (inputFile, index) {
+    inputFile.addEventListener("change", function () {
+        const file = this.files[0];
+        const reader = new FileReader();
+
+        reader.addEventListener("load", function () {
+            previewImages[index].setAttribute("src", this.result);
+        });
+
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    });
+});
+var emailInputs = document.querySelectorAll('input[type="email"]');
+
+// Loop through each email input and add an event listener for validation
+emailInputs.forEach(function (input) {
+    input.addEventListener("blur", function () {
+        // Get the value of the input field
+        var email = this.value;
+
+        // Define a regular expression for email validation
+        var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        // Test the email value against the regular expression
+        if (!emailRegex.test(email)) {
+            // Display an error message if the email is invalid
+            this.setCustomValidity("Please enter a valid email address.");
+        } else {
+            // Clear the error message if the email is valid
+            this.setCustomValidity("");
+        }
+    });
+});
+
+$(function () {
+    $("form[name='employee']").validate({
+        rules: {
+            employee_name: "required",
+            employee_code: "required",
+            father_spouse_name: "required",
+            gender: "required",
+            marital_status: "required",
+            dob: "required",
+            nationality: "required",
+            nationality_status: "required",
+            permanent_address: "required",
+            permanent_area_id: "required",
+            permanent_city_id: "required",
+            permanent_state_id: "required",
+            permanent_country_id: "required",
+            permanent_pincode: "required",
+            comm_address: "required",
+            comm_area_id: "required",
+            comm_city_id: "required",
+            comm_state_id: "required",
+            comm_country_id: "required",
+            comm_pincode: "required",
+            mobile1: "required",
+            mobile2: "required",
+            email1: "required",
+            email2: "required",
+            prev_company_exp_yrs: {
+                required: true,
+                phone_regex: true,
+                minlength: 2,
+            },
+            // prev_company_name: "required",
+            // prev_company_ref_by: "   ",
+            account_name: "required",
+            account_number: "required",
+            bank_name: "required",
+            branch_name: "required",
+            ifsc_code: "required",
+            department_id: "required",
+            designation_id: "required",
+            reporting_to: {
+                required: true,
+                // phone_regex: true,
+            },
+            date_of_join: "required",
+            company_mail_id: "required",
+            company_mobile_no: "required",
+            originals_verified_by: {
+                required: true,
+                // phone_regex: true,
+            },
+            authorised_by: {
+                required: true,
+                // phone_regex: true,
+            },
+        },
+        messages: {
+            prev_company_exp_yrs: "Please enter Integers",
+            password: {
+                required: "Please provide a password",
+                minlength: "Your password must be at least 6 characters long",
+            },
+            city: "Please enter your city",
+            gender: "This field is required",
+        },
+        errorPlacement: function (error, element) {
+            if (element.is(":radio")) {
+                error.appendTo(element.parents(".form-group"));
+            } else {
+                // This is the default behavior
+                // error.insertAfter(element);
+                if (element.siblings(".error").html() == undefined) {
+                    error.appendTo(element.parent().next(".error"));
+                } else {
+                    error.appendTo(element.siblings(".error"));
+                }
+            }
+        },
+        submitHandler: function (form) {
+            form.submit();
+        },
+    });
+});
+
+function setBillingAddress() {
+    if ($("#chkSameAddress").is(":checked")) {
+        $("#permanent_country_id")
+            .val($("#comm_country_id").val())
+            .trigger("change");
+        setTimeout(function () {
+            $("#permanent_state_id")
+                .val($("#comm_state_id").val())
+                .trigger("change");
+        }, 1500);
+        setTimeout(function () {
+            $("#permanent_city_id")
+                .val($("#comm_city_id").val())
+                .trigger("change");
+        }, 2500);
+        setTimeout(function () {
+            $("#permanent_area_id")
+                .val($("#comm_area_id").val())
+                .trigger("change");
+        }, 3500);
+        $("#permanent_address").val($("#comm_address").val());
+        $("#permanent_pincode").val($("#comm_pincode").val());
+    } else {
+        $("#permanent_country_id").val("").trigger("change");
+        $("#permanent_state_id").val("").trigger("change");
+        $("#permanent_city_id").val("").trigger("change");
+        $("#permanent_area_id").val("").trigger("change");
+        $("#permanent_address").val("");
+        $("#permanent_pincode").val("");
+    }
+}
+
+$("#chkSameAddress").click(function () {
+    setBillingAddress();
+});
+
+function cancel() {
+    $("#hdEmployeeId").val("");
+    $("#employee_name").val("");
+    $("#father_spouse_name").val("");
+    $("#gender").prop('checked', false);;
+    $("#dob").val("");
+    $("#nationality").val("");
+    $("#nationality_status").val("");
+    $("#txtPan").val("");
+    $("#txtAdhaarNo").val("");
+    $("#txtPassportNo").val("");
+    $("#txtPerMb").val("");
+    $("#txtOffcialMb").val("");
+    $("#email1").val("");
+    $("#email2").val("");
+    $("#inputFile1").val("");
+    $("#comm_country_id").val("").trigger("change");
+    $("#comm_state_id").val("").trigger("change");
+    $("#comm_city_id").val("").trigger("change");
+    $("#comm_area_id").val("").trigger("change");
+    $("#comm_address").val("");
+    $("#comm_pincode").val("");
+    $("#chkSameAddress").val("");
+    $("#permanent_country_id").val("").trigger("change");
+    $("#permanent_state_id").val("").trigger("change");
+    $("#permanent_city_id").val("").trigger("change");
+    $("#permanent_area_id").val("").trigger("change");
+    $("#permanent_address").val("");
+    $("#permanent_pincode").val("");
+    $("#mobile1").val("");
+    $("#txtRelation1").val("");
+    $("#mobile2").val("");
+    $("#txtRelation2").val("");
+    $("#prev_company_exp_yrs").val("");
+    $("#prev_company_name").val("");
+    $("#prev_company_ref_by").val("");
+    $("#account_name").val("");
+    $("#account_number").val("");
+    $("#bank_name").val("");
+    $("#branch_name").val("");
+    $("#ifsc_code").val("");
+    $("#inputFile2").val("");
+    $("#inputFile3").val("");
+    $("#inputFile4").val("");
+    $("#employee_code").val("");
+    $("#department_id").val("").trigger("change");
+    $("#designation_id").val("").trigger("change");
+    $("#reporting_to").val("").trigger("change");
+    $("#package").val("");
+    $("#date_of_join").val("");
+    $("#company_mail_id").val("");
+    $("#company_mobile_no").val("");
+    $("#ddlOriginalgivesby").val("").trigger("change");
+    $("#authorised_by").val("").trigger("change");
+    $("#originals_verified_by").val("").trigger("change");
+    $("#vehicle").val("").trigger("change");
+    $("#vehicle_type").val("").trigger("change");
+    $("#vehicle_brand").val("").trigger("change");
+    $("#btnSave").text("save");
+}
+    

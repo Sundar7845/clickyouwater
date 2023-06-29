@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class AssetType extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'asset_type',
+        'prefix',
+        'created_by',
+        'updated_by',
+        'deleted_by'
+    ];
+}

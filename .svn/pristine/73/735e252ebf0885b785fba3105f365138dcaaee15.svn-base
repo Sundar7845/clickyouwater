@@ -1,0 +1,33 @@
+$(document).ready(function () {
+    manufactureProductStockList();
+});
+
+$("#ddlCategory").change(function () {
+    manufactureProductStockList();
+});
+
+function manufactureProductStockList() {
+    var category_id =
+        $("#ddlCategory option:selected").val() == undefined ? 0 : $("#ddlCategory option:selected").val();
+
+    $("#tblProductStockList").DataTable({
+        processing: true,
+        serverSide: true,
+        order: [[0, "ASC"]],
+        bDestroy: true,
+        ajax: {
+            url: "/manufacturerproductstockdata",
+            data: function (data) {
+                data.category_id = category_id;
+            },
+        },
+        fnRowCallback: serialNoCount,
+        columns: [
+            { data: "id", orderable: false },
+            { data: "category_name" },
+            { data: "product_name" },
+            { data: "qty" },
+            { data: "action", orderable: false },
+        ],
+    });
+}

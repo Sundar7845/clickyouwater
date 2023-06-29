@@ -1,0 +1,226 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Settings;
+
+use App\Http\Controllers\Controller;
+use App\Models\CustomerSettings;
+use App\Models\Hub;
+use App\Models\HubSettings;
+use App\Models\LogisticSettings;
+use App\Models\ManfacturerSettings;
+use App\Models\ProductType;
+use App\Models\ProductTypeSetting;
+use App\Models\ReferralSetting;
+use App\Traits\Common;
+use Carbon\Carbon;
+use DateTime;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class SettingsController extends Controller
+{
+    use Common;
+    public function settings()
+    {
+        try {
+            $manufacturer = ManfacturerSettings::first();
+            // $datetime = DateTime::createFromFormat('H:i:s', $manufacturer->deliver_to_logistics_hrs);
+            // $manufacturer->deliver_to_logistics_hrs = $datetime->format('H:i ');
+            // $manufacturer->time = Carbon::createFromFormat('H:i:s', $manufacturer->deliver_to_logistics_hrs)->format('H:i');
+
+            $hub = HubSettings::first();
+            $logistic = LogisticSettings::first();
+            $hub = HubSettings::first();
+            $customer = CustomerSettings::first();
+            $products = DB::table('product_type_settings')
+                ->rightjoin('product_types', 'product_types.id', '=', 'product_type_settings.product_type_id')
+                ->select('product_type_settings.*', 'product_types.id as product_id', 'product_types.product_type_name')
+                ->get();
+            return view('admin.settings.settings', compact('products','manufacturer', 'hub', 'logistic', 'customer'));
+        } catch (\Exception $e) {dd($e);
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function settingsCreate(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $man = $request->man;
+            $logistic = $request->logistic;
+            $hub = $request->hub;
+            $product_id = $request->product_id;
+            $action = $request->action;
+            $before_shipment = $request->before_shipment;
+            $after_shipment = $request->after_shipment;
+            $array_data = [];
+            foreach ($request->id as  $ids) {
+                $action_1 = $action[$ids];
+                $array_data['manufacture_price'] = $man[$ids];
+                $array_data['product_type_id'] = $product_id[$ids];
+                $array_data['hub_price'] = $logistic[$ids];
+                $array_data['logistics_price'] = $hub[$ids];
+                $array_data['before_ship_mins_alert'] = $before_shipment[$ids];
+                $array_data['after_ship_mins_alert'] = $after_shipment[$ids];
+                if ($action_1 == 'new') {
+                    ProductTypeSetting::create($array_data);
+                    $notification = array(
+                        'message' => 'Settings Created Successfully!',
+                        'alert-type' => 'success'
+                    );
+                } else {
+                    ProductTypeSetting::where('id', $ids)->update($array_data);
+                    $notification = array(
+                        'message' => 'Settings Updated Successfully!',
+                        'alert-type' => 'success'
+                    );
+                }
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            $notification = array(
+                'message' => 'Settings Not Created!',
+                'alert-type' => 'error'
+            );
+            $this->Log(__FUNCTION__, $request->method(), $e->getMessage(), Auth::user()->id, $request->ip(), gethostname());
+        }
+        return redirect()->route('settings')->with($notification);
+    }
+
+    public function settingsmanufacturer(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $fillable = $request->all();
+            unset($fillable['_token']);
+            if ($request->id == "new") {
+                ManfacturerSettings::create($fillable);
+                $notification = array(
+                    'message' => 'Settings Created Successfully!',
+                    'alert-type' => 'success'
+                );
+            } else {
+                unset($fillable['_token']);
+                unset($fillable['id']);
+
+                ManfacturerSettings::where('id', $request->id)->update($fillable);
+                $notification = array(
+                    'message' => 'Settings Updated Successfully!',
+                    'alert-type' => 'success'
+                );
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            $notification = array(
+                'message' => 'Settings Not Updated!',
+                'alert-type' => 'error'
+            );
+            $this->Log(__FUNCTION__, $request->method(), $e->getMessage(), Auth::user()->id, $request->ip(), gethostname());
+        }
+        return redirect()->route('settings')->with($notification);
+    }
+
+    public function settingshub(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $fillable = $request->all();
+            unset($fillable['_token']);
+            if ($request->id == "new") {
+                HubSettings::create($fillable);
+                $notification = array(
+                    'message' => 'Admin Settings Created Successfully!',
+                    'alert-type' => 'success'
+                );
+            } else {
+                unset($fillable['_token']);
+                unset($fillable['id']);
+
+                HubSettings::where('id', $request->id)->update($fillable);
+                $notification = array(
+                    'message' => 'Admin Settings Updated Successfully!',
+                    'alert-type' => 'success'
+                );
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            $notification = array(
+                'message' => 'Settings Not Updated!',
+                'alert-type' => 'error'
+            );
+            $this->Log(__FUNCTION__, $request->method(), $e->getMessage(), Auth::user()->id, $request->ip(), gethostname());
+        }
+        return redirect()->route('settings')->with($notification);
+    }
+
+    public function settingslogistic(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $fillable = $request->all();
+            unset($fillable['_token']);
+            if ($request->id == "new") {
+                LogisticSettings::create($fillable);
+                $notification = array(
+                    'message' => 'Settings Created Successfully!',
+                    'alert-type' => 'success'
+                );
+            } else {
+                unset($fillable['_token']);
+                unset($fillable['id']);
+
+                LogisticSettings::where('id', $request->id)->update($fillable);
+                $notification = array(
+                    'message' => 'Settings Updated Successfully!',
+                    'alert-type' => 'success'
+                );
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            $notification = array(
+                'message' => 'Settings Not Updated!',
+                'alert-type' => 'error'
+            );
+            $this->Log(__FUNCTION__, $request->method(), $e->getMessage(), Auth::user()->id, $request->ip(), gethostname());
+        }
+        return redirect()->route('settings')->with($notification);
+    }
+
+    public function settingscustomer(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $fillable = $request->all();
+            unset($fillable['_token']);
+            if ($request->id == "new") {
+                CustomerSettings::create($fillable);
+                $notification = array(
+                    'message' => 'Settings Created Successfully!',
+                    'alert-type' => 'success'
+                );
+            } else {
+                unset($fillable['id']);
+
+                CustomerSettings::findorfail($request->id)->update($fillable);
+                $notification = array(
+                    'message' => 'Settings Updated Successfully!',
+                    'alert-type' => 'success'
+                );
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            $notification = array(
+                'message' => 'Settings Not Updated!',
+                'alert-type' => 'error'
+            );
+            $this->Log(__FUNCTION__, $request->method(), $e->getMessage(), Auth::user()->id, $request->ip(), gethostname());
+        }
+        return redirect()->route('settings')->with($notification);
+    }
+}

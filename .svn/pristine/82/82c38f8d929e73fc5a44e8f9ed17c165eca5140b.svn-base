@@ -1,0 +1,1142 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Dashboard | Employee
+@endsection
+
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold mb-4">
+        Add Employee
+    </h4>
+
+    <div class="row mb-4">
+        <!-- Browser Default -->
+
+        <div class="col-md-12 mb-4 mb-md-0">
+
+            @if ($employees)
+                <form method="post" action="{{ url('employee-update') }}" name="employee" id="register-form"
+                    enctype="multipart/form-data">
+                @else
+                    <form method="post" action="{{ url('employee-create') }}" name="employee" id="register-form"
+                        enctype="multipart/form-data">
+            @endif
+            @csrf
+            <input type="hidden" name="id" value="{{ $employees ? $employees->id : '' }}">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-header p-0">
+                        <h4>Identity Details</h4>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Name of the Employee<span
+                                        class="text-danger">*</span></label>
+                                <input type="text" class="form-control" name="employee_name"
+                                    value="{{ $employees ? $employees->employee_name : '' }}"
+                                    placeholder="Enter Employee Name">
+                                @if ($errors->has('employee_name'))
+                                    <div class="text-danger">{{ $errors->first('employee_name') }}</div>
+                                @endif
+                                <span class="error"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Father’s / Spouse Name<span
+                                        class="text-danger">*</span></label>
+                                <input type="text" class="form-control" name="father_spouse_name"
+                                    value="{{ $employees ? $employees->father_spouse_name : '' }}"
+                                    placeholder="Enter Father’s / Spouse Name">
+                                @if ($errors->has('father_spouse_name'))
+                                    <div class="text-danger">{{ $errors->first('father_spouse_name') }}</div>
+                                @endif
+                                <span class="error"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Gender<span
+                                        class="text-danger">*</span></label>
+                                <div class="form-group">
+                                    <input type="radio" class="form-check-input" name="gender" value="1" />
+                                    Male
+                                    <input type="radio" class="form-check-input" name="gender" value="2" />
+                                    Female
+                                </div>
+                                @if ($errors->has('gender'))
+                                    <div class="text-danger">{{ $errors->first('gender') }}</div>
+                                @endif
+                                <span class="error"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Date of birth<span
+                                        class="text-danger">*</span></label>
+                                <div class="form-group">
+                                    <input type="date" name="dob" class="form-control"
+                                        value="{{ $employees ? $employees->dob : '' }}" placeholder="DD/MM/YYYY">
+                                    @if ($errors->has('dob'))
+                                        <div class="text-danger">{{ $errors->first('dob') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Nationality<span
+                                        class="text-danger">*</span></label>
+                                <div class="form-group">
+                                    <input type="text" name="nationality" class="form-control"
+                                        value="{{ $employees ? $employees->nationality : '' }}"
+                                        placeholder="Enter Nationality">
+                                    @if ($errors->has('nationality'))
+                                        <div class="text-danger">{{ $errors->first('nationality') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Status
+                                    <sup>(Resident/Non-Resident/Foreign National)</sup> </label>
+                                <div class="form-group">
+                                    <input type="text" name="nationality_status" class="form-control"
+                                        value="{{ $employees ? $employees->nationality_status : '' }}"
+                                        placeholder="Enter Status">
+                                    @if ($errors->has('nationality_status'))
+                                        <div class="text-danger">{{ $errors->first('nationality_status') }}
+                                        </div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">PAN<span
+                                        class="text-danger">*</span></label>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Enter PAN No">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Aadhaar Number (if any)</label>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Enter Aadhaar No">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Passport Number<sup>(In case of
+                                        overseas)</sup></label>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Enter Passport No">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Personal Mobile<span
+                                        class="text-danger">*</span></label>
+                                <div class="form-group">
+                                    <input type="text" class="form-control mobilenumber"
+                                        placeholder="Enter Personal Mobile">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Official Mobile<span
+                                        class="text-danger">*</span></label>
+                                <div class="form-group">
+                                    <input type="text" class="form-control mobilenumber"
+                                        placeholder="Enter Official Mobile">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Personal Email<span
+                                        class="text-danger">*</span></label>
+                                <div class="form-group">
+                                    <input type="email" name="email1" class="form-control"
+                                        value="{{ $employees ? $employees->email1 : '' }}"
+                                        placeholder="Enter Personal Email">
+                                    @if ($errors->has('email1'))
+                                        <div class="text-danger">{{ $errors->first('email1') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Official Email<span
+                                        class="text-danger">*</span></label>
+                                <div class="form-group">
+                                    <input type="email" name="email2" class="form-control"
+                                        value="{{ $employees ? $employees->email2 : '' }}"
+                                        placeholder="Enter Official Email">
+                                    @if ($errors->has('email2'))
+                                        <div class="text-danger">{{ $errors->first('email2') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Employee Image<span
+                                        class="text-danger">*</span></label>
+                                <input type="file" name="profile_img" id="inputFile1" class="form-control">
+                                <div class="img mt-2">
+                                    @if ($employees)
+                                        <img src="{{ asset($employees->profile_img) }}" id="previewImage1"
+                                            width="100" height="100">
+                                    @else
+                                        <img src="{{ asset('assets\img\avatars\14.png') }}" id="previewImage1"
+                                            width="100" height="100">
+                                    @endif
+
+                                </div>
+                                @if ($errors->has('profile_img'))
+                                    <div class="text-danger">{{ $errors->first('profile_img') }}</div>
+                                @endif
+                                <span class="error"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mt-3">
+                <div class="card-body">
+                    <div class="card-header p-0">
+                        <h4>Address Details</h4>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <strong class="form-label" for="">Communication Address</strong>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="">Country<span
+                                        class="text-danger">*</span></label>
+                                <select name="comm_country_id" id="comm_country_id"
+                                    class="select2 form-select form-select-md county_chnage">
+                                    <option>Select</option>
+                                    @if (!empty($country))
+                                        @foreach ($country as $countrys)
+                                            <option value="{{ $countrys->id }}"
+                                                @if ($employees) {{ $employees->comm_country_id == $countrys->id ? 'selected' : '' }} @endif>
+                                                {{ $countrys->country_name }}
+                                            </option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                                @if ($errors->has('comm_country_id'))
+                                    <div class="text-danger">{{ $errors->first('comm_country_id') }}</div>
+                                @endif
+
+                                <span class="error"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="">State<span
+                                        class="text-danger">*</span></label>
+                                <select name="comm_state_id" id="comm_state_id"
+                                    class="select2 form-select form-select-lg state_chnage">
+                                    <option value="">Select</option>
+                                    @isset($comm_state)
+                                        @foreach ($comm_state as $comm_states)
+                                            <option value="{{ $comm_states->id }}"
+                                                @if ($employees) {{ $employees->comm_state_id == $comm_states->id ? 'selected' : '' }} @endif>
+                                                {{ $comm_states->state_name }}
+                                            </option>
+                                        @endforeach
+                                    @endisset
+                                </select>
+                                @if ($errors->has('comm_state_id'))
+                                    <div class="text-danger">{{ $errors->first('comm_state_id') }}</div>
+                                @endif
+
+                                <span class="error"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="">City/town/village<span
+                                        class="text-danger">*</span></label>
+                                <select name="comm_city_id" id="comm_city_id"
+                                    class="select2 form-select form-select-lg city_chnage">
+                                    <option value="">Select</option>
+                                    @isset($comm_city)
+                                        @foreach ($comm_city as $comm_citys)
+                                            <option value="{{ $comm_citys->id }}"
+                                                @if ($employees) {{ $employees->comm_city_id == $comm_citys->id ? 'selected' : '' }} @endif>
+                                                {{ $comm_citys->city_name }}
+                                            </option>
+                                        @endforeach
+                                    @endisset
+                                </select>
+                                @if ($errors->has('comm_city_id'))
+                                    <div class="text-danger">{{ $errors->first('comm_city_id') }}</div>
+                                @endif
+                                <span class="error"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Area Name<span class="text-danger">*</span></label>
+                                <select name="comm_area_id" id="comm_area_id"
+                                    class="select2 form-select form-select-lg">
+                                    <option value="">SELECT Area</option>
+                                    @isset($comm_area)
+                                        @foreach ($comm_area as $comm_areas)
+                                            <option value="{{ $comm_areas->id }}"
+                                                @if ($employees) {{ $employees->comm_area_id == $comm_areas->id ? 'selected' : '' }} @endif>
+                                                {{ $comm_areas->area_name }}
+                                            </option>
+                                        @endforeach
+                                    @endisset
+                                </select>
+                                @if ($errors->has('comm_area_id'))
+                                    <div class="text-danger">{{ $errors->first('comm_area_id') }}</div>
+                                @endif
+                                <span class="error"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="">Door No/Street/Landmark<span
+                                        class="text-danger">*</span></label>
+                                <input type="text" class="form-control" name="comm_address" id="comm_address"
+                                    value="{{ $employees ? $employees->comm_address : '' }}"
+                                    placeholder="Enter Door No/Street/Landmark">
+                                @if ($errors->has('comm_address'))
+                                    <div class="text-danger">{{ $errors->first('comm_address') }}</div>
+                                @endif
+                                <span class="error"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="">Pin Code<span
+                                        class="text-danger">*</span></label>
+                                <input type="text" name="comm_pincode" id="comm_pincode" class="form-control"
+                                    value="{{ $employees ? $employees->comm_pincode : '' }}"
+                                    placeholder="Enter Pin Code">
+                                @if ($errors->has('comm_pincode'))
+                                    <div class="text-danger">{{ $errors->first('comm_pincode') }}</div>
+                                @endif
+                                <span class="error"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <strong class="form-label" for="">Permanent
+                                            Address</strong>
+                                    </div>
+                                    <div class="col-md-6 text-end">
+                                        <input type="checkbox" id="chkSameAddress"> Same as Communication
+                                    </div>
+                                </div>
+                                <div class="mb-3 mt-3">
+                                    <label class="form-label" for="">Country<span
+                                            class="text-danger">*</span></label>
+                                    <select name="permanent_country_id" id="permanent_country_id"
+                                        class="select2 form-select form-select-md county_chnage">
+                                        <option>Select</option>
+                                        @if (!empty($country))
+                                            @foreach ($country as $countrys)
+                                                <option
+                                                    value="{{ $countrys->id }}"@if ($employees) {{ $employees->permanent_country_id == $countrys->id ? 'selected' : '' }} @endif>
+                                                    {{ $countrys->country_name }}
+                                                </option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                    @if ($errors->has('permanent_country_id'))
+                                        <div class="text-danger">{{ $errors->first('permanent_country_id') }}
+                                        </div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label" for="">State<span
+                                            class="text-danger">*</span></label>
+                                    <select name="permanent_state_id" id="permanent_state_id"
+                                        class="select2 form-select form-select-lg state_chnage">
+                                        <option value="">Select</option>
+                                        @isset($permanent_state)
+                                            @foreach ($permanent_state as $permanent_states)
+                                                <option value="{{ $permanent_states->id }}"
+                                                    @if ($employees) {{ $employees->permanent_state_id == $permanent_states->id ? 'selected' : '' }} @endif>
+                                                    {{ $permanent_states->state_name }}
+                                                </option>
+                                            @endforeach
+                                        @endisset
+                                    </select>
+                                    @if ($errors->has('permanent_state_id'))
+                                        <div class="text-danger">{{ $errors->first('permanent_state_id') }}
+                                        </div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="">City/town/village<span
+                                            class="text-danger">*</span></label>
+                                    <select name="permanent_city_id" id="permanent_city_id"
+                                        class="select2 form-select form-select-lg city_chnage">
+                                        <option value="">Select</option>
+                                        @isset($permanent_city)
+                                            @foreach ($permanent_city as $permanent_citys)
+                                                <option value="{{ $permanent_citys->id }}"
+                                                    @if ($employees) {{ $employees->permanent_city_id == $permanent_citys->id ? 'selected' : '' }} @endif>
+                                                    {{ $permanent_citys->city_name }}
+                                                </option>
+                                            @endforeach
+                                        @endisset
+                                    </select>
+                                    @if ($errors->has('permanent_city_id'))
+                                        <div class="text-danger">{{ $errors->first('permanent_city_id') }}
+                                        </div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Area Name<span class="text-danger">*</span></label>
+                                    <select name="permanent_area_id" id="permanent_area_id"
+                                        class="select2 form-select form-select-lg">
+                                        <option value="">SELECT Area</option>
+                                        @isset($permanent_area)
+                                            @foreach ($permanent_area as $permanent_areas)
+                                                <option value="{{ $permanent_areas->id }}"
+                                                    @if ($employees) {{ $employees->permanent_area_id == $permanent_areas->id ? 'selected' : '' }} @endif>
+                                                    {{ $permanent_areas->area_name }}
+                                                </option>
+                                            @endforeach
+                                        @endisset
+                                    </select>
+                                    @if ($errors->has('permanent_area_id'))
+                                        <div class="text-danger">{{ $errors->first('permanent_area_id') }}
+                                        </div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="">Door No/Street/Landmark<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" name="permanent_address" id="permanent_address"
+                                        class="form-control"
+                                        value="{{ $employees ? $employees->permanent_address : '' }}"
+                                        placeholder="Enter Door No/Street/Landmark">
+                                    @if ($errors->has('permanent_address'))
+                                        <div class="text-danger">{{ $errors->first('permanent_address') }}
+                                        </div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="">Pin Code<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" name="permanent_pincode" id="permanent_pincode"
+                                        class="form-control"
+                                        value="{{ $employees ? $employees->permanent_pincode : '' }}"
+                                        placeholder="Enter Pin Code">
+                                    @if ($errors->has('permanent_pincode'))
+                                        <div class="text-danger">{{ $errors->first('permanent_pincode') }}
+                                        </div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mt-3">
+                <div class="card-body">
+                    <div class="card-header p-0">
+                        <h4>Emergency Contact Details</h4>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Mobile 1<span
+                                        class="text-danger">*</span></label>
+                                <input type="text" class="form-control mobilenumber" name="mobile1"
+                                    value="{{ $employees ? $employees->mobile1 : '' }}" placeholder="Enter Mobile 1">
+                                @if ($errors->has('mobile1'))
+                                    <div class="text-danger">{{ $errors->first('mobile1') }}</div>
+                                @endif
+                                <span class="error"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Relationship 1</label>
+                                <input type="text" class="form-control" placeholder="Enter Relationship 1">
+                                @error('employee_name')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Mobile 2<span
+                                        class="text-danger">*</span></label>
+                                <input type="text" name="mobile2" class="form-control mobilenumber"
+                                    value="{{ $employees ? $employees->mobile2 : '' }}" placeholder="Enter Mobile">
+                                @if ($errors->has('mobile2'))
+                                    <div class="text-danger">{{ $errors->first('mobile2') }}</div>
+                                @endif
+                                <span class="error"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Relationship 2</label>
+                                <input type="text" class="form-control" placeholder="Enter Relationship 2">
+                                @error('employee_name')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mt-3">
+                <div class="card-body">
+                    <div class="card-header p-0">
+                        <h4>Previous Company Details</h4>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Previous company experience
+                                    years</label>
+                                <input type="number" class="form-control" name="prev_company_exp_yrs"
+                                    value="{{ $employees ? $employees->prev_company_exp_yrs : '' }}"
+                                    placeholder="Enter Previous company experience years">
+                                @if ($errors->has('prev_company_exp_yrs'))
+                                    <div class="text-danger">{{ $errors->first('prev_company_exp_yrs') }}</div>
+                                @endif
+                                <span class="error"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Previous company Name</label>
+                                <input type="text" class="form-control" name="prev_company_name"
+                                    value="{{ $employees ? $employees->prev_company_name : '' }}"
+                                    placeholder="Enter Previous company Name">
+                                @if ($errors->has('prev_company_name'))
+                                    <div class="text-danger">{{ $errors->first('prev_company_name') }}</div>
+                                @endif
+                                <span class="error"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Ref By</label>
+                                <input type="text" class="form-control" name="prev_company_ref_by"
+                                    value="{{ $employees ? $employees->prev_company_ref_by : '' }}"
+                                    placeholder="Enter Ref By">
+                                @if ($errors->has('prev_company_ref_by'))
+                                    <div class="text-danger">{{ $errors->first('prev_company_ref_by') }}</div>
+                                @endif
+                                <span class="error"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mt-3">
+                <div class="card-body">
+                    <div class="card-header p-0">
+                        <h4>Bank Details</h4>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Name (As printed in
+                                    passbook)<span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" name="account_name"
+                                    value="{{ $employees ? $employees->account_name : '' }}"
+                                    placeholder="Enter Name">
+                                @if ($errors->has('account_name'))
+                                    <div class="text-danger">{{ $errors->first('account_name') }}</div>
+                                @endif
+                                <span class="error"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Account Number<span
+                                        class="text-danger">*</span></label>
+                                <input type="text" class="form-control acc_no" name="account_number"
+                                    value="{{ $employees ? $employees->account_number : '' }}"
+                                    placeholder="Enter Account Number">
+                                @if ($errors->has('account_number'))
+                                    <div class="text-danger">{{ $errors->first('account_number') }}</div>
+                                @endif
+                                <span class="error"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Bank Name<span
+                                        class="text-danger">*</span></label>
+                                <input type="text" class="form-control" name="bank_name"
+                                    value="{{ $employees ? $employees->bank_name : '' }}"
+                                    placeholder="Enter Bank Name">
+                                @if ($errors->has('bank_name'))
+                                    <div class="text-danger">{{ $errors->first('bank_name') }}</div>
+                                @endif
+                                <span class="error"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Branch Name<span
+                                        class="text-danger">*</span></label>
+                                <input type="text" class="form-control" name="branch_name"
+                                    value="{{ $employees ? $employees->branch_name : '' }}"
+                                    placeholder="Enter Branch Name">
+                                @if ($errors->has('branch_name'))
+                                    <div class="text-danger">{{ $errors->first('branch_name') }}</div>
+                                @endif
+                                <span class="error"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">IFSC Code<span
+                                        class="text-danger">*</span></label>
+                                <input type="text" class="form-control" name="ifsc_code"
+                                    value="{{ $employees ? $employees->ifsc_code : '' }}"
+                                    placeholder="Enter IFSC Code">
+                                @if ($errors->has('ifsc_code'))
+                                    <div class="text-danger">{{ $errors->first('ifsc_code') }}</div>
+                                @endif
+                                <span class="error"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mt-3">
+                <div class="card-body">
+                    <div class="card-header p-0">
+                        <h4>Upload Documents</h4>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Aadhar Card<span
+                                        class="text-danger">*</span></label>
+                                <input type="file" class="form-control" id="inputFile2">
+                                <div class="img mt-2">
+                                    <img src="{{ asset('assets\img\avatars\14.png') }}" id="previewImage2"
+                                        width="100" height="100">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Pan Card<span
+                                        class="text-danger">*</span></label>
+                                <input type="file" class="form-control" id="inputFile3">
+                                <div class="img mt-2">
+                                    <img src="{{ asset('assets\img\avatars\14.png') }}" id="previewImage3"
+                                        width="100" height="100">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Passport<span
+                                        class="text-danger">*</span></label>
+                                <input type="file" class="form-control"id="inputFile4">
+                                <div class="img mt-2">
+                                    <img src="{{ asset('assets\img\avatars\14.png') }}" id="previewImage4"
+                                        width="100" height="100">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mt-3">
+                <div class="card-body">
+                    <div class="card-header p-0">
+                        <h4>For Office Use Only</h4>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-default-name">&nbsp;</label>
+                                <div class="input-group">
+                                    <span class="input-group-text" id="basic-addon11">Employee ID</span>
+                                    <input type="text" class="form-control" name="employee_code"
+                                        id="employee_code" readonly placeholder="EMP001"
+                                        value="{{ $employees ? $employees->employee_code : 'EMP001' }}"
+                                        aria-label="" aria-describedby="basic-addon11" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Department<span
+                                        class="text-danger">*</span></label>
+                                <select name="department_id" id=""
+                                    class="select2 form-select form-select-lg">
+                                    <option value="">Select</option>
+                                    @if (!empty($departments))
+                                        @foreach ($departments as $department)
+                                            <option value="{{ $department->id }}"
+                                                @if ($employees) {{ $employees->department_id == $department->id ? 'selected' : '' }} @endif>
+                                                {{ $department->department_name }}
+                                            </option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                                @if ($errors->has('department_id'))
+                                    <div class="text-danger">{{ $errors->first('department_id') }}</div>
+                                @endif
+                                <span class="error"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Desingation<span
+                                        class="text-danger">*</span></label>
+                                <select name="designation_id" id=""
+                                    class="select2 form-select form-select-lg">
+                                    <option value="">Select</option>
+                                    @if (!empty($designation))
+                                        @foreach ($designation as $designations)
+                                            <option value="{{ $designations->id }}"
+                                                @if ($employees) {{ $employees->designation_id == $designations->id ? 'selected' : '' }} @endif>
+                                                {{ $designations->designation_name }}
+                                            </option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                                @if ($errors->has('designation_id'))
+                                    <div class="text-danger">{{ $errors->first('designation_id') }}</div>
+                                @endif
+                                <span class="error"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Reporting To<span
+                                        class="text-danger">*</span></label>
+                                <select name="reporting_to" id=""
+                                    class="select2 form-select form-select-lg">
+                                    <option value="">Select</option>
+                                    @if (!empty($user))
+                                        @foreach ($user as $users)
+                                            <option value="{{ $users->id }}"
+                                                @if ($employees) {{ $employees->reporting_to == $users->id ? 'selected' : '' }} @endif>
+                                                {{ $users->user_name }}
+                                            </option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                                @if ($errors->has('reporting_to'))
+                                    <div class="text-danger">{{ $errors->first('reporting_to') }}</div>
+                                @endif
+                                <span class="error"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Package<span
+                                        class="text-danger">*</span></label>
+                                <input type="text" name="package" class="form-control"
+                                    value="{{ $employees ? $employees->package : '' }}" placeholder="Enter Package">
+                                @if ($errors->has('package'))
+                                    <div class="text-danger">{{ $errors->first('package') }}</div>
+                                @endif
+                                <span class="error"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Date of joining<span
+                                        class="text-danger">*</span></label>
+                                <input type="date" name="date_of_join" class="form-control"
+                                    value="{{ $employees ? $employees->date_of_join : '' }}">
+                                @if ($errors->has('date_of_join'))
+                                    <div class="text-danger">{{ $errors->first('date_of_join') }}</div>
+                                @endif
+                                <span class="error"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Company Mail ID<span
+                                        class="text-danger">*</span></label>
+                                <input type="email" name="company_mail_id" class="form-control"
+                                    value="{{ $employees ? $employees->company_mail_id : '' }}"
+                                    placeholder="Company Mail ID">
+                                @if ($errors->has('company_mail_id'))
+                                    <div class="text-danger">{{ $errors->first('company_mail_id') }}</div>
+                                @endif
+                                <span class="error"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Company Phone Number<span
+                                        class="text-danger">*</span></label>
+                                <input type="text" name="company_mobile_no" class="form-control mobilenumber"
+                                    value="{{ $employees ? $employees->company_mobile_no : '' }}"
+                                    placeholder="Enter Phone Number">
+                                @if ($errors->has('company_mobile_no'))
+                                    <div class="text-danger">{{ $errors->first('company_mobile_no') }}</div>
+                                @endif
+                                <span class="error"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Originals given by<span
+                                        class="text-danger">*</span></label>
+                                <select id="" class="select2 form-select form-select-lg">
+                                    <option value="">Select</option>
+                                    @if (!empty($user))
+                                        @foreach ($user as $users)
+                                            <option value="{{ $users->id }}">{{ $users->user_name }}
+                                            </option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                                @error('employee_name')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Originals received by<span
+                                        class="text-danger">*</span></label>
+                                <select name="authorised_by" id=""
+                                    class="select2 form-select form-select-lg">
+                                    <option value="">Select</option>
+                                    @if (!empty($user))
+                                        @foreach ($user as $users)
+                                            <option value="{{ $users->id }}"
+                                                @if ($employees) {{ $employees->authorised_by == $users->id ? 'selected' : '' }} @endif>
+                                                {{ $users->user_name }}
+                                            </option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                                @if ($errors->has('authorised_by'))
+                                    <div class="text-danger">{{ $errors->first('authorised_by') }}</div>
+                                @endif
+                                <span class="error"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Originals verified by<span
+                                        class="text-danger">*</span></label>
+                                <select name="originals_verified_by" id=""
+                                    class="select2 form-select form-select-lg">
+                                    <option value="">Select</option>
+                                    @if (!empty($user))
+                                        @foreach ($user as $users)
+                                            <option value="{{ $users->id }}"
+                                                @if ($employees) {{ $employees->originals_verified_by == $users->id ? 'selected' : '' }} @endif>
+                                                {{ $users->user_name }}
+                                            </option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                                @if ($errors->has('originals_verified_by'))
+                                    <div class="text-danger">{{ $errors->first('originals_verified_by') }}
+                                    </div>
+                                @endif
+                                <span class="error"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mt-3">
+                <div class="card-body">
+                    <div class="card-header p-0">
+                        <h4>Office Assets</h4>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-default-name">Asset Name<span
+                                        class="text-danger">*</span>
+                                </label>
+                                <select name="vehicle" id="vehicle" class="select2 form-select form-select-lg">
+                                    <option value="">Select</option>
+                                    <option value="1">Two wheeler - Yamaha</option>
+                                    <option value="2">Lenovo Laptop i3</option>
+                                    <option value="3">EB LMB</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-default-name">Issued by<span
+                                        class="text-danger">*</span>
+                                </label>
+                                <select name="vehicle_type" id="vehicle_type"
+                                    class="select2 form-select form-select-lg">
+                                    <option value="">Select</option>
+                                    <option value="1">Issued by 1</option>
+                                    <option value="2">Issued by 2</option>
+                                    <option value="3">Issued by 3</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-default-name">Authorised by<span
+                                        class="text-danger">*</span>
+                                </label>
+                                <select name="vehicle_brand" id="vehicle_brand"
+                                    class="select2 form-select form-select-lg">
+                                    <option value="">Select</option>
+                                    <option value="1">Authorised by 1</option>
+                                    <option value="2">Authorised by 2</option>
+                                    <option value="3">Authorised by 3</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <div class="mb-3">
+                                <img src="{{ asset('add.png') }}" class="img-fluid" width="50px" height="50px"
+                                    style="margin-top:18px">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-datatable table-responsive pt-0">
+                        <table class="table table-responsive">
+                            <tr>
+                                <th>Asset Name</th>
+                                <th>Issued by</th>
+                                <th>Authorised by</th>
+                                <th>Action</th>
+                            </tr>
+                            <tr>
+                                <td>Two wheeler - Yamaha</td>
+                                <td>Issued by 1</td>
+                                <td>Authorised by 1</td>
+                                <td>
+                                    <a>
+                                        <i class="text-primary ti ti-pencil me-1"></i>
+                                    </a>
+                                    <a>
+                                        <i class="text-danger ti ti-trash me-1"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Lenovo Laptop i3</td>
+                                <td>Issued by 2</td>
+                                <td>Authorised by 2</td>
+                                <td>
+                                    <a>
+                                        <i class="text-primary ti ti-pencil me-1"></i>
+                                    </a>
+                                    <a>
+                                        <i class="text-danger ti ti-trash me-1"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>EB LMB</td>
+                                <td>Issued by 3</td>
+                                <td>Authorised by 3</td>
+                                <td>
+                                    <a>
+                                        <i class="text-primary ti ti-pencil me-1"></i>
+                                    </a>
+                                    <a>
+                                        <i class="text-danger ti ti-trash me-1"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mt-4 mb-3">
+                            <button type="submit" class="btn btn-success">Save</button>
+                            <a href="{{ route('employee-list') }}"><button type="button"
+                                    class="btn btn-danger">Cancel</button></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </form>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+</div>
+
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
+
+<script src="{{ asset('assets/js/admin/masters/employee.js') }}"></script>
+<script src="{{ asset('assets/js/common/common.js') }}"></script>
+
+<script>
+    var state_id = 0;
+    var selected = '';
+
+    $('.county_chnage').change(function(e) {
+        e.preventDefault();
+        if ($(this).attr('id') != 'permanent_country_id') {
+            var stateid = 'comm_state_id';
+
+        } else {
+
+            var stateid = 'permanent_state_id';
+        }
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            url: "{{ route('get-states') }}",
+            type: "POST",
+            data: {
+                id: $(this).val()
+            },
+            success: function(data) {
+                var selOpts = "<option>Select</option>";
+                $.each(data, function(k, v) {
+                    var id = data[k].id;
+                    var val = data[k].state_name;
+
+                    selOpts += "<option value='" + id + "'" + selected + ">" + val +
+                        "</option>";
+                });
+                $('#' + stateid).html(selOpts);
+
+                // state();
+            }
+        });
+
+    });
+
+    $('.state_chnage').change(function(e) {
+        e.preventDefault();
+        if ($(this).attr('id') != 'permanent_state_id') {
+            var stateid = 'comm_city_id';
+
+        } else {
+            var stateid = 'permanent_city_id';
+
+        }
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            url: "{{ route('get-city') }}",
+            type: "POST",
+            data: {
+                id: $(this).val()
+            },
+            success: function(data) {
+                var selOpts = "<option>Select</option>";
+                $.each(data, function(k, v) {
+                    var id = data[k].id;
+                    var val = data[k].city_name;
+
+                    selOpts += "<option value='" + id + "'" + selected + ">" + val +
+                        "</option>";
+                });
+                $('#' + stateid).html(selOpts);
+                // city();
+            }
+        });
+
+    });
+
+    $('.city_chnage').change(function(e) {
+        e.preventDefault();
+        if ($(this).attr('id') != 'permanent_city_id') {
+            var stateid = 'comm_area_id';
+
+        } else {
+            var stateid = 'permanent_area_id';
+
+        }
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            url: "{{ route('get-area') }}",
+            type: "POST",
+            data: {
+                id: $(this).val()
+            },
+            success: function(data) {
+                var selOpts = "<option>Select</option>";
+                if (data.length == 0) {
+                    selOpts += "<option value='0'>Select</option>";
+                }
+                $.each(data, function(k, v) {
+                    var id = data[k].id;
+                    var val = data[k].area_name;
+
+                    selOpts += "<option value='" + id + "'" + selected + ">" + val +
+                        "</option>";
+                });
+                $('#' + stateid).html(selOpts);
+
+            }
+        });
+
+    });
+
+    //img show Preview
+</script>
+
+@if ($employees != '')
+    <script>
+        $(function() {
+            var $radios = $('input:radio[name=gender]');
+            if ($radios.is(':checked') === false) {
+                $radios.filter('[value={!! $employees->gender !!}]').prop('checked', true);
+            }
+        });
+    </script>
+@endif
+@endsection

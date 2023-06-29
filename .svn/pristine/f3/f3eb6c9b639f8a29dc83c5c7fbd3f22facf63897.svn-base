@@ -1,0 +1,207 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Dashboard | Receipt
+@endsection
+
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold mb-4">
+        <span class="fw-light">Accounts /</span> Receipt
+    </h4>
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-12 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row mb-4">
+                        {{-- <div class="col-md p-4">
+							<small class="text-dark fw-semibold d-block">Payment Type</small>
+							<div class="form-check form-check-inline mt-3">
+								<input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1" />
+								<label class="form-check-label" for="inlineRadio1">Manufacturer Payment</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2" />
+								<label class="form-check-label" for="inlineRadio2">Hub Payment</label>
+							</div>
+						</div> --}}
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label" for="basic-default-name">&nbsp;</label>
+                            <div class="input-group">
+                                <span class="input-group-text" id="basic-addon11">Receipt No</span>
+                                <input type="text" class="form-control" disabled placeholder="RECNO325"
+                                    aria-label="Username" aria-describedby="basic-addon11" />
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label" for="basic-default-name">&nbsp;</label>
+                            <div class="input-group">
+                                <span class="input-group-text" id="basic-addon11">Receipt Date</span>
+                                <input type="date" class="form-control" id="purorddate" disabled
+                                    aria-label="Username" aria-describedby="basic-addon11" />
+                            </div>
+                        </div>
+                    </div>
+                    <form class="browser-default-validation">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label> Ledger Name</label>
+                                    <select id="ddlLedger" class="select2 form-select form-select-lg" control="ddl"
+                                        title="Please select Ledger" data-live-search="true">
+                                        <option value="0">Select</option>
+                                        <option value="1">All Ledger</option>
+                                        <option value="HI">Ledger 1</option>
+                                        <option value="CA">Ledger 2</option>
+                                        <option value="NV">Ledger 3</option>
+                                    </select> Closing Balance <i class="fa fa-fw fa-inr"></i>
+                                    <span id="spnCustomerCBal" class="text text-danger"
+                                        style="font-size: 22px;">0.00</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Company Ledger</label>
+                                    <select id="ddlCompanyLedger" class="select2 form-select form-select-lg"
+                                        control="ddl" title="Please select Company ledger">
+                                        <option value="0">Select</option>
+                                        <option value="HI">Company Ledger 1</option>
+                                        <option value="CA">Company Ledger 2</option>
+                                        <option value="NV">Company Ledger 3</option>
+                                    </select> Closing Balance <i class="fa fa-fw fa-inr"></i>
+                                    <span id="spnCompanyCBal" class="text text-danger"
+                                        style="font-size: 22px;">0.00</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-text">Type</label>
+                                    <select name="" id="" class="select2 form-select form-select-lg">
+                                        <option value="Total Amount">Total Amount</option>
+                                        <option value="GST Amount">GST Amount</option>
+                                        <option value="Bill Amount">Bill Amount</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-text">Amount</label>
+                                    <input type="text" id="basic-default-text" class="form-control"
+                                        placeholder="Amount" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-text">Payment Type</label>
+                                    <select id="ddlMode" class="select2 form-select form-select-lg" control="ddl">
+                                        <option value="1">CASH</option>
+                                        <option value="2">DD</option>
+                                        <option value="3">CHEQUE</option>
+                                        <option value="4">NEFT</option>
+                                        <option value="5">UPI</option>
+                                        <option value="6">RTGS</option>
+                                        <option value="7">CREDIT / DEBIT CARD</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4 CHQ" style="display: none;">
+                                <div class="mb-3">
+                                    <label for="exampleInputtext1" id="lblTransNo"> Cheque No</label>
+                                    <input id="txtTransNo" name="txtTransNo" type="text" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-md-4 CHQ" style="display: none;">
+                                <div class="mb-3">
+                                    <label for="exampleInputtext1" id="lblTransDt"> Cheque Date</label>
+                                    <input id="txtTransDate" name="txtTransDate" format="DD/MM/YYYY" type="date"
+                                        class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-md-4 CHQ" style="display: none;">
+                                <div class="mb-3">
+                                    <label> Bank Name</label>
+                                    <div class="mb-3">
+                                        <select name="ddlBankName" id="ddlBankName" style="width:100%"
+                                            class="select2 form-select form-select-lg" control="ddl">
+                                            <option value="0">Select</option>
+                                            <option value="1">State Bank</option>
+                                            <option value="2">Canara Bank</option>
+                                            <option value="3">Indian Bank</option>
+                                            <option value="3">Bank of Baroda Bank</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-text">Remarks</label>
+                                    <input type="text" id="basic-default-text" class="form-control"
+                                        placeholder="Remarks" required />
+                                </div>
+                            </div>
+                            <div class="col-md-12 d-flex justify-content-end">
+                                <div class="mt-4 mb-3">
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                    <button type="button" class="btn btn-danger">Cancel</button>
+                                    <a href="#">
+                                        <button type="button" class="btn btn-success">Go to List</button>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="box-header">
+                                <h5 class="box-title text-light-blue">Pending Bills</h5>
+                            </div>
+                            <div class="card-datatable table-responsive pt-0">
+                                <table class="table" id="grdDetail" cellpadding="0" cellspacing="0"
+                                    border="0">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 30px;">
+                                                <input type="checkbox" id="chkpay" control="chk" />
+                                            </th>
+                                            <th>S.No </th>
+                                            <th>Bill No </th>
+                                            <th>Bill Date </th>
+                                            <th>Description </th>
+                                            <th>Amount </th>
+                                            <th>Bal. Amount </th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbodyList">
+                                        <tr id="emptyRow" style="height: 25px;">
+                                            <td class="empty" colspan="8"
+                                                style="text-align: center; height: 23px;">No Records Found </td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot id="Total">
+                                        <tr>
+                                            <th colspan="5" style="text-align: left;">TOTAL </th>
+                                            <th style="text-align: right;">
+                                                <span id="tdBillAmt"></span>
+                                            </th>
+                                            <th style="text-align: right;">
+                                                <span id="tdBalAmt"></span>
+                                            </th>
+                                            <th style="text-align: right;">
+                                                <span id="tdTotAmt"></span>
+                                            </th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+</div>
+<!-- / Content -->
+@endsection

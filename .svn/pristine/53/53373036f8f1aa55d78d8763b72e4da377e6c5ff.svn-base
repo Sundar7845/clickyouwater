@@ -1,0 +1,12 @@
+<?php
+
+namespace App\Enums;
+
+use Illuminate\Validation\Rules\Enum;
+
+final class WalletTransactionType extends Enum
+{
+    const Wallet = '1';
+    const Referral = '2';
+    const Used = '3';
+}

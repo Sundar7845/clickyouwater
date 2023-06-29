@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Http\Controllers\Accounts;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class ReceiptController extends Controller
+{
+  public function Receipt()
+  {
+    return view('accounts.receipt.receipt');
+  }
+
+  public function ReceiptList()
+  {
+    return view('accounts.receipt.receipt_list');
+  }
+}

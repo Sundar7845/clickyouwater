@@ -1,0 +1,124 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Dashboard | Logistic
+@endsection
+
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-1 mb-4">
+        <span class="text-muted fw-light">Masters /</span> Add Logistic
+    </h4>
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-12 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <form class="browser-default-validation">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Manufacturer Name<span
+                                            class="text-danger">*</span></label>
+                                    <select name="" id="" class="select2 form-select form-select-lg">
+                                        <option value="AK">Alaska</option>
+                                        <option value="HI">Hawaii</option>
+                                        <option value="CA">California</option>
+                                        <option value="NV">Nevada</option>
+                                        <option value="OR">Oregon</option>
+                                        <option value="WA">Washington</option>
+                                        <option value="AZ">Arizona</option>
+                                        <option value="CO">Colorado</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Hub Name<span
+                                            class="text-danger">*</span></label>
+                                    <select name="" id="" class="select2 form-select form-select-lg">
+                                        <option value="AK">Alaska</option>
+                                        <option value="HI">Hawaii</option>
+                                        <option value="CA">California</option>
+                                        <option value="NV">Nevada</option>
+                                        <option value="OR">Oregon</option>
+                                        <option value="WA">Washington</option>
+                                        <option value="AZ">Arizona</option>
+                                        <option value="CO">Colorado</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Logistic Partner ID<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="basic-default-name"
+                                        placeholder="Logistic Partner ID" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Logistic Partner Name<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="basic-default-name"
+                                        placeholder="Logistic Partner Name" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Mobile<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="basic-default-name"
+                                        placeholder="Mobile" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Email<span
+                                            class="text-danger">*</span></label>
+                                    <input type="email" class="form-control" id="basic-default-name"
+                                        placeholder="Email" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Pincode<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="basic-default-name"
+                                        placeholder="Pincode" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Password<span
+                                            class="text-danger">*</span></label>
+                                    <input type="password" class="form-control" id="basic-default-name"
+                                        placeholder="Password" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Confirm Password<span
+                                            class="text-danger">*</span></label>
+                                    <input type="password" class="form-control" id="basic-default-name"
+                                        placeholder="Confirm Password" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mt-4 mb-3">
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                    <button type="button" class="btn btn-danger">Cancel</button>
+                                    <a href="{{ route('logistic-list') }}"><button type="button"
+                                            class="btn btn-success">Go to List</button></a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+</div>
+<!-- / Content -->
+@endsection

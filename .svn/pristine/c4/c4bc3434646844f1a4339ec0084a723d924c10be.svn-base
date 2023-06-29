@@ -1,0 +1,10 @@
+$(function() {
+    $('#stateName').hide(); 
+    $('#ddloffer').change(function(){
+        if($('#ddloffer').val() == '1') {
+            $('#stateName').hide(); 
+        } else {
+            $('#stateName').show(); 
+        } 
+    });
+});

@@ -1,0 +1,49 @@
+@extends('layouts.main_master') @section('content') @section('title')
+Dashboard | Manufacturer
+@endsection
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+<h4 class="fw-bold py-1 mb-4">
+    <span class="text-muted fw-light">Discount Management /</span> Referral Code Details
+</h4>
+<!-- DataTable with Buttons -->
+<div class="col-lg-12 mb-4 mb-lg-0">
+    <div class="card h-100">
+        <div class="table-responsive">
+            <table class="table table-borderless">
+                <thead class="border-bottom">
+                    <tr>
+                        <th>S.No</th>
+                        <th>Refferal Code</th>
+                        <th>Used By</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>20</td>
+                        <td>Raja</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>20</td>
+                        <td>John</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>20</td>
+                        <td>Peter</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>20</td>
+                        <td>Hari</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!--/ DataTable with Buttons -->
+</div>
+<!-- / Content --> @endsection

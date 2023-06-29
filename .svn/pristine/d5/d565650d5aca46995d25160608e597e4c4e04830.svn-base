@@ -1,0 +1,97 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Masters;
+
+use App\Http\Controllers\Controller;
+use App\Models\DocumentType;
+use Illuminate\Database\QueryException;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class DocumentController extends Controller
+{
+    public function documentType()
+    {
+        $document = DocumentType::get();
+        return view('admin.masters.document.document', compact('document'));
+    }
+
+    public function addDocumentType(Request $request)
+    {
+        $request->validate([
+            'txtDocumenttypeName' => 'required'
+        ]);
+
+        if ($request->hdDocumentTypeNameId == null) {
+            DocumentType::create([
+                'documenttype_name' => $request->txtDocumenttypeName,
+                'created_by' => Auth::user()->id
+            ]);
+            $notification = array(
+                'message' => 'Document Type Created Successfully',
+                'alert-type' => 'success'
+            );
+        } else {
+            DocumentType::findorfail($request->hdDocumentTypeNameId)->update([
+                'documenttype_name' => $request->txtDocumenttypeName,
+                'updated_by' => Auth::user()->id
+            ]);
+            $notification = array(
+                'message' => 'Document Type Updated Successfully',
+                'alert-type' => 'success'
+            );
+        }
+        return redirect()->route('documenttype')->with($notification);
+    }
+
+    public function deleteDocumentType($id)
+    {
+        try {
+
+            $area = DocumentType::findorfail($id);
+            $area->delete();
+            $area->update([
+                'deleted_by' => Auth::user()->id
+            ]);
+
+            $notification = array(
+                'message' => 'Document Type Deleted Successfully',
+                'alert' => 'success'
+            );
+            return response()->json([
+                'responseData' => $notification
+            ]);
+        } catch (QueryException $e) {
+
+            $notification = array(
+                'message' => 'Document type could not be deleted',
+                'alert' => 'error'
+            );
+            return response()->json([
+                'responseData' => $notification
+            ]);
+        }
+    }
+
+    public function getDocumentTypeById($id)
+    {
+        $document = DocumentType::where('id', $id)->first();
+        return response()->json([
+            'document' => $document
+        ]);
+    }
+
+    public function getDocumentTypeData()
+    {
+        $document = DocumentType::get();
+
+        return datatables()->of($document)
+            ->addColumn('action', function ($row) {
+                $html = '<i class="text-primary ti ti-pencil me-1"
+                onclick="doEdit(' . $row->id . ');"></i> ';
+                $html .= '<i class="text-danger ti ti-trash me-1" id="confrim-color(' . $row->id . ')" 
+                onclick="showDelete(' . $row->id . ');"></i>';
+                return $html;
+            })->toJson();
+    }
+}

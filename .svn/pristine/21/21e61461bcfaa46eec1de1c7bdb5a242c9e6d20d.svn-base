@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Masters;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class EmployeeController extends Controller
+{
+  public function employee()
+  {
+    return view('admin.masters.employee.employee');
+  }
+
+  public function employeeList()
+  {
+    return view('admin.masters.employee.employee_list');
+  }
+}

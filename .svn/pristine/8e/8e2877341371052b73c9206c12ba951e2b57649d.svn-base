@@ -1,0 +1,139 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Dashboard | Hub Orders
+@endsection
+
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-1 mb-4">
+        <span class="text-muted fw-light">Order Management /</span> Hub Orders
+    </h4>
+    <div class="card">
+        <div class="card-body">
+            <form class="browser-default-validation">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label" for="basic-default-name">State Name</label>
+                            <select name="" id="" class="select2 form-select form-select-lg">
+                                <option value="">Select</option>
+                                <option value="TN">Tamilnadu</option>
+                                <option value="KL">Kerala</option>
+                                <option value="AP">Andra Pradesh</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label" for="basic-default-email">City Name</label>
+                            <select name="" id="" class="select2 form-select form-select-lg">
+                                <option value="">Select</option>
+                                <option value="CBE">Coimbatore</option>
+                                <option value="KL">kollam</option>
+                                <option value="TR">Tirupati</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label" for="basic-default-email">Hub Name</label>
+                            <select name="" id="" class="select2 form-select form-select-lg">
+                                <option value="">Select</option>
+                                <option value="Hub1">Hub1</option>
+                                <option value="HUB2">Hub2</option>
+                                <option value="HUB3">Hub3</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mt-4">
+                        <label>&nbsp;</label>
+                        <button type="button" class="btn btn-flat btn-primary" id="btnDate"
+                            style="height: 36px;">
+                            <i class="fa fa-calendar"></i>
+                            <span id="spnDate" style="padding-left: 5px;">Today</span>
+                            <i class="fa fa-caret-down"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- DataTable with Buttons -->
+    <div class="col-lg-12 mb-4 mb-lg-0">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between">
+                <h5 class="card-title m-0 me-2">Recent Orders</h5>
+            </div>
+            <div class="card-datatable table-responsive pt-0">
+                <table id="huborders" class="table">
+                    <thead class="border-bottom">
+                        <tr>
+                            <th>S.No</th>
+                            <th>HUB NAME</th>
+                            <th>EMAIIL</th>
+                            <th>ACTION</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Roshan Water Hub
+                                <div class="text-muted p-1">
+                                    <small class="bg-light p-1">9876543210</small>
+                                </div>
+                            </td>
+                            <td>Roshan@gchub.com</td>
+                            <td>
+                                <a href="{{route('huborders-view')}}" class="btn btn-primary">View</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Roshini Water Hub
+                                <div class="text-muted p-1">
+                                    <small class="bg-light p-1">9985224145</small>
+                                </div>
+                            </td>
+                            <td>Roshini@gchub.com</td>
+                            <td>
+                                <a href="{{route('huborders-view')}}" class="btn btn-primary">View</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Vasan Water Hub
+                                <div class="text-muted p-1">
+                                    <small class="bg-light p-1">9955220088</small>
+                                </div>
+                            </td>
+
+                            <td>Vasan@gchub.com</td>
+                            <td>
+                                <a href="{{route('huborders-view')}}" class="btn btn-primary">View</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Vetri Water Hub
+                                <div class="text-muted p-1">
+                                    <small class="bg-light p-1">9966210354</small>
+                                </div>
+                            </td>
+                            <td>Vetri@gchub.com</td>
+                            <td>
+                                <a href="{{route('huborders-view')}}" class="btn btn-primary">View</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--/ DataTable with Buttons -->
+</div>
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/orders/huborders.js') }}"></script>
+@endsection

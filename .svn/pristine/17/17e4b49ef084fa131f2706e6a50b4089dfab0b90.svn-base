@@ -1,0 +1,179 @@
+$(document).ready(function () {
+    $("#employee").DataTable();
+});
+
+$(function () {
+    $("form[name='employee']").validate({
+        rules: {
+            txtEmpId: "required",
+            txtEmployeeName: "required",
+            txtFatherName: "required",
+            rdGender: "required",
+            txtPan: "required",
+            txtPersonalMobile: "required",
+            txtOfficialMobile: "required",
+            txtPersonalEmail: "required",
+            txtOfficialEmail: "required",
+            dtDob: "required",
+            txtNationality: "required",
+            txtNationalityStatus: "required",
+            ddlCommCountry: "required",
+            ddlCommState: "required",
+            ddlCommCity: "required",
+            ddlCommArea: "required",
+            txtCmmDoorNo: "required",
+            txtCommPincode: "required",
+            ddlPermCountry: "required",
+            ddlPermState: "required",
+            ddlPermCity: "required",
+            ddlPermArea: "required",
+            txtPermDoorNo: "required",
+            txtPermPincode: "required",
+            txtMobile1: "required",
+            txtMobile2: "required",
+            txtAccountName: "required",
+            txtAccountNumber: "required",
+            txtBankName: "required",
+            txtBranchName: "required",
+            txtIfscCode: "required",
+            txtBankName: "required",
+            filePan: "required",
+            filePassport: "required",
+            fileEmployeeImage: "required",
+            ddlDepartment: "required",
+            ddlDesignation: "required",
+            ddlAssetName: "required",
+            ddlIssuerBy: "required",
+            ddlAuthorisedBY: "required",
+            ddlReportingTo: {
+                required: true,
+            },
+            txtPackage: "required",
+            dtDoj: "required",
+            mailCompanyMail: "required",
+            txtCompanyMobile: "required",
+            ddlOriginalsGiven: {
+                required: true,
+            },
+            ddlOriginalReceived: {
+                required: true,
+            },
+            ddlOriginalVerified: {
+                required: true,
+            },
+        },
+        messages: {
+            prev_company_exp_yrs: "Please enter Integers",
+            password: {
+                required: "Please provide a password",
+                minlength: "Your password must be at least 6 characters long",
+            },
+            ddlCommCity: "Please enter your city",
+            rdGender: "This field is required",
+        },
+        errorPlacement: function (error, element) {
+            if (element.is(":radio")) {
+                error.appendTo(element.parents(".form-group"));
+            } else {
+                // This is the default behavior
+                error.insertAfter(element);
+            }
+        },
+        submitHandler: function (form) {
+            form.submit();
+        },
+    });
+});
+
+$(".county_chnage").change(function (e) {
+    e.preventDefault();
+    if ($(this).attr("id") != "ddlPermCountry") {
+        var stateid = "ddlCommState";
+    } else {
+        var stateid = "ddlPermState";
+    }
+    $.ajaxSetup({
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        },
+    });
+    $.ajax({
+        url: "{{ route('get-states') }}",
+        type: "POST",
+        data: {
+            id: $(this).val(),
+        },
+        success: function (data) {
+            var selOpts = "<option>Select</option>";
+            $.each(data, function (k, v) {
+                var id = data[k].id;
+                var val = data[k].state_name;
+                selOpts += "<option value='" + id + "'>" + val + "</option>";
+            });
+            $("#" + stateid).html(selOpts);
+        },
+    });
+});
+
+$(".state_chnage").change(function (e) {
+    e.preventDefault();
+    if ($(this).attr("id") != "ddlPermState") {
+        var stateid = "ddlCommCity";
+    } else {
+        var stateid = "ddlPermCity";
+    }
+    $.ajaxSetup({
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        },
+    });
+    $.ajax({
+        url: "{{ route('get-city') }}",
+        type: "POST",
+        data: {
+            id: $(this).val(),
+        },
+        success: function (data) {
+            var selOpts = "<option>Select</option>";
+            $.each(data, function (k, v) {
+                var id = data[k].id;
+                var val = data[k].city_name;
+                selOpts += "<option value='" + id + "'>" + val + "</option>";
+            });
+            $("#" + stateid).html(selOpts);
+        },
+    });
+});
+
+$(".city_chnage").change(function (e) {
+    e.preventDefault();
+    if ($(this).attr("id") != "ddlPermCity") {
+        var stateid = "ddlCommArea";
+    } else {
+        var stateid = "ddlPremArea";
+    }
+    $.ajaxSetup({
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        },
+    });
+    $.ajax({
+        url: "{{ route('get-area') }}",
+        type: "POST",
+        data: {
+            id: $(this).val(),
+        },
+        success: function (data) {
+            var selOpts = "<option>Select</option>";
+            if (data.length == 0) {
+                selOpts += "<option value='0'>Nothing</option>";
+            }
+            $.each(data, function (k, v) {
+                var id = data[k].id;
+                var val = data[k].area_name;
+                selOpts += "<option value='" + id + "'>" + val + "</option>";
+            });
+            $("#" + stateid).html(selOpts);
+        },
+    });
+});

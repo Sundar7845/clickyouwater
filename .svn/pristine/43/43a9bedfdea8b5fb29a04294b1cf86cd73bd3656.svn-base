@@ -1,0 +1,12 @@
+$("form").on("submit", function(event) {
+    if (this.checkValidity()) {
+        event.preventDefault();
+        $("#pageloader").fadeIn();
+        this.submit();
+    }
+});
+
+function editWithLoader(id) {
+    $("#pageloader").fadeIn();
+    doEdit(id);
+}

@@ -1,0 +1,106 @@
+var isEdit = false;
+$(document).ready(function () {
+    BindCity();
+});
+
+$("#ddlCity,#ddlOfferName").on("change", function () {
+    var offer_id = $("#ddlOfferName").val();
+    var city_id = $("#ddlCity").val();
+
+    getofferallocation(offer_id, city_id);
+});
+
+
+function getofferallocation(offer_id, city_id) {
+    $.ajax({
+        url: "/get/offerallocation/hubs",
+        type: "POST",
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        },
+        data: {
+            offer_id: offer_id,
+            city_id: city_id,
+            _token: $('meta[name="csrf-token"]').attr("content"),
+        },
+        dataType: "json",
+        success: function (data) {
+            console.log(data);
+            var html = '';
+            $.each(data, function (key, value) {
+                var checkboxId = 'defaultCheck' + key;
+                var inputId = 'txtPointsAllocated' + key;
+                html += '<tr>';
+                html += '<td><div class="form-check"><input class="form-check-input" name="' + checkboxId + '" type="checkbox" value="' + value.id + '" id="' + checkboxId + '"></div></td>';
+                html += '<td>' + value.hub_name + '</td>';
+                html += '<td><input type="text" name="' + inputId + '" id="' + inputId + '" class="form-control txtPointsAllocated" value="' + value.points_allocated + '" placeholder="Enter Points"></td>';
+                html += '<td>50</td>';
+                html += '</tr>';
+            });
+            html += '</form>';
+            $('#tbodyOfferallocate').html(html);
+
+            // Show/hide txtPointsAllocated input field based on checkbox state
+            $('input[name^="defaultCheck"]').on('change', function () {
+                var inputId = '#txtPointsAllocated' + $(this).attr('name').substr(12);
+                if ($(this).is(':checked')) {
+                    $(inputId).prop('readonly', false);
+                } else {
+                    $(inputId).prop('readonly', true);
+                }
+            });
+        }
+    });
+}
+
+var hub_ids = []; // create an empty array to store checked hub names
+var hub_points_allocated = []; // create an empty array to store txtPointsAllocated values
+// Handle form submission
+function validateData() {
+    //hub points allocated
+    $('.txtPointsAllocated').each(function () {
+        if ($(this).closest('tr').find('input[type="checkbox"]').is(':checked')) {
+            hub_points_allocated.push($(this).val());
+        }
+    });
+    //hub Name
+    $('input[name^="defaultCheck"]').each(function (index) {
+        if ($(this).is(':checked')) {
+            //   var hub_id = $(this).attr('id');
+            hub_ids.push($(this).val());
+            // var points = '#txtPointsAllocated_' + hub_id;
+            // hub_points_allocated.push(points);
+        }
+    });
+    $('#hdSelHubIds').val(JSON.stringify(hub_ids));
+    $('#hdSelHubPoints').val(JSON.stringify(hub_points_allocated));
+    return true;
+}
+
+
+// jquery Validation
+$(function () {
+    $("form[name='offer_allocate']").validate({
+        rules: {
+            ddlOfferName: "required",
+            ddlState: "required",
+            ddlCity: "required",
+        },
+        messages: {
+            required: "This field is required",
+        },
+        errorPlacement: function (error, element) {
+            if (element.is(":radio")) {
+                error.appendTo(element.parents(".form-group"));
+            } else {
+                // This is the default behavior
+                // error.insertAfter(element);
+                if (element.siblings(".error").html() == undefined) {
+                    error.appendTo(element.parent().next(".error"));
+                } else {
+                    error.appendTo(element.siblings(".error"));
+                }
+            }
+        },
+    });
+});

@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Http\Controllers\OrderManagement;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class CancelledOrdersController extends Controller
+{
+    public function CancelledOrders()
+    {
+      return view('order_management.cancelled_orders.cancelled_orders');
+    }
+}

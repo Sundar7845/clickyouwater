@@ -1,0 +1,76 @@
+<?php
+
+namespace App\Http\Controllers\API;
+
+use App\Http\Controllers\Controller;
+use App\Models\PaymentGatewaySettings;
+use App\Models\PaymentMethod;
+use App\Models\PaymentMethodConfig;
+use App\Traits\Common;
+use App\Traits\ResponseAPI;
+
+class PaymentMethodsController extends Controller
+{
+    use Common;
+    use ResponseAPI;
+
+    // This method gets the payment methods for a specific customer type
+    public function getPaymentMethods($id)
+    {
+        try {
+            // Query the PaymentMethodConfig model to get the payment methods for the specified customer type
+            $paymentmethods = PaymentMethodConfig::where('customer_type_id', $id)
+                ->value('payment_method_id');
+
+            $paymentmethods = explode(',', $paymentmethods);
+            $pay_method = [];
+            foreach ($paymentmethods as $paymentmethod) {
+                //Get payment settings value for payment method
+                $pg_settings = PaymentGatewaySettings::where('payment_method_id', $paymentmethod)
+                    ->value('value');
+                //Convert the payment settings value from json to array
+                $pay_method_res = json_decode($pg_settings, true);
+                //Check payment method is active or not
+                if ($pay_method_res['status'] == 1) {
+                    //Get payment method details
+                    $paymentMethod = PaymentMethod::find($paymentmethod, ['id', 'payment_method']);
+                    if ($paymentMethod) {
+                        $pay_method[] = $paymentMethod->toArray();
+                    }
+                }
+            }
+
+            // Build a response with the payment methods and a success status
+            $response = [
+                'status' => true,
+                'data' => $pay_method,
+            ];
+            // Return the response with a 200 status code
+            return response($response, 200);
+        } catch (\Exception $e) {
+            // Log any exceptions that occur and return an error response with a 200 status code
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+    // This method gets the payment gateway settings for a specific payment method
+    public function getPaymentGatewaySettings($id)
+    {
+        try {
+            // Query the PaymentGatewaySettings model to get the payment gateway settings for the specific payment method
+            $paymentgateways = PaymentGatewaySettings::where('payment_method_id', $id)
+                ->value('value');
+            // Build a response with the payment gateway settings and a success status
+            $response = [
+                'status' => true,
+                'data' => ($paymentgateways ? json_decode($paymentgateways, true) : null),
+            ];
+            // Return the response with a 200 status code
+            return response($response, 200);
+        } catch (\Exception $e) {
+            // Log any exceptions that occur and return an error response with a 200 status code
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+}

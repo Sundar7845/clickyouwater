@@ -1,0 +1,33 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class DocumentConfig extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'documenttype_id',
+        'documentmodule_id',
+        'is_mandatory',
+        'is_active'
+    ];
+
+    public function documentType()
+    {
+        return $this->belongsTo(DocumentType::class, 'documenttype_id', 'id');
+    }
+
+    public function documentModule()
+    {
+        return $this->belongsTo(DocumentModules::class, 'documentmodule_id', 'id');
+    }
+
+    public function manufactureDocuments()
+    {
+        return $this->belongsTo(ManufacturerDocuments::class,'documenttype_id','documenttype_id');
+    }
+}

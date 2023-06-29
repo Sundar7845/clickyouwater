@@ -1,0 +1,103 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Settings;
+
+use App\Http\Controllers\Controller;
+use App\Models\RefferalSettings;
+use App\Traits\Common;
+use Carbon\Carbon;
+use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+
+class RefferalSettingsController extends Controller
+{
+    use Common;
+    public function referralSettings()
+    {
+        try {
+            $refferalsettings = RefferalSettings::first();
+            return view('admin.settings.refferal_settings', compact('refferalsettings'));
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function addReferralPoints(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'txtReferralContent' => 'required',
+            'txtPointsforEachreferral' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return redirect()->back()->withInput()->withErrors($validator);
+        }
+
+        DB::beginTransaction();
+        try {
+            if ($request->id == "new") {
+
+                if ($request->hasFile('fileReferral_banner')) {
+                    $file = $request->file('fileReferral_banner');
+                    if ($file != null) {
+                        $extension = $file->getClientOriginalExtension();
+                        $fileName = $this->generateRandom(16) . '.' . $extension;
+                    } else {
+                        throw new Exception('Banner Image Is Null');
+                    }
+                }
+
+                RefferalSettings::insertGetId([
+                    'referral_content' => $request->txtReferralContent,
+                    'earnpoints_per_referral' => $request->txtPointsforEachreferral,
+                    'referral_banner_path' => $this->fileUpload($file, 'upload/settings/referral', $fileName),
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now()
+                ]);
+
+                $notification = array(
+                    'message' => 'RefferalSettings Created Successfully!',
+                    'alert-type' => 'success'
+                );
+            } else {
+
+                $oldImage = $request->hdfileReferralbanner;
+                if ($request->hasFile('fileReferral_banner')) {
+                    $file = $request->file('fileReferral_banner');
+                    if ($file != null) {
+                        @unlink($oldImage);
+                        $extension = $file->getClientOriginalExtension();
+                        $fileName = $this->generateRandom(16) . '.' . $extension;
+                        $folderPath = dirname($oldImage); // Use the same folder path as the old image
+                    } else {
+                        throw new Exception('Banner Image Is Null');
+                    }
+                }
+
+                RefferalSettings::findOrFail($request->id)->update([
+                    'referral_content' => $request->txtReferralContent,
+                    'earnpoints_per_referral' => $request->txtPointsforEachreferral,
+                    'referral_banner_path' => $request->hasFile('fileReferral_banner') ? $this->fileUpload($file, $folderPath, $fileName) : $oldImage,
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now()
+                ]);
+
+                $notification = array(
+                    'message' => 'RefferalSettings Updated Successfully!',
+                    'alert-type' => 'success'
+                );
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            $notification = array(
+                'message' => 'RefferalSettings Not Updated!',
+                'alert-type' => 'error'
+            );
+            $this->Log(__FUNCTION__, $request->method(), $e->getMessage(), Auth::user()->id, $request->ip(), gethostname());
+        }
+        return redirect()->route('referral-points')->with($notification);
+    }
+}

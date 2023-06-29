@@ -1,0 +1,26 @@
+<?php
+
+namespace App\Enums;
+
+use Illuminate\Validation\Rules\Enum;
+
+final class RoleTypes extends Enum
+{
+    const SuperAdmin = "1";
+    const Admin = "2";
+    const Manufacture = "3";
+    const Hub = "4";
+    const RegionalManager = "5";
+    const AreaManager = "6";
+    const SalesHead = "7";
+    const FinanceHead = "8";
+    const AccountsHead = "9";
+    const Accounts = "10";
+    const ManufactureIncharge = "11";
+    const HubIncharge = "12";
+    const LogisticsIncharge = "13";
+    const BackOfficeSupport = "14";
+    const Customer = "15";
+    const LogisticPartner = "16";
+    const DeliveryPerson = "17";
+}

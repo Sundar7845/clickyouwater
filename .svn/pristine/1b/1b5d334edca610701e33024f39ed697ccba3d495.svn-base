@@ -1,0 +1,97 @@
+$(document).ready(function () {
+    $("#tblWalletTransactionThrough").DataTable({
+        processing: true,
+        serverSide: true,
+        responsive: true,
+        order: [[0, "ASC"]],
+        ajax: "wallet_transaction_thourgh_data/data",
+        fnRowCallback: function (nRow, aData, iDisplayIndex) {
+            $("td:first", nRow).html(iDisplayIndex + 1);
+            return nRow;
+        },
+
+        columns: [
+            { data: "id" },
+            { data: "wallet_transaction_type" },
+            { data: "msg_format" },
+            { data: "action" },
+        ],
+    });
+});
+
+function doEdit(id) {
+    $("#hdWalletTransactionTypeId").val(id);
+    $("#ddlwalletTransactionType").focus();
+    $("#btnSave").text("Update");
+    getWalletTransactionThroughById(id);
+}
+
+function getWalletTransactionThroughById(id) {
+    $.ajax({
+        type: "GET",
+        url: "getwallettransactionthrough/" + id,
+        dataType: "json",
+        success: function (data) {
+            $("#ddlwalletTransactionType").val(data.wallettransactionthrough.wallet_transaction_type_id).trigger("change");
+            $("#txtMessageFormat").val(data.wallettransactionthrough.msg_format);
+        },
+    });
+}
+
+function cancel() {
+    $("#hdWalletTransactionTypeId").val("");
+    $("#ddlwalletTransactionType").val("").trigger("change");
+    $("#txtMessageFormat").val("");
+    $("#btnSave").text("Save");
+    $("#ddlwalletTransactionType").focus();
+}
+
+function showDelete(id) {
+    confirmDelete(id, "delete/wallettransactionthrough/", "tblWalletTransactionThrough");
+}
+
+function BindAssetId() {
+    $("#ddlAssetType").on("change", function () {
+        var asset_type_id = this.value;
+        $("#txtAssetPrefix").html("");
+        $.ajax({
+            url: "get/assetid",
+            type: "POST",
+            data: {
+                asset_type_id: asset_type_id,
+                _token: $('meta[name="csrf-token"]').attr("content"),
+            },
+            dataType: "json",
+            success: function (data) {
+                if (data.assetid == "") {
+                    $("#txtAssetPrefix").val("");
+                } else {
+                    $("#txtAssetPrefix").val(data.assetid);
+                }
+            },
+        });
+    });
+}
+
+//jquery Validation
+$(function () {
+    $("#walletTransactionType").validate({
+        rules: {
+            ddlwalletTransactionType: "required",
+            txtMessageFormat: "required",
+        },
+        errorPlacement: function (error, element) {
+            if (element.is(":radio")) {
+                error.appendTo(element.parents(".form-group"));
+            } else {
+                // This is the default behavior
+                // error.insertAfter(element);
+                if (element.siblings(".error").html() == undefined) {
+                    error.appendTo(element.parent().next(".error"));
+                } else {
+                    error.appendTo(element.siblings(".error"));
+                }
+            }
+        },
+    });
+});

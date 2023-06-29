@@ -1,0 +1,250 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Orders Details | Click Your Order | Dashboard
+@endsection
+
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-1 mb-4">
+        Orders Details
+    </h4>
+    <div class="row">
+        <!-- Invoice -->
+        <div class="col-xl-12 col-md-12 col-12 mb-md-0 mb-4">
+            <div class="card invoice-preview-card">
+                <div class="card-body">
+                    <div
+                        class="d-flex justify-content-between flex-xl-row flex-md-column flex-sm-row flex-column m-sm-3 m-0">
+                        <div class="mb-xl-0 mb-4">
+                            <div class="d-flex svg-illustration mb-3 gap-2 align-items-center">
+                                <img src="{{ asset('assets/img/layouts/logos.jpeg') }}" width="200" height="200"
+                                    class="img-fluid img-responsive" alt="">
+                            </div>
+                            <p class="mb-0">{{ $company_address->company_name }}</p>
+                            <p class="mb-0">{{ $company_address->company_address }}.</p>
+                            <p class="mb-0">Email : {{ $company_address->company_email }}</p>
+                            <p class="mb-0">GSTIN : {{ $company_address->gstin }}</p>
+                        </div>
+                        <div>
+                            @isset($customeraddress['invoice_no'])
+                                <h4 class="fw-semibold mb-2">INVOICE #{{ $customeraddress['invoice_no'] }}</h4>
+                            @endisset
+                            <div class="pt-1">
+                                <span>Order No:</span>
+                                <span class="fw-semibold">{{ $customeraddress['order_no'] }}</span>
+                            </div>
+                            <div class="pt-1">
+                                <span>Order Date:</span>
+                                <span class="fw-semibold">{{ $customeraddress['transaction_date'] }}</span>
+                            </div>
+                            <div class="pt-1">
+                                <span>Order Status:</span>
+                                <span
+                                    class="fw-semibold badge bg-label-{{ $customeraddress['status_color_css'] }}">{{ $customeraddress['status_name'] }}</span>
+                                <div class="text-muted p-1">
+                                    {{-- pending work extra kilometer --}}
+                                    {{-- <small class="bg-light p-1">extra km : 5</small> --}}
+                                </div>
+                            </div>
+                            <div class="pt-1">
+                                <span>Payment Through:</span>
+                                <span
+                                    class="fw-semibold badge bg-label-{{ $customeraddress['payment_through'] === 'Razorpay' ? 'success' : 'warning' }}">{{ $customeraddress['payment_through'] }}</span>
+                            </div>
+                            @isset($customeraddress['transaction_status'])
+                                <div class="pt-1">
+                                    <span>Payment Status:</span>
+                                    <span
+                                        class="fw-semibold badge {{ $customeraddress['transaction_status'] === 'Failed' ? 'bg-label-danger' : 'bg-label-success' }}">
+                                        {{ $customeraddress['transaction_status'] }}
+                                    </span>
+                                </div>
+                            @endisset
+                            @isset($customeraddress['transaction_id'])
+                                <div class="mb-2 pt-1">
+                                    <span>Transaction ID:</span>
+                                    <span class="fw-semibold">{{ $customeraddress['transaction_id'] }}</span>
+                                </div>
+                            @endisset
+                        </div>
+                    </div>
+                </div>
+                <hr class="my-0" />
+                <div class="card-body">
+                    <div class="row p-sm-3 p-0">
+                        <div class="col-xl-8 col-md-8 col-sm-5 col-12 mb-xl-0 mb-md-4 mb-sm-0 mb-4">
+                            <h6 class="mb-3">Delivered to</h6>
+                            <p class="mb-1">
+                                {{ $customeraddress['delivery_address']['delivery_address'] }},
+                                {{ $customeraddress['delivery_address']['city'] }},{{ $customeraddress['delivery_address']['stateName'] }}-{{ $customeraddress['delivery_address']['pincode'] }}.
+                            </p>
+                            <div class="py-2">
+                                <div class="d-flex">
+                                    <div><img src="{{ asset('assets/img/icons/ico_floor.png') }}"></div>
+                                    <div class="fw-semibold">
+                                        <span
+                                            class="badge bg-label-info">{{ $customeraddress['delivery_address']['floor'] }}</span>
+                                    </div>
+                                    <div class="mx-2 d-flex">
+                                        <div><img src="{{ asset('assets/img/icons/ico_lift.png') }}"></div>
+                                        <div class="fw-semibold">
+                                            @if ($customeraddress['delivery_address']['isLiftAvailWorking'] == 0)
+                                                <span class="badge bg-label-danger">Not Available</span>
+                                            @else
+                                                <span class="badge bg-label-success">Available</span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="mb-1">{{ $customeraddress['delivery_address']['contactPersonName'] }}</p>
+                            <p class="mb-1">+91 {{ $customeraddress['delivery_address']['contactPersonMobile'] }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table m-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Product Name</th>
+                                    <th>HSN/SAC</th>
+                                    <th>Price</th>
+                                    <th>Return Can Qty</th>
+                                    <th>Qty</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($orderdetails as $item)
+                                    <tr>
+                                        <td class="text-nowrap"><img src="{{ asset($item->product_image) }}"
+                                                width="100" height="100"></td>
+                                        <td class="text-nowrap">{{ $item->product_name }}</td>
+                                        <td>{{ $item->hsn_sac_code }}</td>
+                                        <td>₹{{ $item->price }}</td>
+                                        <td>{{ $item->return_empty_cans_qty }}</td>
+                                        <td>{{ $item->qty }}</td>
+                                        <td>₹{{ $item->price * $item->qty }}</td>
+                                    </tr>
+                                @endforeach
+                                <tr>
+                                    <td class="py-3">
+                                        @isset($customeraddress['delivery_desc'])
+                                            <h6>Delivery Instructions</h6>
+                                            <p class="mb-1">{{ $customeraddress['delivery_desc'] }}</p>
+                                        @endisset
+                                        @isset($customeraddress['delivery_details'][0]['customer_rating'])
+                                            @if ($customeraddress['delivery_details'][0]['customer_rating'] > 0)
+                                                <h6>Customer Rating</h6>
+                                                <div class="read-only-ratings" data-rateyo-read-only="true">
+                                                    <input type="hidden" id="hdRating"
+                                                        value="{{ $customeraddress['delivery_details'][0]['customer_rating'] }}">
+                                                    {{ $customeraddress['delivery_details'][0]['customer_rating'] }}
+                                                </div>
+                                            @endif
+                                        @endisset
+                                        @isset($customeraddress['delivery_details'][0]['floor'])
+                                            @if (count($customeraddress['delivery_details']) > 0)
+                                                <h6>Delivery Details Update</h6>
+                                                <p>Delivery Partner updated your details for this order</p>
+                                                <div class="py-2">
+                                                    <div class="d-flex">
+                                                        <div><img src="{{ asset('assets/img/icons/ico_floor.png') }}">
+                                                        </div>
+                                                        <div class="fw-semibold">
+                                                            <span
+                                                                class="badge bg-label-info">{{ $customeraddress['delivery_details'][0]['floor'] }}</span>
+                                                        </div>
+                                                        <div class="mx-2 d-flex">
+                                                            <div><img src="{{ asset('assets/img/icons/ico_lift.png') }}">
+                                                            </div>
+                                                            <div class="fw-semibold">
+                                                                @if ($customeraddress['delivery_details'][0]['is_lift'] == 0)
+                                                                    <span class="badge bg-label-danger">Not Available</span>
+                                                                @else
+                                                                    <span class="badge bg-label-success">Available</span>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        @endisset
+                                    </td>
+                                    <td colspan="5" class="text-end px-4 py-3">
+                                        <p class="mb-2">Subtotal:</p>
+                                        <p class="mb-2">Delivery Charges:</p>
+                                        @if ($order->additional_delivery_charge > 0)
+                                            <p class="mb-2">Additional Delivery Charges:</p>
+                                        @endif
+                                        @if ($order->deposit_amount > 0)
+                                            <p class="mb-2">New Can Deposit:</p>
+                                        @endif
+                                        @if ($order->total_igst_amount > 0)
+                                            <p class="mb-2">GST:</p>
+                                        @endif
+                                        <p class="mb-2">Grand Total:</p>
+                                        @if ($order->wallet_points_used > 0)
+                                            <p class="mb-2">Wallet Points Used(-):</p>
+                                        @endif
+                                        <p class="mb-2">Total Payable:</p>
+                                        @if ($order->total_discount_amount > 0)
+                                            <p class="mb-2">Coupon Discount(-):</p>
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <p class="fw-bold mb-2">₹{{ round($order->sub_total) }}</p>
+                                        <p class="fw-bold mb-2">₹{{ round($order->delivery_charge) }}</p>
+                                        @if ($order->additional_delivery_charge > 0)
+                                            <p class="fw-bold mb-2">₹{{ round($order->additional_delivery_charge) }}
+                                            </p>
+                                        @endif
+                                        @if ($order->deposit_amount > 0)
+                                            <p class="fw-bold mb-2">₹{{ round($order->deposit_amount) }}</p>
+                                        @endif
+                                        @if ($order->total_igst_amount > 0)
+                                            <p class="fw-bold mb-2">₹{{ round($order->total_igst_amount) }}</p>
+                                        @endif
+                                        <p class="fw-bold mb-2">₹{{ round($order->grand_total) }}</p>
+                                        @if ($order->wallet_points_used > 0)
+                                            <p class="fw-bold mb-2">₹{{ round($order->wallet_points_used) }}</p>
+                                        @endif
+                                        <p class="fw-bold mb-2">₹{{ round($order->transaction_amount) }}</p>
+                                        @if ($order->total_discount_amount > 0)
+                                            <p class="fw-bold mb-2">₹{{ round($order->total_discount_amount) }}</p>
+                                        @endif
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Invoice -->
+    </div>
+</div>
+<!-- / Content -->
+@endsection
+@section('footer')
+<script>
+    $(document).ready(function() {
+        var rating = $("#hdRating").val();
+        var readOnlyRatings = $('.read-only-ratings');
+        // Read Only Ratings
+        // --------------------------------------------------------------------
+        if (readOnlyRatings) {
+            readOnlyRatings.rateYo({
+                rating: rating,
+                rtl: isRtl,
+                spacing: '8px',
+                starHeight: '20px',
+                starWidth: '20px',
+            });
+        }
+    });
+</script>
+@endsection

@@ -1,0 +1,18 @@
+<?php
+
+namespace App\Enums;
+
+use Illuminate\Validation\Rules\Enum;
+
+final class NotificationStrReplace extends Enum
+{
+    const OrderPlaced = "{{orderno}}";
+    const PaymentSuccess = "{{invoiceno}}";
+    const PaymentFailed = "{{invoiceno}}";
+    const WholesaleCustomerApproved = "{{orderno}}";
+    const WholesaleCustomerRejected = "{{orderno}}";
+    const InvoiceDownloaded = "{{invoiceno}}";
+    const OrderCancelled = "{{orderno}}";
+    const OrderShipped = "{{orderno}}";
+    const OrderDelivered = "{{orderno}}";
+}

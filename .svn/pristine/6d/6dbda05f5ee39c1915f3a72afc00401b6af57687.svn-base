@@ -1,0 +1,95 @@
+//DataTable
+$(document).ready(function () {
+    $("#tblDesignation").DataTable({
+        processing: true,
+        serverSide: true,
+        order: [[0, "ASC"]],
+        ajax: "designation/data", "fnRowCallback": serialNoCount,
+        columns: [
+            { data: "id", orderable: false },
+            { data: "designation_name" },
+            {
+                data: "is_active",
+                render: function (data, type, row) {
+                    return `<label class="switch">
+                        <input onclick="doStatus(${
+                            row.id
+                        });" id="chkDesignation${
+                        row.id
+                    }" type="checkbox" class="switch-input"
+                        name="chkDesignation" '  ${
+                            data == 1 ? "checked" : ""
+                        } ' />
+                        <span class="switch-toggle-slider">
+                            <span class="switch-on"></span>
+                            <span class="switch-off"></span>
+                        </span>
+                    </label>`;
+                },
+            },
+            { data: "action", orderable: false },
+        ],
+    });
+
+});
+
+//Edit Data
+function doEdit(id) {
+    $("#hdDesignationId").val(id);
+    $("#txtDesignationName").focus();
+    $("#designationTittle").text("Update Designation");
+    $("#btnSave").text("Update");
+    getDesignationById(id);
+}
+
+//Update Status
+function doStatus(id) {
+    var status = $("#chkDesignation" + id).is(":checked");
+    confirmStatusChange(
+        id,
+        "designation/",
+        "tblDesignation",
+        status == true ? 1 : 0,
+        "chkDesignation"
+    );
+}
+
+//Delete Data
+function showDelete(id) {
+    confirmDelete(id, "delete/designation/", "tblDesignation");
+}
+
+//Get Designation
+function getDesignationById(id) {
+    $("#pageloader").fadeIn();
+    $.ajax({
+        type: "GET",
+        url: "getdesignation/" + id,
+        dataType: "json",
+        success: function (data) {
+            console.log(data);
+            $("#txtDesignationName").val(data.designation.designation_name);
+            $("#pageloader").fadeOut();
+        },
+    });
+}
+
+//Cancel
+function cancel() {
+    $("#designationTittle").text("Designation");
+    $("#hdDesignationId").val("");
+    $("#txtDesignationName").val("");
+    $("#txtDesignationName").focus();
+    $("#btnSave").text("Save");
+}
+
+// jquery Validation
+$(function () {
+    $("form[name='designation']").validate({
+        rules: {
+            txtDesignationName: "required",
+        },
+    });
+});
+
+

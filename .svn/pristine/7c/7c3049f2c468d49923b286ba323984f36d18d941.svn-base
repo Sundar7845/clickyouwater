@@ -1,0 +1,441 @@
+$(document).ready(function () {
+    ImgUpload();
+    loadVehicle();
+
+    //Check user mobile  if already exists
+    $("#txtDeliveryPersonMobile").on("focusout", function (e) {
+        var mobileNumber = $(this).val();
+        checkMobileNumberExists(mobileNumber, function (result) {
+            if (result == true) {
+                $("#txtDeliveryPersonMobile").val("");
+                $("#txtDeliveryPersonMobile").focus();
+            }
+        });
+    });
+});
+
+// $("#ddlFilterState,#ddlFilterCity,#ddlFilterArea,#ddlFilterhub").change(
+//     function () {
+//         listDeliveryPerson();
+//     }
+// );
+
+// function listDeliveryPerson() {
+//     var state_id =
+//         $("#ddlFilterState option:selected").val() == undefined
+//             ? 0
+//             : $("#ddlFilterState option:selected").val();
+//     var city_id =
+//         $("#ddlFilterCity option:selected").val() == undefined
+//             ? 0
+//             : $("#ddlFilterCity option:selected").val();
+//     var area_id =
+//         $("#ddlFilterArea option:selected").val() == undefined
+//             ? 0
+//             : $("#ddlFilterArea option:selected").val();
+//     var hub_id =
+//         $("#ddlFilterhub option:selected").val() == undefined
+//             ? 0
+//             : $("#ddlFilterhub option:selected").val();
+//     $("#tblDeliveryPerson").DataTable({
+//         processing: true,
+//         serverSide: true,
+//         searching: true,
+//         order: [[0, "ASC"]],
+//         bDestroy: true,
+//         ajax:
+//             "delivery/person/data?state_id=" +
+//             state_id +
+//             "&city_id=" +
+//             city_id +
+//             "&area_id=" +
+//             area_id +
+//             "&hub_id=" +
+//             hub_id,
+//         fnRowCallback: function (nRow, aData, iDisplayIndex) {
+//             $("td:first", nRow).html(iDisplayIndex + 1);
+//             return nRow;
+//         },
+//         columns: [
+//             { data: "id" },
+//             { data: "delivery_person_code" },
+//             {
+//                 data: "delivery_person_image",
+//                 render: function (data) {
+//                     return (
+//                         '<img src="' +
+//                         data +
+//                         '" class="avatar" width="50" height="50"/>'
+//                     );
+//                 },
+//             },
+//             { data: "delivery_person_name" },
+//             { data: "hub_name" },
+//             {
+//                 data: "rating",
+//                 render: function (data, type, row) {
+//                     return `<div class= "read-only-ratings" data - rateyo - read - only="true"> </div>`;
+//                 },
+//             },
+//             {
+//                 data: "is_active",
+//                 render: function (data, type, row) {
+//                     return `<label class="switch">
+//                 <input onclick="doStatus(${row.id});" id="chkDeliveryPerson${
+//                         row.id
+//                     }" type="checkbox" class="switch-input"
+//                 name="chkDeliveryPerson" '  ${data == 1 ? "checked" : ""} ' />
+//                 <span class="switch-toggle-slider">
+//                     <span class="switch-on"></span>
+//                     <span class="switch-off"></span>
+//                 </span>
+//                 </label>`;
+//                 },
+//             },
+//             { data: "action" },
+//         ],
+//     });
+// }
+
+//Status update
+// function doStatus(id) {
+//     var status = $("#chkDeliveryPerson" + id).is(":checked");
+//     if (status == true) {
+//         $("#chkDeliveryPerson").val(1);
+//         status = 1;
+//     } else {
+//         $("#chkDeliveryPerson").val(0);
+//         status = 0;
+//     }
+//     confirmStatusChange(id, "deliveryperson/", "tblDeliveryPerson", status);
+// }
+
+function ImgUpload() {
+    var imgWrap = "";
+    var imgArray = [];
+
+    $(".upload__inputfile").each(function () {
+        $(this).on("change", function (e) {
+            imgWrap = $(this).closest(".upload__box").find(".upload__img-wrap");
+            var maxLength = $(this).attr("data-max_length");
+
+            var files = e.target.files;
+            var filesArr = Array.prototype.slice.call(files);
+            var iterator = 0;
+            filesArr.forEach(function (f, index) {
+                if (!f.type.match("image.*")) {
+                    return;
+                }
+
+                if (imgArray.length > maxLength) {
+                    return false;
+                } else {
+                    var len = 0;
+                    for (var i = 0; i < imgArray.length; i++) {
+                        if (imgArray[i] !== undefined) {
+                            len++;
+                        }
+                    }
+                    if (len > maxLength) {
+                        return false;
+                    } else {
+                        imgArray.push(f);
+
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            var html =
+                                "<div class='upload__img-box'><div style='background-image: url(" +
+                                e.target.result +
+                                ")' data-number='" +
+                                $(".upload__img-close").length +
+                                "' data-file='" +
+                                f.name +
+                                "' class='img-bg'><div class='upload__img-close'></div></div></div>";
+                            imgWrap.append(html);
+                            iterator++;
+                        };
+                        reader.readAsDataURL(f);
+                    }
+                }
+            });
+        });
+    });
+
+    $("body").on("click", ".upload__img-close", function (e) {
+        var file = $(this).parent().data("file");
+        for (var i = 0; i < imgArray.length; i++) {
+            if (imgArray[i].name === file) {
+                imgArray.splice(i, 1);
+                break;
+            }
+        }
+        $(this).parent().parent().remove();
+    });
+}
+
+// jquery Validation
+$(function () {
+    $("form[name='delivery_person']").validate({
+        rules: {
+            txtDeliveryPersonId: "required",
+            txtDeliveryPersonName: "required",
+            txtDeliveryPersonMobile: "required",
+            deliveryPersonEmail: "required",
+            ddlState: "required",
+            ddlCity: "required",
+            ddlArea: "required",
+            txtDoorNo: "required",
+            txtPincode: "required",
+            ddlHub: "required",
+            password: "required",
+            //password_confirmation: "required",
+            password_confirmation: {
+                required: true,
+                equalTo: "#password",
+            },
+            //fileDelPersonImage: "required"
+            ddlfueltype: "required",
+            ddlvehicletype: "required",
+            ddlvehiclebrand: "required",
+            txtregno: "required",
+        },
+        messages: {
+            required: "This field is required",
+            password_confirmation:
+                "Password and confirm password is doesn't match",
+        },
+        errorPlacement: function (error, element) {
+            if (element.is(":radio")) {
+                error.appendTo(element.parents(".form-group"));
+            } else {
+                // This is the default behavior
+                // error.insertAfter(element);
+                if (element.siblings(".error").html() == undefined) {
+                    error.appendTo(element.parent().next(".error"));
+                } else {
+                    error.appendTo(element.siblings(".error"));
+                }
+            }
+        },
+        submitHandler: function (form) {
+            form.submit();
+        },
+    });
+});
+
+//Delete Data
+// function showDelete(id) {
+//     confirmDelete(id, "delete/deliverperson/", "tblDeliveryPerson");
+// }
+
+//Image Preview
+const inputFiles = document.querySelectorAll('input[type="file"]');
+const previewImages = document.querySelectorAll('img[id^="previewImage"]');
+
+inputFiles.forEach(function (inputFile, index) {
+    inputFile.addEventListener("change", function () {
+        const file = this.files[0];
+        const reader = new FileReader();
+
+        reader.addEventListener("load", function () {
+            previewImages[index].setAttribute("src", this.result);
+        });
+
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    });
+});
+
+var RowIndex = 1;
+
+function validateVehicleInfo() {
+    var ddlfueltype = document.forms["delivery_person"]["ddlfueltype"];
+    var ddlvehicletype = document.forms["delivery_person"]["ddlvehicletype"];
+    var ddlvehiclebrand = document.forms["delivery_person"]["ddlvehiclebrand"];
+    var txtregno = document.forms["delivery_person"]["txtregno"];
+
+    if (ddlfueltype.value == "") {
+        alert("Select Fuel Type");
+        ddlfueltype.focus();
+        return false;
+    }
+
+    if (ddlvehicletype.value == "") {
+        alert("Select Vehicle Type");
+        ddlvehicletype.focus();
+        return false;
+    }
+
+    if (ddlvehiclebrand.value == "") {
+        alert("Select Vehicle Brand");
+        ddlvehiclebrand.focus();
+        return false;
+    }
+
+    if (txtregno.value == "") {
+        alert("Select Register Number");
+        txtregno.focus();
+        return false;
+    }
+    return true;
+}
+function addVehicleInfo() {
+    //Validate vehicle info
+    if (validateVehicleInfo()) {
+        var editRowIndex = $("#hdEditVehicleInfoRowId").val();
+        var vehicleinfodata = "";
+        var FUL = $("#ddlfueltype option:selected").val();
+        var FUT = $("#ddlfueltype option:selected").text();
+        var VHL = $("#ddlvehicletype option:selected").val();
+        var VHT = $("#ddlvehicletype option:selected").text();
+        var VHB = $("#ddlvehiclebrand option:selected").val();
+        var VBT = $("#ddlvehiclebrand option:selected").text();
+        var RNO = $("#txtregno").val();
+
+        if (
+            $(
+                "tr[FUL=" +
+                    FUL +
+                    "]" +
+                    "[VHL=" +
+                    VHL +
+                    "]" +
+                    "[VHB=" +
+                    VHB +
+                    "]" +
+                    "[RNO=" +
+                    RNO +
+                    "]"
+            ).length == 0
+        ) {
+            if (editRowIndex == 0) {
+                vehicleinfodata +=
+                    "<tr id='trvehicle" +
+                    RowIndex +
+                    "' FUL=" +
+                    FUL +
+                    " VHL=" +
+                    VHL +
+                    " VHB=" +
+                    VHB +
+                    " RNO=" +
+                    RNO +
+                    " >";
+                vehicleinfodata +=
+                    "<td><input type='hidden' name='tabFuel[]' value=" +
+                    FUL +
+                    ">" +
+                    FUT +
+                    "</td>";
+                vehicleinfodata +=
+                    "<td><input type='hidden' name='tabVehicleType[]' value=" +
+                    VHL +
+                    ">" +
+                    VHT +
+                    "</td>";
+                vehicleinfodata +=
+                    "<td><input type='hidden' name='tabVehicleBrand[]' value=" +
+                    VHB +
+                    ">" +
+                    VBT +
+                    "</td>";
+                vehicleinfodata +=
+                    "<td><input type='hidden' name='tabRegNo[]' value=" +
+                    RNO +
+                    ">" +
+                    RNO +
+                    "</td>";
+                vehicleinfodata +=
+                    "<td><a><i class='text-primary ti ti-pencil me-1' onclick = 'doEdit(" +
+                    RowIndex +
+                    ");'></i></a><a><i class='text-danger ti ti-trash me-1' onclick ='removeRow(" +
+                    RowIndex +
+                    ");'></i></a></td>";
+                vehicleinfodata += "</tr>";
+                RowIndex++;
+                $("#tbodyVehicleType").append(vehicleinfodata);
+            } else if (editRowIndex > 0) {
+                $("#trvehicle" + editRowIndex + " td:eq(0)").text(FUT);
+                $("#trvehicle" + editRowIndex + " td:eq(1)").text(VHT);
+                $("#trvehicle" + editRowIndex + " td:eq(2)").text(VBT);
+                $("#trvehicle" + editRowIndex + " td:eq(3)").text(RNO);
+                showAddImage();
+                $("#hdEditVehicleInfoRowId").val(0);
+            }
+            formClear();
+        } else {
+            alert("Item Alredy exist");
+        }
+    }
+}
+
+function doEdit(SID) {
+    $("#hdEditVehicleInfoRowId").val(SID);
+    $("#ddlfueltype")
+        .val($("#trvehicle" + SID).attr("FUL"))
+        .trigger("change");
+    $("#ddlvehicletype")
+        .val($("#trvehicle" + SID).attr("VHL"))
+        .trigger("change");
+    $("#ddlvehiclebrand")
+        .val($("#trvehicle" + SID).attr("VHB"))
+        .trigger("change");
+    $("#txtregno").val($("#trvehicle" + SID + " td:eq(3)").text());
+    showEditImage();
+}
+
+function showAddImage() {
+    $("#btnUpdate").css("display", "none");
+    $("#btnAdd").css("display", "block");
+}
+function showEditImage() {
+    $("#btnUpdate").css("display", "block");
+    $("#btnAdd").css("display", "none");
+}
+
+function removeRow(SID) {
+    $("#trvehicle" + SID).remove();
+}
+
+//for vehicle
+function formClear() {
+    $("#ddlfueltype").val("");
+    $("#ddlvehicletype").val("");
+    $("#ddlvehiclebrand").val("").trigger("change");
+    $("#txtregno").val("");
+}
+
+function loadVehicle() {
+    $("#ddlHub").on("change", function () {
+        var hub_id = this.value;
+        $("#ddlVehicle").html("");
+        $.ajax({
+            url: "/get/vehicleinfo",
+            type: "GET",
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+            data: {
+                hub_id: hub_id,
+                _token: $('meta[name="csrf-token"]').attr("content"),
+            },
+            dataType: "json",
+            success: function (result) {
+                $("#ddlVehicle").select2({
+                    placeholder: "Select Vehicle",
+                });
+                $.each(result.responseData, function (key, value) {
+                    console.log(value);
+                    $("#ddlVehicle").append(
+                        '<option value="' +
+                            value.id +
+                            '">' +
+                            value.reg_no +
+                            "</option>"
+                    );
+                });
+            },
+        });
+    });
+}

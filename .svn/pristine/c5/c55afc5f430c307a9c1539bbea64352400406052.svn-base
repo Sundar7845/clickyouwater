@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Http\Controllers\Admin\SalesManagement;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class SalesInvoiceController extends Controller
+{
+    public function salesInvoice()
+    {
+        return view('admin.sales_management.sales_invoice.sales_invoice');
+    }
+
+    public function salesInvoiceList()
+    {
+        return view('admin.sales_management.sales_invoice.sales_invoice_list');
+    }
+}

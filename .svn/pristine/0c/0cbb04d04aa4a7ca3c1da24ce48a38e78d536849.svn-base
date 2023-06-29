@@ -1,0 +1,92 @@
+$(document).ready(function () {
+    $('#employee').DataTable();
+});
+
+
+
+$(function () {
+
+    $("form[name='employee']").validate({
+        rules: {
+            employee_name: "required",
+            employee_code: "required",
+            employee_name: "required",
+            father_spouse_name: "required",
+            gender: "required",
+            marital_status: "required",
+            dob: "required",
+            nationality: "required",
+            nationality_status: "required",
+            permanent_address1: "required",
+            permanent_address2: "required",
+            permanent_city_id: "required",
+            permanent_state_id: "required",
+            permanent_country_id: "required",
+            permanent_pincode: "required",
+            comm_address1: "required",
+            comm_address2: "required",
+            comm_city_id: "required",
+            comm_state_id: "required",
+            comm_country_id: "required",
+            comm_pincode: "required",
+            mobile1: "required",
+            mobile2: "required",
+            email1: "required",
+            email2: "required",
+            prev_company_exp_yrs: {
+                required: true,
+                phone_regex: true,
+                minlength: 2
+            },
+            // prev_company_name: "required",
+            // prev_company_ref_by: "required",
+            account_name: "required",
+            account_number: "required",
+            bank_name: "required",
+            branch_name: "required",
+            ifsc_code: "required",
+            department_id: "required",
+            designation_id: "required",
+            reporting_to: {
+                required: true,
+                // phone_regex: true,
+
+            },
+            date_of_join: "required",
+            company_mail_id: "required",
+            company_mobile_no: "required",
+            originals_verified_by: {
+                required: true,
+                // phone_regex: true,
+
+            },
+            authorised_by: {
+                required: true,
+                // phone_regex: true,
+
+            },
+
+        },
+        messages: {
+            prev_company_exp_yrs: "Please enter Integers",
+            password: {
+                required: "Please provide a password",
+                minlength: "Your password must be at least 6 characters long"
+            },
+            city: "Please enter your city",
+            gender: "This field is required"
+        },
+        errorPlacement: function (error, element) {
+            if (element.is(":radio")) {
+                error.appendTo(element.parents('.form-group'));
+            }
+            else { // This is the default behavior
+                error.insertAfter(element);
+            }
+        },
+        submitHandler: function (form) {
+            form.submit();
+        }
+
+    });
+});

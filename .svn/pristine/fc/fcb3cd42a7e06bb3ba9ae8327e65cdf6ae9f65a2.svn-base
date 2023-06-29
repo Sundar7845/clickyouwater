@@ -1,0 +1,95 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Dashboard | Brands
+@endsection
+
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold mb-4">
+        Brands
+    </h4>
+
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-12 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <form  action="{{ route('add.brands')}} " method="POST" name="brands" enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" name="hdBrandId" id="hdBrandId" value="">
+                        <input type="hidden" name="hdBrandImg" id="hdBrandImg" value="">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Brands Name</label>
+                                    <input type="tetx" id="txtBrantsName" name="txtBrantsName" class="form-control"
+                                        placeholder="Brands Name" required />
+
+                                        @if ($errors->has('txtBrantsName'))
+                                        <div  class="text-danger">{{ $errors->first('txtBrantsName') }}</div>
+                                        @endif
+                                        <span class="error"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Brands Image</label>
+                                    <div class="upload__box">
+                                        <div class="upload__btn-box">
+                                            <label class="upload__btn">
+                                                Upload image
+                                                <input type="file" name="BrandsImage" id="BrandsImage"  multiple=""  data-max_length="20"
+                                                    class="upload__inputfile">
+                                            </label>
+                                            @if ($errors->has('BrandsImage'))
+                                                <span class="text-danger">{{ $errors->first('BrandsImage') }}</span>
+                                            @endif
+                                        </div>
+                                        <div class="upload__img-wrap" ></div>
+                                        <div class="profilePic" ><img src="" alt=""></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mt-4 mb-3">
+                                <button type="submit" id="btnSave" class="btn btn-success">Save</button>
+                                <button type="button" class="btn btn-danger" onclick="cancel();" id="btnCancel" >Cancel</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+    <!-- DataTable with Buttons -->
+    <div class="col-lg-12 mb-4 mb-lg-0">
+        <div class="card h-100">
+            <div class="card-datatable table-responsive pt-0">
+                <table id="tblBrands" class="table">
+                    <thead class="border-bottom">
+                        <tr>
+                            <th>S.No</th>
+                            <th>Brands Name</th>
+                            <th>Status</th>
+                            <th>Brands Image</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--/ DataTable with Buttons -->
+</div>
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/admin/products/brands.js') }}"></script>
+@endsection
+

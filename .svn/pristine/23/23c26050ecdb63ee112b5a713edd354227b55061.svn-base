@@ -1,0 +1,153 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Masters;
+
+use App\Http\Controllers\Controller;
+use App\Models\DocumentConfig;
+use App\Models\DocumentModules;
+use App\Models\DocumentType;
+use App\Traits\Common;
+use Illuminate\Database\QueryException;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class DocumentConfigController extends Controller
+{
+    // use Common;
+    public function documentConfig()
+    {
+        $document = DocumentConfig::get();
+        $documenttype = DocumentType::get();
+        $documentModule = DocumentModules::get();
+        // if ($this->checkUserPermission(Auth::user()->id)) {
+        return view('admin.masters.document_configuration.document_config', compact('document', 'documenttype', 'documentModule'));
+        // } else {
+        //     return view('errors.401');
+        // }
+    }
+
+    public function addDocumentConfig(Request $request)
+    {
+        $request->validate([
+            'ddlDocumentType' => 'required'
+        ]);
+
+        DB::beginTransaction();
+        try{
+
+        $data = $request->all();
+        // dd($data);
+        // if ($request->hdDocumentConfigId == null) {
+        DocumentConfig::where('documenttype_id', $request->ddlDocumentType)->delete();
+        foreach ($data['chkModuleName'] as $value) {
+            if (isset($request->chkMandatory[$value])) {
+
+                $chkMandatory = $request->chkMandatory[$value];
+            } else {
+                $chkMandatory = 0;
+            }
+            $datas = DocumentConfig::create([
+                'documenttype_id' => $request->ddlDocumentType,
+                'documentmodule_id' => $value,
+                'is_mandatory' => $chkMandatory,
+                'is_active' => 1
+            ]);
+        }
+
+        $notification = array(
+            'message' => 'Documentconfig Created Successfully',
+            'alert-type' => 'success'
+        );
+        // } else {
+        //     foreach ($data['chkModuleName'] as $value) {
+        //         if(isset($request->chkMandatory[$value])){
+
+        //             $chkMandatory=$request->chkMandatory[$value];
+        //         }else{
+        //             $chkMandatory=0;
+        //         }
+        //        $datas= DocumentConfig::updateorcreate([
+        //             'documenttype_id' => $request->ddlDocumentType,
+        //             'documentmodule_id' => $value,
+        //             'is_mandatory' => $chkMandatory
+        //         ])->where('documenttype_id',$request->ddlDocumentType)->where('documentmodule_id',$value);
+        //         // dd($request->chkMandatory[$value]);
+        //     }
+        //     // dd($datas);
+        //     DocumentConfig::whereNotIn('documentmodule_id', $request->chkModuleName)->where('documenttype_id', $request->ddlDocumentType)->delete();
+        //     $notification = array(
+        //         'message' => 'Documentconfig Updated Successfully',
+        //         'alert-type' => 'success'
+        //     );
+        // }
+        DB::commit();
+    }catch (\Exception $e) {
+        DB::rollback();
+        $notification = array(
+           'message' => 'Document Config Not Created!',
+           'alert-type' => 'error'
+        );
+    }
+        return redirect()->route('documentconfig')->with($notification);
+    }
+
+    public function deleteDocumentConfig($id)
+    {
+        try {
+            DocumentConfig::where('documenttype_id', $id)->delete();
+            $notification = array(
+                'message' => 'Documentconfig Deleted Successfully',
+                'alert' => 'success'
+            );
+            return response()->json([
+                'responseData' => $notification
+            ]);
+        } catch (QueryException $e) {
+
+            $notification = array(
+                'message' => 'Documentconfig Could Not Be Deleted!',
+                'alert' => 'error'
+            );
+            return response()->json([
+                'responseData' => $notification
+            ]);
+        }
+    }
+
+    public function getDocumentConfigById($id, $type)
+    {
+
+        $document = DocumentConfig::select('document_configs.*', 'document_modules.module_name', 'document_types.documenttype_name')
+            ->join('document_modules', 'document_modules.id', 'document_configs.documentmodule_id')
+            ->join('document_types', 'document_types.id', 'document_configs.documenttype_id')
+            // ->where('document_configs.id',$id)
+            ->where('document_configs.documenttype_id', $type)
+            ->get();
+        return response()->json([
+            'document' => $document
+        ]);
+    }
+
+    public function getDocumentConfigData()
+    {
+        $document = DocumentConfig::select('document_configs.*', 'document_types.documenttype_name')
+            ->join('document_types', 'document_types.id', 'document_configs.documenttype_id')->groupBy('document_configs.documenttype_id')->get();
+
+        return datatables()->of($document)
+            ->addColumn('action', function ($row) {
+                $html = '<i class="text-primary ti ti-pencil me-1"
+                onclick="doEdit(' . $row->id . ',' . $row->documenttype_id . ');"></i> ';
+                $html .= '<i class="text-danger ti ti-trash me-1" id="confrim-color(' . $row->id . ')"
+                onclick="showDelete(' . $row->documenttype_id . ');"></i>';
+                return $html;
+            })->toJson();
+    }
+
+    public function activeStatus($id, $status)
+    {
+        DocumentConfig::findorfail($id)->update([
+            'is_active' => $status
+        ]);
+    }
+}

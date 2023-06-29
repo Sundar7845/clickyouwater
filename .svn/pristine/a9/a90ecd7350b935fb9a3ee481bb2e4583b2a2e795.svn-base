@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Http\Controllers\API\Hub;
+
+use App\Http\Controllers\Controller;
+use App\Traits\Common;
+use App\Traits\ResponseAPI;
+
+class DeliveryPersonController extends Controller
+{
+    //
+    use ResponseAPI;
+    use Common;
+}

@@ -1,0 +1,85 @@
+$(document).ready(function () {
+    $("#tblArea").DataTable({
+        processing: true,
+        serverSide: true,
+        order: [[0, "ASC"]],
+        ajax: "area/data",
+        fnRowCallback: function (nRow, aData, iDisplayIndex) {
+            $("td:first", nRow).html(iDisplayIndex + 1);
+            return nRow;
+        },
+        columns: [
+            { data: "id" },
+            { data: "state_name" },
+            { data: "city_name" },
+            { data: "area_name" },
+            {
+                data: "is_active",
+
+                render: function (data, type, row) {
+                    return `<label class="switch">
+                        <input onclick="doStatus(${row.id});" id="chkArea${
+                        row.id
+                    }" type="checkbox" class="switch-input"
+                        name="chkDesignation" '  ${
+                            data == 1 ? "checked" : ""
+                        } ' />
+                        <span class="switch-toggle-slider">
+                            <span class="switch-on"></span>
+                            <span class="switch-off"></span>
+                        </span>
+                    </label>`;
+                },
+            },
+            { data: "action" },
+        ],
+    });
+    BindCity();
+});
+
+function doEdit(id) {
+    $("#hdAreaId").val(id);
+    $("#txtAreaName").focus();
+    $("#btnSave").text("Update");
+    getAreaById(id);
+}
+
+function getAreaById(id) {
+    $.ajax({
+        type: "GET",
+        url: "getarea/" + id,
+        dataType: "json",
+        success: function (data) {
+            $("#ddlState").val(data.area.state_id).trigger("change");
+            setTimeout(function () {
+                $("#ddlCity").val(data.area.city_id).trigger("change");
+            }, 1000);
+            $("#txtAreaName").val(data.area.area_name);
+        },
+    });
+}
+
+function cancel() {
+    $("#hdAreaId").val("");
+    $("#txtAreaName").val("");
+    $("#ddlState").val(0).trigger("change");
+    $("#ddlCity").val(0);
+    $("#ddlState").focus();
+    $("#btnSave").text("save");
+}
+
+function showDelete(id) {
+    confirmDelete(id, "delete/area/", "tblArea");
+}
+
+function doStatus(id) {
+    var status = $("#chkArea" + id).is(":checked");
+    if (status == true) {
+        $("#chkArea").val(1);
+        status = 1;
+    } else {
+        $("#chkArea").val(0);
+        status = 0;
+    }
+    confirmStatusChange(id, "area/", "tblArea", status);
+}

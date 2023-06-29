@@ -1,0 +1,316 @@
+$(document).ready(function () {
+    BindCity();
+    BindArea();
+
+    //Get Manufacturer
+    $("#ddlCity").on("change", function () {
+        getManufacturer();
+    });
+
+    //Load Manufacturer on Hub edit
+    $("#ddlCity").trigger("change");
+   
+    //Hide ManufacturerLoad
+    $(".loadManufacturer").hide();
+
+    //Check user mobile number if already exists
+    $('#txtMobile').on('focusout', function (e) {
+        var mobileNumber = $(this).val();
+        checkMobileNumberExists(mobileNumber, function (result) {
+            if (result == true) {
+                $('#txtMobile').val("");
+                $('#txtMobile').focus();
+            }
+        });
+    });
+});
+
+function getManufacturer() {
+    $.ajax({
+        url: "/get/manufacturer",
+        type: "POST",
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        },
+        data: {
+            latitude: $("#txtlatitude").val(),
+            longtitude: $("#txtlangtitute").val(),
+            state_id: $("#ddlState").val(),
+            city_id: $("#ddlCity").val(),
+            _token: $('meta[name="csrf-token"]').attr("content"),
+        },
+        dataType: "json",
+        success: function (result) {
+            var manufacturerArray = [];
+
+            $.each(result, function (key, value) {
+                var obj = JSON.parse(value.distance);
+                var manufacturer = {
+                    id: value.manufacturer_id,
+                    name: value.manufacturer_name,
+                    address: value.address,
+                    hubCount: value.hub_count,
+                    distance_value: obj.distance.value,
+                    distance: obj.distance.text
+                };
+                manufacturerArray.push(manufacturer);
+            });
+
+            // Sort the array by distance
+            manufacturerArray.sort(function (a, b) {
+                return a.distance_value - b.distance_value;
+            });
+
+            // Generate HTML using the sorted array
+            var list = "";
+            $.each(manufacturerArray, function (index, value) {
+                list += '<div class="col-md-4">';
+                list += '<div class="form-check custom-option custom-option-icon">';
+                list += '<label class="form-check-label custom-option-content" for="manufacture_' + value.id + '">';
+                list += '<div>';
+                list += '<input name="manufacturerId" class="form-check-input" type="radio" value="' + value.id + '" id="manufacture_' + value.id + '" mid="' + value.id + '" required>';
+                list += '</div>';
+                list += '<span class="custom-option-body">';
+                list += '<span class="custom-option-title">' + value.name + '</span>';
+                list += '<small>' + value.address + '</small>';
+                list += '</span>';
+                list += '<div class="d-flex align-items-center justify-content-between pt-1">';
+                list += '<div class="badge bg-label-success">' + "Total Hubs: " + value.hubCount + '</div>';
+                list += '<div class="badge bg-label-primary"';
+                list += 'id="manufacturerDistance">' + "Distance: " + value.distance + '</div>';
+                list += '</div>';
+                list += '</label>';
+                list += '</div>';
+                list += '</div>';
+            });
+
+            $(".dropzone").hide();
+            $(".loadManufacturer").show();
+            $(".loadManufacturer").html(list);
+
+            if ($("#hdManufacturerId").val() != "" && $("#hdManufacturerId").val() != undefined && $("#hdManufacturerId").val() != 0) {
+                $("#manufacture_" + $("#hdManufacturerId").val()).prop("checked", true);
+            }
+            if ($("#hdAreaId").val() != "" && $("#hdAreaId").val() != undefined && $("#hdAreaId").val() != 0) {
+                $("#ddlArea").val($("#hdAreaId").val()).trigger("change");
+            }
+        },
+    });
+
+}
+
+$("#ddlfueltype").on("change", function () {
+    var fuel_type_id = this.value;
+    $("#ddlvehiclebrand").html("");
+    $.ajax({
+        url: "/get/brands",
+        type: "POST",
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        },
+        data: {
+            fuel_type_id: fuel_type_id,
+            _token: $('meta[name="csrf-token"]').attr("content"),
+        },
+        dataType: "json",
+        success: function (result) {
+            $("#ddlvehiclebrand").html('<option value="0">Select Brand</option>');
+            $.each(result, function (key, value) {
+                $("#ddlvehiclebrand").append(
+                    '<option value="' +
+                    value.id +
+                    '">' +
+                    value.brand_name +
+                    "</option>"
+                );
+            });
+        },
+    });
+});
+
+var RowIndex = 1;
+
+function validateVehicleInfo() {
+    var ddlfueltype = $("#ddlfueltype").val();
+    var ddlvehicletype = $("#ddlvehicletype").val();
+    var ddlvehiclebrand = $("#ddlvehiclebrand").val();
+    var txtregno = $("#txtregno").val();
+
+    if (ddlfueltype == "") {
+        alert('Select Fuel Type');
+        $("#ddlfueltype").focus();
+        return false;
+    }
+
+    if (ddlvehicletype == "") {
+        alert('Select Vehicle Type');
+        $("#ddlvehicletype").focus();
+        return false;
+    }
+
+    if (ddlvehiclebrand == "" || ddlvehiclebrand == 0) {
+        alert('Select Vehicle Brand');
+        $("#ddlvehiclebrand").focus();
+        return false;
+    }
+
+    if (txtregno == "") {
+        alert('Select Register Number');
+        $("#txtregno").focus();
+        return false;
+    }
+    return true;
+}
+
+function addVehicleInfo() {
+
+    if (validateVehicleInfo()) {
+        var editRowIndex = $("#hdEditVehicleInfoRowId").val();
+        //RowIndex = (RowIndex + 1)
+        var vehicleinfodata = "";
+        var FUL = $("#ddlfueltype option:selected").val();
+        var FUT = $("#ddlfueltype option:selected").text();
+        var VHL = $("#ddlvehicletype option:selected").val();
+        var VHT = $("#ddlvehicletype option:selected").text();
+        var VHB = $("#ddlvehiclebrand option:selected").val();
+        var VBT = $("#ddlvehiclebrand option:selected").text();
+        var RNO = $("#txtregno").val();
+
+        if (($("tr[FUL=\"" + FUL + "\"]" + "[VHL=\"" + VHL + "\"]" + "[VHB=\"" + VHB + "\"]" + "[RNO=\"" + RNO + "\"]").length == 0)) {
+            if (editRowIndex == 0) {
+
+                vehicleinfodata += "<tr id='trvehicle" + RowIndex + "' FUL=" + FUL + " VHL=" + VHL + " VHB=" + VHB + " RNO=" + RNO + " >";
+                vehicleinfodata += "<td><input type='hidden'  class ='vehicleinfo' id='tabfueltype_" + RowIndex + "' name='tabFuel[]'  value=" + FUL + "><span id='spnFuelType'>" + FUT + "</span></td>";
+                vehicleinfodata += "<td><input type='hidden'  class = 'vehicleinfo' id='tabvehicletype_" + RowIndex + "' name='tabVehicleType[]'  value=" + VHL + "><span id='spnVehicleType'>" + VHT + "</span></td>";
+                vehicleinfodata += "<td><input type='hidden'  class = 'vehicleinfo' id='tabvehiclebrand_" + RowIndex + "' name='tabVehicleBrand[]'  value=" + VHB + "><span id='spnVehicleBrand'>" + VBT + "</span></td>";
+                vehicleinfodata += "<td><input type='hidden'  class = 'vehicleinfo' id='tabregno_" + RowIndex + "'  name='tabRegNo[]'  value=" + RNO + "><span id='spnRegNo'>" + RNO + "</span></td>";
+                vehicleinfodata += "<td><a><i class='text-primary ti ti-pencil me-1' onclick = 'doEdit(" + RowIndex + ");'></i></a><a><i class='text-danger ti ti-trash me-1' onclick ='removeRow(" + RowIndex + ");'></i></a></td>";
+                vehicleinfodata += "</tr>";
+                RowIndex++;
+                $("#tbodyVehicleType").append(vehicleinfodata);
+            }
+            else if (editRowIndex > 0) {
+                $("#trvehicle" + editRowIndex + " td:eq(0) #tabfueltype_" + editRowIndex).val(FUL);
+                $("#trvehicle" + editRowIndex + " td:eq(0) #spnFuelType").text(FUT);
+                $("#trvehicle" + editRowIndex + " td:eq(1) #tabvehicletype_" + editRowIndex).val(VHL);
+                $("#trvehicle" + editRowIndex + " td:eq(1) #spnVehicleType").text(VHT);
+                $("#trvehicle" + editRowIndex + " td:eq(2) #tabvehiclebrand_" + editRowIndex).val(VHB);
+                $("#trvehicle" + editRowIndex + " td:eq(2) #spnVehicleBrand").text(VBT);
+                $("#trvehicle" + editRowIndex + " td:eq(3) #tabregno_" + editRowIndex).val(RNO);
+                $("#trvehicle" + editRowIndex + " td:eq(3) #spnRegNo").text(RNO);
+                showAddImage();
+                $("#hdEditVehicleInfoRowId").val(0);
+            }
+            formClear();
+        } else {
+            alert('Item Alredy exist');
+        }
+    }
+}
+
+function doEdit(SID) {
+    $("#hdEditVehicleInfoRowId").val(SID);
+    $("#ddlfueltype").val($("#trvehicle" + SID + " #tabfueltype_" + SID).val()).trigger("change");
+    $("#ddlvehicletype").val($("#trvehicle" + SID + " #tabvehicletype_" + SID).val()).trigger("change");
+    setTimeout(function () {
+        $("#ddlvehiclebrand").val($("#trvehicle" + SID + " #tabvehiclebrand_" + SID).val()).trigger("change");
+    }, 1500);
+    $("#txtregno").val($("#trvehicle" + SID + " td:eq(3)").text());
+    showEditImage();
+}
+
+function showAddImage() {
+    $("#btnUpdate").css("display", "none");
+    $("#btnAdd").css("display", "block");
+}
+function showEditImage() {
+    $("#btnUpdate").css("display", "block");
+    $("#btnAdd").css("display", "none");
+}
+
+function removeRow(SID) {
+    $("#trvehicle" + SID).remove();
+}
+
+function formClear() {
+    $("#ddlfueltype").val("");
+    $("#ddlvehicletype").val("");
+    $("#ddlvehiclebrand").val("").trigger('change');
+    $("#txtregno").val("");
+}
+
+$(function () {
+    $("form[name='hub']").validate({
+        rules: {
+            txthubId: "required",
+            txthubName: "required",
+            txtYrsofExp: "required",
+            txtMobile: "required",
+            txtofficialEmail: "required",
+            manufacturerId: "required",
+            txtlatitude: "required",
+            txtlangtitute: "required",
+            txtgeolocation: "required",
+            txtRadius: "required",
+            txtcreditPeriod: "required",
+            txtsettlementPeriod: "required",
+            txtsecurityDeposit: "required",
+            password: "required",
+            password_confirmation: "required",
+            ddlState: "required",
+            ddlCity: "required",
+            ddlArea: "required",
+            txtLandmark: "required",
+            txtpinCode: "required",
+            txtProprietorName: "required",
+            txtProprietorMobile: "required",
+            txtProprietorEmail: "required",
+            txtContactPersonName: "required",
+            txtContactPersonMobile: "required",
+            txtContactPersonEmail: "required",
+            ddlfueltype: {
+                required: function () {
+                    return $.trim($('#tbodyVehicleType').text()) === '';
+                }
+            },
+            ddlvehicletype: {
+                required: function () {
+                    return $.trim($('#tbodyVehicleType').text()) === '';
+                }
+            },
+            ddlvehiclebrand: {
+                required: function () {
+                    return $.trim($('#tbodyVehicleType').text()) === '';
+                }
+            },
+            txtregno: {
+                required: function () {
+                    return $.trim($('#tbodyVehicleType').text()) === '';
+                }
+            },
+        },
+        messages: {
+            required: "This field is required",
+        },
+        errorPlacement: function (error, element) {
+            if (element.is(":radio")) {
+                error.appendTo(element.parents(".form-group"));
+            } else {
+                if (element.siblings(".error").html() == undefined) {
+                    error.appendTo(element.parent().next(".error"));
+                } else {
+                    error.appendTo(element.siblings(".error"));
+                }
+            }
+        },
+        submitHandler: function (form) {
+            form.submit();
+        },
+    });
+});
+
+
+
+
+
+

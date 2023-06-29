@@ -1,0 +1,62 @@
+@php
+    if (Auth::user()->id == 1) {
+        $menu = App\Models\Menu::where('is_mainmenu', '=', 1)->where('is_visible',1)->get();
+    } else {
+        $menu = App\Models\User::select('menus.*', 'user_role_permissions.user_id', 'user_role_permissions.rolepermission_id', 'user_role_permissions.is_edit', 'user_role_permissions.is_delete', 'user_role_permissions.is_view', 'user_role_permissions.is_print', 'user_role_permissions.is_approval')
+            ->join('user_role_permissions', 'users.id', 'user_role_permissions.user_id')
+            ->join('menus', 'menus.id', 'user_role_permissions.menu_id')
+            ->where('menus.is_mainmenu', '=', 1)
+            ->where('menus.is_visible', '=', 1)
+            ->where('users.id', '=', Auth::user()->id)
+            ->get();
+    }
+@endphp
+
+<!-- Menu -->
+<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+    <div class="app-brand demo">
+        <a href="{{ route('dashboard') }}" class="app-brand-link">
+            <img src="{{ asset('assets/img/layouts/logos.jpeg') }}" class="img-fluid img-responsive" alt="">
+        </a>
+        <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
+            <i class="ti menu-toggle-icon d-none d-xl-block ti-sm align-middle"></i>
+            <i class="ti ti-x d-block d-xl-none ti-sm align-middle"></i>
+        </a>
+    </div>
+    <div class="menu-inner-shadow"></div>
+    <ul class="menu-inner py-1">
+        <!-- Layouts -->
+        @foreach ($menu as $item)
+            <li class="menu-item">
+                @php
+                    if (Auth::user()->id == 1) {
+                        $submenu = App\Models\Menu::where('parent_id', $item->id)->where('is_visible',1)->get();
+                    } else {
+                        $submenu = App\Models\User::select('menus.*', 'user_role_permissions.user_id', 'user_role_permissions.rolepermission_id', 'user_role_permissions.is_edit', 'user_role_permissions.is_delete', 'user_role_permissions.is_view', 'user_role_permissions.is_print', 'user_role_permissions.is_approval')
+                            ->join('user_role_permissions', 'users.id', 'user_role_permissions.user_id')
+                            ->join('menus', 'menus.id', 'user_role_permissions.menu_id')
+                            ->where('menus.is_visible', '=', 1)
+                            ->where('menus.parent_id', $item->id)
+                            ->where('users.id', '=', Auth::user()->id)
+                            ->get();
+                    }
+                @endphp
+                <a href="{{ $item->menu_url }}" class="menu-link @if ($submenu->count() > 0) menu-toggle @endif">
+                    <i class="{{ $item->icon }}"></i>
+                    <div data-i18n="{{ $item->menu_name }}">{{ $item->menu_name }}</div>
+                </a>
+                @foreach ($submenu as $submenuitem)
+                    <ul class="menu-sub">
+                        <li class="menu-item">
+                            <a href="{{ $submenuitem->menu_url }}" class="menu-link">
+                                <div data-i18n="{{ $submenuitem->menu_name }}">{{ $submenuitem->menu_name }}</div>
+                            </a>
+                        </li>
+                    </ul>
+                @endforeach
+            </li>
+        @endforeach
+    </ul>
+
+</aside>
+<!-- / Menu -->

@@ -1,0 +1,59 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class Brands extends Model
+{
+    use HasFactory, SoftDeletes;
+
+    protected $fillable = [
+        'category_id',
+        'brand_name',
+        'brand_image',
+        'product_type_id',
+        'is_active',
+        'created_by',
+        'updated_by',
+        'deleted_by'
+    ];
+
+    protected $dates = ['deleted_at'];
+
+    public static function boot()
+    {
+        parent::boot();
+    
+        static::bootSoftDeletes();
+    }
+    
+    public static function bootSoftDeletes()
+    {
+        static::deleting(function ($brands) {
+            $brandId = $brands->getKey();
+    
+            $affectedRows = StateBrandAllocation::whereRaw("FIND_IN_SET($brandId, brand_id)")->count();
+    
+            if ($affectedRows > 0) {
+                throw new \Exception('Cannot delete Brand type because it is associated with StateBrandAllocations.');
+            }
+        });
+    
+        static::restoring(function ($brands) {
+            // add any restoring logic here if necessary
+        });
+    }
+    
+    public function brandallocations()
+    {
+        return $this->hasMany(StateBrandAllocation::class);
+    }
+
+    public function products()
+    {
+        return $this->hasMany(Products::class);
+    }
+}

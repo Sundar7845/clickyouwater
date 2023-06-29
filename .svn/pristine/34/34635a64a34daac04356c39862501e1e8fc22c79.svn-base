@@ -1,0 +1,138 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Dashboard | Debit Note List
+@endsection
+
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-1 mb-4">
+        <span class="text-muted fw-light">Accounts /</span> Debit Note List
+    </h4>
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-12 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Ledger Name</label>
+                                <select id="ddlRtype" class="select2 form-select form-select-lg" control="ddl"
+                                    data-live-search="true">
+                                    <option value="1">All Ledger</option>
+                                    <option value="HI">Hawaii</option>
+                                    <option value="CA">California</option>
+                                    <option value="NV">Nevada</option>
+                                    <option value="OR">Oregon</option>
+                                    <option value="WA">Washington</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <label>&nbsp; </label>
+                            <div class="form-group">
+                                <a href="{{ route('debitnote') }}">
+                                    <button type="button" id="btnNew" class="btn btn-primary"> Add New</button>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <label>&nbsp; </label>
+                            <div class="text-sm-right">
+                                <button type="button" id="btnexport"
+                                    class="btn btn-success btn-rounded waves-effect waves-light mb-3">
+                                    <i></i>Export </button>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mt-4">
+                            <label>&nbsp;</label>
+                            <button type="button" class="btn btn-flat btn-primary" id="btnDate"
+                                style="height: 36px;">
+                                <i class="fa fa-calendar"></i>
+                                <span id="spnDate" style="padding-left: 5px;">Today</span>
+                                <i class="fa fa-caret-down"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mt-3">
+                            <h5>Debit Note List</h5>
+                            <div class="table-responsive">
+                                <table id="" class="table table-sm table-bordered dt-responsive"
+                                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                    <thead>
+                                        <tr class='header'>
+                                            <th># </th>
+                                            <th>Entry Date </th>
+                                            <th>Entry No </th>
+                                            <th>Name </th>
+                                            <th>Debit Type </th>
+                                            <th>Amount </th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbodyList">
+                                        <tr id="emptyRow" style="height: 25px;">
+                                            <td colspan="7" style="text-align: center; height: 23px;">No Record Added
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="5" style="text-align: right;">TOTAL </td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="table-responsive">
+                                <table id="gridProfiledetail" cellpadding="0" cellspacing="0" border="0"
+                                    width="100%;" style="margin-top: 15px; display: none;"
+                                    class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>S.No</th>
+                                            <th>PO.No </th>
+                                            <th>PO.Date</th>
+                                            <th>Supplier Name</th>
+                                            <th>Item Name</th>
+                                            <th>Unit</th>
+                                            <th>Quantity </th>
+                                            <th>Rate </th>
+                                            <th>Discount </th>
+                                            <th>Tax </th>
+                                            <th>Amount </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbodydetaillist">
+                                        <tr>
+                                            <td colspan="11" align="center">No Records Found </td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th colspan="7" style="text-align: left;">TOTAL </th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+</div>
+<!-- / Content -->
+@endsection

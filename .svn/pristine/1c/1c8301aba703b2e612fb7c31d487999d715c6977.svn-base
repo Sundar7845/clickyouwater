@@ -1,0 +1,176 @@
+<?php
+
+namespace App\Http\Controllers\Admin\ProductsManagement;
+
+use App\Enums\MenuPermissionType;
+use App\Http\Controllers\Controller;
+use App\Models\Category;
+use App\Traits\Common;
+use Carbon\Carbon;
+use Illuminate\Validation\Rule;
+use Illuminate\Database\QueryException;
+use Intervention\Image\Facades\Image;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class CategoryController extends Controller
+{
+    use Common;
+    public function category()
+    {
+        try {
+            return view('admin.product_management.category.category');
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function addCategory(Request $request)
+    {
+        $request->validate([
+            'txtCategoryName' => [
+                'required',
+                Rule::unique('categories', 'category_name')->WhereNull('deleted_at')->ignore($request->hdCategoryId),
+            ],
+            'txtCategoryDescription' => 'required',
+        ], [
+            'txtCategoryName.unique' => 'Category name already exists.'
+        ]);
+        DB::beginTransaction();
+        try {
+            if ($request->hdCategoryId == null) {
+
+                $image = $request->file('CategoryImage');
+                $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
+                image::make($image)->save('upload/category/' . $name_gen);
+                $save_url = 'upload/category/' . $name_gen;
+
+                Category::create([
+                    'category_name' => $request->txtCategoryName,
+                    'category_desc' => $request->txtCategoryDescription,
+                    'category_image' => $save_url,
+                    'is_watercan' => $request->chkWaterCan,
+                    'created_by' => Auth::user()->id,
+                    'created_at' => Carbon::now()
+                ]);
+
+                $notification = array(
+                    'message' => 'Category Created Successfully',
+                    'alert-type' => 'success'
+                );
+            } else {
+
+                $oldImage = $request->hdOldImg;
+
+                if ($request->file('CategoryImage')) {
+                    @unlink($oldImage);
+                    $image = $request->file('CategoryImage');
+                    $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
+                    Image::make($image)->save('upload/category/' . $name_gen);
+                    $save_url = 'upload/category/' . $name_gen;
+
+                    Category::findorfail($request->hdCategoryId)->update([
+                        'category_image' => $save_url,
+                        'updated_by' => Auth::user()->id
+                    ]);
+                }
+                Category::findorfail($request->hdCategoryId)->update([
+                    'category_name' => $request->txtCategoryName,
+                    'category_desc' => $request->txtCategoryDescription,
+                    'is_watercan' => $request->chkWaterCan,
+                    'updated_by' => Auth::user()->id
+                ]);
+                $notification = array(
+                    'message' => 'Category Update Successfully',
+                    'alert-type' => 'success'
+                );
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            $notification = array(
+                'message' => 'Category Not Created!',
+                'alert-type' => 'error'
+            );
+            $this->Log(__FUNCTION__, $request->method(), $e->getMessage(), Auth::user()->id, $request->ip(), gethostname());
+        }
+        return redirect()->route('category')->with($notification);
+    }
+
+    public function deleteCategory($id)
+    {
+        try {
+            $category = Category::findorfail($id);
+            $category->delete();
+            $category->update([
+                'deleted_by' => Auth::user()->id
+            ]);
+            $notification = array(
+                'message' => 'Category Deleted Successfully',
+                'alert' => 'success'
+            );
+            return response()->json([
+                'responseData' => $notification
+            ]);
+        } catch (\Exception $e) {
+
+            $notification = array(
+                'message' => 'Category could not be deleted',
+                'alert' => 'error'
+            );
+            return response()->json([
+                'responseData' => $notification
+            ]);
+        }
+    }
+
+
+    public function getCategoryById($id)
+    {
+        try {
+            $category = Category::select('categories.*')->where('categories.id', $id)->whereNull('deleted_at')->first();
+            return response()->json([
+                'category' => $category
+            ]);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function getCategoryData(Request $request)
+    {
+        try {
+            $categoryData = Category::whereNull('deleted_at')->orderBy('id', 'ASC')->get();
+            return datatables()->of($categoryData)
+                ->addColumn('action', function ($row) {
+                    $html = "";
+                    if ($this->isUserHavePermission(MenuPermissionType::Edit)) {
+                        $html = '<i class="text-primary ti ti-pencil me-1"
+                onclick="doEdit(' . $row->id . ');"></i> ';
+                    }
+                    if ($this->isUserHavePermission(MenuPermissionType::Delete)) {
+                        $html .= '<i class="text-danger ti ti-trash me-1" id="confrim-color(' . $row->id . ')" onclick="showDelete(' . $row->id . ');"></i>';
+                    }
+                    return $html;
+                })->toJson();
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function activeStatus($id, $status)
+    {
+        DB::beginTransaction();
+        try {
+            Category::findorfail($id)->update([
+                'is_active' => $status,
+                'updated_by' => Auth::user()->id
+            ]);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            $this->Log(__FUNCTION__, 'POST', $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+}

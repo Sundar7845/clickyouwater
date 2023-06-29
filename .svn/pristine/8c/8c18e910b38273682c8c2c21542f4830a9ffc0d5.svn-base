@@ -1,0 +1,101 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Masters;
+
+use App\Http\Controllers\Controller;
+use App\Models\Brands;
+use App\Models\State;
+use App\Models\StateBrandAllocation;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class AllocationController extends Controller
+{
+    public function allocation()
+    {
+        $states = State::get();
+        $brands = Brands::get();
+        return view('admin.masters.allocation.allocation', compact('states', 'brands'));
+    }
+
+    public function addBrandallocate(Request $request)
+    {
+        $request->validate([
+            'ddlState' => 'required'
+        ]);
+        if ($request->hdBrandAllocateId == null) {
+            $array = $request->chkBrandName;
+            $string = implode(',', $array);
+            // $string = json_encode($request->chkBrandName);
+            // $string = str_replace('"','',$string);
+            $brandallocation = ([
+                'state_id' => $request->ddlState,
+                'brand_id' => $string,
+                'created_by' => Auth::user()->id
+            ]);
+            StateBrandAllocation::create($brandallocation);
+            $notification = array(
+                'message' => 'Offer allocated created successfully',
+                'alert-type' => 'success'
+            );
+        } else {
+            $array = $request->chkBrandName;
+            $string = implode(',', $array);
+            StateBrandAllocation::findorfail($request->hdBrandAllocateId)->update([
+                'state_id' => $request->ddlState,
+                'brand_id' => $string,
+                'updated_by' => Auth::user()->id
+            ]);
+
+            $notification = array(
+                'message' => 'Offer allocated updated successfully',
+                'alert-type' => 'success'
+            );
+        }
+
+
+        return redirect()->route('allocations')->with($notification);
+    }
+
+    public function getaddBrandallocateById($id)
+    {
+        $brandallocation = StateBrandAllocation::select('state_brand_allocations.*', 'states.state_name', 'brands.brand_name')
+            ->join('states', 'states.id', 'state_brand_allocations.state_id')
+            ->join('brands', 'brands.id', 'state_brand_allocations.brand_id')->where('state_brand_allocations.id', $id)->first();
+        return response()->json([
+            'brandallocation' => $brandallocation
+        ]);
+    }
+
+    public function deleteaddBrandallocate($id)
+    {
+        $area = StateBrandAllocation::findorfail($id);
+        $area->delete();
+        $area->update([
+            'deleted_by' => Auth::user()->id
+        ]);
+
+        $notification = array(
+            'message' => 'Allocation Deleted Successfully',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->route('allocations')->with($notification);
+    }
+
+    public function getaddBrandallocateData()
+    {
+        $brandallocation = StateBrandAllocation::select('state_brand_allocations.*', 'states.state_name', 'brands.brand_name')
+            ->join('states', 'states.id', 'state_brand_allocations.state_id')
+            ->join('brands', 'brands.id', 'state_brand_allocations.brand_id')->get();
+
+        return datatables()->of($brandallocation)
+            ->addColumn('action', function ($row) {
+                $html = '<i class="text-primary ti ti-pencil me-1"
+                onclick="doEdit(' . $row->id . ');"></i> ';
+                $html .= '<i class="text-danger ti ti-trash me-1" id="confrim-color(' . $row->id . ')" 
+                onclick="showDelete(' . $row->id . ');"></i>';
+                return $html;
+            })->toJson();
+    }
+}

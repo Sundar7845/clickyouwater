@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Http\Controllers\Admin\LogisticManagement;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class LogisticController extends Controller
+{
+   public function AddLogisticPartner()
+   {
+      return view('Admin.logistic_management.add_logistic');
+   }
+
+   public function LogisticPartnerList()
+   {
+      return view('Admin.logistic_management.logistic_list');
+   }
+}

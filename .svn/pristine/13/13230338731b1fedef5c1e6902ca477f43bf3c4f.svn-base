@@ -1,0 +1,14 @@
+$(function() {
+
+    $('#ddlOffer').change(function(){
+        if($('#ddlOffer').val() == 3) {
+            $('#stateName').show(); 
+        } else {
+            $('#stateName').hide(); 
+        } 
+    });
+});
+
+$(document).ready(function() {
+    $('#offers').DataTable();
+});

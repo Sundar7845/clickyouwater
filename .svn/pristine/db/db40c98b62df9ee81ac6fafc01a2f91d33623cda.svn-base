@@ -1,0 +1,247 @@
+$(document).ready(function () {
+
+    $("#ddlState").on("change", function () {
+        BindCity();
+    });
+
+    $("#ddlCity").on("change", function () {
+        BindArea();
+    });
+
+    //Set autofocus to select2 search field
+    $(document).on('select2:open', () => {
+        document.querySelector('.select2-search__field').focus();
+    });
+
+});
+function BindCity() {
+    $("#ddlState").on("change", function () {
+        var state_id = this.value;
+        $("#ddlCity").html("");
+        $.ajax({
+            url: "get/cities",
+            type: "POST",
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+            data: {
+                state_id: state_id,
+                _token: $('meta[name="csrf-token"]').attr("content"),
+            },
+            dataType: "json",
+            success: function (result) {
+                $("#ddlCity").html('<option value="0">Select City</option>');
+                $.each(result, function (key, value) {
+                    $("#ddlCity").append(
+                        '<option value="' +
+                        value.id +
+                        '">' +
+                        value.city_name +
+                        "</option>"
+                    );
+                });
+            },
+        });
+    });
+}
+
+
+//Bind Area
+function BindArea() {
+    $("#ddlCity").on("change", function () {
+        var city_id = this.value;
+        $("#ddlArea").html("");
+        $.ajax({
+            url: "getareabycity",
+            type: "POST",
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+            data: {
+                city_id: city_id,
+                _token: $('meta[name="csrf-token"]').attr("content"),
+            },
+            dataType: "json",
+            success: function (result) {
+                $("#ddlArea").html('<option value="0">Select Area</option>');
+                $.each(result, function (key, value) {
+                    $("#ddlArea").append(
+                        '<option value="' +
+                        value.id +
+                        '">' +
+                        value.area_name +
+                        "</option>"
+                    );
+                });
+            },
+        });
+    });
+}
+
+function confirmDelete(id, url, tblId) {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "error",
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        customClass: {
+            confirmButton: "btn btn-success me-3",
+            cancelButton: "btn btn-danger",
+        },
+        buttonsStyling: false,
+    }).then(function (result) {
+        if (result.value) {
+            doDelete(id, url, tblId);
+        }
+    });
+}
+
+function doDelete(id, url, tblId) {
+    $.ajax({
+        type: "GET",
+        url: url + id,
+        dataType: "json",
+        success: function (data) {
+            if (data.responseData.alert == "error") {
+                // Swal.fire("You won't be able to delete this!", 'This is referred in some other instance!', 'error');
+                Swal.fire({
+                    title: "You won't be able to delete this!",
+                    text: 'This is referred in some other instance!',
+                    icon: 'error',
+                    customClass: {
+                        confirmButton: 'btn btn-primary'
+                    },
+                    buttonsStyling: false
+                });
+            }
+            else {
+                Swal.fire({
+                    icon: "success",
+                    title: "Deleted!",
+                    text: "Your file has been deleted.",
+                    customClass: {
+                        confirmButton: "btn btn-success",
+                    },
+                });
+            }
+            refreshDatatable(tblId);
+        }
+    });
+}
+
+function confirmStatusChange(id, url, tblId, status, chkswitch) {
+    Swal.fire({
+        title:
+            status == 1
+                ? "Are you sure want to Activate the status?"
+                : "Are you sure want to DeActivate the status?",
+        text: "You won't be able to revert this!",
+        icon: status == 1 ? "warning" : "error",
+        showCancelButton: true,
+        confirmButtonText:
+            status == 1 ? "Yes, Activate it!" : "Yes, DeActivate it!",
+        customClass: {
+            confirmButton: "btn btn-success me-3",
+            cancelButton: "btn btn-danger",
+        },
+        buttonsStyling: false,
+    }).then(function (result) {
+        if (result.value) {
+            statusUpdate(id, url, status);
+            Swal.fire({
+                icon: "success",
+                title: status == 0 ? "DeActivated!" : "Activated!",
+                text: "Your file has been activated.",
+                customClass: {
+                    confirmButton: "btn btn-success",
+                },
+            });
+        }
+        else {
+            $("#" + chkswitch + id).prop("checked", (status == 1 ? false : true));
+        }
+        refreshDatatable(tblId);
+    });
+}
+
+function statusUpdate(id, url, status) {
+    $.ajax({
+        type: "POST",
+        url: url + id + "/" + status,
+        data: {
+            status: status,
+            _token: $('meta[name="csrf-token"]').attr("content"),
+        },
+        dataType: "json",
+        success: function () {
+            return true;
+        },
+    });
+}
+
+function refreshDatatable(tblId) {
+    $("#" + tblId)
+        .DataTable()
+        .ajax.reload();
+}
+
+$(document).ready(function () {
+    $(".mobilenumber").on("input", function () {
+        $(this).val(
+            $(this)
+                .val()
+                .replace(/[^0-9]/g, "")
+        );
+
+        var mobileNumber = $(this).val();
+        if (mobileNumber.length != 10 || isNaN(mobileNumber)) {
+            $(this).css("border-color", "red");
+        } else {
+            $(this).css("border-color", "green");
+        }
+    });
+    $(".acc_no").on("input", function () {
+        $(this).val(
+            $(this)
+                .val()
+                .replace(/[^0-9]/g, "")
+        );
+
+        var mobileNumber = $(this).val();
+        if (isNaN(mobileNumber)) {
+            $(this).css("border-color", "red");
+        } else {
+            $(this).css("border-color", "green");
+        }
+    });
+});
+var emailInputs = document.querySelectorAll('input[type="email"]');
+
+// Loop through each email input and add an event listener for validation
+emailInputs.forEach(function (input) {
+    input.addEventListener("blur", function () {
+        // Get the value of the input field
+        var email = this.value;
+
+        // Define a regular expression for email validation
+        var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        // Test the email value against the regular expression
+        if (!emailRegex.test(email)) {
+            // Display an error message if the email is invalid
+            this.setCustomValidity("Please enter a valid email address.");
+        } else {
+            // Clear the error message if the email is valid
+            this.setCustomValidity("");
+        }
+    });
+});
+
+//Number Validate
+$(".numvalidate").keypress(function (e) {
+    var charCode = (e.which) ? e.which : e.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+        return false;
+    }
+});

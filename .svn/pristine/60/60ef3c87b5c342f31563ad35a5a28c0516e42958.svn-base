@@ -1,0 +1,31 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class DeliveryPerson extends Model
+{
+    use HasFactory,SoftDeletes;
+
+    protected $fillable = [
+        'delivery_person_id',
+        'delivery_person_name',
+        'mobile',
+        'email',
+        'state_id',
+        'city_id',
+        'area_id',
+        'address',
+        'pincode',
+        'hub_id',
+        'password',
+        'delivery_person_image',
+        'is_active',
+        'created_by',
+        'updated_by',
+        'deleted_by',
+    ];
+}

@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Accounts;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class CreditNoteController extends Controller
+{
+  public function creditNote()
+  {
+    return view('admin.accounts.credit_note.credit_note');
+  }
+
+  public function creditNoteList()
+  {
+    return view('admin.accounts.credit_note.credit_note_list');
+  }
+}

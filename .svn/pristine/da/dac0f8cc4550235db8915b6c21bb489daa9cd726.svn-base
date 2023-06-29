@@ -1,0 +1,108 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Masters;
+
+use App\Http\Controllers\Controller;
+use App\Models\City;
+use App\Models\Country;
+use App\Models\State;
+use App\Traits\Common;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+
+class StateController extends Controller
+{
+    use Common;
+    public function state()
+    {
+        try {
+        $state = $this->getStates();
+        return view('admin.masters.state.state', compact('state'));
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function getStateData()
+    {
+        try {
+        $state = $this->getStates(1,1);
+        return datatables()->of($state)
+            ->addColumn('action', function ($row) {
+                $html = '<label class="switch">
+                                <input onclick="doStatus(' . $row->id . ');" id="chkState' . $row->id . '" type="checkbox" class="switch-input"
+                                name="chkState" ' . ($row->is_active == 1 ? "checked" : "") . ' />
+                                <span class="switch-toggle-slider">
+                                    <span class="switch-on"></span>
+                                    <span class="switch-off"></span>
+                                </span>
+                            </label>';
+                return $html;
+            })->toJson();
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function syncState()
+    {
+        try{
+        $country = Country::first();
+        $states = Http::withHeaders([
+            'X-CSCAPI-KEY' => 'WVo5c0hpUWVGNGhkRWNTSzZ2bmpVZkZYWmZFUHNjaENsSm16djE0UQ=='
+        ])->get("https://api.countrystatecity.in/v1/countries/IN/states")->collect();
+        foreach ($states as $state) {
+            $is_value_entered = State::where('state_name', $state['name'])->where('country_id', $country->id)->first();
+            if ($is_value_entered == null) {
+                State::create([
+                    'state_name'  => $state['name'],
+                    'state_code'  => $state['iso2'],
+                    'country_id'  => $country->id
+                ]);
+            }
+        }
+
+        $notification = array(
+            'message' => 'States Synced Successfully',
+            'alert-type' => 'success'
+        );
+    } catch (\Exception $e) {
+        $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+    }
+        return redirect()->route('state')->with($notification);
+    }
+
+    public function activeStatus($id, $status)
+    {
+        DB::beginTransaction();
+        try {
+            State::findorfail($id)->update([
+                'is_active' => $status,
+                'updated_by' => Auth::user()->id
+            ]);
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            $notification = array(
+                'message' => 'Status Not Updated!',
+                'alert-type' => 'error'
+            );
+            $this->Log(__FUNCTION__, 'POST', $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+        return redirect()->back()->with($notification);
+    }
+
+    public function getStaesByCountry()
+    {
+        try {
+        # code...
+        $state = State::select('state_name', 'id')->where('country_id', 1)->get()->toArray();
+        return $state;
+    } catch (\Exception $e) {
+        $this->Log(__FUNCTION__, 'GET', $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+    }  
+    }
+}

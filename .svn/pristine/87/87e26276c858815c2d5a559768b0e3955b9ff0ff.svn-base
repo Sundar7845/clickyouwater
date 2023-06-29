@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Offer;
+
+use App\Http\Controllers\Controller;
+use App\Models\OfferType;
+use Illuminate\Http\Request;
+
+class OffersController extends Controller
+{
+   public function offers()
+   {
+      return view('admin.offer.offers');
+   }
+
+   public function offersAllocate()
+   {
+      return view('admin.offer.offers_allocate');
+   }
+
+}

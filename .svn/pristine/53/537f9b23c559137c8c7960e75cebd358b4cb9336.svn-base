@@ -1,0 +1,87 @@
+var FromDate;
+var ToDate;
+var date = new Date();
+var startdate =
+    date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+var enddate =
+    date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+
+$(document).ready(function () {
+    //payment datatable
+    paymentList();
+
+    $("#ddlPaymentType").bind("change", function () {
+        changePaymentType();
+    });
+
+    FromDate = moment();
+    ToDate = moment();
+
+    $("#btnDate").daterangepicker(
+        {
+            ranges: {
+                Today: [moment(), moment()],
+                Yesterday: [
+                    moment().subtract("days", 1),
+                    moment().subtract("days", 1),
+                ],
+                "Last 7 Days": [moment().subtract("days", 6), moment()],
+                "Last 30 Days": [moment().subtract("days", 29), moment()],
+                "This Month": [
+                    moment().startOf("month"),
+                    moment().endOf("month"),
+                ],
+                "Last Month": [
+                    moment().subtract("month", 1).startOf("month"),
+                    moment().subtract("month", 1).endOf("month"),
+                ],
+            },
+            FromDate: moment(),
+            ToDate: moment(),
+        },
+        getDate
+    );
+
+    getDate(FromDate, ToDate);
+});
+
+function getDate(start, end) {
+    startdate = start.format("YYYY-MM-DD");
+    enddate = end.format("YYYY-MM-DD");
+    dtPayment.draw();
+
+    $("#btnDate span").html(
+        start.format("MMMM D, YYYY") + " - " + end.format("MMMM D, YYYY")
+    );
+}
+
+function paymentList() {
+    dtPayment = $("#payment").DataTable({
+        
+    });
+}
+
+function changePaymentType() {
+    var paymenttype = $("#ddlPaymentType").val();
+    if (paymenttype == 0) {
+        $("#divPurchase").css({ display: "none" });
+        $("#divSalesRtn").css({ display: "none" });
+        $("#divExpLedger").css({ display: "none" });
+        $("#divExpEmployee").css({ display: "none" });
+        $("#divhide").css({ display: "block" });
+    }
+    if (paymenttype == 1) {
+        $("#divPurchase").css({ display: "none" });
+        $("#divSalesRtn").css({ display: "none" });
+        $("#divExpLedger").css({ display: "block" });
+        $("#divExpEmployee").css({ display: "none" });
+        $("#divhide").css({ display: "none" });
+    }
+    if (paymenttype == 2) {
+        $("#divPurchase").css({ display: "none" });
+        $("#divSalesRtn").css({ display: "none" });
+        $("#divExpLedger").css({ display: "none" });
+        $("#divExpEmployee").css({ display: "block" });
+        $("#divhide").css({ display: "none" });
+    }
+}

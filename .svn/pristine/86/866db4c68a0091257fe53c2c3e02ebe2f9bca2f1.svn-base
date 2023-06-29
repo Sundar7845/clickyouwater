@@ -1,0 +1,117 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Dashboard | Payments List
+@endsection
+
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-1 mb-4">
+        <span class="text-muted fw-light">Accounts /</span> Payments List
+    </h4>
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-12 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Customer Name</label>
+                                <select id="ddlRtype" class="select2 form-select form-select-lg" control="ddl"
+                                    data-live-search="true">
+                                    <option value="1">All Ledger</option>
+                                    <option value="HI">Hawaii</option>
+                                    <option value="CA">California</option>
+                                    <option value="NV">Nevada</option>
+                                    <option value="OR">Oregon</option>
+                                    <option value="WA">Washington</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-1 mt-3">
+                            <label> &nbsp;</label>
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="chkAll">
+                                <label class="custom-control-label" for="chkAll">All</label>
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <label>&nbsp; </label>
+                            <div class="text-sm-right">
+                                <button type="button" id="btnexport"
+                                    class="btn btn-success btn-rounded waves-effect waves-light mb-3">Filter</button>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <label>&nbsp; </label>
+                            <div class="form-group">
+                                <a href="{{ route('payments') }}">
+                                    <button type="button" id="btnNew" class="btn btn-primary"> Add New</button>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <label>&nbsp; </label>
+                            <div class="text-sm-right">
+                                <button type="button" id="btnexport"
+                                    class="btn btn-success btn-rounded waves-effect waves-light mb-3">
+                                    <i></i>Export </button>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mt-4">
+                            <label>&nbsp;</label>
+                            <button type="button" class="btn btn-flat btn-primary" id="btnDate"
+                                style="height: 36px;">
+                                <i class="fa fa-calendar"></i>
+                                <span id="spnDate" style="padding-left: 5px;">Today</span>
+                                <i class="fa fa-caret-down"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mt-3">
+                            <h5>Payments List</h5>
+                            <div class="table-responsive">
+                                <table id="" class="table table-sm table-bordered dt-responsive"
+                                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                    <thead>
+                                        <tr class='header'>
+                                            <th>S.No.</th>
+                                            <th>PO.No.</th>
+                                            <th>PO.Date</th>
+                                            <th>Customer</th>
+                                            <th>Due</th>
+                                            <th>Paid</th>
+                                            <th>Balance</th>
+                                            <th>Pay Type</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbodyList">
+                                        <tr id="emptyRow" style="height: 25px;">
+                                            <td colspan="9" style="text-align: center; height: 23px;">No Record Added
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="5" style="text-align: right;">TOTAL </td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+</div>
+<!-- / Content -->
+@endsection

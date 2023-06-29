@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class DeliveryPeopleDocuments extends Model
+{
+    use HasFactory;
+
+    public $timestamps = false;
+
+    protected $fillable = [
+        'delivery_people_id',
+        'documentconfig_id',
+        'document_path',
+        'document_number',
+        'is_verified'
+    ];
+}

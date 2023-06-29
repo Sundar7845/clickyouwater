@@ -1,0 +1,8 @@
+//Third Party Tie-up
+$('#chkIsThirdParty').click(function() {
+    if ($('#chkIsThirdParty').is(':checked')) {
+        $(".ThirdParty").show();
+    } else {
+        $(".ThirdParty").hide();
+    }
+});

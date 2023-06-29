@@ -1,0 +1,158 @@
+@extends('layouts.main_master') @section('content') @section('title') Dashboard | Manufacturer @endsection
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+  <h4 class="fw-bold py-1 mb-4">
+    <span class="text-muted fw-light">Discount Management /</span> Generate Coupon
+  </h4>
+  <div class="row mb-4">
+    <!-- Browser Default -->
+    <div class="col-md-12 mb-4 mb-md-0">
+      <div class="card">
+        <div class="card-body">
+          <form class="browser-default-validation">
+            <div class="row">
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <label class="form-label" for="basic-default-name">Coupon Code <span class="text-danger">*</span>
+                  </label>
+                  <input type="text" class="form-control" id="basic-default-name" placeholder="Coupon Code" required />
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <label class="form-label" for="basic-default-name">Coupon Name<span class="text-danger">*</span>
+                  </label>
+                  <input type="text" class="form-control" id="basic-default-name" placeholder="Coupon Name" required />
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <label class="form-label" for="basic-default-email">Order Qty <span class="text-danger">*</span>
+                  </label>
+                  <input type="email" id="basic-default-email" class="form-control" placeholder="Order Qty" required />
+                </div>
+              </div>
+              <div class="col-md-5">
+                <label>&nbsp;</label>
+                <div class="input-group">
+                    <span class="input-group-text" id="basic-addon11">Validity Date</span>
+                    <button type="button" class="btn btn-flat btn-primary" id="btnDate" style="height: 36px;">
+                        <i class="fa fa-calendar"></i><span id="spnDate" style="padding-left: 5px;">Today</span>
+                        <i class="fa fa-caret-down"></i>
+                        </button>
+                  </div>
+              </div>
+              <div class="col-md-4">
+                <label>&nbsp;</label>
+                <div class="mb-3">
+                  <button type="submit" class="btn btn-primary">Save</button>
+                  <button type="button" class="btn btn-danger">Cancel</button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <!-- /Browser Default -->
+  </div>
+  <h5 class="fw-bold py-1 mb-4">
+    <span class="text-muted fw-light"></span> Coupon List
+  </h5>
+  <!-- DataTable with Buttons -->
+  <div class="col-lg-12 mb-4 mb-lg-0">
+    <div class="card h-100">
+      <div class="table-responsive">
+        <table class="table table-borderless">
+          <thead class="border-bottom">
+            <tr>
+              <th>S.No</th>
+              <th>Coupon ID</th>
+              <th>Coupon Name</th>
+              <th>Order Qty</th>
+              <th>Valifity</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>COUPGLOB00130</td>
+              <td>GLOBELWAT</td>
+              <td>15</td>
+              <td>01-02-2023 to 10-02-2023</td>
+              <td>
+                <label for="" class="badge bg-label-success">Active</label>
+              </td>
+              <td>
+                <a>
+                  <i class="text-primary ti ti-pencil me-1"></i>
+                </a>
+                <a>
+                  <i class="text-danger ti ti-trash me-1"></i>
+                </a>
+              </td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>COUPGLOB00130</td>
+              <td>GLOBELWAT</td>
+              <td>15</td>
+              <td>01-02-2023 to 10-02-2023</td>
+              <td>
+                <label for="" class="badge bg-label-success">Active</label>
+              </td>
+              <td>
+                <a>
+                  <i class="text-primary ti ti-pencil me-1"></i>
+                </a>
+                <a>
+                  <i class="text-danger ti ti-trash me-1"></i>
+                </a>
+              </td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>COUPGLOB00130</td>
+              <td>GLOBELWAT</td>
+              <td>15</td>
+              <td>01-02-2023 to 10-02-2023</td>
+              <td>
+                <label for="" class="badge bg-label-success">Active</label>
+              </td>
+              <td>
+                <a>
+                  <i class="text-primary ti ti-pencil me-1"></i>
+                </a>
+                <a>
+                  <i class="text-danger ti ti-trash me-1"></i>
+                </a>
+              </td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>COUPGLOB00130</td>
+              <td>GLOBELWAT</td>
+              <td>15</td>
+              <td>01-02-2023 to 10-02-2023</td>
+              <td>
+                <label for="" class="badge bg-label-success">Active</label>
+              </td>
+              <td>
+                <a>
+                  <i class="text-primary ti ti-pencil me-1"></i>
+                </a>
+                <a>
+                  <i class="text-danger ti ti-trash me-1"></i>
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!--/ DataTable with Buttons -->
+</div>
+<!-- / Content --> @endsection

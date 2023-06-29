@@ -1,0 +1,194 @@
+$(document).ready(function () {
+    loadVehicle();
+    $("#ddlVehicle").select2({
+        multiple: true,
+        placeholder: "Select Vehicle",
+    });
+});
+
+//Check user mobile  if already exists
+$("#txtDeliveryPersonMobile").on("focusout", function (e) {
+    var mobileNumber = $(this).val();
+    checkMobileNumberExists(mobileNumber, 6, $("#hdDelPerId").val(), function (result) {
+        if (result == true) {
+            $("#txtDeliveryPersonMobile").val("");
+            $("#txtDeliveryPersonMobile").focus();
+        }
+    });
+});
+
+// jquery Validation
+$(function () {
+    $("form[name='delivery_person']").validate({
+        rules: {
+            txtDeliveryPersonId: "required",
+            txtDeliveryPersonName: "required",
+            txtDeliveryPersonMobile: "required",
+            deliveryPersonEmail: "required",
+            ddlState: "required",
+            ddlCity: "required",
+            ddlArea: "required",
+            txtDoorNo: "required",
+            txtPincode: "required",
+            ddlHub: "required",
+            // password: "required",
+            // //password_confirmation: "required",
+            // password_confirmation: {
+            //     required: true,
+            //     equalTo: "#password",
+            // },
+            //fileDelPersonImage: "required"
+            ddlfueltype: "required",
+            ddlvehicletype: "required",
+            ddlvehiclebrand: "required",
+            txtregno: "required",
+        },
+        messages: {
+            required: "This field is required",
+            // password_confirmation:
+            //     "Password and confirm password is doesn't match",
+        },
+        errorPlacement: function (error, element) {
+            if (element.is(":radio")) {
+                error.appendTo(element.parents(".form-group"));
+            } else {
+                // This is the default behavior
+                // error.insertAfter(element);
+                if (element.siblings(".error").html() == undefined) {
+                    error.appendTo(element.parent().next(".error"));
+                } else {
+                    error.appendTo(element.siblings(".error"));
+                }
+            }
+        },
+        submitHandler: function (form) {
+            form.submit();
+        },
+    });
+});
+
+// jquery Validation
+$(function () {
+    $("form[name='delivery_person_edit']").validate({
+        rules: {
+            txtDeliveryPersonId: "required",
+            txtDeliveryPersonName: "required",
+            txtDeliveryPersonMobile: "required",
+            deliveryPersonEmail: "required",
+            ddlState: "required",
+            ddlCity: "required",
+            ddlArea: "required",
+            txtDoorNo: "required",
+            txtPincode: "required",
+            ddlHub: "required",
+            //fileDelPersonImage: "required"
+            ddlfueltype: "required",
+            ddlvehicletype: "required",
+            ddlvehiclebrand: "required",
+            txtregno: "required",
+        },
+        messages: {
+            required: "This field is required",
+            // password_confirmation:
+            //     "Password and confirm password is doesn't match",
+        },
+        errorPlacement: function (error, element) {
+            if (element.is(":radio")) {
+                error.appendTo(element.parents(".form-group"));
+            } else {
+                // This is the default behavior
+                // error.insertAfter(element);
+                if (element.siblings(".error").html() == undefined) {
+                    error.appendTo(element.parent().next(".error"));
+                } else {
+                    error.appendTo(element.siblings(".error"));
+                }
+            }
+        },
+        submitHandler: function (form) {
+            form.submit();
+        },
+    });
+});
+
+//Delete Data
+// function showDelete(id) {
+//     confirmDelete(id, "delete/deliverperson/", "tblDeliveryPerson");
+// }
+
+//Image Preview
+const inputFiles = document.querySelectorAll('input[type="file"]');
+const previewImages = document.querySelectorAll('img[id^="previewImage"]');
+
+inputFiles.forEach(function (inputFile, index) {
+    inputFile.addEventListener("change", function () {
+        const file = this.files[0];
+        const reader = new FileReader();
+
+        reader.addEventListener("load", function () {
+            previewImages[index].setAttribute("src", this.result);
+        });
+
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    });
+});
+
+function loadVehicle() {
+    $("#ddlHub").on("change", function () {
+        var hub_id = this.value;
+        $("#ddlVehicle").html("");
+        $.ajax({
+            url: "/get/vehicleinfo",
+            type: "GET",
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+            data: {
+                hub_id: hub_id,
+                _token: $('meta[name="csrf-token"]').attr("content"),
+            },
+            dataType: "json",
+            success: function (result) {
+                $("#ddlVehicle").select2({
+                    placeholder: "Select Vehicle",
+                });
+                $.each(result.responseData, function (key, value) {
+                    console.log(value);
+                    $("#ddlVehicle").append(
+                        '<option value="' +
+                        value.id +
+                        '">' +
+                        value.reg_no +
+                        "</option>"
+                    );
+                });
+            },
+        });
+    });
+}
+
+function cancel() {
+    var baseUrl = window.location.origin;
+    $("#txtDeliveryPersonName").val("");
+    $("#txtDeliveryPersonMobile").val("");
+    $("#deliveryPersonEmail").val("");
+    $("#ddlHub").val("").trigger("change");
+    $("#ddlVehicle").val("").trigger("change");
+    // $("#password").val("");
+    // $("#password_confirmation").val("");
+    $("#fileDelPersonImage").val("");
+    $("#ddlState").val("").trigger("change");
+    $("#ddlCity").val("").trigger("change");
+    $("#ddlArea").val("").trigger("change");
+    $("#txtDoorNo").val("");
+    $("#txtPincode").val("");
+    $("#previewImage1").attr(
+        "src",
+        baseUrl + "/assets/img/avatars/14.png"
+    );
+    $("input[type='file']").val("");
+    $(".valid").val("");
+    $("#txtDeliveryPersonName").focus();
+}

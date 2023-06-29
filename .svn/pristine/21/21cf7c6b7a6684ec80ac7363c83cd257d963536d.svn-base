@@ -1,0 +1,46 @@
+$(document).ready(function () {
+    $("#tblDepartmentList").DataTable({
+        processing: true,
+        serverSide: true,
+        responsive:true,
+        order: [[0, "ASC"]],
+        ajax: "department/data",
+        fnRowCallback: function (nRow, aData, iDisplayIndex) {
+            $("td:first", nRow).html(iDisplayIndex + 1);
+            return nRow;
+        },
+
+        columns: [
+            { data: "id" },
+            { data: "department_name" },
+            { data: "is_active"},
+            { data: "action" }
+        ],
+    });
+});
+
+function doEdit(id) {
+    $("#hdDepartmentId").val(id);
+    $("#txtDepartmentName").focus();
+    $("#btnSave").text("Update");
+    getDepartmentById(id);
+}
+
+function getDepartmentById(id) {
+    $.ajax({
+        type: "GET",
+        url: "getdepartment/" + id,
+        dataType: "json",
+        success: function (data) {
+            $("#txtDepartmentName").val(data.department.department_name);
+        },
+    });
+}
+
+function cancel() {
+    $("#hdAreaId").val("");
+    $("#txtDepartmentName").val("");
+    $("#btnSave").text("Save");
+    $("#txtDepartmentName").focus();
+}
+

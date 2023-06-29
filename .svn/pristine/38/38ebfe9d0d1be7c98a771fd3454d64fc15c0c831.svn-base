@@ -1,0 +1,72 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class Order extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'order_no',
+        'invoice_no',
+        'user_id',
+        'hub_id',
+        'delivery_address_id',
+        'delivery_address',
+        'delivery_charge',
+        'exp_delivery_date',
+        'coupon_id',
+        'coupon_code',
+        'total_discount_amount',
+        'total_igst_amount',
+        'total_sgst_amount',
+        'total_cgst_amount',
+        'total_qty',
+        'wallet_points_used',
+        'deposit_amount',
+        'total_tax_amount',
+        'sub_total',
+        'taxable_amount',
+        'roundoff',
+        'grand_total',
+        'desc',
+        'status_id',
+        'is_cancel',
+        'transaction_amount',
+        'transaction_date',
+        'transaction_status',
+        'transaction_response',
+        'transaction_id',
+        'payment_method',
+        'payment_through',
+        'invoice_path'
+    ];
+    public function orderDets()
+    {
+        return $this->hasMany(OrderDet::class, 'order_id');
+    }
+
+    public function userOrderHistories()
+    {
+        return $this->hasMany(UserOrderHistory::class, 'order_id');
+    }
+
+    public function orderTrackings()
+    {
+        return $this->hasMany(OrderTracking::class, 'order_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+    public function products()
+    {
+        return $this->hasManyThrough(Products::class, OrderDet::class, 'order_id', 'id', 'id', 'product_id');
+    }
+
+}

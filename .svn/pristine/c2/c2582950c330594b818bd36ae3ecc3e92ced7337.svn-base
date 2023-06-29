@@ -1,0 +1,129 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Dashboard | Logistic List
+@endsection
+
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-1 mb-4">
+        Logistic List
+    </h4>
+    <!-- Filters -->
+    <div class="card mt-3">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <strong class="form-label">State Name</strong>
+                        <select name="ddlState" id="ddlState" class="select2 form-select form-select-lg">
+                            <option value="">Select State</option>
+                            @if (!empty($states))
+                                @foreach ($states as $state)
+                                    <option value="{{ $state->id }}">
+                                        {{ $state->state_name }}
+                                    </option>
+                                @endforeach
+                            @endif
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <strong class="form-label">District Name</strong>
+                        <select name="ddlCity" id="ddlCity" class="select2 form-select form-select-lg">
+                            <option value="">Select District</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <strong class="form-label">Area Name</strong>
+                        <select name="ddlArea" id="ddlArea" class="select2 form-select form-select-lg">
+                            <option value="">Select Area</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-12 mb-4 mb-md-0 mt-3">
+            <div class="card">
+                <div class="card-body">
+                    <form class="browser-default-validation">
+                        <div class="row">
+                            <!-- DataTable with Buttons -->
+                            <div class="col-lg-12 mb-4 mb-lg-0">
+                                <div class="card-datatable table-responsive pt-0">
+                                    <table id="tbllogistic" class="table">
+                                        <thead class="border-bottom">
+                                            <tr>
+                                                <th>S.No</th>
+                                                <th>Logistic Code</th>
+                                                <th>Logistic Name</th>
+                                                <th>Manufacturer Name</th>
+                                                <th>Hub Name</th>
+                                                <th>Propreitor Name</th>
+                                                <th>No of Vehicle</th>
+                                                <th>No of Drivers</th>
+                                                <th>Document</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <!--/ DataTable with Buttons -->
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+</div>
+<!-- / Content -->
+<!-- Modal -->
+<div class="modal fade" id="addNewCCModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-simple">
+        <div class="modal-content p-3 p-md-5">
+            <div class="modal-body">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="card-datatable table-responsive pt-0">
+                    <table id="logistic" class="table">
+                        <thead class="border-bottom">
+                            <tr>
+                                <th>S.No</th>
+                                <th>Hub Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>saravanampatti</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Hopes</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Perur</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--/Modal -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/admin/logisticmanagement/logistic_list.js') }}"></script>
+@endsection

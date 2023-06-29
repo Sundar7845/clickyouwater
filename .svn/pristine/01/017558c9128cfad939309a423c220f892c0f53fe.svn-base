@@ -1,0 +1,240 @@
+$(function() {
+    $('#ddlOffer').change(function(){
+        if($('#ddlOffer').val() == 2) {
+            $('#stateName').show(); 
+        } else {
+            $('#stateName').hide(); 
+        } 
+    });
+});
+
+$(document).ready(function() {
+
+  //image tag hide
+  if($('#previewImage1').attr('src') === '') {
+    $('#previewImage1').hide();
+  }
+  $("#OfferImage").on("change", function (){
+    $('#previewImage1').show();
+  });
+    
+    $('#tbloffers').DataTable({
+        processing: true,
+        serverSide: true,
+        order: [[0, "ASC"]],
+        ajax: "offers/data",
+        fnRowCallback: function (nRow, aData, iDisplayIndex) {
+            $("td:first", nRow).html(iDisplayIndex + 1);
+            return nRow;
+        },
+        columns: [
+            { data: "id" },
+            {
+                data: "offer_image_path",
+                render: function (data) {
+                    return '<img src="' + data + '" class="avatar" width="50" height="50"/>';
+                }
+            },
+            { data: "offer_name" },
+            { data: "validity" },
+            { data: "formatted_start_date" },
+            { data: "formatted_end_date" },
+            { data: "is_active",
+            render: function (data, type, row) {
+                return `<label class="switch">
+                <input onclick="doStatus(${row.id});" id="chkOffer${row.id}" type="checkbox" class="switch-input"
+                name="chkOffer" '  ${(data == 1 ? "checked" : "")} ' />
+                <span class="switch-toggle-slider">
+                    <span class="switch-on"></span>
+                    <span class="switch-off"></span>
+                </span>
+                </label>`;
+                }
+            },
+            { data: "action" }
+        ],
+    });
+});
+
+function doStatus(id) {
+    var status = $("#chkOffer" + id).is(":checked");
+    confirmStatusChange(id, "offers/", "tbloffers", (status == true ? 1 : 0), "chkOffer");
+  }
+
+function cancel() {
+    $("#hdOfferId").val("");
+    $("#ddlOffer").val("").trigger('change');
+    $("#txtOfferName").val("");
+    $("#txtStartDate").val("");
+    $("#txtEndDate").val("");
+    $("#txtOfferPoints").val("");
+    $("#OfferImage").val("");
+    $(".upload__img-wrap").html("");
+    $("#btnSave").text("Save");
+    $("#ddlOffer").focus();
+}
+
+function showDelete(id) {
+    confirmDelete(id, "delete/offers/", "tbloffers");
+}
+
+// jquery Validation
+$(function () {
+    $("form[name='offers']").validate({ 
+        rules: {
+            ddlOffer: "required",
+            ddlState: "required",
+            txtOfferName: "required",
+            txtValidityDays: "required",
+            txtStartDate: "required",
+            txtEndDate: "required",
+            txtOffertotalPoints: "required",
+            txtOfferCode: {
+              required: function() {
+                  return $.trim($('#tbodyOfferCodes').text()) === '';
+              }
+          },
+          txtCodeType: {
+              required: function() {
+                  return $.trim($('#tbodyOfferCodes').text()) === '';
+              }
+          },
+        },
+        messages: {
+          required: "This field is required",
+      },
+        errorPlacement: function (error, element) {
+            if (element.is(":radio")) {
+                error.appendTo(element.parents(".form-group"));
+            } else {
+                // This is the default behavior
+                // error.insertAfter(element);
+                if (element.siblings(".error").html() == undefined) {
+                    error.appendTo(element.parent().next(".error"));
+                } else {
+                    error.appendTo(element.siblings(".error"));
+                }
+            }
+        },
+    });
+});
+
+var RowIndex = 1;
+
+function validateOfferCodes() {
+   
+    if($("#txtOfferCode").val() == "") {
+        alert('Enter Offer Code');
+        $("#txtOfferCode").focus();
+        return false;
+    }
+
+    if($("#txtCodeType").val() == "") {
+        alert('Enter Code Type');
+        $("#txtCodeType").focus();
+        return false;
+    }
+    return true;
+}
+
+function addOfferCodes() {
+ 
+  if (validateOfferCodes()) {
+      var editRowIndex = $("#hdEditOffercodesRowId").val();
+      var offercodesdata = "";
+      var OFC = $("#txtOfferCode").val();
+      var OCT = $("#txtCodeType").val();  
+
+      if (($("tr[OFC=\"" + OFC + "\"]" + "[OCT=\"" + OCT + "\"]").length == 0)) {
+          if (editRowIndex == 0) {
+              offercodesdata += "<tr id='troffercodes" + RowIndex + "' OFC=" + OFC + " OCT=" + OCT + ">";
+              offercodesdata += "<td><input type='hidden' class ='offercode' id='taboffercode_" + RowIndex + "' name='tabOfferCodes[]' value=" + OFC + "><span id='spnOfferCodes'>" + OFC + "</span></td>";
+              offercodesdata += "<td><input type='hidden' class ='offercode' id='tabcodetype_" + RowIndex + "' name='tabOfferCodeTypes[]' value=" + OCT + "><span id='spnOfferCodeType'>" + OCT + "</span></td>";
+              offercodesdata += "<td><a><i class='text-primary ti ti-pencil me-1' onclick = 'doEditOfferCodes(" + RowIndex + ");'></i></a><a><i class='text-danger ti ti-trash me-1' onclick ='removeRow(" + RowIndex + ");'></i></a></td>";
+              offercodesdata += "</tr>";
+              RowIndex++;
+              $("#tbodyOfferCodes").append(offercodesdata);
+          }
+          else if (editRowIndex > 0) {
+              $("#troffercodes" + editRowIndex + " td:eq(0) #taboffercode_" + editRowIndex).val(OFC);
+              $("#troffercodes" + editRowIndex + " td:eq(0) #spnOfferCodes").text(OFC);
+              $("#troffercodes" + editRowIndex + " td:eq(1) #tabcodetype_" + editRowIndex).val(OCT);
+              $("#troffercodes" + editRowIndex + " td:eq(1) #spnOfferCodeType").text(OCT);
+              showAddImage();
+              $("#hdEditOffercodesRowId").val(0);
+          }
+          formClear();
+      } else {
+          alert('Item Alredy exist');
+      }
+  }
+}
+
+function formClear() {
+  $("#txtOfferCode").val("");
+  $("#txtCodeType").val("");
+}
+
+function doEditOfferCodes(SID) {
+  $("#hdEditOffercodesRowId").val(SID);
+  $("#txtOfferCode").val($("#troffercodes" + SID + " td:eq(0)").text());
+  $("#txtCodeType").val($("#troffercodes" + SID + " td:eq(1)").text());
+  showEditImage();
+}
+
+function showEditImage() {
+  $("#btnUpdate").css("display", "block");
+  $("#btnAdd").css("display", "none");
+}
+
+function showAddImage() {
+  $("#btnUpdate").css("display", "none");
+  $("#btnAdd").css("display", "block");
+}
+
+function removeRow(SID) {
+  $("#troffercodes" + SID).remove();
+}
+
+//Image Preview
+const inputFiles = document.querySelectorAll('input[type="file"]');
+const previewImages = document.querySelectorAll('img[id^="previewImage"]');
+
+inputFiles.forEach(function (inputFile, index) {
+    inputFile.addEventListener("change", function () {
+        const file = this.files[0];
+        const reader = new FileReader();
+
+        reader.addEventListener("load", function () {
+            previewImages[index].setAttribute("src", this.result);
+        });
+
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    });
+});
+
+function validate(event){
+    event.preventDefault(); // prevent the default form submission behavior
+    if ($.trim($('#tbodyOfferCodes').text()) === '') {
+      alert('Please enter offer codes.');
+      return false;
+    }
+    return true;
+}
+
+
+function cancel() {
+    $("#hdOfferImg").val("");
+    $("#ddlOffer").val("").trigger('change');
+    $("#ddlState").val("").trigger('change');
+    $("#txtOfferName").val("");
+    $("#txtStartDate").val("");
+    $("#txtEndDate").val("");
+    $("#txtOffertotalPoints").val("");
+    $("#txtOfferclaimPoints").val("");
+    $('#previewImage1').attr('src', '');
+    $("#OfferImage").val("");
+    $("#ddlOffer").focus();
+}

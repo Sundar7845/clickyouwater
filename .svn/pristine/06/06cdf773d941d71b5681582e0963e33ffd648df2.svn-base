@@ -1,0 +1,128 @@
+<?php
+
+namespace App\Http\Controllers\API\Hub;
+
+use App\Enums\RoleTypes;
+use App\Enums\StatusTypes;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\HubOrderResource;
+use App\Models\DeliveryPerson;
+use App\Models\Order;
+use App\Models\OrderDelivery;
+use App\Traits\Common;
+use App\Traits\ResponseAPI;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class HubController extends Controller
+{
+    //
+    use ResponseAPI;
+    use Common;
+
+    public function getHubUserInfo()
+    {
+        try {
+            //orders to assign count
+            $orders_to_assign = $this->getOrders(StatusTypes::OrderPlaced)->count();
+            //surrender orders count
+            $surrender_orders = 0;
+            //Total hub orders
+            $statusIds = [
+                StatusTypes::OrderPlaced,
+                StatusTypes::OrderShipped,
+                StatusTypes::OrderDelivered,
+                StatusTypes::AssignedToDelivery
+            ];
+            $total_hub_orders = $this->getOrders(
+                implode(',', $statusIds)
+            )->count();
+            //orders assigned count
+            $orders_assigned = $this->getOrders(
+                implode(',', [
+                    StatusTypes::AssignedToDelivery,
+                    StatusTypes::OrderShipped
+                ])
+            )->count();
+            //pending confirmation from delivery agents 
+            $pending_orders_confirmation = $this->getOrders(StatusTypes::AssignedToDelivery)->count();
+
+            //orders not delivered count
+            $orders_not_delivered = 0;
+            //orders delivered count
+            $orders_delivered = $this->getOrders(StatusTypes::OrderDelivered)->count();
+
+            //Pending orders by product type 
+            $orders_by_product_types = [];
+            //Assigned orders by delivery person
+            $orders_by_delivery_person = [];
+
+            //Logistics
+            //items delivery request 
+            $items_delivery = [];
+            //return cans request 
+            $return_cans_request = [];
+
+            $hub_user_info = array(
+                'orders_to_assign' => $orders_to_assign,
+                'surrender_orders' => $surrender_orders,
+                'total_hub_orders' => $total_hub_orders,
+                'orders_assigned' => $orders_assigned,
+                'pending_orders_confirmation' => $pending_orders_confirmation,
+                'orders_not_delivered' => $orders_not_delivered,
+                'orders_delivered' => $orders_delivered,
+                'orders_by_product_types' => $orders_by_product_types,
+                'orders_by_delivery_person' => $orders_by_delivery_person,
+                'items_delivery' => $items_delivery,
+                'return_cans_request' => $return_cans_request,
+            );
+
+            $response = array(
+                'message' => "Success",
+                'data' => $hub_user_info,
+                'status' => true,
+            );
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+    public function getDPListOrdersInfo()
+    {
+        try {
+            $deliveryPerson = DeliveryPerson::where('hub_id', Auth::user()->ref_id)->get();
+            if ($deliveryPerson->count() != 0) {
+                $deliveryMan = [];
+                foreach ($deliveryPerson as $key => $value) {
+                    $deliveryMan[] = array(
+                        'id' => $value->id,
+                        'delivery_person_name' => $value->delivery_person_name,
+                        'delivery_person_user_id' => $this->getUserId($value->id, RoleTypes::DeliveryPerson),
+                        'is_online' => $value->is_online,
+                        'orders_assigned' => $this->getAssignedOrders($value->id)
+                    );
+                }
+
+                $response = array(
+                    'message' => "Success",
+                    'data' => $deliveryMan,
+                    'status' => true,
+                );
+            } else {
+
+                $response = array(
+                    'message' => "Success",
+                    'data' => [],
+                    'status' => true,
+                );
+            }
+
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+}

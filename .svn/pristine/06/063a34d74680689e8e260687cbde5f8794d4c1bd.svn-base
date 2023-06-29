@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Http\Controllers\Admin\OrderManagement;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class HubOrdersController extends Controller
+{
+  public function hubOrders()
+  {
+    return view('Admin.order_management.hub_orders.hub_orders');
+  }
+}

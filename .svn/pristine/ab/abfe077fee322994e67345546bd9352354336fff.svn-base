@@ -1,0 +1,78 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Settings;
+
+use App\Http\Controllers\Controller;
+use App\Models\BillNoSetting;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class SettingsController extends Controller
+{
+    public function settings()
+    {
+        return view('admin.settings.settings');
+    }
+
+    //Bill on Setting
+    public function BillSettings()
+    {
+        $data = BillNoSetting::get();
+        return view('admin.settings.bill_settings',compact('data'));
+    }
+    public function addBillSettings(Request $request)
+    {
+        dd($request);
+        $request->validate([
+            'txtManuPrefix' => 'required',
+            'txtManuLength' => 'required',
+            'txtManuLive' => 'required',
+            'txtHubPrefix' => 'required',
+            'txtHubLength' => 'required',
+            'txtHubLive' => 'required',
+            'txtLogisticPrefix' => 'required',
+            'txtLogisticLength' => 'required',
+            'txtLogisticLive' => 'required',
+            'txtCusPrefix' => 'required',
+            'txtCusLength' => 'required',
+            'txtCusLive' => 'required',
+            'txtDlPrefix' => 'required',
+            'txtDlLength' => 'required',
+            'txtDlLive' => 'required',
+            'txtEmplyPrefix' => 'required',
+            'txtEmplyLength' => 'required',
+            'txtEmplyLive' => 'required',
+        ]);
+
+        if ($request->hdManufacturerId == null) {
+            BillNoSetting::create([
+                'manufacture_prefix' => $request->txtPrefix,
+                'manufacture_length' => $request->txtLength,
+                'manufacture_live' => $request->txtLive,
+                'created_by' => Auth::user()->id
+            ]);
+
+             $notification = array(
+                    'message' => 'Manufacturer Created Successfully',
+                    'alert-type' => 'success'
+                );
+        } else {
+            BillNoSetting::findorfail($request->hdDepartmentId)->update([
+                'department_name' => $request->txtDepartmentName,
+                'updated_by' => Auth::user()->id
+            ]);
+
+            $notification = array(
+                'message' => 'Department Updated Successfully',
+                'alert-type' => 'success'
+            );
+        }
+        return redirect()->route('bill-settings')->with($notification);
+    }
+
+
+    public function referralPoints()
+    {
+        return view('admin.settings.referral_points');
+    }
+}

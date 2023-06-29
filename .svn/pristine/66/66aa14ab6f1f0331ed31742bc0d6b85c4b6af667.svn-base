@@ -1,0 +1,89 @@
+@extends('layouts.main_master') @section('content')
+@section('title')
+    Customer Outstanding List | Click Your Water | Dashboard
+@endsection
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-1 mb-4">Customer Outstanding List</h4>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                {{-- <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="form-label" for="basic-default-email">Customer Type</label>
+                        <select name="ddlcustomerType" id="ddlcustomerType" class="form-select">
+                            @foreach ($customer_types as $item)
+                                <option value="{{ $item->id }}" {{ $item->id == 1 ? 'selected' : '' }}>
+                                    {{ $item->customer_type }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div> --}}
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="form-label">State Name</label>
+                        <select name="ddlState" id="ddlState" class="select2 form-select ">
+                            <option value="">Select State</option>
+                            @foreach ($states as $item)
+                                <option value="{{ $item->id }}">{{ $item->state_name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="form-label">District Name</label>
+                        <select name="ddlCity" id="ddlCity" class="select2 form-select ">
+                            <option value="">Select District</option>
+                        </select>
+                    </div>
+                </div>
+                {{-- <div class="col-md-2">
+                    <div class="mb-3">
+                        <label class="form-label">Area Name</label>
+                        <select name="ddlArea" id="ddlArea" class="select2 form-select ">
+                            <option value="">Select</option>
+                        </select>
+                    </div>
+                </div> --}}
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="form-label">Hub Name</label>
+                        <select name="ddlHub" id="ddlHub" class="select2 form-select ">
+                            <option value="">Select Hub</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- DataTable with Buttons -->
+    <div class="col-lg-12 mt-2 mb-4 mb-lg-0">
+        <div class="card h-100">
+            <div class="card-datatable table-responsive pt-0">
+                <table id="tblCustomerOutstanding" class="table">
+                    <thead class="border-bottom">
+                        <tr>
+                            <th>S.No</th>
+                            <th>CUSTOMER NAME</th>
+                            <th>ADDRESS</th>
+                            <th>PRODUCT NAME</th>
+                            <th>EXTRA QTY</th>
+                            <th>DEPOSIT AMT</th>
+                            <th>ACTION</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--/ DataTable with Buttons -->
+</div>
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/admin/customermanagement/customer_outstanding.js') }}"></script>
+@endsection

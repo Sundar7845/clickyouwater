@@ -1,0 +1,13 @@
+<?php
+
+namespace App\Http\Controllers\Masters;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class WholesalePartnerController extends Controller
+{
+   public function WholesalePartner(){
+    return view('wholesale_partner.wholesale_partner');
+   }
+}

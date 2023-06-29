@@ -1,0 +1,129 @@
+$(document).ready(function () {
+    $("#tblProducttype").DataTable({
+        processing: true,
+        serverSide: true,
+        order: [[0, "ASC"]],
+        ajax: "producttype/data", "fnRowCallback": serialNoCount,
+        columns: [
+            { data: "id", orderable: false },
+            { data: "category_name" },
+            { data: "product_type_name" },
+            { data: "delivery_charge" },
+            { data: "delivery_duration" },
+            { data: "formatted_start_date" },
+            { data: "newcan_deposit_amt" },
+            {
+                data: "min_order_qty",
+                render: function (data, type, row) {
+                    return row.min_order_qty + " / " + row.max_order_qty;
+                },
+            },
+            {
+                data: "is_active",
+                render: function (data, type, row) {
+                    return `<label class="switch">
+                <input onclick="doStatus(${row.id});" id="chkproducttype${row.id
+                        }" type="checkbox" class="switch-input"
+                name="chkproducttype" '  ${data == 1 ? "checked" : ""} ' />
+                <span class="switch-toggle-slider">
+                    <span class="switch-on"></span>
+                    <span class="switch-off"></span>
+                </span>
+            </label>`;
+                },
+            },
+            { data: "action", orderable: false },
+        ],
+    });
+    BindCity();
+});
+
+function doStatus(id) {
+    var status = $("#chkproducttype" + id).is(":checked");
+    confirmStatusChange(
+        id,
+        "producttype/",
+        "tblProducttype",
+        status == true ? 1 : 0,
+        "chkproducttype"
+    );
+}
+
+function doEdit(id) {
+    $("#hdProductTypeId").val(id);
+    $("#ddlCategory").focus();
+    $("#btnSave").text("Update");
+    $("#heading").text("Update Product Type");
+    getProductTypeById(id);
+}
+
+function getProductTypeById(id) {
+    $.ajax({
+        type: "GET",
+        url: "getproducttype/" + id,
+        dataType: "json",
+        success: function (data) {
+            console.log(data);
+            $("#ddlCategory")
+                .val(data.ProductType.category_id)
+                .trigger("change");
+            $("#txtProductTypeName").val(data.ProductType.product_type_name);
+            $("#txtDeliveryCharge").val(data.ProductType.delivery_charge);
+            $("#txtDeliveryDuration").val(data.ProductType.delivery_duration);
+            $("#timeOrderBefore").val(data.ProductType.order_before_time);
+            $("#txtNewCanDeposit").val(data.ProductType.newcan_deposit_amt);
+            $("#txtMinQty").val(data.ProductType.min_order_qty);
+            $("#txtMaxQty").val(data.ProductType.max_order_qty);
+            $("#txtdescription").val(data.ProductType.desc);
+        },
+    });
+}
+
+function cancel() {
+    $("#hdProductTypeId").val("");
+    $("#ddlCategory").val("").trigger("change");
+    $("#txtProductTypeName").val("");
+    $("#txtDeliveryCharge").val("");
+    $("#txtDeliveryDuration").val("");
+    $("#timeOrderBefore").val("");
+    $("#txtNewCanDeposit").val("");
+    $("#txtMinQty").val("");
+    $("#txtMaxQty").val("");
+    $("#txtdescription").val("");
+    $("#ddlCategory").focus();
+    $("#btnSave").text("Save");
+    $("#heading").text("Product Type");
+}
+
+function showDelete(id) {
+    confirmDelete(id, "delete/producttype/", "tblProducttype");
+}
+
+// jquery Validation
+$(function () {
+    $("form[name='producttype']").validate({
+        rules: {
+            ddlMainProductType: "required",
+            txtDeliveryCharge: "required",
+            txtDeliveryDuration: "required",
+            timeOrderBefore: "required",
+            txtNewCanDeposit: "required",
+            txtMinQty: "required",
+            txtMaxQty: "required",
+            txtdescription: "required",
+        },
+        errorPlacement: function (error, element) {
+            if (element.is(":radio")) {
+                error.appendTo(element.parents(".form-group"));
+            } else {
+                // This is the default behavior
+                // error.insertAfter(element);
+                if (element.siblings(".error").html() == undefined) {
+                    error.appendTo(element.parent().next(".error"));
+                } else {
+                    error.appendTo(element.siblings(".error"));
+                }
+            }
+        },
+    });
+});

@@ -1,0 +1,50 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateLogisticDriverInfosTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('logistic_driver_infos', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('logistic_partner_id')->nullable();
+            $table->foreign('logistic_partner_id')->references('id')->on('logistic_partners')->onDelete('restrict')->onUpdate('cascade');
+            $table->text('hub_id')->nullable();
+            $table->unsignedBigInteger('logistic_vehicle_id')->nullable();
+            $table->foreign('logistic_vehicle_id')->references('id')->on('logistic_vehicle_infos')->onDelete('restrict')->onUpdate('cascade');
+            $table->string('driver_name')->nullable();
+            $table->string('license_no')->nullable();
+            $table->string('license_doc_path')->nullable();
+            $table->date('license_expiry')->nullable();
+            $table->string('mobile_no')->nullable();
+            $table->string('password')->nullable();
+            $table->integer('is_active')->default(1);
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->foreign('created_by')->references('id')->on('users')->onDelete('restrict')->onUpdate('cascade');
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->foreign('updated_by')->references('id')->on('users')->onDelete('restrict')->onUpdate('cascade');
+            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->foreign('deleted_by')->references('id')->on('users')->onDelete('restrict')->onUpdate('cascade');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('logistic_driver_infos');
+    }
+}

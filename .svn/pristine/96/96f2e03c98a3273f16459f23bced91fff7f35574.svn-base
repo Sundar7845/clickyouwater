@@ -1,0 +1,139 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Admin Order | Click Your Water | Dashboard
+@endsection
+
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-1 mb-4">
+        Admin Order
+    </h4>
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-12 mb-4 mb-md-0">
+            <form action="{{ route('add.addadminorder') }}" method="POST" name="adminPlaceOrder">
+                @csrf
+                <input type="hidden" id="hdAdminOrderId" value="0">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="ddlHubName">Hub Name<span
+                                            class="text-danger">*</span></label>
+                                    <select name="ddlHubName" id="ddlHubName" class="select2 form-select"
+                                        title="Select Hub Name" required>
+                                        <option value="">Select Hub</option>
+                                        @foreach ($hubs as $item)
+                                            <option value="{{ $item->id }}">
+                                                {{ $item->hub_name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @if ($errors->has('ddlHubName'))
+                                        <div class="text-danger">{{ $errors->first('ddlHubName') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="adminOrderNo" class="form-label" for="basic-default-name">&nbsp;</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text" id="basic-addon11">Order No</span>
+                                        <input type="text" class="form-control" name="adminOrderNo" id="adminOrderNo"
+                                            readonly placeholder="ORDERNO" value="{{ $adminOrderNo }}"
+                                            title="Admin Order NO" required />
+                                        @if ($errors->has('adminOrderNo'))
+                                            <div class="text-danger">{{ $errors->first('adminOrderNo') }}</div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label" for="dtAdminOrder">&nbsp;</label>
+                                <div class="input-group">
+                                    <span class="input-group-text" id="dtAdminOrder">Order Date</span>
+                                    <input type="date" class="form-control" id="dtAdminOrderDate" readonly />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card mt-2">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="ddlProducts">Product Name</label>
+                                    <select name="ddlProducts" id="ddlProducts" class="select2 form-select"
+                                        title="Select Product Name">
+                                        <option value="">Select Product Name</option>
+                                        @foreach ($products as $item)
+                                            <option value="{{ $item->id }}">
+                                                {{ $item->product_name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @if ($errors->has('ddlProducts'))
+                                        <div class="text-danger">{{ $errors->first('ddlProducts') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label" for="btnQuantity">Quantity</label>
+                                <div class="input-group">
+                                    <input type="number" min="0" oninput="validity.valid||(value='');"
+                                        class="form-control" name="txtProductQty" id="txtProductQty"
+                                        placeholder="Enter Product Qty" title="Please Enter Qty" />
+                                    <span class="" id="basic-addon11"></span>
+                                    <button type="button" class="btn btn-primary"
+                                        onclick="placeAdminOrder();">Add</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 mt-3">
+                                <h5>Admin Order Details</h5>
+                                <!-- DataTable with Buttons -->
+                                <div class="card-datatable table-responsive pt-0">
+                                    <table class="table table-responsive">
+                                        <thead>
+                                            <th>Product Name</th>
+                                            <th>Qty</th>
+                                            <th>Action</th>
+                                        </thead>
+                                        <tbody id="tboadyPlaceAdminOrders">
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!--/ DataTable with Buttons -->
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 d-flex justify-content-between">
+                                <div class="mt-4 mb-3">
+                                    <button type="submit" class="btn btn-success">Save</button>
+                                    <button type="button" class="btn btn-danger" onclick="doCancel();">Cancel</button>
+                                </div>
+                                <div class="mt-4 mb-3">
+                                    <a href="{{ route('adminorderlist') }}"><button type="button"
+                                            class="btn btn-primary">Go to List</button></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <!-- /Browser Default -->
+        </div>
+    </div>
+</div>
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/admin/adminorders/place_admin_order.js') }}"></script>
+@endsection

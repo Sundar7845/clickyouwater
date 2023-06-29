@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Http\Controllers\Admin\StockManagement;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class StockController extends Controller
+{
+    public function StockEntry()
+    {
+        return view('Admin.stock_management.stock_entry');
+    }
+}

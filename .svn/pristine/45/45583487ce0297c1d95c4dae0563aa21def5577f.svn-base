@@ -1,0 +1,166 @@
+
+var treeData = [];
+var selKeys;
+var MenuList = "";
+$(document).ready(function () {
+	$('#tblRole').DataTable();
+
+
+	Loadmenu();
+	$("#divMenuList").dynatree({
+		autoCollapse: true,
+		checkbox: true,
+		selectMode: 3,
+		children: treeData,
+		debugLevel: 0,
+		onSelect: function (select, node) {
+			selKeys = $.map(node.tree.getSelectedNodes(), function (node) {
+				return node.data.key;
+			});
+			var partsel = new Array();
+			$(".dynatree-partsel:not(.dynatree-selected)").each(function () {
+				var node = $.ui.dynatree.getNode(this);
+				partsel.push(node.data.key);
+			});
+			selKeys = selKeys.concat(partsel);
+		}
+	});
+});
+
+
+
+
+function doEdit(UGID) {
+	$("#hdUsergroupId").val(UGID);
+	$("#txtUsergroup").val($("#trusergroup" + UGID + " td:eq(1)").text());
+
+	GetRollmenu(UGID);
+
+	$("#txtUsergroup").focus();
+
+	$("#btnClear").text("Cancel");
+	$("#btnSave").text("Update");
+}
+
+function ClearData() {
+
+	$("#hdUsergroupId").val("0");
+	$("#txtUsergroup").val("");
+	$("#txtUsergroup").focus();
+	$("#btnSave").text("Save");
+	$("#btnClear").text("Clear");
+	$("#divMenuList").dynatree("getRoot").visit(function (node) {
+		node.select(false);
+	});
+	$("#permission_id").val("");
+}
+
+function FileUsergroup() {
+	var txtUsergroup = document.forms["RegUsergroup"]["txtUsergroup"];
+	getDetail();
+
+	if (txtUsergroup.value.trim() == "") {
+		showmsg("Please Enter User Group Name", "2");
+		txtUsergroup.focus();
+		return false;
+	}
+
+	return true;
+}
+
+function getDetail() {
+	var LST = [];
+
+	var tree = $("#divMenuList").dynatree("getTree");
+
+	$.each(selKeys, function (idx, val) {
+		LST.push(val);
+	});
+	$("#permission_id").val(LST);
+}
+
+
+
+function Loadmenu() {
+	jQuery.ajax({
+		type: "GET",
+		url: "/get-menus",
+		async: false,
+		data: {
+			"type": 'menu'
+		},
+		dataType: 'json',
+		success: function (data) {
+			console.log(data);
+			MenuList = data.menus.menu_name;
+			bindMenu();
+		}
+	});
+}
+
+function bindMenu() {
+	$.each(MenuList, function (idx, val) {
+
+		if (this.is_mainmenu == "1") {
+			if (this.id == "1") {
+				treeData.push({ "title": this.menus.menu_name, "key": $.trim(this.menus.id), select: true, unselectable: true });
+			}
+			else {
+				treeData.push({ "title": this.menus.menu_name, "key": $.trim(this.menus.id), "children": [] });
+			}
+		}
+		else {
+			$.each(treeData, function () {
+				if (this.key == $.trim(val.menus.parent_id)) {
+					this.children.push({ "title": val.menus.menu_name, "key": $.trim(val.menus.id) });
+				}
+			});
+		}
+
+	});
+
+}
+
+
+function GetRollmenu(UGID) {
+
+	var RID = UGID;
+
+	jQuery.ajax({
+		type: "GET",
+		url: "usergroup/usergroup_menulist.php",
+		async: false,
+		data: {
+			"id": RID
+		},
+		dataType: 'json',
+		success: function (responseData) {
+			var MList = "";
+
+			$.each(responseData.data, function (idx, val) {
+				MList = val.permission_id.replace(/[\[\]']+/g, '');
+			});
+			MList = MList.split(",");
+
+			const oldArray = MList
+			const removeItems = ['2', '21', '27']
+
+			const newArray = oldArray.filter((value) => {
+				return !removeItems.includes(value)
+			})
+
+			$("#divMenuList").dynatree("getRoot").visit(function (node) {
+				node.select(false);
+			});
+			$.each(newArray, function (idx, val) {
+				$("#divMenuList").dynatree("getRoot").visit(function (node) {
+					if (node.data.key == $.trim(val)) {
+						node.select(true);
+					}
+				});
+			});
+		}
+	});
+}
+
+

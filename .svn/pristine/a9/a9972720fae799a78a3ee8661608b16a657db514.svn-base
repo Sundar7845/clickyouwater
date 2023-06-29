@@ -1,0 +1,153 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Masters;
+
+use App\Http\Controllers\Controller;
+use App\Models\Area;
+use App\Models\State;
+use App\Traits\Common;
+use Illuminate\Http\Request;
+
+class AreaController extends Controller
+{
+    use Common;
+    public function area(Request $request)
+    {
+        $area = Area::with('state', 'city')->get();
+        $states = State::get();
+        return view('admin.masters.area.area', compact('states', 'area'));
+    }
+
+    public function getCity(Request $request)
+    {
+        $data = $this->getCities($request->state_id);
+        return response()->json($data);
+    }
+
+    public function addArea(Request $request)
+    {
+        $request->validate([
+            'ddlState' => 'required',
+            'ddlCity' => 'required',
+            'txtAreaName' => 'required'
+        ]);
+
+        if ($request->hdAreaId == null) {
+            Area::create([
+                'state_id' => $request->ddlState,
+                'city_id' => $request->ddlCity,
+                'area_name' => $request->txtAreaName
+            ]);
+        } else {
+            Area::findorfail($request->hdAreaId)->update([
+                'state_id' => $request->ddlState,
+                'city_id' => $request->ddlCity,
+                'area_name' => $request->txtAreaName
+            ]);
+        }
+
+        $notification = array(
+            'message' => 'Area Created Successfully',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->route('area')->with($notification);
+    }
+
+    public function deleteArea($id)
+    {
+        $area = Area::findorfail($id);
+        $area->delete();
+
+        $notification = array(
+            'message' => 'Area Deleted Successfully',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->route('area')->with($notification);
+        // $success ='Area Deleted Successfully';
+        // return response()->json([
+        //     'success' => $success,
+        // ]);
+    }
+
+    public function getAreaById($id)
+    {
+        $area = Area::select('areas.*', 'states.state_name', 'cities.city_name')
+            ->join('states', 'states.id', 'areas.state_id')
+            ->join('cities', 'cities.id', 'areas.city_id')->where('areas.id', $id)->first();
+        return response()->json([
+            'area' => $area
+        ]);
+    }
+
+    public function getData(Request $request)
+    {
+
+        // $draw                 =         $request->get('draw'); // Internal use
+        // $start                 =         $request->get("start"); // where to start next records for pagination
+        // $rowPerPage         =         $request->get("length"); // How many recods needed per page for pagination
+
+        // $orderArray        =         $request->get('order');
+        // $columnNameArray     =         $request->get('columns'); // It will give us columns array
+
+        // $searchArray         =         $request->get('search');
+        // $columnIndex         =         $orderArray[0]['column'];  // This will let us know,
+        // // which column index should be sorted 
+        // // 0 = id, 1 = name, 2 = email , 3 = created_at
+
+        // $columnName         =         $columnNameArray[$columnIndex]['data']; // Here we will get column name, 
+        // // Base on the index we get
+
+        // $columnSortOrder     =         $orderArray[0]['dir']; // This will get us order direction(ASC/DESC)
+        // $searchValue         =         $searchArray['value']; // This is search value 
+
+
+        $areas = Area::select('areas.*', 'states.state_name', 'cities.city_name')->join('states', 'states.id', 'areas.state_id')
+            ->join('cities', 'cities.id', 'areas.city_id')->get();
+        // $total = $areas->count();
+
+        return datatables()->of($areas)
+            ->addColumn('action', function ($row) {
+                $html = '<i class="text-primary ti ti-pencil me-1"
+                onclick="doEdit(' . $row->id . ');"></i> ';
+                $html .= '<a href="delete/area/' . $row->id . '">
+                <i class="text-danger ti ti-trash me-1" id="confrim-text" onclick="doDelete('. $row->id .');"></i>
+            </a>';
+                return $html;
+            })->toJson();
+
+
+
+        // $totalFilter = Area::select('areas.*', 'states.state_name', 'cities.city_name')->join('states', 'states.id', 'areas.state_id')
+        //     ->join('cities', 'cities.id', 'areas.city_id')->get();
+        // if (!empty($searchValue)) {
+        //     $totalFilter = $totalFilter->where('area_name', 'like', '%' . $searchValue . '%');
+        //     $totalFilter = $totalFilter->orWhere('state_name', 'like', '%' . $searchValue . '%');
+        //     $totalFilter = $totalFilter->orWhere('city_name', 'like', '%' . $searchValue . '%');
+        // }
+        // $totalFilter = $totalFilter->count();
+
+        // $arrData = Area::select('areas.*', 'states.state_name', 'cities.city_name')->join('states', 'states.id', 'areas.state_id')
+        //     ->join('cities', 'cities.id', 'areas.city_id')->get();
+        // $arrData = $arrData->skip($start)->take($rowPerPage);
+        // $arrData = $arrData->orderBy($columnName, $columnSortOrder);
+
+        // if (!empty($searchValue)) {
+        //     $arrData = $arrData->where('area_name', 'like', '%' . $searchValue . '%');
+        //     $totalFilter = $totalFilter->orWhere('state_name', 'like', '%' . $searchValue . '%');
+        //     $totalFilter = $totalFilter->orWhere('city_name', 'like', '%' . $searchValue . '%');
+        // }
+
+        // $arrData = $arrData->get();
+
+        // $response = array(
+        //     "draw" => intval($draw),
+        //     "recordsTotal" => $total,
+        //     "recordsFiltered" => $totalFilter,
+        //     "data" => $arrData,
+        // );
+
+        // return response()->json($response);
+    }
+}

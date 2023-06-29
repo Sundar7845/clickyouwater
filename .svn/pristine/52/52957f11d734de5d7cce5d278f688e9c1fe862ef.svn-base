@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Surrender extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'user_id',
+        'reason_id',
+        'hub_id',
+        'status_id',
+        'address_id',
+        'refund_amount',
+        'refund_to'
+    ];
+}

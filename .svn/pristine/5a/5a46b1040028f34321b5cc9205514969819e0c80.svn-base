@@ -1,0 +1,122 @@
+$(document).ready(function () {
+    $("#tblProducttype").DataTable({
+        processing: true,
+        serverSide: true,
+        order: [[0, "ASC"]],
+        ajax: "producttype/data",
+        fnRowCallback: function (nRow, aData, iDisplayIndex) {
+            $("td:first", nRow).html(iDisplayIndex + 1);
+            return nRow;
+        },
+        columns: [
+            { data: "id" },
+            { data: "product_type_name" },
+            { data: "delivery_charge" },
+            { data: "delivery_duration" },
+            { data: "is_active",
+            render: function (data, type, row) {
+                return `<label class="switch">
+                <input onclick="doStatus(${row.id});" id="chkproducttype${row.id}" type="checkbox" class="switch-input"
+                name="chkproducttype" '  ${(data == 1 ? "checked" : "")} ' />
+                <span class="switch-toggle-slider">
+                    <span class="switch-on"></span>
+                    <span class="switch-off"></span>
+                </span>
+            </label>`;
+        }
+            },
+            { data: "order_before_time" },
+            { data: "newcan_deposit_amt" },
+            { data: "min_order_qty" },
+            { data: "max_order_qty" },
+            { data: "action" },
+        ],
+    });
+     BindCity();
+});
+
+function doStatus(id) {
+    var status = $("#chkproducttype"+id).is(":checked");
+    if (status == true) {
+        $("#chkproducttype").val(1);
+        status = 1;
+    } else {
+        $("#chkproducttype").val(0);
+        status = 0;
+    }
+    confirmStatusChange(id, "producttype/", "tblProducttype", status);
+}
+
+function doEdit(id) {
+    $("#txtProductTypeId").val(id);
+    $("#txtProductType").focus();
+    $("#btnSave").text("Update");
+    getProductTypeById(id);
+}
+
+function getProductTypeById(id) {
+    $.ajax({
+        type: "GET",
+        url: "getproducttype/" + id,
+        dataType: "json",
+        success: function (data) {
+            $("#txtProductType").val(data.ProductType.product_type_name);
+            $("#txtDeliveryCharge").val(data.ProductType.delivery_charge);
+            $("#txtDeliveryDuration").val(data.ProductType.delivery_duration);
+            $("#timeOrderBefore").val(data.ProductType.order_before_time);
+            $("#txtNewCanDeposit").val(data.ProductType.newcan_deposit_amt);
+            $("#txtMinQty").val(data.ProductType.min_order_qty);
+            $("#txtMaxQty").val(data.ProductType.max_order_qty);
+        },
+    });
+}
+
+function cancel() {
+    $("#txtProductTypeId").val("");
+    $("#txtProductType").val("");
+    $("#txtDeliveryCharge").val("");
+    $("#txtDeliveryDuration").val("");
+    $("#timeOrderBefore").val("");
+    $("#txtNewCanDeposit").val("");
+    $("#txtMinQty").val("");
+    $("#txtMaxQty").val("");
+    $("#txtProductType").focus();
+    $("#btnSave").text("Save");
+}
+
+function showDelete(id) {
+    confirmDelete(id, "delete/producttype/", "tblProducttype");
+}
+
+// jquery Validation
+$(function () {
+
+    $("form[name='producttype']").validate({
+
+        rules: {
+            txtProductType: "required",
+            txtDeliveryCharge: "required",
+            txtDeliveryDuration: "required",
+            timeOrderBefore: "required",
+            txtNewCanDeposit: "required",
+            txtMinQty: "required",
+            txtMaxQty: "required",
+           
+        },
+        
+        errorPlacement: function (error, element) {
+            if (element.is(":radio")) {
+                error.appendTo(element.parents(".form-group"));
+            } else {
+                // This is the default behavior
+                // error.insertAfter(element);
+                if (element.siblings(".error").html() == undefined) {
+                    error.appendTo(element.parent().next(".error"));
+                } else {
+                    error.appendTo(element.siblings(".error"));
+                }
+            }
+        },
+    });
+});
+

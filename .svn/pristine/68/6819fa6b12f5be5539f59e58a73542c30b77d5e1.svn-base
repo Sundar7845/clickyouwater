@@ -1,0 +1,71 @@
+<?php
+
+namespace App\Http\Controllers\Login;
+
+use App\Http\Controllers\Controller;
+use App\Providers\RouteServiceProvider;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Validator;
+
+class LoginController extends Controller
+{
+    public function __construct()
+    {
+        $this->middleware('guest')->except('logout');
+    }
+
+    public function loginForm()
+    {
+        return view('login.login');
+    }
+
+    public function forgetPassword()
+    {
+        return view('forget_password');
+    }
+
+    public function login(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'txtMobile'   => 'required',
+            'txtPassword' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withInput()->withErrors($validator);
+        }
+
+        if (Auth::attempt([
+            'mobile' => $request->txtMobile,
+            'password' => $request->txtPassword
+        ], $request->get('remember'))) {
+
+            $notification = array(
+                'message' => 'Logged in successfully',
+                'alert-type' => 'success'
+            );
+            return redirect()->route('dashboard')->with($notification);
+        } else {
+            $notification = array(
+                'message' => 'Invalid credentials!',
+                'alert-type' => 'error'
+            );
+            return redirect()->route('login')->with($notification);
+        }
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        Session::flush();
+        $request->session()->invalidate();
+        $notification = array(
+            'message' => 'Logged Out Successfully',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->route('login')->with($notification);
+    }
+}

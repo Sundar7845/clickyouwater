@@ -1,0 +1,186 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Dashboard | Offer Allocation
+@endsection
+
+<!-- Content -->
+
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold mb-4">
+        <span class="fw-light">Masters /</span> Offer Allocation
+    </h4>
+    <div class="row mb-4">
+        <div class="card">
+            <!-- Browser Default -->
+            <div class="col-md-12 mb-4 mb-md-0">
+                <div class="card-body">
+                    <form class="browser-default-validation">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <h5><label class="form-label" for="basic-default-name">Offer Name<span
+                                                class="text-danger">*</span></label></h5>
+                                    <select name="" id="" class="select2 form-select form-select-lg">
+                                        <option value="">Select</option>
+                                        <option value="TN">Offer 1</option>
+                                        <option value="KL">Offer 2</option>
+                                        <option value="AP">Offer 3</option>
+                                    </select>
+                                </div>
+                                <div class="mt-4 mb-3">
+                                    <button type="submit" class="btn btn-primary">Allocate</button>
+                                </div>
+                            </div>
+                            <div class="col-md-8 mb-4 mb-md-0">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="mb-3">
+                                            <h5><label class="form-label" for="basic-default-name">Hub Name</label></h5>
+                                            <div class="scroll-bar">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input" id="chkAll">
+                                                    <label class="custom-control-label" for="chkAll">Hub 1</label>
+                                                    <input type="text" disabled name="" id="">
+                                                </div>
+                                                <div class="custom-control custom-checkbox mt-3">
+                                                    <input type="checkbox" class="custom-control-input" id="chkAll">
+                                                    <label class="custom-control-label" for="chkAll">Hub 2</label>
+                                                    <input type="text" disabled name="" id="">
+                                                </div>
+                                                <div class="custom-control custom-checkbox mt-3">
+                                                    <input type="checkbox" class="custom-control-input" id="chkAll">
+                                                    <label class="custom-control-label" for="chkAll">Hub 3</label>
+                                                    <input type="text" disabled name="" id="">
+                                                </div>
+                                                <div class="custom-control custom-checkbox mt-3">
+                                                    <input type="checkbox" class="custom-control-input" id="chkAll">
+                                                    <label class="custom-control-label" for="chkAll">Hub 4</label>
+                                                    <input type="text" disabled name="" id="">
+                                                </div>
+                                                <div class="custom-control custom-checkbox mt-3">
+                                                    <input type="checkbox" class="custom-control-input" id="chkAll">
+                                                    <label class="custom-control-label" for="chkAll">Hub 5</label>
+                                                    <input type="text" disabled name="" id="">
+                                                </div>
+                                                <div class="custom-control custom-checkbox mt-3">
+                                                    <input type="checkbox" class="custom-control-input" id="chkAll">
+                                                    <label class="custom-control-label" for="chkAll">Hub 6</label>
+                                                    <input type="text" disabled name="" id="">
+                                                </div>
+                                                <div class="custom-control custom-checkbox mt-3">
+                                                    <input type="checkbox" class="custom-control-input" id="chkAll">
+                                                    <label class="custom-control-label" for="chkAll">Hub 7</label>
+                                                    <input type="text" disabled name="" id="">
+                                                </div>
+                                                <div class="custom-control custom-checkbox mt-3">
+                                                    <input type="checkbox" class="custom-control-input" id="chkAll">
+                                                    <label class="custom-control-label" for="chkAll">Hub 8</label>
+                                                    <input type="text" disabled name="" id="">
+                                                </div>
+                                                <div class="custom-control custom-checkbox mt-3">
+                                                    <input type="checkbox" class="custom-control-input" id="chkAll">
+                                                    <label class="custom-control-label" for="chkAll">Hub 9</label>
+                                                    <input type="text" disabled name="" id="">
+                                                </div>
+                                                <div class="custom-control custom-checkbox mt-3">
+                                                    <input type="checkbox" class="custom-control-input" id="chkAll">
+                                                    <label class="custom-control-label" for="chkAll">Hub 10</label>
+                                                    <input type="text" disabled name="" id="">
+                                                </div>
+                                                <div class="custom-control custom-checkbox mt-3">
+                                                    <input type="checkbox" class="custom-control-input" id="chkAll">
+                                                    <label class="custom-control-label" for="chkAll">Hub 11</label>
+                                                    <input type="text" disabled name="" id="">
+                                                </div>
+                                                <div class="custom-control custom-checkbox mt-3">
+                                                    <input type="checkbox" class="custom-control-input" id="chkAll">
+                                                    <label class="custom-control-label" for="chkAll">Hub 12</label>
+                                                    <input type="text" disabled name="" id="">
+                                                </div>
+                                                <div class="custom-control custom-checkbox mt-3">
+                                                    <input type="checkbox" class="custom-control-input" id="chkAll">
+                                                    <label class="custom-control-label" for="chkAll">Hub 13</label>
+                                                    <input type="text" disabled name="" id="">
+                                                </div>
+                                                <div class="custom-control custom-checkbox mt-3">
+                                                    <input type="checkbox" class="custom-control-input" id="chkAll">
+                                                    <label class="custom-control-label" for="chkAll">Hub 14</label>
+                                                    <input type="text" disabled name="" id="">
+                                                </div>
+                                                <div class="custom-control custom-checkbox mt-3">
+                                                    <input type="checkbox" class="custom-control-input" id="chkAll">
+                                                    <label class="custom-control-label" for="chkAll">Hub 15</label>
+                                                    <input type="text" disabled name="" id="">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 mt-5">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Offer Allocation List</h5>
+                    <form class="browser-default-validation">
+                        <div class="row">
+                            <div class="col-lg-12 mb-4 mb-lg-0">
+                                <div class="card h-100">
+                                    <div class="card-datatable table-responsive pt-0">
+                                        <table id="offerallocate" class="table">
+                                            <thead class="border-bottom">
+                                                <tr>
+                                                    <th>S.No</th>
+                                                    <th>OFFER Name</th>
+                                                    <th>ACTION</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>1</td>
+                                                    <td>offer 1</td>
+                                                    <td>
+                                                        <a><i class="text-primary ti ti-pencil me-1"></i></a>
+                                                        <a><i class="text-danger ti ti-trash me-1"></i></a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>2</td>
+                                                    <td>offer 2</td>
+                                                    <td>
+                                                        <a><i class="text-primary ti ti-pencil me-1"></i></a>
+                                                        <a><i class="text-danger ti ti-trash me-1"></i></a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>3</td>
+                                                    <td>offer 3</td>
+                                                    <td>
+                                                        <a><i class="text-primary ti ti-pencil me-1"></i></a>
+                                                        <a><i class="text-danger ti ti-trash me-1"></i></a>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+</div>
+
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/offers/offerallocate.js') }}"></script>
+@endsection

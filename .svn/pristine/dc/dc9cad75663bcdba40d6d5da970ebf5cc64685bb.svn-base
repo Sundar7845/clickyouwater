@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Http\Controllers\Admin\FeedBack;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class FeedBackController extends Controller
+{
+   public function feedBack()
+   {
+      return view('Admin.feedback.feedback');
+   }
+}

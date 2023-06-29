@@ -1,0 +1,87 @@
+<?php
+
+namespace App\Traits;
+
+use App\Models\Cordinates;
+use App\Models\Hub;
+use GuzzleHttp\Client;
+use GeometryLibrary\PolyUtil;
+use GoogleMaps\Facade\GoogleMapsFacade;
+use Grimzy\LaravelMysqlSpatial\Types\Point;
+use Grimzy\LaravelMysqlSpatial\Types\Polygon;
+use Grimzy\LaravelMysqlSpatial\Types\LineString;
+
+trait Maps
+{
+    // private $api_key = 'AIzaSyCxSrT3mnTnRnbUSW1DGhTKAu2kGpdgm5Y';
+    public function getDistance($fromLatLng, $toLatLng)
+    {
+        $response = GoogleMapsFacade::load('directions')
+            ->setParam(['destination' => $toLatLng, 'origin' => $fromLatLng])
+            ->get();
+
+        // $url = 'https://maps.googleapis.com/maps/api/directions/json?destination=' . $toLatLng . '&origin=' . $fromLatLng . '&key=' . $this->api_key;
+
+        // $client = new Client();
+        // $response = $client->request('GET', $url);
+        // $data = json_decode($response->getBody(), true);
+
+        $data = json_decode($response, true);
+
+        $distance = $data['routes'][0]['legs'][0]['distance'];
+        $duration = $data['routes'][0]['legs'][0]['duration'];
+
+        $result = [
+            'distance' => $distance,
+            'duration' => $duration,
+        ];
+
+        return response()->json($result)->content();
+    }
+
+    public function getServiceAvailable()
+    {
+        $point = new Point(9.230822806236903, 78.78329962491989);
+
+        // $value = "(11.065807,77.003148),(11.065449,77.00332),(11.065328,77.003003),(11.06567,77.002901),(11.065807,77.003148),(11.065449,77.00332),(11.065328,77.003003),(11.06567,77.002901)";
+
+        // $polygon = []; // Define $polygon array
+
+        // foreach (explode('),(', trim($value, '()')) as $index => $single_array) {
+        //     if ($index == 0) {
+        //         $lastcord = explode(',', $single_array);
+        //     }
+        //     $coords = explode(',', $single_array);
+        //     $polygon[] = new Point($coords[0], $coords[1]);
+        // }
+        // $polygon[] = new Point($lastcord[0], $lastcord[1]);
+
+        // $poly = new Polygon([new LineString($polygon)]);
+        // // $poly->contains($poly,$point);
+        // $cordinates = new Cordinates();
+        // $cordinates->geo_coordinates = $poly;
+        // $cordinates->save();
+
+        $geo_location = Cordinates::where('id',1)->contains('geo_coordinates', $point)->latest()->first();
+        dd($geo_location);
+        if (!$geo_location) {
+            return response()->json([
+                'success' => 'service_not_available_in_this_area'
+            ], 200);
+        } else {
+            return response()->json([
+                'error' => 'service_available_in_this_area'
+            ], 200);
+        }
+        // dd($poly);
+    }
+
+    public static function format_coordiantes($coordinates)
+    {
+        $data = [];
+        foreach ($coordinates as $coord) {
+            $data[] = (object)['lat' => $coord->getlat(), 'lng' => $coord->getlng()];
+        }
+        return $data;
+    }
+}

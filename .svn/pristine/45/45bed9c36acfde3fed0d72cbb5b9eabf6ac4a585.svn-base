@@ -1,0 +1,86 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class Area extends Model
+{
+    use HasFactory, SoftDeletes;
+
+    protected $fillable = [
+        'area_name',
+        'city_id',
+        'state_id',
+        'radius',
+        'is_active',
+        'created_by',
+        'updated_by',
+        'deleted_by'
+    ];
+
+    public function state()
+    {
+        return $this->belongsTo(State::class, 'state_id', 'id');
+    }
+
+    public function city()
+    {
+        return $this->belongsTo(City::class, 'city_id', 'id');
+    }
+
+    protected $dates = ['deleted_at'];
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::bootSoftDeletes();
+    }
+
+    public static function bootSoftDeletes()
+    {
+        static::deleting(function ($area) {
+            if ($area->employees()->count() > 0) {
+                throw new \Exception('Cannot delete employee type because there are associated employees.');
+            }
+            if ($area->ledgers()->count() > 0) {
+                throw new \Exception('Cannot delete ledger type because there are associated ledgers.');
+            }
+            if ($area->manufacturer()->count() > 0) {
+                throw new \Exception('Cannot delete manufacturer type because there are associated manufacturer.');
+            }
+            if ($area->hub()->count() > 0) {
+                throw new \Exception('Cannot delete hub type because there are associated hub.');
+            }
+            if ($area->logisticpartner()->count() > 0) {
+                throw new \Exception('Cannot delete hub type because there are associated hub.');
+            }
+        });
+        static::restoring(function ($area) {
+            // add any restoring logic here if necessary
+        });
+    }
+
+    public function employees()
+    {
+        return $this->hasMany(Employee::class);
+    }
+
+    public function ledgers()
+    {
+        return $this->hasMany(Ledger::class);
+    }
+
+    public function manufacturer()
+    {
+        return $this->hasMany(Manufacturer::class);
+    }
+
+    public function logisticpartner()
+    {
+        return $this->hasMany(LogisticPartner::class);
+    }
+}

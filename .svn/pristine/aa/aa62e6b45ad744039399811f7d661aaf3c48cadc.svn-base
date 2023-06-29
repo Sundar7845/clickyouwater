@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Http\Controllers\OrderManagement;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class CustomerOrdersController extends Controller
+{
+  public function CustomerOrders()
+  {
+    return view('order_management.customer_orders.customer_orders');
+  }
+}

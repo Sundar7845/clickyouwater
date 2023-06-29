@@ -1,0 +1,191 @@
+<?php
+
+namespace App\Http\Controllers\Admin\DeliveryPersonManagement;
+
+use App\Http\Controllers\Controller;
+use App\Models\Area;
+use App\Models\BillNoSetting;
+use App\Models\City;
+use App\Models\DeliveryPerson;
+use App\Models\Hub;
+use App\Models\State;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Intervention\Image\Facades\Image;
+
+class DeliveryPersonController extends Controller
+{
+    public function deliveryPerson($id = NULL)
+    {
+
+        if ($id) {
+            $deliveryPerson = DeliveryPerson::find($id);
+            $states = State::all();
+            $hubs = Hub::all();
+            $cities = City::where('state_id', $deliveryPerson->state_id)->get();
+            $areas = Area::where('city_id', $deliveryPerson->city_id)->first();
+            $deliveryExample = $deliveryPerson->delivery_person_id;
+            return view('admin.delivery_person_management.delivery_person', compact('states', 'deliveryPerson', 'hubs',   'deliveryExample', 'cities', 'areas'));
+        }
+        $deliveryPerson = '';
+        $hubs = Hub::get();
+        $states = State::orderBy('state_name', 'ASC')->get();
+        $delivery = DeliveryPerson::first();
+        $data = BillNoSetting::first();
+        $delPrefix = $data->deliveryperson_prefix ?? 0;
+        $delLength = $data->deliveryperson_length ?? 0;
+        $delLive = (int)($data->deliveryperson_live ?? 0) + 1;
+        if ($delLive) {
+            $delNumber = $delLive;
+        }
+        $man = sprintf("%0{$delLength}d", $delNumber);
+        $delExample = $delPrefix . $man;
+        return view('admin.delivery_person_management.delivery_person', compact('delExample', 'deliveryPerson', 'delivery', 'states', 'hubs'));
+    }
+
+    public function deliveryPersonCreate(Request $request)
+    {
+        $request->validate([
+            'txtDeliveryPersonId' => 'required',
+            'txtDeliveryPersonName' => 'required',
+            'txtDeliveryPersonMobile' => 'required',
+            'deliveryPersonEmail' => 'required',
+            'ddlState' => 'required',
+            'ddlCity' => 'required',
+            'ddlArea' => 'required',
+            'txtDoorNo' => 'required',
+            'txtPincode' => 'required',
+            'ddlHub' => 'required',
+            'fileDelPersonImage' => 'required',
+            // 'DeliveryPersonPassword' => 'required|min:6|confirmed',
+            // 'DeliveryPersonConfirmPassword' => 'required|min:6'
+        ]);
+
+        if ($request->hdDelPerId == null) {
+
+            $image = $request->file('fileDelPersonImage');
+            $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
+            image::make($image)->save('upload/deliveryperson/' . $name_gen);
+            $save_url = 'upload/deliveryperson/' . $name_gen;
+
+            DeliveryPerson::create([
+                'delivery_person_id' => $request->txtDeliveryPersonId,
+                'delivery_person_name' => $request->txtDeliveryPersonName,
+                'mobile' => $request->txtDeliveryPersonMobile,
+                'email' => $request->deliveryPersonEmail,
+                'state_id' => $request->ddlState,
+                'city_id' => $request->ddlCity,
+                'area_id' => $request->ddlArea,
+                'address' => $request->txtDoorNo,
+                'pincode' => $request->txtPincode,
+                'hub_id' => $request->ddlHub,
+                'password' => Hash::make($request->DeliveryPersonPassword),
+                'delivery_person_image' => $save_url,
+                'is_active' => 1,
+                'created_by' => Auth::user()->id,
+            ]);
+
+            $data = BillNoSetting::first();
+            $data->deliveryperson_live = $data->deliveryperson_live + 1;
+            $data->save();
+
+            $notification = array(
+                'message' => 'Delivery Person Created Successfully',
+                'alert-type' => 'success'
+            );
+        } else {
+
+            $oldImage = $request->hdDeliveryPerImg;
+
+            if ($request->file('fileDelPersonImage')) {
+                @unlink($oldImage);
+                $image = $request->file('fileDelPersonImage');
+                $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
+                Image::make($image)->save('upload/deliveryperson/' . $name_gen);
+                $save_url = 'upload/deliveryperson/' . $name_gen;
+            }
+
+            DeliveryPerson::findorfail($request->hdDelPerId)->update([
+                'delivery_person_id' => $request->txtDeliveryPersonId,
+                'delivery_person_name' => $request->txtDeliveryPersonName,
+                'mobile' => $request->txtDeliveryPersonMobile,
+                'email' => $request->deliveryPersonEmail,
+                'state_id' => $request->ddlState,
+                'city_id' => $request->ddlCity,
+                'area_id' => $request->ddlArea,
+                'address' => $request->txtDoorNo,
+                'pincode' => $request->txtPincode,
+                'hub_id' => $request->ddlHub,
+                'password' => Hash::make($request->DeliveryPersonPassword),
+                'delivery_person_image' => $save_url,
+                'is_active' => 1,
+                'created_by' => Auth::user()->id,
+            ]);
+
+            $notification = array(
+                'message' => 'Delivery Person Updated Successfully',
+                'alert-type' => 'success'
+            );
+
+            return redirect()->route('deliverypersonlist')->with($notification);
+        }
+    }
+
+    public function getdeliveryPersonData(Request $request)
+    {
+        $deliverypersonData = DB::table('delivery_people')
+            // DeliveryPerson::select('delivery_people.*')
+            ->join('hubs', 'hubs.id', '=', 'delivery_people.hub_id')
+            ->select('delivery_people.*', 'hubs.hub_name')
+            ->get();
+
+        return datatables()->of($deliverypersonData)
+            ->addColumn('action', function ($row) {
+                $html = '<a href="deliveryperson/' . $row->id . '"><i class="text-primary ti ti-pencil me-1"></i></a> ';
+                $html .= '<i class="text-danger ti ti-trash me-1" id="confrim-color(' . $row->id . ')" onclick="showDelete(' . $row->id . ');"></i>';
+                return $html;
+            })->toJson();
+    }
+
+    public function activeStatus($id, $status)
+    {
+        DeliveryPerson::findorfail($id)->update([
+            'is_active' => $status,
+            'updated_by' => Auth::user()->id
+        ]);
+    }
+
+    public function getDeliveryPersonById($id)
+    {
+        $deliveryperson = DeliveryPerson::select('delivery_people.*')->where('delivery_people.id', $id)->first();
+        return response()->json([
+            'deliveryperson' => $deliveryperson
+        ]);
+    }
+
+    public function Deletedeliverypersonlist($id)
+    {
+
+        $deliveryPerson = DeliveryPerson::findorfail($id);
+        $deliveryPerson->delete();
+
+        $deliveryPerson->Update([
+            'deleted_by' => Auth::user()->id
+        ]);
+
+        $notification = array(
+            'message' => 'Delivery Person Deleted Successfully',
+            'alert' => 'success'
+        );
+        return response()->json([
+            'responseData' => $notification
+        ]);
+    }
+
+    public function deliveryPersonList()
+    {
+        return view('admin.delivery_person_management.delivery_person_list');
+    }
+}

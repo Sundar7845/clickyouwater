@@ -1,0 +1,95 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Dashboard | Expense
+@endsection
+
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-1 mb-4">
+         Expense
+    </h4>
+
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-12 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <form class="browser-default-validation">
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label" for="basic-default-name">Expense Date</label>
+                                <div class="input-group">
+                                    <input type="date" class="form-control" id="purorddate"
+                                        placeholder="Expense Date" aria-label="Username"
+                                        aria-describedby="basic-addon11" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Expense Ledger</label>
+                                    <select name="" id="" class="select2 form-select form-select-lg">
+                                        <option value="0">Select</option>
+                                        <option value="AK">Expense Ledger 1</option>
+                                        <option value="HI">Expense Ledger 2</option>
+                                        <option value="CA">Expense Ledger 3</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Expense Group</label>
+                                    <select name="" id="" class="select2 form-select form-select-lg">
+                                        <option value="0">Select</option>
+                                        <option value="AK">Expense 1</option>
+                                        <option value="HI">Expense 2</option>
+                                        <option value="CA">Expense 3</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="exampleInputEmail1"> Expense Detail</label>
+                                    <input type="text" id="txtDetail" maxlength="150" class="form-control"
+                                        title="Please enter Expense Detail" placeholder="Enter Expense Detail"/>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="exampleInputEmail1"> Amount</label>
+                                    <input type="text" id="txtAmount" class="form-control" maxlength="10"
+                                        control="numeric" title="Please enter amount" placeholder="0.00"/>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mt-4 mb-3">
+                                    <input id="chkIsPaid" type="checkbox" checked="checked" />
+                                    <label id="lblIsPaid"> Paid</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div id="divCLedger" class="mb-3" style="display: block;">
+                                    <label id="companyLedger"> From Company Ledger</label>
+                                    <select id="ddlCompanyLedger" class="select2 form-select form-select-lg"
+                                        control="ddl"></select> Closing Balance <i class="fa fa-fw fa-inr"></i>
+                                    <span id="spnExpenseCompanyBal" class="text text-danger"
+                                        style="font-size: 22px;">0.00</span>
+                                </div>
+                            </div>
+                            <div class="col-md-12 d-flex justify-content-end">
+                                <div class="mb-3">
+                                    <button type="submit" class="btn btn-success">Save</button>
+                                    <button type="button" class="btn btn-danger">Cancel</button>
+                                    <a href="{{route('expenselist')}}" class="btn btn-primary">Go to List</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+</div>
+<!-- / Content -->
+@endsection

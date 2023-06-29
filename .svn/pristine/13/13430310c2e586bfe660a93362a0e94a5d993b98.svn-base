@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Http\Controllers\Performance;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class PerformanceController extends Controller
+{
+    public function ManufacturerPerformance(){
+        return view('performance.manufacturer_performance');
+    }
+
+    public function HubPerformance(){
+        return view('performance.hub_performance');
+    }
+
+    public function LogisticsPerformance(){
+        return view('performance.logistics_performance');
+    }
+
+    public function DeliveryPerformance(){
+        return view('performance.delivery_performance');
+    }
+}

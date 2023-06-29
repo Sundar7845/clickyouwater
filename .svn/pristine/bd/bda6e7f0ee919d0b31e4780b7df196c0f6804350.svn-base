@@ -1,0 +1,53 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Masters;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\Country;
+use App\Models\Department;
+use App\Models\Designation;
+use App\Models\Employee;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
+
+class EmployeeController extends Controller
+{
+  public function employee()
+  {
+    $country = Country::all();
+    $designation = Designation::all();
+    $departments = Department::all();
+    $user = User::all();
+    return view('admin.masters.employee.employee', compact('country', 'designation', 'departments', 'user'));
+  }
+
+  public function employeeList()
+  {
+    $employees = DB::table('employees')
+      ->join('departments', 'departments.id', '=', 'employees.department_id')
+      ->join('designations', 'designations.id', '=', 'employees.designation_id')
+      ->select('employees.id', 'employees.employee_code', 'employees.employee_name', 'employees.mobile1', 'employees.email1', 'departments.department_name', 'designations.designation_name')
+      ->get();
+    return view('admin.masters.employee.employee_list', compact('employees'));
+  }
+  public function employeeCreate(Request $request)
+  {
+    $fillale = $request->all();
+    if ($request->hasFile('fileEmployeeImage')) {
+      $path = $request->file('fileEmployeeImage')->store('temp');
+      $file = $request->file('fileEmployeeImage');
+      $fileName = $file->getClientOriginalName();
+      $file->move(public_path('uploads'), $fileName);
+      $fileName = 'uploads/' . $fileName;
+    } else {
+      $fileName = "default";
+    }
+    $uniqueCode = md5(uniqid(rand(), true));
+
+    $fillale['fileEmployeeImage'] = $fileName;
+    $fillale['txtEmpId'] = $uniqueCode;
+    $employee = Employee::create($fillale);
+    return redirect()->route('employee');
+  }
+}

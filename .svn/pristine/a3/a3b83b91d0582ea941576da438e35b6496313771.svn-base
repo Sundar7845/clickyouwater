@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Accounts;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class ReferralPaymentsController extends Controller
+{
+    public function referralPayments()
+    {
+        return view('admin.accounts.referral_payments.referral_payments');
+    }
+}

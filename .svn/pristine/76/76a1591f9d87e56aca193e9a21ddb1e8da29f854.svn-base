@@ -1,0 +1,115 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Category | Click Your Water | Dashboard
+@endsection
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold mb-4">
+        Category
+    </h4>
+
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-12 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <form class="browser-default-validation" name="category" action="{{ route('add.category') }}"
+                        method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" name="hdCategoryId" id="hdCategoryId" value="">
+                        <input type="hidden" name="hdOldImg" id="hdOldImg" value="">
+                        <div class="row">
+
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="txtCategoryName">Category Name <span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" id="txtCategoryName" name="txtCategoryName"
+                                        class="form-control" placeholder="Category Name" title="Enter Category Name"
+                                        value="{{ old('txtCategoryName') }}" required />
+
+                                    @if ($errors->has('txtCategoryName'))
+                                        <div class="text-danger">{{ $errors->first('txtCategoryName') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="CategoryImage">Category Image <span
+                                            class="text-danger">*</span></label>
+                                    <div class="upload__box">
+                                        <div class="upload__btn-box">
+
+                                            <input type="file" name="CategoryImage" id="CategoryImage"
+                                                data-max_length="20" class="form-control" title="Enter Category Image"
+                                                required>
+
+                                            @if ($errors->has('CategoryImage'))
+                                                <span class="text-danger">{{ $errors->first('CategoryImage') }}</span>
+                                            @endif
+                                        </div>
+                                        <div class="upload__img-wrap"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="txtCategoryDescription">Category Description <span
+                                            class="text-danger">*</span></label>
+                                    <textarea type="text" id="txtCategoryDescription" name="txtCategoryDescription" class="form-control"
+                                        placeholder="Category Description" title="Enter Category Description" required>{{old('txtCategoryDescription')}}</textarea>
+
+                                    @if ($errors->has('txtCategoryDescription'))
+                                        <div class="text-danger">{{ $errors->first('txtCategoryDescription') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mt-4 mb-3">
+                                <button type="submit" id="btnSave" class="btn btn-success">Save</button>
+                                <button type="button" class="btn btn-danger" onclick="cancel();"
+                                    id="btnCancel">Cancel</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+    <!-- DataTable with Buttons -->
+    <div class="col-lg-12 mb-4 mb-lg-0">
+        <div class="card h-100">
+            <div class="card-datatable table-responsive pt-0">
+                <table id="tblCategory" class="table">
+                    <thead class="border-bottom">
+                        <tr>
+                            <th>S.No</th>
+                            <th>Category Image</th>
+                            <th>Category Name</th>
+                            <th>Category Description</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--/ DataTable with Buttons -->
+</div>
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/admin/products/category.js') }}"></script>
+@endsection

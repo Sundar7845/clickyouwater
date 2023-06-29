@@ -1,0 +1,24 @@
+$(document).ready(function() {
+    $('#expensegroup').DataTable();
+});
+
+
+function cancel() {
+    $("#txtExpense").val("").focus();
+    $("#btnSave").text("save");
+}
+
+
+
+//jquery Validation
+$(function () {
+   
+    $("form[name='expense']").validate({
+
+        rules: {
+            txtExpense: "required",
+        },
+    });
+});
+
+

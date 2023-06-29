@@ -1,0 +1,188 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Dashboard | Ledger
+@endsection
+
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold mb-4">
+        <span class="fw-light">Masters /</span> Ledger
+    </h4>
+
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-12 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <form class="browser-default-validation">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Ledger Code</label>
+                                    <input type="tetx" id="basic-default-email" class="form-control"
+                                        placeholder="GLB001" disabled="disabled" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Ledger Type<span
+                                        class="text-danger">*</span></label>
+                                    <select name="" id="" class="select2 form-select form-select-lg">
+                                        <option value="CBE">Customer</option>
+                                        <option value="TR">Manufacturer</option>
+                                        <option value="CHE">Hub</option>
+                                        <option value="ER">Logistic Partner</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Ledger Name<span
+                                        class="text-danger">*</span></label>
+                                    <input type="tetx" id="basic-default-email" class="form-control"
+                                        placeholder="Ledger Name" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Mobile<span
+                                        class="text-danger">*</span></label>
+                                    <input type="tetx" id="basic-default-email" class="form-control"
+                                        placeholder="Mobile" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">State Name<span
+                                        class="text-danger">*</span></label>
+                                    <select name="" id="" class="select2 form-select form-select-lg">
+                                        <option value="TN">Tamilnadu</option>
+                                        <option value="KL">Kerala</option>
+                                        <option value="AP">Andra Pradesh</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">City Name<span
+                                        class="text-danger">*</span></label>
+                                    <select name="" id="" class="select2 form-select form-select-lg">
+                                        <option value="CBE">Coimbatore</option>
+                                        <option value="TR">Trichy</option>
+                                        <option value="CHE">Chennai</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Area Name<span
+                                        class="text-danger">*</span></label>
+                                    <select name="" id="" class="select2 form-select form-select-lg">
+                                        <option value="CBE">Coimbatore</option>
+                                        <option value="TR">Trichy</option>
+                                        <option value="CHE">Chennai</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Address<span
+                                        class="text-danger">*</span></label>
+                                    <input type="tetx" id="basic-default-email" class="form-control"
+                                        placeholder="Address" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Credit Period <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group input-group-merge">
+                                        <input type="text" id="" placeholder="Credit Period" class="form-control" required />
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Settlement Period <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group input-group-merge">
+                                        <input type="text" id="" placeholder="Settlement Period" class="form-control" required />
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mt-4 mb-3">
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                    <button type="button" class="btn btn-danger">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+    <!-- DataTable with Buttons -->
+    <div class="col-lg-12 mb-4 mb-lg-0">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between">
+                <h5 class="card-title m-0 me-2">Ledger List</h5>
+            </div>
+            <div class="card-datatable table-responsive pt-0">
+                <table id="ledger" class="table">
+                    <thead class="border-bottom">
+                        <tr>
+                            <th>S.No</th>
+                            <th>LEDGER CODE</th>
+                            <th>LEDGER TYPE</th>
+                            <th>LEDGER NAME</th>
+                            <th>ADDRESS</th>
+                            <th>ACTION</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>GLB001</td>
+                            <td>Customer</td>
+                            <td>Johny</td>
+                            <td>12, Saravanampatti, Coimbatore - 641035</td>
+                            <td><a><i class="text-primary ti ti-pencil me-1"></i></a> <a><i
+                                        class="text-danger ti ti-trash me-1"></i></a></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>GLB002</td>
+                            <td>Customer</td>
+                            <td>George</td>
+                            <td>20, Sevur, Coimbatore - 641035</td>
+                            <td><a><i class="text-primary ti ti-pencil me-1"></i></a> <a><i
+                                        class="text-danger ti ti-trash me-1"></i></a></td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>GLB003</td>
+                            <td>Customer</td>
+                            <td>John</td>
+                            <td>10, Sitra, Coimbatore - 641035</td>
+                            <td><a><i class="text-primary ti ti-pencil me-1"></i></a> <a><i
+                                        class="text-danger ti ti-trash me-1"></i></a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--/ DataTable with Buttons -->
+</div>
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/masters/ledger.js') }}"></script>
+@endsection

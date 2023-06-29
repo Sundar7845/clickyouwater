@@ -1,0 +1,127 @@
+$(document).ready(function() {
+    $('#tblLedger').DataTable({
+        processing: true,
+        serverSide: true,
+        responsive: true,
+        order: [[0, "ASC"]],
+        ajax: "ledger/data",
+        fnRowCallback: function (nRow, aData, iDisplayIndex) {
+            $("td:first", nRow).html(iDisplayIndex + 1);
+            return nRow;
+        },
+
+        columns: [
+            { data: "id" },
+            { data: "ledger_code" },
+            { data: "ledger_type" },
+            { data: "ledger_name" },
+            { data: "is_active",
+            render: function (data, type, row) {
+                        return `<label class="switch">
+                        <input onclick="doStatus(${row.id});" id="chkLedger${row.id}" type="checkbox" class="switch-input"
+                        name="chkLedger" '  ${(data == 1 ? "checked" : "")} ' />
+                        <span class="switch-toggle-slider">
+                            <span class="switch-on"></span>
+                            <span class="switch-off"></span>
+                        </span>
+                    </label>`;
+                }
+            },
+            { data: "street" },
+            { data: "action" }
+        ],
+    });
+    BindCity();
+    BindArea();
+});
+
+function cancel() {
+    $("#txtLedgerCode").val("");
+    $("#ddlLedgertype").val("").trigger("change");
+    $("#txtLedgername").val("");
+    $("#txtmobile").val("");
+    $("#ddlState").val("").trigger("change");
+    $("#ddlCity").val("").trigger("change");
+    $("#ddlArea").val("").trigger("change");
+    $("#txtAddress").val("");
+    $("#txtPincode").val("");
+    $("#txtCreditPeriod").val("");
+    $("#txtSettlemnt").val("");
+    $("#btnSave").text("save");
+}
+
+//jquery Validation
+$(function () {
+    $("form[name='ledger']").validate({
+        rules: {
+            txtLedgerCode: "required",
+            ddlLedgertype: "required",
+            txtLedgername: "required",
+            txtmobile: "required",
+            ddlState: "required",
+            ddlCity: "required",
+            ddlArea: "required",
+            txtAddress: "required",
+            txtPincode: "required",
+            txtCreditPeriod: "required",
+            txtSettlemnt: "required",
+            txtOpening: "required",
+            ddlbalanceType: "required",
+        },
+        errorPlacement: function (error, element) {
+            if (element.is(":radio")) {
+                error.appendTo(element.parents(".form-group"));
+            } else {
+                // This is the default behavior
+                // error.insertAfter(element);
+                if (element.siblings(".error").html() == undefined) {
+                    error.appendTo(element.parent().next(".error"));
+                } else {
+                    error.appendTo(element.siblings(".error"));
+                }
+            }
+        },
+    });
+    
+});
+
+function doStatus(id) {
+    var status = $("#chkLedger" + id).is(":checked");
+    confirmStatusChange(id, "ledger/", "tblLedger", (status == true ? 1 : 0), "chkLedger");
+}
+
+function doEdit(id) {
+    $("#hdLedgerId").val(id);
+    $("#ddlLedgertype").focus();
+    $("#btnSave").text("Update");
+    getLedgerById(id);
+}
+
+function getLedgerById(id) {
+    $.ajax({
+        type: "GET",
+        url: "getledger/" + id,
+        dataType: "json",
+        success: function (data) {
+            $("#txtLedgerCode").val(data.ledger.ledger_code);
+            $("#ddlLedgertype").val(data.ledger.ledger_type_id).trigger('change');
+            $("#txtLedgername").val(data.ledger.ledger_name);
+            $("#txtmobile").val(data.ledger.mobile);
+            $("#ddlState").val(data.ledger.state_id).trigger('change');
+            setTimeout(function () {
+                $("#ddlCity").val(data.ledger.city_id).trigger("change");
+            }, 1000);
+            setTimeout(function () {
+                $("#ddlArea").val(data.ledger.area_id).trigger("change");
+            }, 2500);
+            $("#txtAddress").val(data.ledger.street);
+            $("#txtPincode").val(data.ledger.pincode);
+            $("#txtCreditPeriod").val(data.ledger.credit_period);
+            $("#txtSettlemnt").val(data.ledger.settlement_period);
+        },
+    });
+}
+
+function showDelete(id) {
+    confirmDelete(id, "delete/ledger/", "tblLedger");
+}

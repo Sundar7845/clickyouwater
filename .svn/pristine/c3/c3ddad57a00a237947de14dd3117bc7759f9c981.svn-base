@@ -1,0 +1,249 @@
+@extends('layouts.main_master') @section('content')
+@section('title')
+    Dashboard | Add Products
+@endsection
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-1 mb-4">
+         Add Products
+    </h4>
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-12 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <form class="browser-default-validation">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Category <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <select name="" id="" class="select2 form-select form-select-lg">
+                                        <option value="">Select</option>
+                                        <option value="TN">20L Watercan</option>
+                                        <option value="KL">Bottled Water / Beverages</option>
+                                        <option value="AP">Bulk Water</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Product Type <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <select name="" id="" class="select2 form-select form-select-lg">
+                                        <option value="">Select</option>
+                                        <option value="Elite">Elite</option>
+                                        <option value="Premium">Premium</option>
+                                        <option value="Classic">Classic</option>
+                                        <option value="Regular">Regular</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Brand <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <select name="" id="" class="select2 form-select form-select-lg">
+                                        <option value="">Select</option>
+                                        <option value="Smart Blue">Smart Blue</option>
+                                        <option value="Adiyogi">Adiyogi</option>
+                                        <option value="Agriya">Agriya</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Product Name</label>
+                                    <input type="tetx" id="basic-default-email" class="form-control"
+                                        placeholder="Product Name" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Product Image</label>
+                                    <div class="input-group">
+                                        <input id="txtfileattachment" type="file" class="form-control" tabindex="-1"
+                                            multiple="multiple" accept="application/pdf" />
+                                    </div>
+                                    <div class="form-group input-group">
+                                        <span id="spnfileattachment" class=" form-group input-group-text"
+                                            style="cursor: pointer; display: none;"></span>
+                                    </div>
+                                </div>
+                                <div id="grdFileUploadDetail" class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <tbody id="tbodyFile"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Customer Price</label>
+                                    <input type="tetx" id="basic-default-email" class="form-control"
+                                        placeholder="Customer Price" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Wholesale Price</label>
+                                    <input type="tetx" id="basic-default-email" class="form-control"
+                                        placeholder="Wholesale Price" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Capacity</label>
+                                    <input type="tetx" id="basic-default-email" class="form-control"
+                                        placeholder="Capacity" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Description</label>
+                                    <input type="tetx" id="basic-default-email" class="form-control"
+                                        placeholder="Description" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Empty Can Return <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <div class="col-sm-6">
+                                        <label class="switch">
+                                            <input type="checkbox" class="switch-input" />
+                                            <span class="switch-toggle-slider">
+                                                <span class="switch-on"></span>
+                                                <span class="switch-off"></span>
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">CGST%</label>
+                                    <input type="tetx" id="basic-default-email" class="form-control"
+                                        placeholder="CGST%" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">SGST%</label>
+                                    <input type="tetx" id="basic-default-email" class="form-control"
+                                        placeholder="SGST%" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mt-4 mb-3">
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                    <button type="button" class="btn btn-danger">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+    <!-- DataTable with Buttons -->
+    <h5 class="fw-bold py-1 mb-4">Products List</h5>
+    <div class="col-lg-12 mb-4 mb-lg-0">
+        <div class="card h-100">
+            <div class="card-datatable table-responsive pt-0">
+                <table id="product" class="table">
+                    <thead class="border-bottom">
+                        <tr>
+                            <th>S.No</th>
+                            <th>Category</th>
+                            <th>Type</th>
+                            <th>Brand</th>
+                            <th>Name</th>
+                            <th>Image</th>
+                            <th>Customer Price</th>
+                            <th>Wholesale Price</th>
+                            <th>Ltr</th>
+                            <th>Description</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>20L Watercan</td>
+                            <td>Elite</td>
+                            <td>Smart Blue</td>
+                            <td>Smart Blue</td>
+                            <td><img src="{{ asset('assets/img/branding/smart_blue.jpg') }}" width="100"
+                                    height="60" class="img-fluid"></td>
+                            <td>₹200</td>
+                            <td>₹190</td>
+                            <td>20 Ltr</td>
+                            <td>Packaged Drinking Water</td>
+                            <td>
+                                <a>
+                                    <i class="text-primary ti ti-pencil me-1"></i>
+                                </a>
+                                <a>
+                                    <i class="text-danger ti ti-trash me-1"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Bottled Water / Beverages</td>
+                            <td>Premium</td>
+                            <td>Adiyogi</td>
+                            <td>Adiyogi</td>
+                            <td><img src="{{ asset('assets/img/branding/smart_blue.jpg') }}" width="100"
+                                    height="60" class="img-fluid"></td>
+                            <td>₹200</td>
+                            <td>₹190</td>
+                            <td>20 Ltr</td>
+                            <td>Packaged Drinking Water</td>
+                            <td>
+                                <a>
+                                    <i class="text-primary ti ti-pencil me-1"></i>
+                                </a>
+                                <a>
+                                    <i class="text-danger ti ti-trash me-1"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Bulk Water</td>
+                            <td>Classic</td>
+                            <td>Agriya</td>
+                            <td>Agriya</td>
+                            <td><img src="{{ asset('assets/img/branding/smart_blue.jpg') }}" width="100"
+                                    height="60" class="img-fluid"></td>
+                            <td>₹200</td>
+                            <td>₹190</td>
+                            <td>20 Ltr</td>
+                            <td>Packaged Drinking Water</td>
+                            <td>
+                                <a>
+                                    <i class="text-primary ti ti-pencil me-1"></i>
+                                </a>
+                                <a>
+                                    <i class="text-danger ti ti-trash me-1"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--/ DataTable with Buttons -->
+</div>
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/admin/products/product.js') }}"></script>
+@endsection

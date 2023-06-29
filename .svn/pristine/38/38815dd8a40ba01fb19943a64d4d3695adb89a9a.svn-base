@@ -1,0 +1,210 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Dashboard | Expense
+@endsection
+
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-1 mb-4">
+        Expense
+    </h4>
+
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-12 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST" action="{{ route('expensecreate') }}" id="expensesubmit"
+                        enctype="multipart/form-data">
+                        @csrf
+                        <div class="row">
+                            <!-- RADIO BUTTONS -->
+                            <div class="d-flex mb-3">
+                                <div class="form-check form-check-inline">
+                                    <input class="rounded-circle form-check-input option-input checkbox" type="radio"
+                                        name="flexRadioDefault" id="radioGenral" name="radioGenral" checked>
+                                    <label class="form-label fw-bold" for="radioGenral">General Expense</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="rounded-circle form-check-input option-input checkbox" type="radio"
+                                        name="flexRadioDefault" id="radioEmployee" name="radioEmployee">
+                                    <label class="form-label fw-bold" for="radioEmployee">Employee Expense</label>
+                                </div>
+                                <input type="hidden" name="txtExpenseType" id="txtExpenseType">
+                            </div>
+
+                            <div class="form-group col-md-4 col-lg-4">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Entry Date</label>
+                                    <div class="form-group">
+                                        <div class="input-group" id="datePickerExample2">
+                                            <div class="input-group">
+                                                <input type="date" class="form-control" name="ddlDate" id="ddlDate"
+                                                    placeholder="Expense Date" aria-label="Username"
+                                                    aria-describedby="basic-addon11">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-4 col-lg-4">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Expense Detail</label>
+                                    <input type="text" tabindex="-1" class="form-control" id="txtExpenseDetail"
+                                        name="txtExpenseDetail">
+                                    <span class="mb-3 text-danger" id="emptydetail"></span>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-lg-4 col-sm-4 col-md-4" id="ledDiv">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Expense Ledger</label>
+                                        <select class="form-select js-select-search-ddl" name="ddlExpenselVendor"
+                                            id="ddlExpenselVendor" required>
+                                            <option value="">Select Ledger</option>
+                                            @foreach ($expenseLedger as $item)
+                                                <option value="{{ $item->id }}">{{ $item->ledger_name }}</option>
+                                            @endforeach
+                                        </select>
+                                        <h6 class="card-title mt-2"> Closing Balance <span id="account_symbol"></span>
+                                            <span id="closinglvendor">0.00</span>
+                                        </h6>
+                                        <span class="mb-3 text-danger" id="emptyvenledger"></span>
+                                    </div>
+
+                                </div><!-- Col -->
+
+                                <div class="form-group col-lg-4 col-sm-4 col-md-4" id="empDiv"
+                                    style="display: none;">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Expense Employee</label>
+                                        <select class="form-select js-select-search-ddl" name=""
+                                            id="ddlExpenselEmployee" required>
+                                            <option value="">Select Ledger</option>
+                                            @foreach ($employeeLeger as $item)
+                                                <option value="{{ $item->id }}">{{ $item->ledger_name }}</option>
+                                            @endforeach
+                                        </select>
+                                        <h6 class="card-title mt-2"> Pending Balance <span id="account_symbol"></span>
+                                            <span id="pendingemployee">0.00</span>
+                                        </h6>
+                                        <span class="mb-3 text-danger" id="emptyemployeeId"></span>
+
+                                    </div>
+
+                                </div><!-- Col -->
+                                <div class="form-group col-md-4 col-lg-4">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold" for="">Amount</label>
+                                        <input type="text" id="txtAmount" name="txtAmount" class="form-control"
+                                            oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                            control="numeric" maxlength="15" autocomplete="off">
+                                        <span class="mb-3 text-danger" id="emptyamount"></span>
+                                    </div>
+
+                                </div><!-- Col -->
+                                <div class="form-group col-md-4 col-lg-4">
+                                    <div class="mb-3">
+                                    </div>
+                                </div><!-- Col -->
+                            </div><!-- Row -->
+                            <div class="row">
+                                <div class="form-group col-md-4 col-lg-4">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Expense Group</label>
+                                        <select class="form-select js-select-search-ddl" name="ddlExpenseGroup"
+                                            id="ddlExpenseGroup" required>
+                                            <option value="">Select Expense Group</option>
+                                            @foreach ($expenseGroup as $item)
+                                                <option value="{{ $item->id }}">{{ $item->expensegroup_name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <span class="mb-3 text-danger" id="emptygrp"></span>
+                                    </div>
+
+                                    <div class="mb-3" id="empFile" style="display: none;">
+                                        <label class="form-label fw-bold">
+                                            File Attachment</label>
+                                        <div class="input-group">
+                                            <input id="txtfileattachment" name="txtfileattachment" type="file"
+                                                class="form-control" tabindex="-1"
+                                                accept="application/pdf,.png, .jpg, .jpeg">
+                                        </div>
+                                    </div>
+                                </div><!-- Col -->
+
+
+                                <input type="hidden" name="isPaid" id="isPaid">
+                                <div class="form-group col-md-4 col-lg-4" id="PayNowdiv">
+                                    <div class="mb-2">
+                                        <label class="form-label fw-bold">
+                                            <input type="checkbox" class="form-check-input mt-0" name="txtCheckBox"
+                                                id="txtCheckBox" checked>
+                                            Pay Now</label>
+
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">From Company Ledger</label>
+                                        <select class="form-select js-select-search-ddl" name="ddlExpenselCompany"
+                                            id="ddlExpenselCompany" required>
+                                            <option value="">Select Company Ledger</option>
+                                            @foreach ($companyLedger as $item)
+                                                <option value="{{ $item->id }}">{{ $item->ledger_name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <h6 class="card-title mt-2"> Closing Balance <span id="account_symbol"></span>
+                                            <span id="closinglcompany">0.00</span>
+                                        </h6>
+                                        <span class="mb-3 text-danger" id="emptycompany"></span>
+                                    </div>
+
+
+                                </div><!-- Col -->
+                                <div class="form-group col-md-4 col-lg-4" id="NotPaydiv" style="display:none;">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">
+                                            <input type="checkbox" class="form-check-input mt-0" name="txtNotPay"
+                                                id="txtNotPay"> Not Pay
+                                            Now</label>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-4 col-lg-4">
+                                    <div class="mb-3">
+                                    </div>
+                                </div><!-- Col -->
+                                <div class="form-group col-md-4 col-lg-4">
+                                    <div class="mb-3">
+                                    </div>
+                                </div><!-- Col -->
+                                <div class="form-group col-md-4 col-lg-4">
+                                    <div class="mb-3">
+                                    </div>
+                                </div><!-- Col -->
+                            </div><!-- Row -->
+
+                            <div class="d-flex justify-content-end">
+                                <button type="button" id="btnSave" name="" class="btn btn-success me-1"
+                                    value="Save">Save</button>
+                                <button type="button" id="btnClear" class="btn btn-danger me-1">Cancel</button>
+                                <a href="{{ route('expenselist') }}" type="button" id="btnGoToList"
+                                    class="btn btn-primary submit">Go To
+                                    List</a>
+                            </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+</div>
+<!-- / Content -->
+@endsection
+
+@section('footer')
+<script src="{{ asset('assets/js/admin/accounts/expense.js') }}"></script>
+@endsection

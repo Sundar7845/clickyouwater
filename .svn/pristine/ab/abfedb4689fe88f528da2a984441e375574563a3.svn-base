@@ -1,0 +1,77 @@
+<?php
+
+namespace App\Http\Controllers\API;
+
+use App\Http\Controllers\Controller;
+use App\Models\Products;
+use App\Models\ProductType;
+use App\Traits\Common;
+use App\Traits\ResponseAPI;
+use Illuminate\Http\Request;
+
+class ProductsController extends Controller
+{
+    use Common;
+    use ResponseAPI;
+    //
+    public function getProductTypes()
+    {
+        # code...
+        try {
+
+            $types = ProductType::where('is_active', 1)->get(['id', 'product_type_name', 'delivery_charge', 'delivery_duration', 'order_before_time', 'newcan_deposit_amt', 'min_order_qty', 'max_order_qty', 'desc']);
+
+            $response = [
+                'status' => true,
+                'data' => $types,
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            // return response($response, 200);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+    public function getProducts($id = null)
+    {
+        # code...
+        try {
+
+            $products = Products::where('is_active', 1)->where('category_id', $id)->get(["id", "product_name", "category_id", "product_image", "customer_price", "wholesale_price", "capacity", "desc", "is_emptycan_return", "CGST", "SGST"]);
+
+
+            $response = [
+                'status' => true,
+                'data' => $products,
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            // return response($response, 200);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+
+    public function getProductDetails($id = null)
+    {
+        # code...
+        try {
+
+            $products = Products::where('id', $id)->get(["id", "product_name", "category_id", "product_image", "customer_price", "wholesale_price", "capacity", "desc", "is_emptycan_return", "CGST", "SGST"]);
+
+            $response = [
+                'status' => true,
+                'data' => $products,
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            // return response($response, 200);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+}

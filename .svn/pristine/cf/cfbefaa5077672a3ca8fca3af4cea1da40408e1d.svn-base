@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Http\Controllers\Masters;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class AreaController extends Controller
+{
+   public function Area()
+   {
+      return view('masters.area.area');
+   }
+}

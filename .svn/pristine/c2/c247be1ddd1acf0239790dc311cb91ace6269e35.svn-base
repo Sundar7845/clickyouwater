@@ -1,0 +1,170 @@
+$(document).ready(function () {
+    $("#tblBrandAllocation").DataTable({
+        processing: true,
+        serverSide: true,
+        order: [[0, "ASC"]],
+        ajax: "brandallocate/data", "fnRowCallback": serialNoCount,
+        columns: [
+            { data: "id", orderable: false },
+            { data: "state_name" },
+            { data: "city_name" },
+            { data: "action", orderable: false },
+        ],
+    });
+
+    dropdownParent = $("#ddlBrand").divParent;
+
+    //To get Product Type
+    $("#ddlCategory").bind("change", function () {
+        getProductType();
+    });
+
+    //To get Brands
+    $("#ddlProductType").bind("change", function () {
+        getBrands();
+    });
+});
+
+function doEdit(id) {
+    $("#hdBrandAllocateId").val(id);
+    $("#ddlState").focus();
+    $("#btnallocate").text("Update");
+    $("#brandTitle").text("Update State Brand Allocation");
+    $("input[type^='checkbox']").attr("checked", false);
+    getBrandAllocateById(id);
+}
+
+function getBrandAllocateById(id) {
+    $("#pageloader").fadeIn();
+    $.ajax({
+        type: "GET",
+        url: "getbrandallocate/" + id,
+        dataType: "json",
+        success: function (data) {
+            $("#ddlState").val(data.brandallocation.state_id).trigger("change");
+
+            setTimeout(function () {
+                $("#ddlCity").val(data.brandallocation.city_id).trigger("change");
+            }, 2000);
+
+            $("#ddlCategory").val(data.brandallocation.category_id).trigger("change");
+
+            setTimeout(function () {
+                $("#ddlProductType").val(data.brandallocation.product_type_id).trigger("change");
+            }, 3000);
+
+            setTimeout(function () {
+                var brand_ids = data.brandallocation.brand_id.split(",");
+                $("#ddlBrand").val(brand_ids).trigger("change");
+                $("#pageloader").fadeOut();
+            }, 4000);
+        },
+    });
+}
+
+function showDelete(id) {
+    confirmDelete(id, "delete/brandallocate/", "tblBrandAllocation");
+}
+
+function cancel() {
+    $("#btnallocate").text("Allocate");
+    $("#brandTitle").text("State Brand Allocation");
+    $("#hdBrandAllocateId").val("");
+    $("#ddlState").val("").trigger("change");
+    $("#ddlCity").val(0).trigger("change");
+    $("#ddlCategory").val(0).trigger("change");
+    $("#ddlProductType").val(0).trigger("change");
+    $("#ddlBrand").val(0).trigger("change");
+    $("#ddlState").focus();
+    $("#btnSave").text("save");
+}
+
+// jquery Validation
+$(function () {
+    $("form[name='brand_allocation']").validate({
+        rules: {
+            ddlState: "required",
+            ddlCity: "required",
+            chkBrandName: "required",
+        },
+        errorPlacement: function (error, element) {
+            if (element.is(":radio")) {
+                error.appendTo(element.parents(".form-group"));
+            } else if (element.is(":checkbox")) {
+                error.appendTo(
+                    element.siblings("label[for='" + element.attr("id") + "']")
+                );
+            } else {
+                if (element.siblings(".error").html() == undefined) {
+                    error.appendTo(element.parent().next(".error"));
+                } else {
+                    error.appendTo(element.siblings(".error"));
+                }
+            }
+        },
+    });
+});
+
+function getProductType() {
+    var category_id = $("#ddlCategory").val();
+    $.ajax({
+        url: "/get/producttype",
+        type: "GET",
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        },
+        data: {
+            category_id: category_id,
+            _token: $('meta[name="csrf-token"]').attr("content"),
+        },
+        dataType: "json",
+        success: function (result) {
+            $("#ddlProductType").select2({
+                placeholder: "Select Product Type",
+            });
+            $("#ddlProductType").html(
+                '<option value="">Select Product Type</option>'
+            );
+            $.each(result.productType, function (key, value) {
+                $("#ddlProductType").append(
+                    '<option value="' +
+                    value.id +
+                    '">' +
+                    value.product_type_name +
+                    "</option>"
+                );
+            });
+        },
+    });
+}
+
+function getBrands() {
+    var product_type_id = $("#ddlProductType").val();
+    $.ajax({
+        url: "/get/producttypesbrands",
+        type: "GET",
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        },
+        data: {
+            product_type_id: product_type_id,
+            _token: $('meta[name="csrf-token"]').attr("content"),
+        },
+        dataType: "json",
+        success: function (result) {
+            $("#ddlBrand").select2({
+                placeholder: "Select Brands",
+            });
+            $("#ddlBrand").html('<option value="">Select Brand</option>');
+            $.each(result.brands, function (key, value) {
+                $("#ddlBrand").append(
+                    '<option value="' +
+                    value.id +
+                    '">' +
+                    value.brand_name +
+                    "</option>"
+                );
+            });
+        },
+    });
+}

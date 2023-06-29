@@ -1,0 +1,119 @@
+<?php
+
+namespace App\Http\Controllers\API;
+
+use App\Enums\StatusTypes;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\AddressResource;
+use App\Http\Resources\UserAddressResource;
+use App\Models\CustomerAddress;
+use App\Models\Order;
+use App\Models\Products;
+use App\Traits\Common;
+use App\Traits\ResponseAPI;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class CanController extends Controller
+{
+    use Common;
+    use ResponseAPI;
+    public function getCansInHand()
+    {
+
+        try {
+            // $userOrders = Order::where('user_id', Auth::user()->id)->where('status_id', StatusTypes::OrderDelivered)
+            //     ->get();
+
+            // $total_emptycan = 0;
+            // $total_qty = 0;
+            // $address_id = [];
+            // $data_brand_wise = [];
+            // $address_details = [];
+            // $data_address_product_wise = [];
+
+            // if ($userOrders) {
+            //     foreach ($userOrders as $orders) {
+            //         if ($orders->orderDets) {
+            //             foreach ($orders->orderDets as $orderDets) {
+            //                 $total_emptycan = $total_emptycan + (int)$orderDets->return_empty_cans_qty;
+            //                 // dd($orders->delivery_address_id);
+            //                 $deliveryAddressId = $orders->delivery_address_id;
+            //                 // $product_id = $orderDets->product_id;
+            //                 $brand_id = $orderDets->products->brand_id;
+            //                 if (!in_array($deliveryAddressId, $address_id)) {
+            //                     $address_id[] = $deliveryAddressId;
+            //                 }
+            //                 // dd($address_id);
+
+            //                 // If the delivery address and product id combination is not yet in the array, add it
+            //                 if (!isset($data_address_product_wise[$deliveryAddressId][$brand_id])) {
+            //                     $data_address_product_wise[$deliveryAddressId][$brand_id] = [
+            //                         'empty_can' => 0,
+            //                         'brand_name' => 0,
+            //                     ];
+            //                 }
+            //                 // Increment the empty can count and total qty for this delivery address and product id combination
+            //                 $data_address_product_wise[$deliveryAddressId][$brand_id]['empty_can'] += (int) $orderDets->qty - (int) $orderDets->return_empty_cans_qty;
+            //                 $data_address_product_wise[$deliveryAddressId][$brand_id]['brand_name'] = $orderDets->products->brand->brand_name;
+            //                 // $data_address_product_wise[$deliveryAddressId][$brand_id]['brand_id'] = $orderDets->products->brand->id;
+            //             }
+            //         }
+            //         $total_qty = $total_qty + (int)$orders->total_qty;
+            //     }
+            //     $empty_can = $total_qty - $total_emptycan;
+            // } else {
+
+            //     $response = [
+            //         'status' => false,
+            //         'data' => [
+            //             "total_can_in_hand" => 0,
+            //             "address_wise" => [],
+            //         ],
+            //         'message' => "No records found"
+            //     ];
+            //     return response($response, 200);
+            // }
+            // // dd($address_id);
+            // foreach ($address_id as $address) {
+            //     $address_empty_can = 0;
+
+            //     foreach ($userOrders as $order) {
+            //         if ($order->delivery_address_id == $address) {
+            //             foreach ($order->orderDets as $orderDet) {
+            //                 $address_empty_can += (int) $orderDet->qty - (int) $orderDet->return_empty_cans_qty;
+            //             }
+            //             $formattedAddress = UserAddressResource::collection($this->getCustomerAddress_details($order->delivery_address_id));
+            //             $brand_array[] = $data_address_product_wise[$order->delivery_address_id][$orderDet->products->brand_id];
+            //         }
+            //     }
+            //     $address_wise['address'] = $formattedAddress;
+            //     $address_wise['empty_can'] = $address_empty_can;
+            //     $address_wise['brand_wise'] = $brand_array;
+            //     $address_details[] = $address_wise;
+            //     $brand_array = [];
+            // }
+
+            // $response = [
+            //     'status' => false,
+            //     'data' => [
+            //         "total_can_in_hand" => $empty_can,
+            //         "address_wise" => $address_details,
+            //     ],
+            //     'message' => "Success"
+            // ];
+
+            $response = [
+                'status' => false,
+                'data' => $this->getCansInHandAddressWise(),
+                'message' => "Success"
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+}

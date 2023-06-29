@@ -1,0 +1,117 @@
+$(document).ready(function () {
+    $("#tblDocumentConfig").DataTable({
+        processing: true,
+        serverSide: true,
+        order: [[0, "ASC"]],
+        ajax: "documentconfig/data",
+        fnRowCallback: function (nRow, aData, iDisplayIndex) {
+            $("td:first", nRow).html(iDisplayIndex + 1);
+            return nRow;
+        },
+        columns: [
+            { data: "id" },
+            { data: "documenttype_name" },
+            {
+                data: "is_active",
+
+                render: function (data, type, row) {
+                    return `<label class="switch">
+                        <input onclick="doStatus(${
+                            row.id
+                        });" id="chkDocumentConfig${
+                        row.id
+                    }" type="checkbox" class="switch-input"
+                        name="chkDocumentConfig" '  ${
+                            data == 1 ? "checked" : ""
+                        } ' />
+                        <span class="switch-toggle-slider">
+                            <span class="switch-on"></span>
+                            <span class="switch-off"></span>
+                        </span>
+                    </label>`;
+                },
+            },
+            { data: "action" },
+        ],
+    });
+});
+
+function doEdit(id) {
+    $("#hdDocumentConfigId").val(id);
+    $("#ddlDocumentType").focus();
+    $("#btnSave").text("Update");
+    $("input[type^='checkbox']").attr("checked", false);
+    getDocumentConfigById(id);
+}
+
+function getDocumentConfigById(id) {
+    $.ajax({
+        type: "GET",
+        url: "documentconfig/" + id,
+        dataType: "json",
+        success: function (data) {
+            console.log(data);
+            $("#ddlDocumentType")
+                .val(data.document.documenttype_id)
+                .trigger("change");
+            $("#chkModuleName" + data.document.documentmodule_id).attr(
+                "checked",
+                true
+            );
+            $("#chkMandatory" + data.document.documentmodule_id).attr(
+                "checked",
+                true
+            );
+        },
+    });
+}
+
+function cancel() {
+    $("#hdDocumentConfigId").val("");
+    $("#ddlDocumentType").val("").trigger("change");
+    $("input[type^='checkbox']").attr("checked", false);
+    $("#ddlDocumentType").focus();
+    $("#btnSave").text("Save");
+}
+
+function showDelete(id) {
+    confirmDelete(id, "delete/documentconfig/", "tblDocumentConfig");
+}
+
+function doStatus(id) {
+    var status = $("#chkDocumentConfig" + id).is(":checked");
+    if (status == true) {
+        $("#chkDocumentConfig").val(1);
+        status = 1;
+    } else {
+        $("#chkDocumentConfig").val(0);
+        status = 0;
+    }
+    confirmStatusChange(id, "documentconfig/", "tblDocumentConfig", status);
+}
+
+// jquery Validation
+$(function () {
+
+    $("form[name='document_config']").validate({
+
+        rules: {
+            ddlDocumentType: "required",
+           
+        },
+        
+            errorPlacement: function (error, element) {
+                if (element.is(":radio")) {
+                    error.appendTo(element.parents(".form-group"));
+                } else {
+                    // This is the default behavior
+                    // error.insertAfter(element);
+                    if (element.siblings(".error").html() == undefined) {
+                        error.appendTo(element.parent().next(".error"));
+                    } else {
+                        error.appendTo(element.siblings(".error"));
+                    }
+                }
+            },
+    });
+});

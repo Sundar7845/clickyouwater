@@ -1,0 +1,112 @@
+$(document).ready(function() {
+    $('#tbllogistic').DataTable({
+        processing: true,
+        serverSide: true,
+        order: [[0, "ASC"]],
+        ajax: "logisticData",
+        fnRowCallback: function (nRow, aData, iDisplayIndex) {
+            $("td:first", nRow).html(iDisplayIndex + 1);
+            return nRow;
+        },
+        columns: [
+            { data: "id" },
+            { data: "logistic_partner_id" },
+            { data: "logistic_partner_name" },
+            { data: "manufacturer_name" },
+            { data: "hub_name."}, 
+            { data: "proprietor_name"}, 
+            { data: "years_of_experience"}, 
+            { data: "years_of_experience"}, 
+            { data: "email",
+            render: function (data, type, row) {
+                return `<a href="manufacturerdocument"
+                class="badge bg-label-warning">View</a>`;
+            }
+            }, 
+            {                 
+                
+                data: "is_active",
+            render: function (data, type, row) {
+                return `<label class="switch">
+                        <input onclick="doStatus(${row.id});" id="chkLogistic${row.id}" type="checkbox" class="switch-input"
+                        name="chkLogistic" '  ${(data == 1 ? "checked" : "")} ' />
+                        <span class="switch-toggle-slider">
+                            <span class="switch-on"></span>
+                            <span class="switch-off"></span>
+                        </span>
+                    </label>`;
+            }}, 
+            { data: "action" },
+        ],
+    });
+    
+    BindCity();
+    BindArea();
+});
+
+
+//Update Status
+function doStatus(id) {
+    var status = $("#chkLogistic" + id).is(":checked");
+    confirmStatusChange(id, "logistic/", "tbllogistic", (status == true ? 1 : 0), "chkLogistic");
+}
+
+
+//Validation
+$(function () {
+    
+    $("form[name='logistic']").validate({
+        rules: {
+            txtLogisticId: "required",
+            txtLogisticName: "required",
+            'ddlManufacturerName[]': {
+                required: true
+            },
+            'ddlHubName[]': {
+                required: true
+            },
+            txtYearsOfExperience: "required",
+            txtMobile: "required",
+            txtEmail: "required",
+            txtPincode1: "required",
+            txtCreditPeriod: "required",
+            txtSettlementPeriod: "required",
+            ddlState: "required",
+            ddlCity: "required",
+            ddlArea: "required",
+            txtAddress: "required",
+            txtPincode2: "required",
+            txtProprietorName: "required",
+            txtProprietorMobile: "required",
+            txtProprietorEmail: "required",
+            txtContactPersonEmail1: "required",
+            txtContactPersonMobile: "required",
+            txtContactPersonEmail2: "required"
+           
+        },
+        messages: {
+            required: "This field is required",
+        },
+        errorPlacement: function (error, element) {
+            if (element.is(":radio")) {
+                error.appendTo(element.parents(".form-group"));
+            } else {
+                // This is the default behavior
+                // error.insertAfter(element);
+                if (element.siblings(".error").html() == undefined) {
+                    error.appendTo(element.parent().next(".error"));
+                } else {
+                    error.appendTo(element.siblings(".error"));
+                }
+            }
+        },
+        submitHandler: function (form) {
+            form.submit();
+        },
+    });
+});
+
+//Delete Data
+function showDelete(id) {
+    confirmDelete(id, "delete/logisticlist/", "tbllogistic");
+}

@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Http\Controllers\Admin\DeliveryPersonManagement;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class DeliveryPersonController extends Controller
+{
+    public function deliveryPerson()
+    {
+        return view('admin.delivery_person_management.delivery_person');
+    }
+
+    public function deliveryPersonList()
+    {
+        return view('admin.delivery_person_management.delivery_person_list');
+    }
+}

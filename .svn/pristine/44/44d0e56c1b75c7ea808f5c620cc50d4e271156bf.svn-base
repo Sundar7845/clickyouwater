@@ -1,0 +1,145 @@
+@extends('layouts.main_master') @section('content')
+@section('title')
+    Dashboard | Product Type
+@endsection
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-1 mb-4">
+        Product Type
+    </h4>
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-12 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <form action="{{ route('add.prodctType') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="txtProductTypeId" id="txtProductTypeId" value="">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Product Type</label>
+                                    <input type="text" id="txtProductType" name="txtProductType" class="form-control"
+                                        placeholder="Product Type" required />
+                                    @error('txtProductType')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Delivery Charge</label>
+                                    <input type="text" id="txtDeliveryCharge" name="txtDeliveryCharge"
+                                        class="form-control" placeholder="Delivery Charge" required />
+                                    @error('txtDeliveryCharge')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Delivery Duration</label>
+                                    <input type="text" id="txtDeliveryDuration" name="txtDeliveryDuration"
+                                        class="form-control" placeholder="Delivery Duration" required />
+                                    @error('txtDeliveryDuration')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="flatpickr-basic">Order Before</label>
+                                    <input type="time" id="timeOrderBefore" name="timeOrderBefore"
+                                        class="form-control" />
+                                    @error('timeOrderBefore')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>New Can Deposit</label>
+                                    <input type="text" id="txtNewCanDeposit" name="txtNewCanDeposit"
+                                        class="form-control" placeholder="New Can Deposit" required />
+                                    @error('txtNewCanDeposit')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label>&nbsp;</label>
+                                <div class="input-group">
+                                    <span class="input-group-text" id="basic-addon11">Min. Order Qty</span>
+                                    <input type="text" class="form-control" id="txtMinQty" name="txtMinQty" />
+                                    @error('txtMinQty')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                    <span class="input-group-text" id="basic-addon11">Max. Order Qty</span>
+                                    <input type="text" class="form-control" id="txtMaxQty" name="txtMaxQty" />
+                                    @error('txtMaxQty')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mt-4 mb-3">
+                                    <button type="submit" id="btnSave" class="btn btn-success">Save</button>
+                                    <button type="button" class="btn btn-danger" onclick="cancel();">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+
+    <h5 class="fw-bold py-1 mb-4">Product Type List</h5>
+    <!-- DataTable with Buttons -->
+    <div class="col-lg-12 mb-4 mb-lg-0">
+        <div class="card h-100">
+            <div class="card-datatable table-responsive pt-0">
+                <table id="producttype" class="table">
+                    <thead class="border-bottom">
+                        <tr>
+                            <th>S.No</th>
+                            <th>Product Type</th>
+                            <th>Delivery Charge</th>
+                            <th>Delivery Duration (Hrs)</th>
+                            <th>Order Before (PM)</th>
+                            <th>New Can Deposit</th>
+                            <th>Min Order Qty</th>
+                            <th>Max Order Qty</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--/ DataTable with Buttons -->
+
+</div>
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/admin/products/producttype.js') }}"></script>
+@endsection

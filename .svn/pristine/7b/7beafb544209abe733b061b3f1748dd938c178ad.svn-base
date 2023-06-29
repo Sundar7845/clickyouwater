@@ -1,0 +1,162 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Settings;
+
+use App\Http\Controllers\Controller;
+use App\Models\AdminSettings;
+use App\Models\GeoApiSettings;
+use App\Models\PaymentGatewaySettings;
+use App\Models\SmsSettings;
+use App\Models\WalletTransactionThrough;
+use App\Traits\Common;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class AdminSettingsController extends Controller
+{
+    use Common;
+    public function AdminSettings()
+    {
+        $adminsettings = AdminSettings::first();
+        $smssettings = SmsSettings::first();
+        $geoapisettings = GeoApiSettings::first();
+        $paymentgateway = PaymentGatewaySettings::first();
+        return view('admin.settings.admin_settings', compact('adminsettings', 'smssettings', 'geoapisettings', 'paymentgateway'));
+    }
+
+    public function AdminSettingsCreate(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $fillable = $request->all();
+            unset($fillable['_token']);
+            if ($request->id == "new") {
+                AdminSettings::create($fillable);
+                $notification = array(
+                    'message' => 'AdminSettings Created Successfully!',
+                    'alert-type' => 'success'
+                );
+            } else {
+                unset($fillable['_token']);
+                unset($fillable['id']);
+
+                AdminSettings::where('id', $request->id)->update($fillable);
+                $notification = array(
+                    'message' => 'AdminSettings Updated Successfully!',
+                    'alert-type' => 'success'
+                );
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            $notification = array(
+                'message' => 'AdminSettings Not Updated!',
+                'alert-type' => 'error'
+            );
+            $this->Log(__FUNCTION__, $request->method(), $e->getMessage(), Auth::user()->id, $request->ip(), gethostname());
+        }
+        return redirect()->route('adminsettings')->with($notification);
+    }
+
+    public function SmsSettingsCreate(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $fillable = $request->all();
+            unset($fillable['_token']);
+            if ($request->id == "new") {
+                SmsSettings::create($fillable);
+                $notification = array(
+                    'message' => 'SmsSettings Created Successfully!',
+                    'alert-type' => 'success'
+                );
+            } else {
+                unset($fillable['_token']);
+                unset($fillable['id']);
+
+                SmsSettings::where('id', $request->id)->update($fillable);
+                $notification = array(
+                    'message' => 'SmsSettings Updated Successfully!',
+                    'alert-type' => 'success'
+                );
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            $notification = array(
+                'message' => 'SmsSettings Not Updated!',
+                'alert-type' => 'error'
+            );
+            $this->Log(__FUNCTION__, $request->method(), $e->getMessage(), Auth::user()->id, $request->ip(), gethostname());
+        }
+        return redirect()->route('adminsettings')->with($notification);
+    }
+
+    public function GeoApiSettingsCreate(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $fillable = $request->all();
+            unset($fillable['_token']);
+            if ($request->id == "new") {
+                GeoApiSettings::create($fillable);
+                $notification = array(
+                    'message' => 'GeoApiSettings Created Successfully!',
+                    'alert-type' => 'success'
+                );
+            } else {
+                unset($fillable['_token']);
+                unset($fillable['id']);
+                GeoApiSettings::where('id', $request->id)->update($fillable);
+                $notification = array(
+                    'message' => 'GeoApiSettings Updated Successfully!',
+                    'alert-type' => 'success'
+                );
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            $notification = array(
+                'message' => 'GeoApiSettings Not Updated!',
+                'alert-type' => 'error'
+            );
+            $this->Log(__FUNCTION__, $request->method(), $e->getMessage(), Auth::user()->id, $request->ip(), gethostname());
+        }
+        return redirect()->route('adminsettings')->with($notification);
+    }
+
+    public function paymentGatewayCreate(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $fillable = $request->all();
+            unset($fillable['_token']);
+            if ($request->id == "new") {
+                PaymentGatewaySettings::create($fillable);
+                $notification = array(
+                    'message' => 'Payment Gateway Settings Created Successfully!',
+                    'alert-type' => 'success'
+                );
+            } else {
+                unset($fillable['_token']);
+                unset($fillable['id']);
+
+                PaymentGatewaySettings::where('id', $request->id)->update($fillable);
+                $notification = array(
+                    'message' => 'Payment Gateway Settings Updated Successfully!',
+                    'alert-type' => 'success'
+                );
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            $notification = array(
+                'message' => 'Payment Gateway Settings Not Updated!',
+                'alert-type' => 'error'
+            );
+            $this->Log(__FUNCTION__, $request->method(), $e->getMessage(), Auth::user()->id, $request->ip(), gethostname());
+        }
+        return redirect()->route('adminsettings')->with($notification);
+    }
+}

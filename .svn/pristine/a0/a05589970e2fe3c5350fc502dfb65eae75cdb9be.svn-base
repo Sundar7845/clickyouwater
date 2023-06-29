@@ -1,0 +1,26 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\CouponType;
+use Illuminate\Database\Seeder;
+
+class CouponTypeSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        $data = [
+            ['coupon_type' => 'First Order'],
+            ['coupon_type' => 'Order Qty/Week'],
+            ['coupon_type' => 'Order Qty/Month'],
+            ['coupon_type' => 'Order Qty/Year']
+        ];
+
+        CouponType::insert($data);
+    }
+}

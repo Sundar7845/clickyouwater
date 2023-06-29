@@ -1,0 +1,135 @@
+$(document).ready(function () {
+    // call BindCity() function to bind cities based on selected State
+    BindCity();
+
+    // call BindArea() function to bind areas based on selected city
+    BindArea();
+
+    // initialize Tagify control on area input field
+    const ddlAreaEl = document.querySelector('#ddlArea');
+    let whitelist = [];
+
+    let ddlArea = new Tagify(ddlAreaEl, {
+        whitelist: whitelist,
+        maxTags: 10,
+        dropdown: {
+            maxItems: 20,
+            classname: '',
+            enabled: 0,
+            closeOnSelect: false
+        },
+        callbacks: {
+            add: onTagAdded // callback function to handle new tag added
+        }
+    });
+
+    // event listener for city selection
+    $("#ddlCity").on("change", function () {
+        BindArea();
+    });
+
+    function BindArea() {
+        return new Promise((resolve, reject) => {
+            var city_id = $("#ddlCity").val();
+            $("#ddlArea").html('<option value="0">Select Area</option>');
+            $.ajax({
+                url: "/getareabycity",
+                type: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                },
+                data: {
+                    city_id: city_id,
+                    _token: $('meta[name="csrf-token"]').attr("content"),
+                },
+                dataType: "json",
+                success: function (result) {
+                    var areas = [];
+                    $.each(result, function (key, value) {
+                        areas.push(value.area_name);
+                    });
+                    ddlArea.settings.whitelist = areas; // set the new whitelist directly
+                    ddlArea.update(); // update the Tagify control with new whitelist
+                    resolve();
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    reject(thrownError);
+                },
+            });
+        });
+    }
+
+    function onTagAdded(e) {
+        // check if the added tag is not in the current whitelist
+        if (!ddlArea.settings.whitelist.includes(e.detail.data.value)) {
+            // add new tag to whitelist
+            ddlArea.settings.whitelist.push(e.detail.data.value);
+            ddlArea.update();
+        } else {
+            // do nothing if the tag is already in the whitelist
+        }
+    }
+});
+
+
+//Third Party Tie-up
+$("#chkIsThirdParty").click(function () {
+    if ($("#chkIsThirdParty").is(":checked")) {
+        $(".ThirdParty").show();
+    } else {
+        $(".ThirdParty").hide();
+    }
+});
+
+//Validation
+$(function () {
+    $("form[name='manufacture']").validate({
+        rules: {
+            txtManufacturerName: "required",
+            txtMobile: "required",
+            txtOffEmail: "required",
+            txtLatitude: "required",
+            txtLongtitude: "required",
+            txtGeoLocation: "required",
+            txtCreditPeriod: "required",
+            txtSettlementPeriod: "required",
+            password: "required",
+            password_confirmation: "required",
+            yearOfExp: "required",
+            txtNoOfBrands: "required",
+            txtAnnualTurnOver: "required",
+            txtSecurityDeposit: "required",
+            ddlState: "required",
+            ddlCity: "required",
+            ddlArea: "required",
+            txtAddress: "required",
+            txtPincode: "required",
+            comm_pincode: "required",
+            txtProprietorName: "required",
+            txtProprietorMobile: "required",
+            txtProprietorEmail: "required",
+            txtContactPersonName: "required",
+            txtContactPersonMobile: "required",
+            txtContactPersonEmail: "required",
+        },
+        messages: {
+            required: "This field is required",
+        },
+        errorPlacement: function (error, element) {
+            if (element.is(":radio")) {
+                error.appendTo(element.parents(".form-group"));
+            } else {
+                // This is the default behavior
+                // error.insertAfter(element);
+                if (element.siblings(".error").html() == undefined) {
+                    error.appendTo(element.parent().next(".error"));
+                } else {
+                    error.appendTo(element.siblings(".error"));
+                }
+            }
+        },
+        submitHandler: function (form) {
+            form.submit();
+        },
+    });
+});

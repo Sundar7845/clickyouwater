@@ -1,0 +1,183 @@
+$(function() {
+    $('#ddlOffer').change(function(){
+        if($('#ddlOffer').val() == 2) {
+            $('#stateName').show(); 
+        } else {
+            $('#stateName').hide(); 
+        } 
+    });
+});
+
+$(document).ready(function() {
+    ImgUpload()
+    $('#tbloffers').DataTable({
+        processing: true,
+        serverSide: true,
+        order: [[0, "ASC"]],
+        ajax: "offers/data",
+        fnRowCallback: function (nRow, aData, iDisplayIndex) {
+            $("td:first", nRow).html(iDisplayIndex + 1);
+            return nRow;
+        },
+        columns: [
+            { data: "id" },
+            {
+                data: "offer_image_path",
+                render: function (data) {
+                    return '<img src="' + data + '" class="avatar" width="50" height="50"/>';
+                }
+            },
+            { data: "offer_name" },
+            { data: "validity" },
+            { data: "start_date" },
+            { data: "end_date" },
+            { data: "is_active",
+            render: function (data, type, row) {
+                return `<label class="switch">
+                <input onclick="doStatus(${row.id});" id="chkOffer${row.id}" type="checkbox" class="switch-input"
+                name="chkOffer" '  ${(data == 1 ? "checked" : "")} ' />
+                <span class="switch-toggle-slider">
+                    <span class="switch-on"></span>
+                    <span class="switch-off"></span>
+                </span>
+                </label>`;
+                }
+            },
+            { data: "action" }
+        ],
+    });
+});
+
+function doStatus(id) {
+    var status = $("#chkOffer" + id).is(":checked");
+    confirmStatusChange(id, "offers/", "tbloffers", (status == true ? 1 : 0), "chkOffer");
+  }
+
+  function doEdit(id) {
+    $("#hdOfferId").val(id);
+    $("#ddlOffer").focus();
+    $("#btnSave").text("Update");
+    getOfferById(id);
+}
+
+function getOfferById(id) {
+    $.ajax({
+        type: "GET",
+        url: "getoffers/" + id,
+        dataType: "json",
+        success: function (data) {console.log(data.offer.offer_type_id);
+            $("#ddlOffer").val(data.offer.offer_type_id).trigger('change');
+           // $("#ddlState").val(data.offer.state_id).trigger('change');
+            $("#txtOfferName").val(data.offer.offer_name);
+            $("#txtStartDate").val(data.offer.start_date);
+            $("#txtEndDate").val(data.offer.end_date);
+            $("#txtOfferPoints").val(data.offer.offer_points);
+            var img = "<div class='upload__img-box'><div style='background-image: url(" + data.offer.offer_image_path + ")' data-number='" + $(".upload__img-close").length + "' data-file='" + data.offer.offer_image_path + "' class='img-bg'><div class='upload__img-close'></div></div></div>";
+             $(".upload__img-wrap").html(img);
+             $("#hdOfferImg").val(data.offer.offer_image_path);
+             ImgUpload();
+        },
+    });
+}
+
+function cancel() {
+    $("#hdOfferId").val("");
+    $("#ddlOffer").val("").trigger('change');
+    $("#txtOfferName").val("");
+    $("#txtStartDate").val("");
+    $("#txtEndDate").val("");
+    $("#txtOfferPoints").val("");
+    $("#OfferImage").val("");
+    $(".upload__img-wrap").html("");
+    $("#btnSave").text("Save");
+    $("#ddlOffer").focus();
+}
+
+function showDelete(id) {
+    confirmDelete(id, "delete/offers/", "tbloffers");
+}
+
+// jquery Validation
+$(function () {
+    $("form[name='offers']").validate({ 
+        rules: {
+            ddlOffer: "required",
+            ddlState: "required",
+            txtOfferName: "required",
+            txtValidityDays: "required",
+            txtStartDate: "required",
+            txtEndDate: "required",
+            txtOfferPoints: "required",
+        },
+        errorPlacement: function (error, element) {
+            if (element.is(":radio")) {
+                error.appendTo(element.parents(".form-group"));
+            } else {
+                // This is the default behavior
+                // error.insertAfter(element);
+                if (element.siblings(".error").html() == undefined) {
+                    error.appendTo(element.parent().next(".error"));
+                } else {
+                    error.appendTo(element.siblings(".error"));
+                }
+            }
+        },
+    });
+});
+
+function ImgUpload() {
+    var imgWrap = "";
+    var imgArray = [];
+
+    $("#OfferImage").each(function () {
+      $(this).on('change', function (e) {
+        imgWrap = $(this).closest('.upload__box').find('.upload__img-wrap');
+        var maxLength = $(this).attr('data-max_length');
+
+        var files = e.target.files;
+        var filesArr = Array.prototype.slice.call(files);
+        var iterator = 0;
+        filesArr.forEach(function (f, index) {
+
+          if (!f.type.match('image.*')) {
+            return;
+          }
+
+          if (imgArray.length > maxLength) {
+            return false
+          } else {
+            var len = 0;
+            for (var i = 0; i < imgArray.length; i++) {
+              if (imgArray[i] !== undefined) {
+                len++;
+              }
+            }
+            if (len > maxLength) {
+              return false;
+            } else {
+              imgArray.push(f);
+
+              var reader = new FileReader();
+              reader.onload = function (e) {
+                var html = "<div class='upload__img-box'><div style='background-image: url(" + e.target.result + ")' data-number='" + $(".upload__img-close").length + "' data-file='" + f.name + "' class='img-bg'><div class='upload__img-close'></div></div></div>";
+                imgWrap.html(html);
+                iterator++;
+              }
+              reader.readAsDataURL(f);
+            }
+          }
+        });
+      });
+    });
+
+    $('body').on('click', ".upload__img-close", function (e) {
+      var file = $(this).parent().data("file");
+      for (var i = 0; i < imgArray.length; i++) {
+        if (imgArray[i].name === file) {
+          imgArray.splice(i, 1);
+          break;
+        }
+      }
+      $(this).parent().parent().remove();
+    });
+}

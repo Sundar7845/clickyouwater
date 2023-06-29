@@ -1,0 +1,96 @@
+<?php
+
+namespace App\Http\Controllers\Admin\OrderManagement;
+
+use App\Http\Controllers\Controller;
+use App\Models\Hub;
+use App\Models\Manufacturer;
+use App\Traits\Common;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class ManufacturerOrdersController extends Controller
+{
+  use Common;
+  public function manufacturerOrders()
+  {
+    $states = $this->getStates();
+    return view('admin.order_management.manufacturer_orders.manufacturer_orders', compact('states'));
+  }
+
+  public function manOrders(){
+    return view('admin.order_management.manufacturer_orders.man_orders');
+  }
+
+  public function getHubs(Request $request)
+  {
+    try {
+      $hubs = Hub::where('city_id', $request->city_id)->where('is_active', 1)->get();
+      return response()->json([
+        'hubs' => $hubs
+      ]);
+    } catch (\Exception $e) {
+      $this->Log(__FUNCTION__, 'GET', $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+    }
+  }
+
+  public function manufactureOrderData(Request $request)
+  {
+    try {
+
+      $hubOrder = "";
+      $query = Manufacturer::select('manufacturers.*', 'hubs.hub_name')
+        ->join('hub_manufacture_configs', 'hub_manufacture_configs.manufacturer_id', 'manufacturers.id')
+        ->join('hubs', 'hubs.id', 'hub_manufacture_configs.hub_id')
+        ->where('manufacturers.is_active', 1)
+        ->where('hubs.is_active', 1);
+
+      if ($request->state_id > 0) {
+        $query = $query->where('manufacturers.state_id', $request->state_id);
+      }
+      if ($request->city_id > 0) {
+        $query = $query->where('manufacturers.city_id', $request->city_id);
+      }
+      if ($request->hub_id > 0) {
+        $query = $query->where('hub_manufacture_configs.hub_id', $request->hub_id);
+      }
+
+      $hubOrder = $query->get();
+      return datatables()->of($hubOrder)
+        ->addColumn('action', function ($row) {
+          $html = '<a href="/manufacturerorderlist/' . $row->id . '" class="btn btn-xs btn-primary">View</a>';
+          return $html;
+        })
+        ->toJson();
+    } catch (\Exception $e) {
+      $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+    }
+  }
+
+  public function manufacturerOrderList($id)
+  {
+    try {
+      $manufacturerOrderDetail = Manufacturer::where('id', $id)->where('is_active', 1)->first();
+      return view('admin.order_management.manufacturer_orders.maufactureorder_detail', compact('manufacturerOrderDetail'));
+    } catch (\Exception $e) {
+      $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+    }
+  }
+
+  public function ManufacturerOrderDetail(Request $request)
+  {
+    try {
+      $manufacturerAllOrder = "";
+      $query = $this->getAllOrders("Manufacture", 0, 0, $request->manufacture_id);
+      $manufacturerAllOrder = $query->get();
+      return datatables()->of($manufacturerAllOrder)
+        ->addColumn('action', function ($row) {
+          $html = '<a href="/orderdetail/' . $row->id . '" class="btn btn-xs btn-primary">View</a>';
+          return $html;
+        })
+        ->toJson();
+    } catch (\Exception $e) {
+      $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+    }
+  }
+}

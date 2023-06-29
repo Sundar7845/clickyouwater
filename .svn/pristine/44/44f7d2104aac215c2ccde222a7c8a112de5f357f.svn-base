@@ -1,0 +1,119 @@
+<?php
+
+namespace App\Http\Controllers\Admin\ProductsManagement;
+
+use App\Http\Controllers\Controller;
+use App\Models\Brands;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Intervention\Image\Facades\Image;
+
+class BrandsController extends Controller
+{
+    public function brands()
+    {
+        return view('admin.product_management.brands.brands');
+    }
+
+    public function addBrands(Request $request)
+    {
+
+        if ($request->hdBrandId == null) {
+            
+        $request->validate([
+            'txtBrantsName' => 'required',
+            'BrandsImage' => 'required'
+        ]);
+
+            $image = $request->file('BrandsImage');
+            $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
+            image::make($image)->save('upload/brands/' . $name_gen);
+            $save_url = 'upload/brands/' . $name_gen;
+
+            Brands::create([
+                'brand_name' => $request->txtBrantsName,
+                'brand_image' => $save_url,
+                'created_by' => Auth::user()->id
+            ]);
+
+            $notification = array(
+                'message' => 'Brands Created Successfully',
+                'alert-type' => 'success'
+            );
+
+        } else {
+
+            $oldImage = $request->hdBrandImg;
+            
+            if ($request->file('BrandsImage')) 
+            {
+                @unlink($oldImage);
+                $image = $request->file('BrandsImage');
+                $name_gen = hexdec(uniqid()).'.'.$image->getClientOriginalExtension();
+                Image::make($image)->save('upload/brands/'.$name_gen);
+                $save_url = 'upload/brands/'.$name_gen;
+
+                Brands::findorfail($request->hdBrandId)->update([
+                    'brand_image' => $save_url,
+                    'updated_by' => Auth::user()->id
+                ]);
+           }
+
+           Brands::findorfail($request->hdBrandId)->update([
+            'brand_name' => $request->txtBrantsName,
+            'updated_by' => Auth::user()->id
+        ]);
+                
+            $notification = array(
+                'message' => 'Brands Updated Successfully',
+                'alert-type' => 'success'
+            );
+        }
+
+        return redirect()->route('brands')->with($notification);
+    }
+
+    public function getBrandsData(Request $request)
+    {
+        $departmentData = Brands::select('brands.*')->get();
+
+        return datatables()->of($departmentData)
+            ->addColumn('action', function ($row) {
+                $html = '<i class="text-primary ti ti-pencil me-1"
+                onclick="doEdit(' . $row->id . ');"></i> ';
+                $html .= '<i class="text-danger ti ti-trash me-1" id="confrim-color(' . $row->id . ')" onclick="showDelete(' . $row->id . ');"></i>';
+                return $html;
+            })->toJson();
+    }
+
+    public function getBrandsById($id)
+    {
+        $brand = Brands::select('brands.*')->where('brands.id', $id)->first();
+        return response()->json([
+            'brand' => $brand
+        ]);
+    }
+
+    public function deleteBrands($id)
+    {
+        $brands = Brands::findorfail($id);
+        $brands->delete();
+        $brands->update([
+            'deleted_by' => Auth::user()->id
+        ]);
+        $notification = array(
+            'message' => 'Brands Deleted Successfully',
+            'alert-type' => 'success'
+        );
+        return redirect()->route('brands')->with($notification);
+    }
+
+    public function activeStatus($id, $status)
+    {
+        Brands::findorfail($id)->update([
+            'is_active' => $status,
+            'updated_by' => Auth::user()->id
+        ]);
+    }
+
+}

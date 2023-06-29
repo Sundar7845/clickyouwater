@@ -1,0 +1,91 @@
+<?php
+
+namespace App\Http\Controllers\Admin\ProductsManagement;
+
+use App\Http\Controllers\Controller;
+use App\Models\Brands;
+use Illuminate\Http\Request;
+use Intervention\Image\Facades\Image;
+
+class BrandsController extends Controller
+{
+    public function brands()
+    {
+        return view('admin.product_management.brands.brands');
+    }
+
+    public function addBrands(Request $request)
+    {
+        $request->validate([
+            'txtBrantsName' => 'required',
+            'BrandsImage' => 'required'
+        ]);
+
+        if ($request->hdBrandId == null) {
+
+            $image = $request->file('BrandsImage');
+            $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
+            image::make($image)->save('upload/brands/' . $name_gen);
+            $save_url = 'upload/brands/' . $name_gen;
+
+            Brands::create([
+                'brand_name' => $request->txtBrantsName,
+                'brand_image' => $save_url
+            ]);
+
+        } else {
+            $images = $request->file('BrandsImage');
+                $name_gen = hexdec(uniqid()) . '.' . $images->getClientOriginalExtension();
+                image::make($images)->save('upload/brands/' . $name_gen);
+                $save_url = 'upload/brands/' . $name_gen;
+            Brands::findorfail($request->hdBrandId)->update([
+                'brand_name' => $request->txtBrantsName,
+                'brand_image' => $save_url
+            ]);
+        }
+
+        $notification = array(
+            'message' => 'Brands Created Successfully',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->route('brands')->with($notification);
+    }
+
+    public function getBrandsData(Request $request)
+    {
+        $departmentData = Brands::select('brands.*')->get();
+        
+        return datatables()->of($departmentData)
+            ->addColumn('action', function ($row) {
+                $html = '<i class="text-primary ti ti-pencil me-1"
+                onclick="doEdit(' . $row->id . ');"></i> ';
+                $html .= '<a href="delete/brands/' . $row->id . '">
+                <i class="text-danger ti ti-trash me-1" id="confrim-text"></i>
+            </a>';
+                return $html;
+            })->toJson();
+    }
+
+    public function getBrandsById($id)
+    {
+        $brand = Brands::select('brands.*')->where('brands.id', $id)->first();
+        return response()->json([
+            'brand' => $brand
+        ]);
+    }
+
+    public function deleteBrands($id)
+    {
+        $brands = Brands::findorfail($id);
+        $brands->delete();
+
+        $notification = array(
+            'message' => 'Brands Deleted Successfully',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->route('brands')->with($notification);
+    }
+
+}

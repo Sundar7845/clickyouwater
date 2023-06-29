@@ -1,0 +1,103 @@
+@extends('layouts.main_master') @section('content')
+@section('title')
+    Dashboard | Manufacturer Document
+@endsection
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-1 mb-4">
+        <span class="text-muted fw-light">Manufacturer /</span> Manufacturer Document
+    </h4>
+    <!-- DataTable with Buttons -->
+    <div class="col-lg-12 mb-4 mb-lg-0">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between">
+            </div>
+            <div class="table-responsive">
+                <table class="table table-borderless">
+                    <thead class="border-bottom">
+                        <tr>
+                            <th>S.No</th>
+                            <th>Document Name</th>
+                            <th>Document</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>GST Reg</td>
+                            <td>
+                                <a href="" class="badge bg-label-warning">View</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>FSSAI Cert</td>
+                            <td>
+                                <a href="" class="badge bg-label-warning">View</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>BIS (Buareu of Ind stand)</td>
+                            <td>
+                                <a href="" class="badge bg-label-warning">View</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>MOU</td>
+                            <td>
+                                <a href="" class="badge bg-label-warning">View</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>Agreement</td>
+                            <td>
+                                <a href="" class="badge bg-label-warning">View</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>Brand Tie-up</td>
+                            <td>
+                                <a href="" class="badge bg-label-warning">View</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>Proprietor / Director PAN</td>
+                            <td>
+                                <a href="" class="badge bg-label-warning">View</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td>Proprietor / Director Aadhar</td>
+                            <td>
+                                <a href="" class="badge bg-label-warning">View</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>9</td>
+                            <td>PWD</td>
+                            <td>
+                                <a href="" class="badge bg-label-warning">View</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>10</td>
+                            <td>Pollution</td>
+                            <td>
+                                <a href="" class="badge bg-label-warning">View</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--/ DataTable with Buttons -->
+</div>
+<!-- / Content -->
+@endsection

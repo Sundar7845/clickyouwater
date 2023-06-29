@@ -1,0 +1,195 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Masters;
+
+use App\Http\Controllers\Controller;
+use App\Models\Area;
+use App\Models\City;
+use Illuminate\Http\Request;
+use App\Models\Country;
+use App\Models\Department;
+use App\Models\Designation;
+use App\Models\Employee;
+use App\Models\State;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class EmployeeController extends Controller
+{
+    public function employee($id = NULL)
+    {
+        $country = Country::all();
+        $designation = Designation::all();
+        $departments = Department::all();
+        $user = User::all();
+        $employees = '';
+        if ($id) {
+            $employees = Employee::find($id);
+
+            $permanent_state = State::where('country_id', $employees->permanent_country_id)->get();
+            $permanent_city = City::where('state_id', $employees->permanent_state_id)->get();
+            $permanent_area = Area::where('city_id', $employees->permanent_city_id)->get();
+            $comm_state = State::where('country_id', $employees->comm_country_id)->get();
+            $comm_city = City::where('state_id', $employees->comm_state_id)->get();
+            $comm_area = Area::where('city_id', $employees->comm_city_id)->get();
+            return view('admin.masters.employee.employee', compact('country', 'designation', 'departments', 'user', 'employees', 'permanent_state', 'permanent_city', 'permanent_area', 'comm_area', 'comm_state', 'comm_city'));
+        }
+        return view('admin.masters.employee.employee', compact('country', 'designation', 'departments', 'user', 'employees'));
+    }
+
+    public function employeeList()
+    {
+        $employees = DB::table('employees')
+            ->join('departments', 'departments.id', '=', 'employees.department_id')
+            ->join('designations', 'designations.id', '=', 'employees.designation_id')
+            ->select('employees.id', 'employees.employee_code', 'employees.employee_name', 'employees.mobile1', 'employees.email1', 'departments.department_name', 'designations.designation_name')
+            ->get();
+        return view('admin.masters.employee.employee_list', compact('employees'));
+    }
+    public function employeeCreate(Request $request)
+    {
+        $request->validate([
+            'employee_code'         =>  'required',
+            'employee_name'         =>  'required',
+            'father_spouse_name'    =>  'required',
+            'gender'                =>  'required',
+            'dob'                   =>  'required',
+            'nationality'           =>  'required',
+            'nationality_status'    =>  'required',
+            'permanent_address'     =>  'required',
+            'permanent_area_id'     =>  'required',
+            'permanent_city_id'     =>  'required',
+            'permanent_state_id'    =>  'required',
+            'permanent_pincode'     =>  'required',
+            'permanent_country_id'  =>  'required',
+            'comm_address'          =>  'required',
+            'comm_area_id'          =>  'required',
+            'comm_city_id'          =>  'required',
+            'comm_state_id'         =>  'required',
+            'comm_pincode'          =>  'required',
+            'comm_country_id'       =>  'required',
+            'mobile1'               =>  'required',
+            'mobile2'               =>  'required',
+            'email1'                =>  'required',
+            'email2'                =>  'required',
+            'prev_company_exp_yrs'  =>  'required',
+            'prev_company_name'     =>  'required',
+            'prev_company_ref_by'   =>  'required',
+            'account_name'          =>  'required',
+            'account_number'        =>  'required',
+            'bank_name'             =>  'required',
+            'branch_name'           =>  'required',
+            'ifsc_code'             =>  'required',
+            'profile_img'           =>  'required',
+            'department_id'         =>  'required',
+            'designation_id'        =>  'required',
+            'reporting_to'          =>  'required',
+            'package'               =>  'required',
+            'date_of_join'          =>  'required',
+            'company_mail_id'       =>  'required',
+            'company_mobile_no'     =>  'required',
+            'originals_verified_by' =>  'required',
+            'authorised_by'         =>  'required'
+        ]);
+
+        $fillable = $request->all();
+        if ($request->hasFile('profile_img')) {
+            $path = $request->file('profile_img')->store('temp');
+            $file = $request->file('profile_img');
+            $fileName = $file->getClientOriginalName();
+            $file->move(public_path('uploads'), $fileName);
+            $fileName = 'uploads/' . $fileName;
+        } else {
+            $fileName = "default";
+        }
+        $uniqueCode = md5(uniqid(rand(), true));
+
+        $fillable['profile_img'] = $fileName;
+        $fillable['employee_code'] = $uniqueCode;
+        unset($fillable['_token']);
+
+        unset($fillable['vehicle']);
+        unset($fillable['vehicle_type']);
+        unset($fillable['vehicle_brand']);
+
+        $employee = Employee::create($fillable);
+        return redirect()->route('employee-list')->with('success', 'Employee Created successfully!');
+    }
+    public function employeeUpdate(Request $request)
+    {
+        $request->validate([
+            'employee_code'         =>  'required',
+            'employee_name'         =>  'required',
+            'father_spouse_name'    =>  'required',
+            'gender'                =>  'required',
+            'dob'                   =>  'required',
+            'nationality'           =>  'required',
+            'nationality_status'    =>  'required',
+            'permanent_address'     =>  'required',
+            'permanent_city_id'     =>  'required',
+            'permanent_state_id'    =>  'required',
+            'permanent_pincode'     =>  'required',
+            'permanent_country_id'  =>  'required',
+            'comm_address'          =>  'required',
+            'comm_city_id'          =>  'required',
+            'comm_state_id'         =>  'required',
+            'comm_pincode'          =>  'required',
+            'comm_country_id'       =>  'required',
+            'mobile1'               =>  'required',
+            'mobile2'               =>  'required',
+            'email1'                =>  'required',
+            'email2'                =>  'required',
+            'prev_company_exp_yrs'  =>  'required',
+            'prev_company_name'     =>  'required',
+            'prev_company_ref_by'   =>  'required',
+            'account_name'          =>  'required',
+            'account_number'        =>  'required',
+            'bank_name'             =>  'required',
+            'branch_name'           =>  'required',
+            'ifsc_code'             =>  'required',
+            'department_id'         =>  'required',
+            'designation_id'        =>  'required',
+            'reporting_to'          =>  'required',
+            'package'               =>  'required',
+            'date_of_join'          =>  'required',
+            'company_mail_id'       =>  'required',
+            'company_mobile_no'     =>  'required',
+            'originals_verified_by' =>  'required',
+            'authorised_by'         =>  'required'
+        ]);
+
+        $fillable = $request->all();
+
+        if ($request->hasFile('profile_img')) {
+            $path = $request->file('profile_img')->store('temp');
+            $file = $request->file('profile_img');
+            $fileName = $file->getClientOriginalName();
+            $file->move(public_path('uploads'), $fileName);
+            $fileName = 'uploads/' . $fileName;
+        }
+
+        $fillable['profile_img'] = $fileName;
+        unset($fillable['vehicle']);
+        unset($fillable['vehicle_type']);
+        unset($fillable['vehicle_brand']);
+        unset($fillable['_token']);
+        unset($fillable['id']);
+
+        $affectedRows = Employee::where("id", $request->id)->update($fillable);
+
+
+        return redirect()->route('employee-list')->with('success', 'Employee updated successfully!');;
+    }
+
+    public function deleteEmp($id)
+    {
+        $employee = Employee::find($id);
+        if ($employee) {
+            $employee->delete();
+            return response()->json(['message' => 'Employee record deleted successfully.']);
+        } else {
+            return response()->json(['message' => 'Employee record not found.'], 404);
+        }
+    }
+}

@@ -1,0 +1,156 @@
+<?php
+
+namespace App\Http\Controllers\Admin\UserRightsManagement;
+
+use App\Http\Controllers\Controller;
+use App\Models\Employee;
+use App\Models\Menu;
+use App\Models\RolePermission;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+
+class UsersController extends Controller
+{
+    public function users()
+    {
+        $employee = Employee::get();
+        $users = User::get();
+        $roles = RolePermission::select('role_permissions.*', 'roles.role_name')->join('roles', 'roles.id', 'role_permissions.role_id')->get();
+        return view('admin.users_rights_management.users', compact('employee', 'users', 'roles'));
+    }
+
+    public function createUser(Request $request)
+    {
+        $request->validate([
+            'ddlEmployee' => 'required',
+            'ddlRoleName' => 'required',
+            'txtDisplayName' => 'required',
+            'txtUserMobile' => 'required',
+            'txtUserEmail' => 'required',
+            'password' => 'required|min:6|confirmed',
+            'password_confirmation' => 'required|min:6'
+        ]);
+
+        $employee = Employee::where('id', $request->ddlEmployee)->pluck('employee_name')->first();
+
+        if ($request->hdRolePermissionId == null) {
+            User::create([
+                'user_name' => $employee,
+                'email' => $request->txtUserEmail,
+                'password' => Hash::make($request->password),
+                'role_id' => $request->ddlRoleName,
+                'display_name' => $request->txtDisplayName,
+                'mobile' => $request->txtUserMobile,
+                'created_by' => Auth::user()->id
+            ]);
+            $notification = array(
+                'message' => 'User Created Successfully',
+                'alert-type' => 'success'
+            );
+        } else {
+            User::findorfail($request->hdRolePermissionId)->update([
+                'user_name' => $employee,
+                'email' => $request->txtUserEmail,
+                'password' => Hash::make($request->password),
+                'role_id' => $request->ddlRoleName,
+                'display_name' => $request->txtDisplayName,
+                'mobile' => $request->txtUserMobile,
+                'updated_by' => Auth::user()->id
+            ]);
+
+            $notification = array(
+                'message' => 'User Updated Successfully',
+                'alert-type' => 'success'
+            );
+        }
+        return redirect()->route('users')->with($notification);
+    }
+
+    public function listMenus($id)
+    {
+        $getMenuId = RolePermission::select('menu_id')->where('role_id', '=', $id)->get()->toArray();
+        $getMenuName = explode(',', $getMenuId[0]['menu_id']);
+        $menu = Menu::whereIn('id', $getMenuName)->get();
+        $html = '';
+        $serialNo = 1;
+        foreach ($menu as  $value) {
+
+            # code...
+            $html .= '<tr>
+                    <td>'.$serialNo++.'</td>
+                    <td id="menuName" value="'.$value->id.'">'.$value->menu_name.'</td>
+                    <td>
+                        <label class="switch switch-primary">
+                            <input type="checkbox" id="chkall" class="switch-input" />
+                            <span class="switch-toggle-slider">
+                                <span class="switch-on">
+                                    <i class="ti ti-check"></i>
+                                </span>
+                                <span class="switch-off">
+                                    <i class="ti ti-x"></i>
+                                </span>
+                            </span>
+                        </label>
+                    </td>
+                    <td>
+                        <label class="switch switch-primary">
+                            <input type="checkbox" id="chkall" class="switch-input" />
+                            <span class="switch-toggle-slider">
+                                <span class="switch-on">
+                                    <i class="ti ti-check"></i>
+                                </span>
+                                <span class="switch-off">
+                                    <i class="ti ti-x"></i>
+                                </span>
+                            </span>
+                        </label>
+                    </td>
+                    <td>
+                        <label class="switch switch-primary">
+                            <input type="checkbox" id="chkall" class="switch-input" />
+                            <span class="switch-toggle-slider">
+                                <span class="switch-on">
+                                    <i class="ti ti-check"></i>
+                                </span>
+                                <span class="switch-off">
+                                    <i class="ti ti-x"></i>
+                                </span>
+                            </span>
+                        </label>
+                    </td>
+                    <td>
+                        <label class="switch switch-primary">
+                            <input type="checkbox" id="chkall" class="switch-input" />
+                            <span class="switch-toggle-slider">
+                                <span class="switch-on">
+                                    <i class="ti ti-check"></i>
+                                </span>
+                                <span class="switch-off">
+                                    <i class="ti ti-x"></i>
+                                </span>
+                            </span>
+                        </label>
+                    </td>
+                    <td>
+                        <label class="switch switch-primary">
+                            <input type="checkbox" id="chkall" class="switch-input" />
+                            <span class="switch-toggle-slider">
+                                <span class="switch-on">
+                                    <i class="ti ti-check"></i>
+                                </span>
+                                <span class="switch-off">
+                                    <i class="ti ti-x"></i>
+                                </span>
+                            </span>
+                        </label>
+                    </td>
+                </tr>';
+        }
+        return response()->json([
+            'menu' => $html
+        ]);
+    }
+}

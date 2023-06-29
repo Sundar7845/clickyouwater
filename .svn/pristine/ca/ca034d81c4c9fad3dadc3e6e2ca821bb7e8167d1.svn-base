@@ -1,0 +1,74 @@
+<?php
+
+namespace App\Http\Controllers\API;
+
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Models\UserReferralHistory;
+use App\Traits\Common;
+use App\Traits\ResponseAPI;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class ReferralController extends Controller
+{
+    use Common;
+    use ResponseAPI;
+
+    public function verifyReferral($code)
+    {
+        try {
+
+            $isReferred = UserReferralHistory::where('user_id', Auth::user()->id)->count();
+
+            $referred_by = User::where('referral_code', $code)->first();
+
+            $message = ($isReferred > 0) ? 'Already Verified' : ($referred_by ? 'Updated Successfully' : 'Invalid Code');
+
+            $data = [];
+            $status = ($message === 'Updated Successfully');
+
+            if ($status) {
+                UserReferralHistory::create([
+                    'user_id' => Auth::user()->id,
+                    'referred_by' => $referred_by->id,
+                    'referred_on' => Carbon::today()
+                ]);
+            }
+
+            $response = [
+                'status' => $status,
+                'data' => $data,
+                'message' => $message
+            ];
+
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    public function getReferralSettings()
+    {
+        try {
+
+            $referral_settings = $this->getReferralSetting();
+            // Append base URL to product_image field
+            foreach ($referral_settings as $referral) {
+                $referral->referral_banner_path = ($referral->referral_banner_path ? $this->getBaseUrl() . '/' . $referral->referral_banner_path : null);
+            }
+
+            $response = [
+                'status' => true,
+                'data' => $referral_settings,
+                'message' => "Success"
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+}

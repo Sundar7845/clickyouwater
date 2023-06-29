@@ -1,0 +1,58 @@
+<?php
+
+namespace App\Http\Controllers\API;
+
+use App\Http\Controllers\Controller;
+use App\Models\PaymentGatewaySettings;
+use App\Models\PaymentMethodConfig;
+use App\Traits\Common;
+use App\Traits\ResponseAPI;
+
+class PaymentMethodsController extends Controller
+{
+    use Common;
+    use ResponseAPI;
+
+    // This method gets the payment methods for a specific customer type
+    public function getPaymentMethods($id)
+    {
+        try {
+            // Query the PaymentMethodConfig model to get the payment methods for the specified customer type
+            $paymentmethods = PaymentMethodConfig::where('customer_type_id', $id)
+                ->select('id', 'customer_type_id', 'payment_method_id')
+                ->get();
+            // Build a response with the payment methods and a success status
+            $response = [
+                'status' => true,
+                'data' => $paymentmethods,
+            ];
+            // Return the response with a 200 status code
+            return response($response, 200);
+        } catch (\Exception $e) {
+            // Log any exceptions that occur and return an error response with a 200 status code
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+    // This method gets the payment gateway settings for a specific payment method
+    public function getPaymentGatewaySettings($id)
+    {
+        try {
+            // Query the PaymentGatewaySettings model to get the payment gateway settings for the specific payment method
+            $paymentgateways = PaymentGatewaySettings::where('payment_method_id', $id)
+                ->select('id', 'payment_method_id', 'value')
+                ->get();
+            // Build a response with the payment gateway settings and a success status
+            $response = [
+                'status' => true,
+                'data' => $paymentgateways,
+            ];
+            // Return the response with a 200 status code
+            return response($response, 200);
+        } catch (\Exception $e) {
+            // Log any exceptions that occur and return an error response with a 200 status code
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+}

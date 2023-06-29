@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Traits;
+
+use App\Models\City;
+
+trait Common
+{
+    public function getCity($state)
+    {
+        $data['cities'] = City::where("state_id", $state)->get(["city_name", "id"]);
+        return response()->json($data);
+    }
+}

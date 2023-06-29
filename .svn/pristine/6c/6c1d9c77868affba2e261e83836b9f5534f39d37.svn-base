@@ -1,0 +1,222 @@
+<?php
+
+namespace App\Http\Controllers\API\Auth;
+
+use App\Enums\RoleTypes;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\RegisterRequests;
+use App\Models\Customer;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Traits\Common;
+use App\Traits\ResponseAPI;
+use Carbon\Carbon;
+use Intervention\Image\Facades\Image;
+
+
+class AuthController extends Controller
+{
+    use Common;
+    use ResponseAPI;
+    public function signup(RegisterRequests $request)
+    {
+
+        DB::beginTransaction();
+        try {
+            // dd($request);
+            $fields = $request->validated();
+            $customer = Customer::create([
+                'customer_name' => $fields['user_name'],
+                'mobile' => $fields['mobile'],
+                'email' => $request->email,
+                'customertype_id' => $fields['customertype_id'],
+            ]);
+
+
+            $file_path = null;
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                // Generate a unique file name for the image
+                $fileName = $customer->id . '_' . $this->generateRandom(16) . '.' . $image->getClientOriginalExtension();
+
+                // Resize and save the image using the intervention/image package
+                $image = Image::make($image->getRealPath());
+                $image->resize(400, 400, function ($constraint) {
+                    $constraint->aspectRatio();
+                });
+                $file_path = 'upload/customers/' . $fileName;
+                $image->save(public_path($file_path));
+            }
+            // dd($file_path);
+            $user = User::create([
+                'user_name' => $fields['user_name'],
+                'display_name' => $fields['user_name'],
+                'email' => $request->email,
+                'mobile' => $fields['mobile'],
+                'device_id' => $request['device_id'],
+                'fcm_token' => $request['fcm_token'],
+                'user_img_path' => $file_path,
+                'password' => bcrypt($fields['mobile']),
+                'ref_id' => $customer->id,
+                'role_id' => RoleTypes::Customer,
+                'is_active' => 1,
+                'referral_code' => $this->generateReferralCode(),
+                'is_approved' => ($fields['customertype_id'] == 1 ? 1 : 0)
+            ]);
+
+
+            $token = $user->createToken('myapptoken')->plainTextToken;
+            $otp = $this->sendOTP($user->mobile);
+
+            DB::commit(); // Commit the transaction
+
+            $response = [
+                'status' => true,
+                'message' => 'Success',
+                'user' => $user,
+                'token' => $token
+            ];
+            return response($response, 201);
+        } catch (\Exception $e) {
+            DB::rollback(); // Roll back the transaction if an error occurs
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    public function sendOTP($mobile = 0)
+    {
+
+        try {
+
+            $otpdetails = $this->getOtpDetails();
+            $otp = $this->generateRandom($otpdetails->otp_length);
+
+            $smsdetails = $this->getSmsDetails();
+            $msg = $smsdetails->otp_msg;
+            $msg = str_replace("{{}}", $otp, $msg);
+
+            $tempid = $smsdetails->otp_msg_tempid;
+
+            $smsResponse = $this->sendSMS($mobile, $msg, $tempid);
+            $codes_res = explode('-', $smsResponse);
+            if ($codes_res) {
+                // Check if SMS is sent successfully
+                if ($codes_res[0] == 100) {
+                    User::findOrfail('mobile', $mobile)
+                        ->update(['OTP' =>  $otp, 'otp_expiry' => now()->addMinutes($otpdetails->otp_expiry_duration)]);
+                    return $otp;
+                } else {
+                    return 0;
+                }
+            } else {
+                return 0;
+            }
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 0, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    public function login(Request $request)
+    {
+        $fields = $request->validate([
+            'mobile' => 'required|numeric|digits_between:10,12',
+            'otp' => 'required'
+        ]);
+        try {
+            // Check email
+            $user = User::where('mobile', $fields['mobile'])->first();
+
+            $message = ($user->is_approved == 0 ? 'User Not Approved' : ($user->OTP != $request->otp ? 'Incorrect OTP!' : (Carbon::now() >= $user->otp_expiry ? 'Your otp is expired!' : 'Success')));
+            $status = ($message === 'Success');
+            if ($status) {
+                $token = $user->createToken('myapptoken')->plainTextToken;
+
+                $user->update([
+                    'last_login' => now(),
+                    'device_id' => $request['device_id'],
+                    'fcm_token' => $request['fcm_token'],
+                ]);
+
+                $response = [
+                    'status' => $status,
+                    'message' => $message,
+                    'user' => $user,
+                    'token' => $token
+                ];
+            } else {
+                $response = [
+                    'status' => $status,
+                    'message' => $message
+                ];
+            }
+
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 0, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+    public function verifyOTP(Request $request)
+    {
+        $fields = $request->validate([
+            'otp' => 'required'
+        ]);
+        try {
+
+            // Check email
+            $user = User::where('mobile', auth()->user()->mobile)->first();
+
+            $message = ($user->OTP != $request->otp ? 'Incorrect OTP!' : (Carbon::now() >= $user->otp_expiry ? 'Your otp is expired!' : 'Success'));
+            $status = ($message === 'Success');
+            if ($status) {
+                User::findOrfail('id', $user->id)
+                    ->update(['mobile_verified_at' => now(), 'last_login' => now()]);
+                $response = [
+                    'status' => $status,
+                    'message' => $message,
+                    'user' => $user,
+                ];
+            } else {
+                $response = [
+                    'status' => $status,
+                    'message' => $message
+                ];
+            }
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), auth()->user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    public function verifyMobile($mobile)
+    {
+        try {
+            $user = User::where('mobile', $mobile)->get()->toArray();
+            if (count($user) > 0) {
+                $response = array(
+                    'message' => "success",
+                    'status' => true,
+                );
+            } else {
+                $response = array(
+                    'message' => "Invalid Mobile Number",
+                    'status' => false,
+                );
+            }
+
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+        return response()->json(['message' => 'Logged out successfully']);
+    }
+}

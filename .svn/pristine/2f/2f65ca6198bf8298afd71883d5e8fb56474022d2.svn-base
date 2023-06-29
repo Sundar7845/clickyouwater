@@ -1,0 +1,29 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class OrderDelivery extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'order_id',
+        'delivery_user_id',
+        'floor',
+        'is_lift',
+        'delivery_user_notes',
+        'delivery_reason',
+        'customer_rating',
+        'is_highlighted',
+        'is_notdelivered',
+        'delivered_on',
+    ];
+
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
+    }
+}

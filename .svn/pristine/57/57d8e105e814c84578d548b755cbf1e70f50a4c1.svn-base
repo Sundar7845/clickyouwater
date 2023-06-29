@@ -1,0 +1,161 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Dashboard | Bulk Orders
+@endsection
+
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="card">
+        <div class="card-body">
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Bulk Order Form</h5>
+                    </div>
+                    <div class="card-body">
+                        <form>
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-icon-default-fullname">Full Name</label>
+                                <div class="input-group input-group-merge">
+                                    <span id="basic-icon-default-fullname2" class="input-group-text"><i
+                                            class="ti ti-user"></i></span>
+                                    <input type="text" class="form-control" id="basic-icon-default-fullname"
+                                        placeholder="John Doe" aria-label="John Doe"
+                                        aria-describedby="basic-icon-default-fullname2" />
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-icon-default-email">Email</label>
+                                <div class="input-group input-group-merge">
+                                    <span class="input-group-text"><i class="ti ti-mail"></i></span>
+                                    <input type="text" id="basic-icon-default-email" class="form-control"
+                                        placeholder="john.doe" aria-label="john.doe"
+                                        aria-describedby="basic-icon-default-email2" />
+                                    <span id="basic-icon-default-email2" class="input-group-text">@example.com</span>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-icon-default-phone">Phone No</label>
+                                <div class="input-group input-group-merge">
+                                    <span id="basic-icon-default-phone2" class="input-group-text"><i
+                                            class="ti ti-phone"></i></span>
+                                    <input type="text" id="basic-icon-default-phone" class="form-control phone-mask"
+                                        placeholder="658 799 8941" aria-label="658 799 8941"
+                                        aria-describedby="basic-icon-default-phone2" />
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-icon-default-company">Organisation Name</label>
+                                <div class="input-group input-group-merge">
+                                    <span id="basic-icon-default-company2" class="input-group-text"><i
+                                            class="ti ti-building-community"></i></span>
+                                    <input type="text" id="basic-icon-default-company" class="form-control"
+                                        placeholder="ACME Inc." aria-label="ACME Inc."
+                                        aria-describedby="basic-icon-default-company2" />
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-icon-default-company">Organisation Type</label>
+                                <div class="input-group input-group-merge">
+                                    <span id="basic-icon-default-company2" class="input-group-text"><i
+                                            class="ti ti-building-community"></i></span>
+                                    <select name="" id="" class=" form-select form-select">
+                                        <option value="">Select Organisation Type</option>
+                                        <option value="company">company</option>
+                                        <option value="shop">shop</option>
+                                        <option value="home">home</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-icon-default-company">Category</label>
+                                <div class="input-group input-group-merge">
+                                    <span id="" class="input-group-text"><i class="ti ti-bottle"></i></span>
+                                    <select name="" id="" class=" form-select form-select">
+                                        <option value="">Select</option>
+                                        <option value="company">500ml</option>
+                                        <option value="shop">1l</option>
+                                        <option value="home">5l</option>
+                                        <option value="home">40l</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-icon-default-company">Quantity</label>
+                                <div class="input-group input-group-merge">
+                                    <span id="basic-icon-default-company2" class="input-group-text"><i
+                                            class="ti ti-question-mark"></i></span>
+                                    <input type="text" id="" class="form-control"
+                                        placeholder="please enter quantity" aria-label="ACME Inc."
+                                        aria-describedby="basic-icon-default-company2" />
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-icon-default-company">Delivery Date</label>
+                                <div class="input-group input-group-merge">
+                                    <span id="basic-icon-default-company2" class="input-group-text"><i
+                                            class="ti ti-calendar"></i></span>
+                                    <input type="text" id="" class="form-control"
+                                        placeholder="dd/mm/yyyy" aria-label="ACME Inc."
+                                        aria-describedby="basic-icon-default-company2" />
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-icon-default-company">Door No</label>
+                                <div class="input-group input-group-merge">
+                                    <span id="basic-icon-default-company2" class="input-group-text"><i
+                                            class="ti ti-calendar"></i></span>
+                                    <input type="text" id="" class="form-control"
+                                        placeholder="Please enter door no" aria-label="ACME Inc."
+                                        aria-describedby="basic-icon-default-company2" />
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-icon-default-company">Area Name</label>
+                                <div class="input-group input-group-merge">
+                                    <span id="" class="input-group-text"><i class="ti ti-pin"></i></span>
+                                    <select name="" id="" class=" form-select form-select">
+                                        <option value="">Select Area Name</option>
+                                        <option value="company">Saravanampatti</option>
+                                        <option value="shop">hopes</option>
+                                        <option value="home">peelamedu</option>
+                                        <option value="home">sitra</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-icon-default-company">City Name</label>
+                                <div class="input-group input-group-merge">
+                                    <span id="" class="input-group-text"><i class="ti ti-bolt"></i></span>
+                                    <select name="" id="" class=" form-select form-select">
+                                        <option value="">Select City Name</option>
+                                        <option value="company">Coimbatore</option>
+                                        <option value="shop">Kannur</option>
+                                        <option value="home">Trichy</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-icon-default-company">State Name</label>
+                                <div class="input-group input-group-merge">
+                                    <span id="" class="input-group-text"><i
+                                            class="ti ti-pennant"></i></span>
+                                    <select name="" id="" class=" form-select form-select">
+                                        <option value="">Select State Name</option>
+                                        <option value="company">Tamil Nadu</option>
+                                        <option value="shop">Kerala</option>
+                                        <option value="home">Karnataka</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Send</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- / Content -->
+@endsection

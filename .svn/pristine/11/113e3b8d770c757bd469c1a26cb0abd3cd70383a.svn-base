@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Accounts;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class StockInwardController extends Controller
+{
+    public function stockInward(){
+
+        return view('admin.accounts.stock_inward.stock_inward');
+    }
+}

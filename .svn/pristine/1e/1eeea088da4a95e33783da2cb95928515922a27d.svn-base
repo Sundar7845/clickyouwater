@@ -1,0 +1,63 @@
+<?php
+
+namespace App\Http\Controllers\API\Delivery;
+
+use App\Http\Controllers\Controller;
+use App\Http\Resources\DeliveryPersonOrderResource;
+use App\Traits\Common;
+use App\Traits\ResponseAPI;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class DeliveryPersonOrdersController extends Controller
+{
+    //
+    use ResponseAPI;
+    use Common;
+    public function getDPOrders(Request $request)
+    {
+        try {
+
+            $orders = $this->getOrders($request->status_id);
+            // dd($orders->get());
+
+            $userOrders = $orders->paginate($this->recordsperpage);
+
+            $response = array(
+                'message' => "Success",
+                'data' => DeliveryPersonOrderResource::collection($userOrders),
+                'pagination' => [
+                    'total' => $userOrders->total(),
+                    'per_page' => $userOrders->perPage(),
+                    'current_page' => $userOrders->currentPage(),
+                    'last_page' => $userOrders->lastPage(),
+                    'next_page_url' => $userOrders->nextPageUrl(),
+                    'prev_page_url' => $userOrders->previousPageUrl(),
+                ],
+                'status' => true,
+            );
+
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    public function getDPOrderDetails($id)
+    {
+        try {
+            $orderdetails = $this->getOrderDetail($id);
+
+            $response = array(
+                'message' => "Success",
+                'data' => $orderdetails,
+                'status' => true,
+            );
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+}

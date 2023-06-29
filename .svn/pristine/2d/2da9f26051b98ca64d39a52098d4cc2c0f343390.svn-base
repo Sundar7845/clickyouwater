@@ -1,0 +1,40 @@
+@extends('layouts.main_master') @section('content') @section('title')
+        Referral Code | Click Your Order | Dashboard
+@endsection
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+<h4 class="fw-bold py-1 mb-4">
+    {{ $referral_name->user_name }} referrals
+</h4>
+<!-- DataTable with Buttons -->
+<div class="col-lg-12 mb-4 mb-lg-0">
+    <div class="card h-100">
+        <div class="card-datatable table-responsive pt-0">
+            <table id="tblRefferalCode" class="table">
+                <thead class="border-bottom">
+                    <tr>
+                        <th>S.No</th>
+                        <th>Used By</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($username as $key => $item)
+                    <tr>
+                        <td>{{ $key + 1 }}</td>
+                        <td>{{ $item->user_name }}</td>
+                        <td>{{ $item->referred_on }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!--/ DataTable with Buttons -->
+</div>
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/admin/discountmanagement/refferalcode.js') }}"></script>
+@endsection

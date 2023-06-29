@@ -1,0 +1,234 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Logistic Driver Info | Click Your Order | Dashboard
+@endsection
+
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold mb-4" id="logisticDriverInfoTitle">
+        Logistic Driver Info
+    </h4>
+
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-12 mb-4 mb-md-0">
+            <form method="POST" action="{{ route('add.logisticDriverInfo') }}" name="logisticDriverInfo"
+                enctype="multipart/form-data">
+                @csrf
+                <input type="hidden" name="hdLogisticDriverId" id="hdLogisticDriverId" value="">
+                {{-- <input type="hidden" name="hdPassword" id="hdPassword" value=""> --}}
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="ddlLogisticPartner">Logistic Partner<span
+                                            class="text-danger">*</span></label>
+                                    <select name="ddlLogisticPartner" id="ddlLogisticPartner"
+                                        class="select2 form-select" title="Select Logistic Partner Name"
+                                        @if (Auth::user()->role_id == 5) disabled @endif required>
+                                        <option value="">Select Logistic Partner</option>
+                                        @foreach ($logisticPartners as $item)
+                                            <option value="{{ $item->id }}"
+                                                {{ old('ddlLogisticPartner') == $item->id ? 'selected' : '' }}
+                                                @isset($logistic_partner_id) @if ($item->id == $logistic_partner_id) selected @endif @endisset>
+                                                {{ $item->logistic_partner_name }}
+                                            </option>
+                                        @endforeach
+                                        @if ($errors->has('ddlLogisticPartner'))
+                                            <div class="text-danger">{{ $errors->first('ddlLogisticPartner') }}</div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </select>
+                                    <input type="hidden" name="hdLogisticPartnerId" id="hdLogisticPartnerId"
+                                        value="{{ $logistic_partner_id }}">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="ddlLogisticVehicle">Logistic Vehicle<span
+                                            class="text-danger">*</span></label>
+                                    <select name="ddlLogisticVehicle" id="ddlLogisticVehicle"
+                                        class="select2 form-select" title="Select Logistic Vehicle" required>
+                                        <option value="">Select Logistic Vehicle</option>
+                                    </select>
+                                    @if ($errors->has('ddlLogisticVehicle'))
+                                        <div class="text-danger">{{ $errors->first('ddlLogisticVehicle') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="ddlHub">Hub<span
+                                            class="text-danger">*</span></label>
+                                    <select name="ddlHub[]" id="ddlHub" class="select2 form-select"
+                                        title="Select Hub Name" multiple="multiple" required>
+                                    </select>
+                                    @if ($errors->has('ddlHub'))
+                                        <div class="text-danger">{{ $errors->first('ddlHub') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="txtDriverName">Driver Name<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" name="txtDriverName" id="txtDriverName"
+                                        placeholder="Enter Driver Name" title="Enter Driver Name" class="form-control"
+                                        required value="{{ old('txtDriverName') }}">
+                                    @if ($errors->has('txtDriverName'))
+                                        <div class="text-danger">{{ $errors->first('txtDriverName') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="txtLicenseNo">License No<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" name="txtLicenseNo" id="txtLicenseNo"
+                                        placeholder="Enter License No" title="Enter License No" class="form-control"
+                                        required value="{{ old('txtLicenseNo') }}">
+                                    @if ($errors->has('txtLicenseNo'))
+                                        <div class="text-danger">{{ $errors->first('txtLicenseNo') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="fileLicense">License Document<span
+                                            class="text-danger">*</span></label>
+                                    <input type="hidden" name="hdFileLicense" id="hdFileLicense" value="">
+                                    <input type="file" name="fileLicense" id="fileLicense"
+                                        placeholder="Upload License Document" title="Upload License Document"
+                                        class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <div>
+                                        <a href="" id="document_view" class="btn btn-primary"
+                                            target="_blank"><i class="ti ti-eye"></i>View</a>
+                                    </div>
+                                </div>
+                                @if ($errors->has('fileLicense'))
+                                    <div class="text-danger">{{ $errors->first('fileLicense') }}</div>
+                                @endif
+                                <span class="error"></span>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="dtLicenseExpiry">License Expiry Date<span
+                                            class="text-danger">*</span></label>
+                                    <input type="date" name="dtLicenseExpiry" id="dtLicenseExpiry"
+                                        title="Select License Expiry Date" class="form-control"
+                                        value="{{ old('dtLicenseExpiry') }}">
+                                </div>
+                                @if ($errors->has('dtLicenseExpiry'))
+                                    <div class="text-danger">{{ $errors->first('dtLicenseExpiry') }}</div>
+                                @endif
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="txtMobileNo">Mobile No<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" name="txtMobileNo" id="txtMobileNo"
+                                        placeholder="Enter Mobile No" title="Enter Mobile No"
+                                        class="form-control mobilenumber" required value="{{ old('txtMobileNo') }}">
+                                </div>
+                                @if ($errors->has('txtMobileNo'))
+                                    <div class="text-danger">{{ $errors->first('txtMobileNo') }}</div>
+                                @endif
+                                <span class="error"></span>
+                            </div>
+                            {{-- <div class="col-md-4">
+                                <div class="mb-3 form-password-toggle">
+                                    <label class="form-label" for="txtPassword">Password <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group input-group-merge">
+                                        <input type="password" class="form-control" name="txtPassword"
+                                            id="txtPassword" title="Enter Password" placeholder="******"
+                                            value="{{ old('txtPassword') }}" />
+                                        <span class="input-group-text cursor-pointer">
+                                            <i class="ti ti-eye-off"></i>
+                                        </span>
+                                    </div>
+                                    @if ($errors->has('txtPassword'))
+                                        <div class="text-danger">{{ $errors->first('txtPassword') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3 form-password-toggle">
+                                    <label class="form-label" for="txtConfirmPassword">Confirm Password <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group input-group-merge">
+                                        <input type="password" class="form-control" name="txtConfirmPassword"
+                                            id="txtConfirmPassword" title="Enter Confirm Password"
+                                            placeholder="******" value="{{ old('txtConfirmPassword') }}" />
+                                        <span class="input-group-text cursor-pointer">
+                                            <i class="ti ti-eye-off"></i>
+                                        </span>
+                                    </div>
+                                    @if ($errors->has('txtConfirmPassword'))
+                                        <div class="text-danger">{{ $errors->first('txtConfirmPassword') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div> --}}
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mt-4 mb-3">
+                                <button type="submit" id="btnSave" class="btn btn-success">Save</button>
+                                <button type="button" class="btn btn-danger" onclick="cancel();"
+                                    id="btnCancel">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+    <!-- DataTable with Buttons -->
+    <div class="col-lg-12 mb-4 mb-lg-0">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between">
+                <h5 class="card-title m-0 me-2">Logistic Drivers List</h5>
+            </div>
+            <div class="card-datatable table-responsive pt-0">
+                <table id="tblLogisticDrivers" class="table">
+                    <thead class="border-bottom">
+                        <tr>
+                            <th>S.No</th>
+                            <th>Logistic Name</th>
+                            <th>Logistic Vehicle</th>
+                            <th>Driver Name</th>
+                            <th>License No</th>
+                            <th>License Expiry</th>
+                            <th>Mobile</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--/ DataTable with Buttons -->
+</div>
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/admin/logisticmanagement/logistic_driver_info.js') }}"></script>
+@endsection

@@ -1,0 +1,28 @@
+<?php
+
+namespace App\Http\Controllers\Admin\LogisticManagement;
+
+use App\Http\Controllers\Controller;
+use App\Models\FuelType;
+use App\Models\VehicleBrand;
+use App\Models\VehicleType;
+use App\Traits\Common;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class LogisticVehicleInfoController extends Controller
+{
+    use common;
+    public function LogisticVehicleInfo(){
+
+        try {
+        $fueltypes = FuelType::all();
+        $vehicletypes = VehicleType::all();
+        $vehiclebrands = VehicleBrand::all();
+        return view('admin.logistic_management.add_logistic_vehicle_info',compact('fueltypes','vehicletypes','vehiclebrands'));
+
+        } catch (\Exception $e) {
+        $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+}

@@ -1,0 +1,892 @@
+<?php
+
+namespace App\Traits;
+
+use App\Enums\DocumentModulesType;
+use App\Enums\MenuPermissionType;
+use App\Enums\ProductType;
+use App\Enums\StatusTypes;
+use App\Enums\WalletTransactionType;
+use App\Enums\WalletTransactionTypes;
+use App\Http\Resources\UserAddressResource;
+use App\Models\AdminSettings;
+use App\Models\Area;
+use App\Models\BillNoSetting;
+use App\Models\City;
+use App\Models\Country;
+use App\Models\CustomerAddress;
+use App\Models\CustomerNearestHub;
+use App\Models\DeliveryPeopleDocuments;
+use App\Models\DeliveryPerson;
+use App\Models\DocumentConfig;
+use App\Models\DocumentModules;
+use App\Models\EmployeeDocuments;
+use App\Models\GeoApiSettings;
+use App\Models\Hub;
+use App\Models\HubDocuments;
+use App\Models\Log;
+use App\Models\LogisticPartner;
+use App\Models\LogisticPartnerDocuments;
+use App\Models\LogisticsHubConfig;
+use App\Models\ManufacturerDocuments;
+use App\Models\Menu;
+use App\Models\Order;
+use App\Models\RefferalSettings;
+use App\Models\Role;
+use App\Models\SmsSettings;
+use App\Models\State;
+use App\Models\User;
+use App\Models\UserReferralHistory;
+use App\Models\UserRolePermission;
+use App\Models\UserWallet;
+use Carbon\Carbon;
+use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Route;
+
+trait Common
+{
+    public function getBaseUrl()
+    {
+        return url('/');
+    }
+    public function getAdminSetting()
+    {
+        return AdminSettings::first();
+    }
+    public function getReferralSetting()
+    {
+        return RefferalSettings::first();
+    }
+
+    public function sendSMS($mobile, $msg, $tempid)
+    {
+        $smsdetails = $this->getSmsDetails();
+
+        $url = $smsdetails->api_url;
+
+        // Set SMSIntegra API parameters
+        $params = [
+            'uid' => $smsdetails->uid,
+            'pwd' => $smsdetails->pwd,
+            'mobile' => $mobile,
+            'msg' => $msg,
+            'sid' => $smsdetails->senderid,
+            'type' => 0,
+            'dtTimeNow' => date('Y-m-d H:i:s'),
+            'entityid' => $smsdetails->entityid,
+            'tempid' => $tempid,
+        ];
+        // Send HTTP POST request to SMSIntegra API
+        $client = new Client();
+        $response = $client->request('POST', $url, ['query' => $params]);
+        return (string) $response->getBody();
+    }
+
+    public function generateOtp($length)
+    {
+        $min = pow(10, $length - 1);
+        $max = pow(10, $length) - 1;
+        return rand($min, $max);
+    }
+    public function generateReferralCode()
+    {
+        $otpdetails = $this->getOtpDetails();
+
+        $code = substr(md5(uniqid(mt_rand(), true)), 0, $otpdetails->referral_code_length); // generate a random string
+        return strtoupper($code);
+    }
+
+    public function getSmsDetails()
+    {
+        return SmsSettings::first();
+    }
+    public function getOtpDetails()
+    {
+        return AdminSettings::first();
+    }
+    public function getMapDetails()
+    {
+        return GeoApiSettings::first();
+    }
+    public function createUser($user_name, $email, $password, $ref_id, $display_name, $mobile, $role_id, $is_active, $created_by)
+    {
+        User::create([
+            'user_name' => $user_name,
+            'email' => $email,
+            'password' => Hash::make($password),
+            'ref_id' => $ref_id,
+            'display_name' => $display_name,
+            'mobile' =>  $mobile,
+            'role_id' => $role_id,
+            'is_active' => $is_active,
+            'created_by' => $created_by
+        ]);
+    }
+    public function updateLiveCount($documentsmodule_id, $plusorminus)
+    {
+        switch ($documentsmodule_id) {
+            case DocumentModulesType::Hub:
+                $data = BillNoSetting::first();
+                $data->hub_live = ($plusorminus == 1 ? $data->hub_live + 1 : $data->hub_live - 1);
+                $data->save();
+                break;
+            case DocumentModulesType::Employee:
+                $data = BillNoSetting::first();
+                $data->employee_live  = ($plusorminus == 1 ? $data->employee_live  + 1 : $data->employee_live  - 1);
+                $data->save();
+                break;
+            case DocumentModulesType::Manufacturer:
+                $data = BillNoSetting::first();
+                $data->manufacture_live  = ($plusorminus == 1 ? $data->manufacture_live  + 1 : $data->manufacture_live  - 1);
+                $data->save();
+                break;
+            case DocumentModulesType::Logistic:
+                $data = BillNoSetting::first();
+                $data->logistics_live  = ($plusorminus == 1 ? $data->logistics_live  + 1 : $data->logistics_live  - 1);
+                $data->save();
+                break;
+            case DocumentModulesType::DeliveryPerson:
+                $data = BillNoSetting::first();
+                $data->deliveryperson_live  = ($plusorminus == 1 ? $data->deliveryperson_live  + 1 : $data->deliveryperson_live  - 1);
+                $data->save();
+                break;
+            case DocumentModulesType::Ledger:
+                $data = BillNoSetting::first();
+                $data->ledger_live = ($plusorminus == 1 ? $data->ledger_live  + 1 : $data->ledger_live  - 1);
+                $data->save();
+                break;
+            case DocumentModulesType::Payment:
+                $data = BillNoSetting::first();
+                $data->Pay_live = ($plusorminus == 1 ? $data->Pay_live  + 1 : $data->Pay_live  - 1);
+                $data->save();
+                break;
+            case DocumentModulesType::Order:
+                $data = BillNoSetting::first();
+                $data->ORD_live = ($plusorminus == 1 ? $data->ORD_live  + 1 : $data->ORD_live  - 1);
+                $data->save();
+                break;
+            case DocumentModulesType::Invoice:
+                $data = BillNoSetting::first();
+                $data->INV_live = ($plusorminus == 1 ? $data->INV_live  + 1 : $data->INV_live  - 1);
+                $data->save();
+                break;
+            default:
+                $data = [];
+        }
+        return $data;
+    }
+
+    public function getAutoGeneratedCode($documentsmodule_id)
+    {
+        $auto_generate_code = null;
+        $data = BillNoSetting::first();
+        switch ($documentsmodule_id) {
+            case DocumentModulesType::Hub:
+                $hubPrefix = $data->hub_prefix ?? 0;
+                $hubLength = $data->hub_length ?? 0;
+                $hubLive = (int)($data->hub_live ?? 0) + 1;
+                if ($hubLive) {
+                    $hubNumber = $hubLive;
+                }
+                $hubs = sprintf("%0{$hubLength}d", $hubNumber);
+                $hubExample = $hubPrefix . $hubs;
+
+                $auto_generate_code = $hubExample;
+                break;
+
+            case DocumentModulesType::Logistic:
+                $logPrefix = $data->logistics_prefix ?? 0;
+                $logLength = $data->logistics_length ?? 0;
+                $logLive = (int)($data->logistics_live ?? 0) + 1;
+                if ($logLive) {
+                    $logNumber = $logLive;
+                }
+                $logs = sprintf("%0{$logLength}d", $logNumber);
+                $logExample = $logPrefix . $logs;
+                $auto_generate_code = $logExample;
+                break;
+
+            case DocumentModulesType::Manufacturer:
+                $manPrefix = $data->manufacture_prefix ?? 0;
+                $ManLength = $data->manufacture_length ?? 0;
+                $manLive = (int)($data->manufacture_live ?? 0) + 1;
+                if ($manLive) {
+                    $manNumber = $manLive;
+                }
+                $mans = sprintf("%0{$ManLength}d", $manNumber);
+                $manExample = $manPrefix . $mans;
+                $auto_generate_code = $manExample;
+                break;
+
+            case DocumentModulesType::DeliveryPerson:
+                $delPrefix = $data->deliveryperson_prefix ?? 0;
+                $delLength = $data->deliveryperson_length ?? 0;
+                $delLive = (int)($data->deliveryperson_live ?? 0) + 1;
+                if ($delLive) {
+                    $delNumber = $delLive;
+                }
+                $del = sprintf("%0{$delLength}d", $delNumber);
+                $delExample = $delPrefix . $del;
+                $auto_generate_code = $delExample;
+                break;
+
+            case DocumentModulesType::Employee:
+                $manPrefix = $data->employee_prefix ?? 0;
+                $ManLength = $data->employee_length ?? 0;
+                $manLive = (int)($data->employee_live ?? 0) + 1;
+                if ($manLive) {
+                    $manNumber = $manLive;
+                }
+                $man = sprintf("%0{$ManLength}d", $manNumber);
+                $manExample = $manPrefix . $man;
+                $auto_generate_code = $manExample;
+                break;
+            case DocumentModulesType::Payment:
+                $payPrefix = $data->Pay_prefix ?? 0;
+                $payLength = $data->Pay_length ?? 0;
+                $payLive = (int)($data->Pay_live ?? 0) + 1;
+                if ($payLive) {
+                    $payNumber = $payLive;
+                }
+                $payment = sprintf("%0{$payLength}d", $payNumber);
+                $payExample = $payPrefix . $payment;
+                $auto_generate_code = $payExample;
+                break;
+
+            case DocumentModulesType::Ledger:
+                $ledPrefix = $data->ledger_prefix ?? 0;
+                $ledLength = $data->ledger_length ?? 0;
+                $ledLive = (int)($data->ledger_live ?? 0) + 1;
+                if ($ledLive) {
+                    $ledNumber = $ledLive;
+                }
+                $leds = sprintf("%0{$ledLength}d", $ledNumber);
+                $auto_generate_code = $ledPrefix . $leds;
+                break;
+            case DocumentModulesType::Order:
+                $ordPrefix = $data->ORD_prefix ?? 0;
+                $ordLength = $data->ORD_length ?? 0;
+                $ordLive = (int)($data->ORD_live ?? 0) + 1;
+                if ($ordLive) {
+                    $ordNumber = $ordLive;
+                }
+                $ords = sprintf("%0{$ordLength}d", $ordNumber);
+                $auto_generate_code = $ordPrefix . $ords;
+                break;
+            case DocumentModulesType::Invoice:
+                $invPrefix = $data->INV_prefix ?? 0;
+                $invLength = $data->INV_length ?? 0;
+                $invLive = (int)($data->INV_live ?? 0) + 1;
+                if ($invLive) {
+                    $invNumber = $invLive;
+                }
+                $invs = sprintf("%0{$invLength}d", $invNumber);
+                $auto_generate_code = $invPrefix . $invs;
+                break;
+        }
+
+        return $auto_generate_code;
+    }
+
+    public function getCountries()
+    {
+        return Country::where('is_active', 1)->orderBy('country_name', 'asc')->get(["country_name", "id"]);
+    }
+
+    public function getStates($country_id = 1, $all = 0)
+    {
+        return State::where('country_id', $country_id)
+            ->where($all ? [] : ['is_active' => 1])
+            ->orderBy('state_name', 'asc')
+            ->select('state_name', 'state_code', 'id', 'is_active')
+            ->get();
+    }
+
+    public function getCities($state_id, $all = 0)
+    {
+        return City::where('state_id', $state_id)
+            ->where($all ? [] : ['is_active' => 1])
+            ->orderBy('city_name', 'asc')
+            ->select('city_name', 'id', 'is_active')
+            ->get();
+    }
+
+    public function getAreas($city_id, $all = 0)
+    {
+        return Area::where('city_id', $city_id)
+            ->where($all ? [] : ['is_active' => 1])
+            ->whereNull('deleted_at')
+            ->orderBy('area_name', 'asc')
+            ->select('area_name', 'id', 'is_active')
+            ->get();
+    }
+    public function getCustomerAddress_details($id = Null)
+    {
+        if ($id != null) {
+            return CustomerAddress::with('getAddressType', 'cityname', 'statename', 'countryname')
+                ->where("customer_id", Auth::user()->customer->id)
+                ->where("id", $id)
+                ->get();
+        } else {
+            return CustomerAddress::with('getAddressType', 'cityname', 'statename', 'countryname')
+                ->where("customer_id", Auth::user()->customer->id)->get();
+        }
+    }
+
+    public function getCustomerNearestHub($address_id)
+    {
+        $hub_id = CustomerNearestHub::where('customer_address_id', $address_id)->value('hub_id');
+        return ($hub_id ? $hub_id : 0);
+    }
+
+    public function checkUserPermission($user_id)
+    {
+        $userPermission = UserRolePermission::select('menu_id')->where('user_id', $user_id)->get()->toArray();
+        $getMenuId = explode(',', $userPermission['menu_id'] ?? 0);
+        $checkpermission = Menu::whereIn('id', [$getMenuId])->first();
+        if ($checkpermission) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function fileUpload($fileinput, $filepath, $fileName)
+    {
+        $fileinput->move(public_path($filepath), $fileName);
+        return $filepath . '/' . $fileName;
+    }
+
+    public function generateRandom($digit)
+    {
+        $min = pow(10, $digit - 1);
+        $max = pow(10, $digit) - 1;
+        return rand($min, $max);
+    }
+
+    public function getRolesForDropDown()
+    {
+        $role_id = [1, 3, 4, 5, 6, 17, 18];
+        $roles = Role::whereNotIn('id', $role_id)->whereNull('deleted_at')->get();
+
+        return $roles;
+    }
+
+    public function getUserRolesForDropDown()
+    {
+        $role_id = [1, 3, 4, 5, 6, 17, 18];
+        $users = User::where('is_active', 1)->whereNotIn('role_id', $role_id)->get();
+
+        return $users;
+    }
+
+    public function validateDocuments($request, $documentsmodule_id)
+    {
+        $documents = $this->getDocumentsByModule($documentsmodule_id);
+        foreach ($documents as $item) {
+            if ($item->is_mandatory == 1) {
+                $document = 'doc_' . $item->id;
+                $image = 'file_' . $item->id;
+                if ($request->$document == null || $request->$image == null) {
+                    return $item;
+                }
+            }
+        }
+        return true;
+    }
+
+    public function validateUpdateDocuments($request, $documentsmodule_id, $id)
+    {
+        $documents = $this->getDocumentConfigsByModule($documentsmodule_id, $id);
+        foreach ($documents as $item) {
+            if ($item->is_mandatory == 1) {
+                $existingimage = 'hdDocumentImg_' . $item->id;
+                $document = 'doc_' . $item->id;
+                $image = 'file_' . $item->id;
+                if ($request->$document == null || ($request->$existingimage == null ? $request->$image : $request->$existingimage) == null) {
+                    return $item;
+                }
+            }
+        }
+        return true;
+    }
+
+    public function getDocumentsByModule($documentsmodule_id)
+    {
+        $documents = DocumentConfig::join('document_modules', 'document_modules.id', 'document_configs.documentmodule_id')
+            ->join('document_types', 'document_types.id', 'document_configs.documenttype_id')
+            ->where('documentmodule_id', $documentsmodule_id)->where('document_configs.is_active', 1)
+            ->select('document_configs.*', 'document_modules.module_name', 'document_types.documenttype_name')
+            ->get();
+
+        return $documents;
+    }
+    public function getDocumentConfigsByModule($documentsmodule_id, $id)
+    {
+        $documents = [];
+        switch ($documentsmodule_id) {
+            case DocumentModulesType::Hub:
+                $documents = DocumentConfig::with('documentType', 'documentModule')
+                    ->where('document_configs.documentmodule_id', $documentsmodule_id)
+                    ->leftJoin('hub_documents as hd', function ($join) use ($id) {
+                        $join->on('hd.documenttype_id', 'document_configs.documenttype_id')
+                            ->where('hd.hub_id', $id);
+                    })
+                    ->where('document_configs.documentmodule_id', $documentsmodule_id)
+                    ->where('document_configs.is_active', 1)
+                    ->select('document_configs.*', 'hd.hub_id', 'hd.document_number', 'hd.document_path')
+                    ->get();
+                break;
+            case DocumentModulesType::Employee:
+                $documents = DocumentConfig::with('documentType', 'documentModule')
+                    ->leftJoin('employee_documents as ed', function ($join) use ($id) {
+                        $join->on('ed.documenttype_id', 'document_configs.documenttype_id')
+                            ->where('ed.employee_id', $id);
+                    })
+                    ->where('document_configs.documentmodule_id', $documentsmodule_id)
+                    ->where('document_configs.is_active', 1)
+                    ->select('document_configs.*', 'ed.employee_id', 'ed.document_number', 'ed.document_path')
+                    ->get();
+
+                break;
+            case DocumentModulesType::Manufacturer:
+                $documents = DocumentConfig::with('documentType', 'documentModule')
+                    ->leftJoin('manufacturer_documents as md', function ($join) use ($id) {
+                        $join->on('md.documenttype_id', 'document_configs.documenttype_id')
+                            ->where('md.manufacture_id', $id);
+                    })
+                    ->where('document_configs.documentmodule_id', $documentsmodule_id)
+                    ->where('document_configs.is_active', 1)
+                    ->select('document_configs.*', 'md.manufacture_id', 'md.document_number', 'md.document_path')
+                    ->get();
+
+                break;
+            case DocumentModulesType::Logistic:
+                $documents = DocumentConfig::with('documentType', 'documentModule')
+                    ->leftJoin('logistic_partner_documents as lpd', function ($join) use ($id) {
+                        $join->on('lpd.documenttype_id', 'document_configs.documenttype_id')
+                            ->where('lpd.logistic_partner_id', $id);
+                    })
+                    ->where('document_configs.documentmodule_id', $documentsmodule_id)
+                    ->where('document_configs.is_active', 1)
+                    ->select('document_configs.*', 'lpd.logistic_partner_id', 'lpd.document_number', 'lpd.document_path')
+                    ->get();
+                break;
+            case DocumentModulesType::DeliveryPerson:
+                $documents = DocumentConfig::with('documentType', 'documentModule')
+                    ->leftJoin('delivery_people_documents as dpd', function ($join) use ($id) {
+                        $join->on('dpd.documenttype_id', 'document_configs.documenttype_id')
+                            ->where('dpd.delivery_people_id', $id);
+                    })
+                    ->where('document_configs.documentmodule_id', $documentsmodule_id)
+                    ->where('document_configs.is_active', 1)
+                    ->select('document_configs.*', 'dpd.delivery_people_id', 'dpd.document_number', 'dpd.document_path')
+                    ->get();
+                break;
+            default:
+                $documents = [];
+        }
+        return $documents;
+    }
+
+    public function Log($transaction_name, $mode, $log_message, $user_id, $ip_address, $system_name, $is_app = 0)
+    {
+        Log::create([
+            'transaction_name' => $transaction_name,
+            'mode' => $mode,
+            'log_message' => $log_message,
+            'user_id' => $user_id,
+            'ip_address' => $ip_address,
+            'system_name' =>  $system_name,
+            'is_app' =>  $is_app,
+            'log_date' => Carbon::now()
+        ]);
+    }
+
+    public function getMenuUrl()
+    {
+        $currentUrl = url()->current();
+        $path = parse_url($currentUrl, PHP_URL_PATH);
+        $segments = explode('/', $path);
+        $menuUrl = '/' . $segments[1];
+
+        return $menuUrl;
+    }
+
+    public function chkUserMenuPermission()
+    {
+        $menu = Menu::where('menu_url', $this->getMenuUrl())->first();
+        if ($menu) {
+            $chkUserFilePermission = UserRolePermission::select('is_edit', 'is_delete', 'is_view', 'is_print', 'is_approval')
+                ->where('user_id', Auth::user()->id)
+                ->where('menu_id', $menu->id)
+                ->first();
+            return $chkUserFilePermission;
+        }
+    }
+
+    public function chkUserHasPermission()
+    {
+        $menu = Menu::where('menu_url', $this->getMenuUrl())->first();
+        if ($menu) {
+            $chkUserHasPermission = UserRolePermission::where('user_id', Auth::user()->id)
+                ->where('menu_id', $menu->id)
+                ->first();
+            return ($chkUserHasPermission ? true : false);
+        } else {
+            return false;
+        }
+    }
+
+    public function isUserHavePermission($permissionType)
+    {
+        if (Auth::user()->id == 1) {
+            return true;
+        }
+
+        $userMenuPermission = $this->chkUserMenuPermission();
+        switch ($permissionType) {
+            case MenuPermissionType::Edit:
+                return ($userMenuPermission->is_edit == 1);
+            case MenuPermissionType::Delete:
+                return ($userMenuPermission->is_delete == 1);
+            case MenuPermissionType::View:
+                return ($userMenuPermission->is_view == 1);
+            case MenuPermissionType::Print:
+                return ($userMenuPermission->is_print == 1);
+            case MenuPermissionType::Approval:
+                return ($userMenuPermission->is_approval == 1);
+        }
+    }
+
+    public function documentTitle($documentsmodule_id)
+    {
+        $documentTitle = [];
+        switch ($documentsmodule_id) {
+            case DocumentModulesType::DeliveryPerson:
+                $documentTitle = DocumentModules::where('id', $documentsmodule_id)->pluck('module_name')->first();
+                break;
+            case DocumentModulesType::Employee:
+                $documentTitle = DocumentModules::where('id', $documentsmodule_id)->pluck('module_name')->first();
+                break;
+            case DocumentModulesType::Manufacturer:
+                $documentTitle = DocumentModules::where('id', $documentsmodule_id)->pluck('module_name')->first();
+                break;
+            case DocumentModulesType::Logistic:
+                $documentTitle = DocumentModules::where('id', $documentsmodule_id)->pluck('module_name')->first();
+                break;
+            case DocumentModulesType::Hub:
+                $documentTitle = DocumentModules::where('id', $documentsmodule_id)->pluck('module_name')->first();
+                break;
+            default:
+                $documentTitle = [];
+        }
+        return $documentTitle;
+    }
+
+    public function documentByUsers($documentsmodule_id, $id)
+    {
+        $documents = [];
+        switch ($documentsmodule_id) {
+            case DocumentModulesType::DeliveryPerson:
+                $documents = DeliveryPeopleDocuments::with('documentType')
+                    ->where('delivery_people_documents.delivery_people_id', $id)
+                    ->get();
+                break;
+            case DocumentModulesType::Logistic:
+                $documents = LogisticPartnerDocuments::with('documentType')
+                    ->where('logistic_partner_documents.logistic_partner_id', $id)
+                    ->get();
+                break;
+            case DocumentModulesType::Manufacturer:
+                $documents = ManufacturerDocuments::with('documentType')
+                    ->where('manufacturer_documents.manufacture_id', $id)
+                    ->get();
+                break;
+            case DocumentModulesType::Hub:
+                $documents = HubDocuments::with('documentType')
+                    ->where('hub_documents.hub_id', $id)
+                    ->get();
+                break;
+            case DocumentModulesType::Employee:
+                $documents = EmployeeDocuments::with('documentType')
+                    ->where('employee_documents.employee_id', $id)
+                    ->get();
+                break;
+            default:
+                $documents = [];
+        }
+        return $documents;
+    }
+
+    public function updateDocumentVerification($documentsmodule_id, $id, $status)
+    {
+        $documents = [];
+        switch ($documentsmodule_id) {
+            case DocumentModulesType::Logistic:
+                LogisticPartnerDocuments::findorfail($id)->update([
+                    'is_verified' => $status,
+                    'updated_by' => Auth::user()->id
+                ]);
+                break;
+            case DocumentModulesType::DeliveryPerson:
+                DeliveryPeopleDocuments::findorfail($id)->update([
+                    'is_verified' => $status,
+                    'updated_by' => Auth::user()->id
+                ]);
+                break;
+            case DocumentModulesType::Manufacturer:
+                ManufacturerDocuments::findorfail($id)->update([
+                    'is_verified' => $status,
+                    'updated_by' => Auth::user()->id
+                ]);
+                break;
+            case DocumentModulesType::Hub:
+                HubDocuments::findorfail($id)->update([
+                    'is_verified' => $status,
+                    'updated_by' => Auth::user()->id
+                ]);
+                break;
+            case DocumentModulesType::Employee:
+                EmployeeDocuments::findorfail($id)->update([
+                    'is_verified' => $status,
+                    'updated_by' => Auth::user()->id
+                ]);
+                break;
+            default:
+                $documents = [];
+        }
+        return $documents;
+    }
+
+    public function getOrCreateAreaId($areaName, $stateId, $cityId)
+    {
+        $area = Area::where('area_name', $areaName)
+            ->orWhere('id', $areaName)
+            ->where('state_id', $stateId)
+            ->where('city_id', $cityId)
+            ->first();
+
+        if ($area) {
+            return $area->id;
+        } else {
+            $newArea = new Area;
+            $newArea->area_name = $areaName;
+            $newArea->state_id = $stateId;
+            $newArea->city_id = $cityId;
+            $newArea->created_by = Auth::user()->id;
+            $newArea->created_at = Carbon::now();
+            $newArea->save();
+
+            return $newArea->id;
+        }
+    }
+
+    public function getDeliveryInfo($product_type_id, $order_before_time, $delivery_duration)
+    {
+        // $product_type_delivery_durations = [
+        //     ProductType::Elite => "$delivery_duration Hr Delivery",
+        //     ProductType::Premium => "Same Day Delivery",
+        //     ProductType::Classic => "Next Day Delivery",
+        //     ProductType::Regular => "Delivery Within " . round($delivery_duration / 24) . " Days",
+        // ];
+
+
+
+        if ($delivery_duration < 12) {
+            $delivery_day = "$delivery_duration Hr Delivery";
+        } else if ($delivery_duration > 12 and $delivery_duration <= 24) {
+            $delivery_day = "Same Day Delivery";
+        } else if ($delivery_duration > 24 and $delivery_duration <= 48) {
+            $delivery_day = "Next Delivery";
+        } else {
+            $delivery_day = "Delivery Within " . round($delivery_duration / 24) . " Days";
+        }
+
+        $current_time = now();
+        $order_before = Carbon::parse($order_before_time);
+
+        if ($current_time >= $order_before) {
+            $delivery_text = "Order will be delivered on next working day";
+        } else {
+            $diff = $this->timeDiff($current_time, $order_before);
+            $time_string = ($diff->h > 0 ? $diff->h . " hrs " : "") . ($diff->i > 0 ? $diff->i . " mins " : "");
+            $delivery_text = ($product_type_id == ProductType::Regular) ?
+                "Order will be delivered within " . round($delivery_duration / 24) . " days" :
+                "Order within " . $time_string . " to avail " . strtolower($delivery_day);
+        }
+
+        $data = [
+            'delivery_text' => $delivery_text,
+            'delivery_day' => $delivery_day
+        ];
+        return $data;
+    }
+
+    public function timeDiff($from_time, $to_time)
+    {
+        return $from_time->diff($to_time);
+    }
+
+    public function addReferralWallet($id, $referral_points, $type)
+    {
+
+        //Get current wallet points for user
+        $user_wallet_points = User::where('id', $id)
+            ->value('wallet_points');
+
+        $current_wallet_points = ($user_wallet_points + $referral_points);
+
+        $wallets = UserWallet::create([
+            'user_id' => $id,
+            'amount' => $referral_points,
+            'balance' => $current_wallet_points,
+            'wallet_transaction_type_id' => $type,
+            'transaction_date' => now()
+        ]);
+
+        User::where('id', $id)->update([
+            'wallet_points' => $current_wallet_points
+        ]);
+
+        // Return the response with a 200 status code
+        return true;
+    }
+    public function updateWallet($id, $used_points)
+    {
+
+        //Get current wallet points for user
+        $user_wallet_points = User::where('id', $id)
+            ->value('wallet_points');
+
+        $current_wallet_points = ($user_wallet_points - $used_points);
+
+        $wallets = UserWallet::create([
+            'user_id' => $id,
+            'amount' => $used_points,
+            'balance' => $current_wallet_points,
+            'wallet_transaction_type_id' => WalletTransactionTypes::Used,
+            'transaction_date' => now()
+        ]);
+
+        User::where('id', $id)->update([
+            'wallet_points' => $current_wallet_points
+        ]);
+
+        // Return the response with a 200 status code
+        return true;
+    }
+    public function hubActivation($hub_id)
+    {
+        $deliveryPeople = DeliveryPerson::where('hub_id', $hub_id)
+            ->where('is_active', 1)
+            ->count();
+        $logisticPartner = LogisticsHubConfig::select('logistics_hub_configs.*', 'logistic_partners.is_active')
+            ->join('logistic_partners', 'logistic_partners.id', 'logistics_hub_configs.logistic_partner_id')
+            ->where('logistics_hub_configs.hub_id', $hub_id)
+            ->where('logistic_partners.is_active', 1)
+            ->get()
+            ->count();
+        if ($deliveryPeople > 0 && $logisticPartner > 0) {
+            Hub::findOrfail($hub_id)->update([
+                'is_active' => 1
+            ]);
+        } else {
+            Hub::findOrfail($hub_id)->update([
+                'is_active' => 0
+            ]);
+        }
+    }
+
+    public function getCansInHand()
+    {
+        return 0;
+    }
+
+    public function getTotalCansInHand()
+    {
+        return $this->getCansInHandAddressWise('empty_can');
+    }
+
+    public function getCansInHandAddressWise($type = null, $user_id = null)
+    {
+        $user_id = ($user_id ? $user_id : Auth::user()->id);
+        $userOrders = Order::where('user_id', $user_id)->where('status_id', StatusTypes::OrderDelivered)
+            ->get();
+
+        $total_emptycan = 0;
+        $total_qty = 0;
+        $address_id = [];
+        $data_brand_wise = [];
+        $address_details = [];
+        $data_address_product_wise = [];
+
+        if ($userOrders) {
+            foreach ($userOrders as $orders) {
+                if ($orders->orderDets) {
+                    foreach ($orders->orderDets as $orderDets) {
+                        $total_emptycan = $total_emptycan + (int)$orderDets->return_empty_cans_qty;
+                        // dd($orders->delivery_address_id);
+                        $deliveryAddressId = $orders->delivery_address_id;
+                        // $product_id = $orderDets->product_id;
+                        $brand_id = $orderDets->products->brand_id;
+                        if (!in_array($deliveryAddressId, $address_id)) {
+                            $address_id[] = $deliveryAddressId;
+                        }
+                        // dd($address_id);
+
+                        // If the delivery address and product id combination is not yet in the array, add it
+                        if (!isset($data_address_product_wise[$deliveryAddressId][$brand_id])) {
+                            $data_address_product_wise[$deliveryAddressId][$brand_id] = [
+                                'empty_can' => 0,
+                                'brand_name' => 0,
+                            ];
+                        }
+                        // Increment the empty can count and total qty for this delivery address and product id combination
+                        $data_address_product_wise[$deliveryAddressId][$brand_id]['empty_can'] += (int) $orderDets->qty - (int) $orderDets->return_empty_cans_qty;
+                        $data_address_product_wise[$deliveryAddressId][$brand_id]['brand_name'] = $orderDets->products->brand->brand_name;
+                        // $data_address_product_wise[$deliveryAddressId][$brand_id]['brand_id'] = $orderDets->products->brand->id;
+                    }
+                }
+                $total_qty = $total_qty + (int)$orders->total_qty;
+            }
+            $empty_can = $total_qty - $total_emptycan;
+        } else {
+            $empty_can = 0;
+        }
+        if ($type == "empty_can") {
+            return $empty_can;
+        }
+
+        if (isset($address_id)) {
+            foreach ($address_id as $address) {
+                $address_empty_can = 0;
+
+                foreach ($userOrders as $order) {
+                    if ($order->delivery_address_id == $address) {
+                        foreach ($order->orderDets as $orderDet) {
+                            $address_empty_can += (int) $orderDet->qty - (int) $orderDet->return_empty_cans_qty;
+                        }
+                        $formattedAddress = UserAddressResource::collection($this->getCustomerAddress_details($order->delivery_address_id));
+                        $brand_array[] = $data_address_product_wise[$order->delivery_address_id][$orderDet->products->brand_id];
+                    }
+                }
+                $address_wise['address'] = $formattedAddress;
+                $address_wise['empty_can'] = $address_empty_can;
+                $address_wise['brand_wise'] = $brand_array;
+                $address_details[] = $address_wise;
+                $brand_array = [];
+            }
+        } else {
+            $address_details = [];
+        }
+        $return_data = [
+            "total_can_in_hand" => $empty_can,
+            "address_wise" => $address_details,
+        ];
+
+        return $return_data;
+    }
+}

@@ -1,0 +1,72 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class Products extends Model
+{
+    use HasFactory, SoftDeletes;
+
+    protected $fillable = [
+        'product_name',
+        'product_type_id',
+        'brand_id',
+        'category_id',
+        'product_image',
+        'customer_price',
+        'wholesale_price',
+        'capacity',
+        'desc',
+        'is_emptycan_return',
+        'CGST',
+        'SGST',
+        'is_active',
+        'created_by',
+        'updated_by',
+        'deleted_by'
+    ];
+    public function category()
+    {
+        return $this->belongsTo(Category::class,'category_id','id');
+    }
+
+    public function productType()
+    {
+        return $this->belongsTo(ProductType::class,'product_type_id','id');
+    }
+
+    public function brand()
+    {
+        return $this->belongsTo(Brands::class,'brand_id','id');
+    }
+
+    public function cart()
+    {
+        return $this->hasMany(Cart::class,'product_id');
+    }
+
+    public function categorys()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function productTypes()
+    {
+        return $this->belongsTo(ProductType::class);
+    }
+
+    public function brands()
+    {
+        return $this->belongsTo(Brands::class);
+    }
+
+    public function orderDets()
+    {
+        return $this->hasMany(OrderDet::class, 'product_id');
+    }
+    
+}
+

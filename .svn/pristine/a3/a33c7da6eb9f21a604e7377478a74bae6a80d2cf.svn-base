@@ -1,0 +1,65 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateLogisticPartnersTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('logistic_partners', function (Blueprint $table) {
+            $table->id();
+            $table->string('logistic_partner_code');
+            $table->string('logistic_partner_name');
+            $table->unsignedBigInteger('manufacturer_id');
+            $table->foreign('manufacturer_id')->references('id')->on('manufacturers');
+            $table->unsignedBigInteger('hub_id');
+            $table->foreign('hub_id')->references('id')->on('hubs');
+            $table->string('years_of_experience')->nullable();
+            $table->string('mobile')->nullable();
+            $table->string('email')->nullable();
+            $table->string('credit_period')->nullable();
+            $table->string('settlement_period')->nullable();
+            $table->string('password')->nullable();
+            $table->unsignedBigInteger('state_id');
+            $table->foreign('state_id')->references('id')->on('states');
+            $table->unsignedBigInteger('city_id');
+            $table->foreign('city_id')->references('id')->on('cities');
+            $table->unsignedBigInteger('area_id');
+            $table->foreign('area_id')->references('id')->on('areas');
+            $table->string('address')->nullable();
+            $table->string('pincode')->nullable();
+            $table->string('proprietor_name')->nullable();
+            $table->string('proprietor_mobile')->nullable();
+            $table->string('proprietor_email')->nullable();
+            $table->string('contact_person_name')->nullable();
+            $table->string('contact_person_mobile')->nullable();
+            $table->string('contact_person_email')->nullable();
+            $table->integer('is_active')->default(0);
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->foreign('created_by')->references('id')->on('users');
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->foreign('updated_by')->references('id')->on('users');
+            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->foreign('deleted_by')->references('id')->on('users');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('logistic_partners');
+    }
+}

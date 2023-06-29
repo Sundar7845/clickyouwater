@@ -1,0 +1,24 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class OfferAllocation extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'offer_id',
+        'state_id',
+        'created_by',
+        'updated_by',
+        'deleted_by'
+    ];
+
+    public function offer()
+    {
+        return $this->belongsTo(Offer::class, 'offer_id');
+    }
+}

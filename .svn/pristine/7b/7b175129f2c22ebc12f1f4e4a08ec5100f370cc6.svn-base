@@ -1,0 +1,27 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\WalletTransactionType;
+use Illuminate\Database\Seeder;
+
+class WalletTransactionTypeSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        $data = [
+            ['wallet_transaction_type' => 'WalletPending'],
+            ['wallet_transaction_type' => 'WalletSuccess'],
+            ['wallet_transaction_type' => 'WalletFailed'],
+            ['wallet_transaction_type' => 'Referral'],
+            ['wallet_transaction_type' => 'Used']
+        ];
+        
+        WalletTransactionType::insert($data);
+    }
+}

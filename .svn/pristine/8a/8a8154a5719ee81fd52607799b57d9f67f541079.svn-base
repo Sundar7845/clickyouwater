@@ -1,0 +1,72 @@
+<?php
+
+namespace App\Http\Controllers\Admin\DiscountManagement;
+
+use App\Enums\MenuPermissionType;
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use Illuminate\Http\Request;
+use App\Traits\Common;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class ReferralHistoryController extends Controller
+{
+    use Common;
+
+    public function referralHistory(Request $request)
+    {
+        try {
+            //To load list based type(All,Today,ThisMonth)
+            $type = $request->input('type');
+            return view('admin.discount_management.referral_history', compact('type'));
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, 'GET', $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function getRefferalCustomerdata(Request $request)
+    {
+        try {
+            $customerName = DB::table('user_referral_histories')
+                ->join('users', 'users.id', 'user_referral_histories.referred_by')
+                ->select('users.user_name', 'users.referral_code', DB::raw('count(user_referral_histories.user_id) as user_id_count'), 'user_referral_histories.referred_by')
+                ->groupBy('users.user_name', 'users.referral_code');
+
+            // Apply type filters based on the 'type' parameter
+            if ($request->type === 'today') {
+                $customerName->whereDate('user_referral_histories.referred_on', today());
+            } elseif ($request->type === 'thismonth') {
+                $customerName->whereMonth('user_referral_histories.referred_on', now()->month);
+            }
+
+            $customerName = $customerName->get();
+
+            return datatables()->of($customerName)
+                ->addColumn('action', function ($row) {
+                    $html = "";
+                    if ($this->isUserHavePermission(MenuPermissionType::View)) {
+                        $html = '<a href="referralcode/' . $row->referred_by . '" class="btn btn-xs btn-primary">View</a>';
+                    }
+                    return $html;
+                })->toJson();
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, 'GET', $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function referralCode($id)
+    {
+        try {
+            $username = DB::table('user_referral_histories')
+                ->join('users', 'users.id', 'user_referral_histories.user_id')
+                ->where('user_referral_histories.referred_by', $id)
+                ->select('users.user_name', DB::raw("DATE_FORMAT(user_referral_histories.referred_on, '%d/%m/%Y ') as referred_on"))
+                ->get();
+            $referral_name = User::where('id', $id)->first();
+            return view('admin.discount_management.referral_code', compact('username', 'referral_name'));
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, 'GET', $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+}

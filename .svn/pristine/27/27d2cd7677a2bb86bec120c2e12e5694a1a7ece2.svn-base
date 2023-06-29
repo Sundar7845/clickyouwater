@@ -1,0 +1,78 @@
+<?php
+
+namespace App\Http\Controllers\Admin\DeliveryPersonManagement;
+
+use App\Http\Controllers\Controller;
+use App\Models\BillNoSetting;
+use App\Models\DeliveryPerson;
+use App\Models\Hub;
+use App\Models\State;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Intervention\Image\Facades\Image;
+
+class DeliveryPersonController extends Controller
+{
+    public function deliveryPerson()
+    {
+        $hubs = Hub::get();
+        $states = State::orderBy('state_name', 'ASC')->get();
+        $deliveryPerson = DeliveryPerson::get();
+        $data = BillNoSetting::first();
+        $delPrefix = $data->deliveryperson_prefix ?? 0;
+        $delLength = $data->deliveryperson_length ?? 0;
+        $delLive = (int)($data->deliveryperson_live ?? 0) + 1;
+        if ($delLive) {
+            $delNumber = $delLive;
+        }
+        $man = sprintf("%0{$delLength}d", $delNumber);
+        $delExample = $delPrefix . $man;
+        return view('admin.delivery_person_management.delivery_person', compact('delExample', 'deliveryPerson', 'states'));
+    }
+
+    public function deliveryPersonCreate(Request $request)
+    {
+        $request->validate([
+            'txtDelveryPersonId' => 'required',
+            'txtDeliveryPersonName' => 'required',
+            'txtDeliveryPersonMobile' => 'required',
+            'deliveryPersonEmail' => 'required',
+            'ddlState' => 'required',
+            'ddlCity' => 'required',
+            'ddlArea' => 'required',
+            'txtDoorNo' => 'required',
+            'txtPincode' => 'required',
+            'ddlHub' => 'required',
+            'txtDeliveryPersonPassword' => 'required',
+            'txtDeliveryPersonPassword' => 'required',
+            'fileDeliveryPersonImage' => 'required'
+        ]);
+
+        $image = $request->file('fileDeliveryPersonImage');
+        $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
+        image::make($image)->save('upload/DeliveryPerson/' . $name_gen);
+        $save_url = 'upload/DeliveryPerson/' . $name_gen;
+
+        DeliveryPerson::create([
+            'delivery_person_id' => $request->txtDelveryPersonId,
+            'delivery_person_name' => $request->txtDeliveryPersonName,
+            'mobile' => $request->txtDeliveryPersonMobile,
+            'email' => $request->deliveryPersonEmail,
+            'state_id' => $request->ddlState,
+            'city_id' => $request->ddlCity,
+            'area_id' => $request->ddlArea,
+            'address' => $request->txtDoorNo,
+            'pincode' => $request->txtPincode,
+            'hub_id' => $request->ddlHub,
+            'password' => $request->txtDeliveryPersonPassword,
+            'delivery_person_image' => $save_url,
+            'is_active' => 1,
+            'created_by' => Auth::user()->id,
+        ]);
+    }
+
+    public function deliveryPersonList()
+    {
+        return view('admin.delivery_person_management.delivery_person_list');
+    }
+}

@@ -1,0 +1,87 @@
+$(document).ready(function () {
+    $("#tblDepartmentList").DataTable({
+        processing: true,
+        serverSide: true,
+        responsive: true,
+        order: [[0, "ASC"]],
+        ajax: "department/data",
+        fnRowCallback: function (nRow, aData, iDisplayIndex) {
+            $("td:first", nRow).html(iDisplayIndex + 1);
+            return nRow;
+        },
+        columns: [
+            { data: "id" },
+            { data: "department_name" },
+            {
+                data: "is_active",
+                render: function (data, type, row) {
+                    return `<label class="switch">
+                        <input onclick="doStatus(${
+                            row.id
+                        });" id="chkDepartment${
+                        row.id
+                    }" type="checkbox" class="switch-input"
+                        name="chkDepartment" '  ${
+                            data == 1 ? "checked" : ""
+                        } ' />
+                        <span class="switch-toggle-slider">
+                            <span class="switch-on"></span>
+                            <span class="switch-off"></span>
+                        </span>
+                    </label>`;
+                },
+            },
+            { data: "action" },
+        ],
+    });
+
+});
+
+function doStatus(id) {
+    var status = $("#chkDepartment" + id).is(":checked");
+    confirmStatusChange(
+        id,
+        "department/",
+        "tblDepartmentList",
+        status == true ? 1 : 0,
+        "chkDepartment"
+    );
+}
+
+function doEdit(id) {
+    $("#hdDepartmentId").val(id);
+    $("#txtDepartmentName").focus();
+    $("#btnSave").text("Update");
+    getDepartmentById(id);
+}
+
+function getDepartmentById(id) {
+    $.ajax({
+        type: "GET",
+        url: "getdepartment/" + id,
+        dataType: "json",
+        success: function (data) {
+            $("#txtDepartmentName").val(data.department.department_name);
+        },
+    });
+}
+
+function cancel() {
+    $("#hdDepartmentId").val("");
+    $("#txtDepartmentName").val("");
+    $("#btnSave").text("Save");
+    $("#txtDepartmentName").focus();
+}
+
+function showDelete(id) {
+    confirmDelete(id, "delete/department/", "tblDepartmentList");
+}
+
+// jquery Validation
+$(function () {
+    $("form[name='department']").validate({
+        rules: {
+            txtDepartmentName: "required",
+        },
+    });
+});

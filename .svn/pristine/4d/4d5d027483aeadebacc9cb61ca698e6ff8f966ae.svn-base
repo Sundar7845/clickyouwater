@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Http\Controllers\Admin\PurchaseManagement;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class PurchaseInvoiceController extends Controller
+{
+    public function purchaseInvoice()
+    {
+        return view('admin.purchase_management.purchase_invoice.purchase_invoice');
+    }
+
+    public function purchaseInvoiceList()
+    {
+        return view('admin.purchase_management.purchase_invoice.purchase_invoice_list');
+    }
+}

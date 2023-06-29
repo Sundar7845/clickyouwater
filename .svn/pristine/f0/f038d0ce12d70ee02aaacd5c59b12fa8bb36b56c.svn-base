@@ -1,0 +1,170 @@
+<?php
+
+namespace App\Http\Controllers\Admin\UserRightsManagement;
+
+use App\Http\Controllers\Controller;
+use App\Models\Employee;
+use App\Models\Menu;
+use App\Models\RolePermission;
+use App\Models\User;
+use App\Models\UserRolePermission;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+
+class UsersController extends Controller
+{
+    public function users()
+    {
+        $employee = Employee::get();
+        $users = User::get();
+        $roles = RolePermission::select('role_permissions.*', 'roles.role_name')->join('roles', 'roles.id', 'role_permissions.role_id')->get();
+        return view('admin.users_rights_management.users', compact('employee', 'users', 'roles'));
+    }
+
+    public function createUser(Request $request)
+    {
+        // dd($request->all());
+        $request->validate([
+            'ddlEmployee' => 'required',
+            'ddlRoleName' => 'required',
+            'txtDisplayName' => 'required',
+            'txtUserMobile' => 'required',
+            'txtUserEmail' => 'required',
+            'password' => 'required|min:6|confirmed',
+            'password_confirmation' => 'required|min:6'
+        ]);
+
+        $employee = Employee::where('id', $request->ddlEmployee)->pluck('employee_name')->first();
+
+        if ($request->hdRolePermissionId == null) {
+            $user_id =  User::insertGetId([
+                'user_name' => $employee,
+                'employee_id' => $request->ddlEmployee,
+                'email' => $request->txtUserEmail,
+                'password' => Hash::make($request->password),
+                'role_id' => $request->ddlRoleName,
+                'display_name' => $request->txtDisplayName,
+                'mobile' => $request->txtUserMobile,
+                'created_by' => Auth::user()->id
+            ]);
+            $id = $user_id;
+            $fileds = $request['menuId'];
+            $menuPermissionData = [];
+            for ($i = 0; $i < count($request['menuId']); $i++) {
+
+                $row = $fileds[$i];
+                $menuPermissionData['rolepermission_id'] = $request['ddlRoleName'];
+                $menuPermissionData['user_id'] = $id;
+                $menuPermissionData['menu_id'] = $row;
+                $menuPermissionData['is_edit'] = $request['checkEdit'][$row][0] ?? 0;
+                $menuPermissionData['is_delete'] = $request['checkDelete'][$row][0] ?? 0;
+                $menuPermissionData['is_view'] = $request['checkView'][$row][0] ?? 0;
+                $menuPermissionData['is_print'] = $request['checkPrint'][$row][0] ?? 0;
+                $menuPermissionData['is_approval'] = $request['checkApproval'][$row][0] ?? 0;
+                $menuPermissionData['created_by'] =  Auth::user()->id;
+
+                $dd = UserRolePermission::create($menuPermissionData);
+            }
+
+            $notification = array(
+                'message' => 'User Created Successfully',
+                'alert-type' => 'success'
+            );
+        } else {
+            User::findorfail($request->hdRolePermissionId)->update([
+                'user_name' => $employee,
+                'employee_id' => $request->ddlEmployee,
+                'email' => $request->txtUserEmail,
+                'password' => Hash::make($request->password),
+                'role_id' => $request->ddlRoleName,
+                'display_name' => $request->txtDisplayName,
+                'mobile' => $request->txtUserMobile,
+                'updated_by' => Auth::user()->id
+            ]);
+            UserRolePermission::where('user_id', $request->hdRolePermissionId)->delete();
+            $id = $request->hdRolePermissionId;
+            $fileds = $request['menuId'];
+            $menuPermissionData = [];
+            for ($i = 0; $i < count($request['menuId']); $i++) {
+
+                $row = $fileds[$i];
+                $menuPermissionData['rolepermission_id'] = $request['ddlRoleName'];
+                $menuPermissionData['user_id'] = $id;
+                $menuPermissionData['menu_id'] = $row;
+                $menuPermissionData['is_edit'] = $request['checkEdit'][$row][0] ?? 0;
+                $menuPermissionData['is_delete'] = $request['checkDelete'][$row][0] ?? 0;
+                $menuPermissionData['is_view'] = $request['checkView'][$row][0] ?? 0;
+                $menuPermissionData['is_print'] = $request['checkPrint'][$row][0] ?? 0;
+                $menuPermissionData['is_approval'] = $request['checkApproval'][$row][0] ?? 0;
+                $menuPermissionData['created_by'] =  Auth::user()->id;
+
+                $create = UserRolePermission::create($menuPermissionData);
+            }
+
+            $notification = array(
+                'message' => 'User Updated Successfully',
+                'alert-type' => 'success'
+            );
+        }
+        return redirect()->route('users')->with($notification);
+    }
+
+    public function listMenus($id)
+    {
+        $getMenuId = RolePermission::select('menu_id')->where('role_id', '=', $id)->get()->toArray();
+        $getMenuName = explode(',', $getMenuId[0]['menu_id']);
+        $menu = Menu::whereIn('id', $getMenuName)->get();
+        return response()->json([
+            'menu' => $menu
+        ]);
+    }
+
+    public function getPermissionData(Request $request)
+    {
+
+        $userRoleData = UserRolePermission::select('user_role_permissions.*', 'roles.role_name', 'role_permissions.role_id', 'users.user_name', 'users.display_name', 'users.email', 'users.is_active', 'users.id', 'users.employee_id')->join('role_permissions', 'role_permissions.id', 'user_role_permissions.rolepermission_id')->join('roles', 'roles.id', 'role_permissions.role_id')->join('users', 'users.id', 'user_role_permissions.user_id')->join('employees', 'employees.id', 'users.employee_id')->groupBy('user_role_permissions.user_id')->get();
+        return datatables()->of($userRoleData)
+            ->addColumn('action', function ($row) {
+                $html = '<i class="text-primary ti ti-pencil me-1"
+                onclick="doEdit(' . $row->id . ');"></i> ';
+                $html .= '<i class="text-danger ti ti-trash me-1" id="confirm-color' . $row->id . '" onclick="showDelete(' . $row->id . ');"></i>';
+                return $html;
+            })->toJson();
+    }
+
+    public function getUserPermissionById($id)
+    {
+        $userPermission = UserRolePermission::select('user_role_permissions.*', 'roles.role_name', 'role_permissions.role_id', 'users.user_name', 'users.display_name', 'users.email', 'users.mobile', 'users.is_active', 'users.id', 'users.employee_id', 'roles.id')->join('role_permissions', 'role_permissions.id', 'user_role_permissions.rolepermission_id')->join('roles', 'roles.id', 'role_permissions.role_id')->join('users', 'users.id', 'user_role_permissions.user_id')->join('employees', 'employees.id', 'users.employee_id')->where('users.id', $id)->first();
+
+        $userMenuPermission = UserRolePermission::get();
+
+        return response()->json([
+            'userPermission' => $userPermission,
+            'userMenuPermission' => $userMenuPermission
+        ]);
+    }
+
+    public function activeStatus($id, $status)
+    {
+        User::findorfail($id)->update([
+            'is_active' => $status,
+            'updated_by' => Auth::user()->id
+        ]);
+    }
+
+    public function deleteUserPermission($id)
+    {
+        $permission = UserRolePermission::findorfail($id);
+        $permission->delete();
+
+        $permission->Update([
+            'deleted_by' => Auth::user()->id
+        ]);
+
+        return response()->json([
+            'success' => 'User Deleted Successfully'
+        ]);
+    }
+}

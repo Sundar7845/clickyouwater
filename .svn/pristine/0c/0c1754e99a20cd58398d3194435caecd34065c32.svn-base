@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Http\Controllers\Admin\LogisticManagement;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Traits\Common;
+use Illuminate\Support\Facades\Auth;
+
+class LogisticDriverInfoController extends Controller
+{
+    use common;
+    public function LogisticDriverInfo(){
+        try {
+        return view('admin.logistic_management.add_logistic_driver_info');
+
+        } catch (\Exception $e) {
+        $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+}

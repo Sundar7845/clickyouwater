@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Http\Controllers\Admin\ManufacturerManagement;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class ManufacturerController extends Controller
+{
+    public function manufacturer()
+    {
+        return view('Admin.manufacturer_management.manufacturer');
+    }
+
+    public function manufacturerList()
+    {
+        return view('Admin.manufacturer_management.manufacturerlist');
+    }
+}

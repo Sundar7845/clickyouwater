@@ -1,0 +1,119 @@
+$(document).ready(function() {
+    $('#tblgeneratecoupon').DataTable({
+        processing: true,
+        serverSide: true,
+        responsive: true,
+        order: [[0, "ASC"]],
+        ajax: "generatecoupon/data",
+        fnRowCallback: function (nRow, aData, iDisplayIndex) {
+            $("td:first", nRow).html(iDisplayIndex + 1);
+            return nRow;
+        },
+
+        columns: [
+            { data: "id" },
+            { data: "coupon_type" },
+            { data: "coupon_name" },
+            { data: "coupon_code" },
+            { data: "min_order_qty" },
+            { data: "formatted_start_date" },
+            { data: "formatted_end_date" },
+            { data: "is_active",
+            render: function (data, type, row) {
+                        return `<label class="switch">
+                        <input onclick="doStatus(${row.id});" id="chkCoupon${row.id}" type="checkbox" class="switch-input"
+                        name="chkCoupon" '  ${(data == 1 ? "checked" : "")} ' />
+                        <span class="switch-toggle-slider">
+                            <span class="switch-on"></span>
+                            <span class="switch-off"></span>
+                        </span>
+                    </label>`;
+                }
+            },
+            { data: "action" }
+        ],
+    });
+});
+
+function doStatus(id) {
+    var status = $("#chkCoupon" + id).is(":checked");
+    confirmStatusChange(id, "coupon/", "tblgeneratecoupon", (status == true ? 1 : 0), "chkCoupon");
+}
+
+function doEdit(id) {
+    $("#hdgeneratecouponId").val(id);
+    $("#ddlCouponType").focus();
+    $("#btnSave").text("Update");
+    getCouponById(id);
+}
+
+function getCouponById(id) {
+    $.ajax({
+        type: "GET",
+        url: "getcoupon/" + id,
+        dataType: "json",
+        success: function (data) {
+            $("#ddlCouponType").val(data.coupon.coupon_type_id).trigger('change');
+            $("#txtCouponName").val(data.coupon.coupon_name);
+            $("#txtCouponCode").val(data.coupon.coupon_code);
+            $("#ddlStartDate").val(data.coupon.start_date);
+            $("#ddlEndDate").val(data.coupon.end_date);
+            $("#ddlDiscountType").val(data.coupon.discount_type_id).trigger('change');
+            $("#txtdiscount_value").val(data.coupon.discount_value);
+            $("#txtMaxDiscount").val(data.coupon.max_discount);
+            $("#txtMinOrderQty").val(data.coupon.min_order_qty);
+        },
+    });
+}
+
+// jquery Validation
+$(function () {
+    $("form[name='generate_coupon']").validate({
+        rules: {
+            ddlCouponType: "required",
+            txtCouponName: "required",
+            txtCouponCode: "required",
+            ddlStartDate: "required",
+            ddlEndDate: "required",
+            ddlDiscountType: "required",
+            txtdiscount_value: "required",
+            txtMaxDiscount: "required",
+            txtMinOrderQty: "required",
+        },
+        errorPlacement: function (error, element) {
+            if (element.is(":radio")) {
+                error.appendTo(element.parents(".form-group"));
+            } else {
+                // This is the default behavior
+                // error.insertAfter(element);
+                if (element.siblings(".error").html() == undefined) {
+                    error.appendTo(element.parent().next(".error"));
+                } else {
+                    error.appendTo(element.siblings(".error"));
+                }
+            }
+        },
+        submitHandler: function (form) {
+            form.submit();
+        },
+    });
+});
+
+function cancel() {
+    $("#hdgeneratecouponId").val("");
+    $("#ddlCouponType").val("").trigger('change');
+    $("#txtCouponName").val("");
+    $("#txtCouponCode").val("");
+    $("#ddlStartDate").val("");
+    $("#ddlEndDate").val("");
+    $("#ddlDiscountType").val("").trigger('change');
+    $("#txtdiscount_value").val("");
+    $("#txtMaxDiscount").val("");
+    $("#txtMinOrderQty").val("");
+    $("#btnSave").text("Save");
+    $("#ddlCouponType").focus();
+}
+
+function showDelete(id) {
+    confirmDelete(id, "delete/coupon/", "tblgeneratecoupon");
+}

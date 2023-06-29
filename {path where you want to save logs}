@@ -1,0 +1,108 @@
+[1668] Log opened at 2023-04-05 08:58:24.534408
+[1668] [Step Debug] INFO: Connecting to configured address/port: 127.0.0.1:9001.
+[1668] [Step Debug] ERR: Time-out connecting to debugging client, waited: 200 ms. Tried: 127.0.0.1:9001 (through xdebug.client_host/xdebug.client_port).
+[7920] Log opened at 2023-04-05 09:03:52.064951
+[7920] [Step Debug] INFO: Connecting to configured address/port: 127.0.0.1:9001.
+[7920] [Step Debug] ERR: Time-out connecting to debugging client, waited: 200 ms. Tried: 127.0.0.1:9001 (through xdebug.client_host/xdebug.client_port).
+[9428] Log opened at 2023-04-05 09:04:09.386188
+[9428] [Step Debug] INFO: Connecting to configured address/port: 127.0.0.1:9001.
+[9428] [Step Debug] ERR: Time-out connecting to debugging client, waited: 200 ms. Tried: 127.0.0.1:9001 (through xdebug.client_host/xdebug.client_port).
+[11648] Log opened at 2023-04-05 10:26:00.033195
+[11648] [Step Debug] INFO: Connecting to configured address/port: 127.0.0.1:9001.
+[11648] [Step Debug] INFO: Connected to debugging client: 127.0.0.1:9001 (through xdebug.client_host/xdebug.client_port).
+[11648] [Step Debug] -> <init xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" fileuri="file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/artisan" language="PHP" xdebug:language_version="8.2.0" protocol_version="1.0" appid="11648" idekey="VSCODE"><engine version="3.2.1"><![CDATA[Xdebug]]></engine><author><![CDATA[Derick Rethans]]></author><url><![CDATA[https://xdebug.org]]></url><copyright><![CDATA[Copyright (c) 2002-2023 by Derick Rethans]]></copyright></init>
+
+[11648] [Step Debug] <- feature_set -i 1 -n resolved_breakpoints -v 1
+[11648] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="feature_set" transaction_id="1" feature="resolved_breakpoints" success="1"></response>
+
+[11648] [Step Debug] <- feature_set -i 2 -n notify_ok -v 1
+[11648] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="feature_set" transaction_id="2" feature="notify_ok" success="1"></response>
+
+[11648] [Step Debug] <- feature_set -i 3 -n extended_properties -v 1
+[11648] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="feature_set" transaction_id="3" feature="extended_properties" success="1"></response>
+
+[11648] [Step Debug] <- feature_set -i 4 -n breakpoint_include_return_value -v 1
+[11648] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="feature_set" transaction_id="4" feature="breakpoint_include_return_value" success="1"></response>
+
+[11648] [Step Debug] <- feature_set -i 5 -n max_children -v 100
+[11648] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="feature_set" transaction_id="5" feature="max_children" success="1"></response>
+
+[11648] [Step Debug] <- breakpoint_set -i 6 -t line -f file:///d:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php -n 20
+[11648] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="breakpoint_set" transaction_id="6" id="116480001" resolved="unresolved"></response>
+
+[11648] [Step Debug] <- breakpoint_set -i 7 -t line -f file:///d:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php -n 21
+[11648] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="breakpoint_set" transaction_id="7" id="116480002" resolved="unresolved"></response>
+
+[11648] [Step Debug] <- breakpoint_set -i 8 -t line -f file:///d:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php -n 27
+[11648] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="breakpoint_set" transaction_id="8" id="116480003" resolved="unresolved"></response>
+
+[11648] [Step Debug] <- breakpoint_set -i 9 -t line -f file:///d:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php -n 83
+[11648] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="breakpoint_set" transaction_id="9" id="116480004" resolved="unresolved"></response>
+
+[11648] [Step Debug] <- run -i 10
+[12252] Log opened at 2023-04-05 10:28:42.632778
+[12252] [Step Debug] INFO: Connecting to configured address/port: 127.0.0.1:8000.
+[12252] [Step Debug] ERR: Time-out connecting to debugging client, waited: 200 ms. Tried: 127.0.0.1:8000 (through xdebug.client_host/xdebug.client_port).
+[7848] Log opened at 2023-04-05 10:39:37.221034
+[7848] [Step Debug] INFO: Connecting to configured address/port: 127.0.0.1:8000.
+[7848] [Step Debug] INFO: Connected to debugging client: 127.0.0.1:8000 (through xdebug.client_host/xdebug.client_port).
+[7848] [Step Debug] -> <init xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" fileuri="file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/artisan" language="PHP" xdebug:language_version="8.2.0" protocol_version="1.0" appid="7848" idekey="VSCODE"><engine version="3.2.1"><![CDATA[Xdebug]]></engine><author><![CDATA[Derick Rethans]]></author><url><![CDATA[https://xdebug.org]]></url><copyright><![CDATA[Copyright (c) 2002-2023 by Derick Rethans]]></copyright></init>
+
+[13860] Log opened at 2023-04-05 10:43:23.672009
+[13860] [Step Debug] INFO: Connecting to configured address/port: 127.0.0.1:8000.
+[13860] [Step Debug] INFO: Connected to debugging client: 127.0.0.1:8000 (through xdebug.client_host/xdebug.client_port).
+[13860] [Step Debug] -> <init xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" fileuri="file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/artisan" language="PHP" xdebug:language_version="8.2.0" protocol_version="1.0" appid="13860" idekey="VSCODE"><engine version="3.2.1"><![CDATA[Xdebug]]></engine><author><![CDATA[Derick Rethans]]></author><url><![CDATA[https://xdebug.org]]></url><copyright><![CDATA[Copyright (c) 2002-2023 by Derick Rethans]]></copyright></init>
+
+[13860] [Step Debug] <- feature_set -i 1 -n resolved_breakpoints -v 1
+[13860] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="feature_set" transaction_id="1" feature="resolved_breakpoints" success="1"></response>
+
+[13860] [Step Debug] <- feature_set -i 2 -n notify_ok -v 1
+[13860] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="feature_set" transaction_id="2" feature="notify_ok" success="1"></response>
+
+[13860] [Step Debug] <- feature_set -i 3 -n extended_properties -v 1
+[13860] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="feature_set" transaction_id="3" feature="extended_properties" success="1"></response>
+
+[13860] [Step Debug] <- feature_set -i 4 -n breakpoint_include_return_value -v 1
+[13860] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="feature_set" transaction_id="4" feature="breakpoint_include_return_value" success="1"></response>
+
+[13860] [Step Debug] <- feature_set -i 5 -n max_children -v 100
+[13860] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="feature_set" transaction_id="5" feature="max_children" success="1"></response>
+
+[13860] [Step Debug] <- breakpoint_set -i 6 -t line -f file:///d:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php -n 20
+[13860] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="breakpoint_set" transaction_id="6" id="138600001" resolved="unresolved"></response>
+
+[13860] [Step Debug] <- breakpoint_set -i 7 -t line -f file:///d:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php -n 21
+[13860] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="breakpoint_set" transaction_id="7" id="138600002" resolved="unresolved"></response>
+
+[13860] [Step Debug] <- breakpoint_set -i 8 -t line -f file:///d:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php -n 27
+[13860] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="breakpoint_set" transaction_id="8" id="138600003" resolved="unresolved"></response>
+
+[13860] [Step Debug] <- breakpoint_set -i 9 -t line -f file:///d:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php -n 83
+[13860] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="breakpoint_set" transaction_id="9" id="138600004" resolved="unresolved"></response>
+
+[13860] [Step Debug] <- run -i 10
+[13124] Log opened at 2023-04-05 10:43:59.278912
+[13124] [Step Debug] INFO: Connecting to configured address/port: 127.0.0.1:8000.
+[13124] [Step Debug] INFO: Connected to debugging client: 127.0.0.1:8000 (through xdebug.client_host/xdebug.client_port).
+[13124] [Step Debug] -> <init xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" fileuri="file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/artisan" language="PHP" xdebug:language_version="8.2.0" protocol_version="1.0" appid="13124" idekey="VSCODE"><engine version="3.2.1"><![CDATA[Xdebug]]></engine><author><![CDATA[Derick Rethans]]></author><url><![CDATA[https://xdebug.org]]></url><copyright><![CDATA[Copyright (c) 2002-2023 by Derick Rethans]]></copyright></init>
+
+[7704] Log opened at 2023-04-05 10:45:48.379847
+[7704] [Step Debug] INFO: Connecting to configured address/port: 127.0.0.1:8000.
+[7704] [Step Debug] ERR: Time-out connecting to debugging client, waited: 200 ms. Tried: 127.0.0.1:8000 (through xdebug.client_host/xdebug.client_port).
+[13984] Log opened at 2023-04-05 10:50:24.541978
+[13984] [Step Debug] INFO: Connecting to configured address/port: 127.0.0.1:8000.
+[13984] [Step Debug] INFO: Connected to debugging client: 127.0.0.1:8000 (through xdebug.client_host/xdebug.client_port).
+[13984] [Step Debug] -> <init xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" fileuri="file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/artisan" language="PHP" xdebug:language_version="8.2.0" protocol_version="1.0" appid="13984" idekey="VSCODE"><engine version="3.2.1"><![CDATA[Xdebug]]></engine><author><![CDATA[Derick Rethans]]></author><url><![CDATA[https://xdebug.org]]></url><copyright><![CDATA[Copyright (c) 2002-2023 by Derick Rethans]]></copyright></init>
+
+[2404] Log opened at 2023-04-05 10:51:12.300741
+[2404] [Step Debug] INFO: Connecting to configured address/port: 127.0.0.1:8000.
+[2404] [Step Debug] ERR: Time-out connecting to debugging client, waited: 200 ms. Tried: 127.0.0.1:8000 (through xdebug.client_host/xdebug.client_port).
+[13768] Log opened at 2023-04-05 10:52:19.345412
+[13768] [Step Debug] INFO: Connecting to configured address/port: 127.0.0.1:9001.
+[13768] [Step Debug] ERR: Time-out connecting to debugging client, waited: 200 ms. Tried: 127.0.0.1:9001 (through xdebug.client_host/xdebug.client_port).
+[1904] Log opened at 2023-04-05 10:58:27.545043
+[1904] [Step Debug] INFO: Connecting to configured address/port: 127.0.0.1:9001.
+[1904] [Step Debug] ERR: Time-out connecting to debugging client, waited: 200 ms. Tried: 127.0.0.1:9001 (through xdebug.client_host/xdebug.client_port).
+[13212] Log opened at 2023-04-05 11:04:28.027567
+[13212] [Step Debug] INFO: Connecting to configured address/port: 127.0.0.1:9001.
+[13212] [Step Debug] ERR: Time-out connecting to debugging client, waited: 200 ms. Tried: 127.0.0.1:9001 (through xdebug.client_host/xdebug.client_port).

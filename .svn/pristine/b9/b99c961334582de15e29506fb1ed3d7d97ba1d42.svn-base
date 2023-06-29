@@ -1,0 +1,65 @@
+//DataTable
+$(document).ready(function () {
+    $("#tblManufacturer").DataTable({
+        processing: true,
+        serverSide: true,
+        order: [[0, "ASC"]],
+        ajax: "manufacturerData",
+        fnRowCallback: function (nRow, aData, iDisplayIndex) {
+            $("td:first", nRow).html(iDisplayIndex + 1);
+            return nRow;
+        },
+        columns: [
+            { data: "id" },
+            { data: "manufacturer_id" },
+            { data: "manufacturer_name" },
+            { data: "pincode" },
+            { data: "pincode" },
+            {
+                data: "is_active",
+                render: function (data, type, row) {
+                    return `<label class="switch">
+                            <input onclick="doStatus(${row.id});" id="chkManufacturer${row.id}" type="checkbox" class="switch-input"
+                            name="chkManufacturer" '  ${(data == 1 ? "checked" : "")} ' />
+                            <span class="switch-toggle-slider">
+                                <span class="switch-on"></span>
+                                <span class="switch-off"></span>
+                            </span>
+                        </label>`;
+                }
+            },
+            { data: "action" },
+        ],
+    });
+    BindCity();
+    BindArea();
+});
+
+
+//Update Status
+function doStatus(id) {
+    var status = $("#chkManufacturer" + id).is(":checked");
+    if (status == true) {
+        $("#chkManufacturer").val(1);
+        status = 1;
+    } else {
+        $("#chkManufacturer").val(0);
+        status = 0;
+    }
+    confirmStatusChange(id, "manufacturer/", "tblManufacturer", status);
+}
+
+
+//Delete Data
+function showDelete(id) {
+    confirmDelete(id, "delete/manufacturer/", "tblManufacturer");
+}
+
+//Third Party Tie-up
+$('#chkIsThirdParty').click(function () {
+    if ($('#chkIsThirdParty').is(':checked')) {
+        $(".ThirdParty").show();
+    } else {
+        $(".ThirdParty").hide();
+    }
+});

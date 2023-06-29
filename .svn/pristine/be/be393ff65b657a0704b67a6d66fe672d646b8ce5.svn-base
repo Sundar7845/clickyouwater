@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Http\Controllers\StockManagement;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class ManufacturerStockController extends Controller
+{
+    public function ManufacturerStock()
+    {
+        return view('stock_management.manufacturer_stock');
+    }
+}

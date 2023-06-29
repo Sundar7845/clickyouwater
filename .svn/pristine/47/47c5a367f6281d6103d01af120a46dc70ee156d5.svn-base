@@ -1,0 +1,684 @@
+<?php
+
+namespace App\Http\Controllers\API\Delivery;
+
+use App\Enums\RoleTypes;
+use App\Enums\StatusTypes;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\DeliveryPersonOrderResource;
+use App\Http\Resources\DPDeliveredOrderResource;
+use App\Models\CustomerStock;
+use App\Models\CustomerStockHistory;
+use App\Models\DeliveryPerson;
+use App\Models\DeliveryPersonStock;
+use App\Models\DeliveryPersonStockHistory;
+use App\Models\Order;
+use App\Models\OrderDelivery;
+use App\Models\User;
+use App\Traits\Common;
+use App\Traits\ResponseAPI;
+use Carbon\Carbon;
+use DateTime;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+use Intervention\Image\Facades\Image;
+
+class DeliveryPersonController extends Controller
+{
+    use ResponseAPI;
+    use Common;
+    public function getDeliveryPersonInfo($user_id = null)
+    {
+        try {
+
+            $user_id = ($user_id ? $user_id : Auth::user()->id);
+            $user = User::where('id', $user_id)->first();
+            $delivery_person = DeliveryPerson::where('id', $user->ref_id)->first();
+            //assigned orders count
+            $new_orders = $this->getOrders(StatusTypes::AssignedToDelivery, $user_id)->count();
+            //orders accepted by delivery person but not delivered count
+            $pending_orders = $this->getOrders(StatusTypes::OrderShipped, $user_id)->count();
+
+            //orders assigned count
+            $orders_assigned = $this->getOrders(
+                implode(',', [
+                    StatusTypes::AssignedToDelivery,
+                    StatusTypes::OrderShipped
+                ]),
+                $user_id
+            )->count();
+
+            //orders not delivered count
+            $orders_not_delivered = $this->getDPCouldNotDeliveredCount();
+            //orders delivered count
+            $orders_delivered = $this->getOrders(StatusTypes::OrderDelivered, $user_id)->count();
+
+            //get delivery persons monthly summary count
+            $assigned_orders = $this->getOrders(
+                implode(',', [
+                    StatusTypes::AssignedToDelivery,
+                    StatusTypes::OrderShipped
+                ]),
+                $user_id
+            )->whereMonth('order_deliveries.created_at', Carbon::now()->month)->count();
+            $delivered_orders = $this->getOrders(StatusTypes::OrderDelivered, $user_id)->whereMonth('order_deliveries.created_at', Carbon::now()->month)->count();
+
+            $on_time_deliveries = $this->getOrders(StatusTypes::OrderDelivered, $user_id)
+                ->whereColumn('order_deliveries.delivered_on', '<=', 'orders.exp_delivery_date')
+                ->count();
+            $same_day_deliveries = $this->getOrders(StatusTypes::OrderDelivered, $user_id)
+                ->whereMonth('order_deliveries.created_at', Carbon::now()->month)
+                ->where(DB::raw("DATE(order_deliveries.created_at)"), '=', DB::raw("DATE(order_deliveries.delivered_on)"))
+                ->count();
+            // dd($same_day_deliveries);
+            //TODO::missed_damaged_items
+            $missed_damaged_items = 0;
+            $month_summary =  array(
+                'assigned_orders' => $assigned_orders,
+                'delivered' => $delivered_orders,
+                'on_time_deliveries' => $on_time_deliveries,
+                'same_day_deliveries' => $same_day_deliveries,
+                'missed_damaged_items' => $missed_damaged_items,
+            );
+
+            //get empty cans count
+            $empty_cans = $this->getDPEmptyCansCount($user_id);
+
+            //get highlighted orders for delivery person
+            $dp_orders = $this->getOrders(null, $user_id)->where('order_deliveries.is_highlighted', 1)->first();
+            $highlighted_order = null;
+            if ($dp_orders) {
+                $highlighted_order = array(
+                    'order_id' => $dp_orders->id,
+                    'order_no' => $dp_orders->order_no
+                );
+            }
+
+            //Get pending orders count based on product type
+            $pending_orders_list = $this->getOrders(StatusTypes::OrderShipped, $user_id)->get();
+            $watercan_list = [];
+            $others_list = [];
+            if ($pending_orders_list) {
+                foreach ($pending_orders_list as $key => $order) {
+                    // dd($order->orderDets);
+                    foreach ($order->orderDets as $key => $orderdet) {
+                        $item = [
+                            'product_type_id' => $orderdet->products->productType->id,
+                            'product_type_name' => $orderdet->products->productType->product_type_name,
+                            'qty' => $orderdet->qty,
+                        ];
+
+                        if ($orderdet->products->category->is_watercan) {
+                            $watercan_list[] = $item;
+                        } else {
+                            $others_list[] = $item;
+                        }
+                    }
+                }
+            }
+
+            $grouped_watercan_list = collect($watercan_list)->groupBy('product_type_id');
+
+            //Water cans list
+            $product_watercan_list = $grouped_watercan_list->map(function ($list) {
+                $total_qty = $list->sum('qty');
+                $firstItem = $list->first();
+
+                return [
+                    'product_type_id' => $firstItem['product_type_id'],
+                    'product_type_name' => $firstItem['product_type_name'],
+                    'qty' => $total_qty,
+                ];
+            })->values()->all();
+
+
+            //TODO::others list
+
+            // dd($product_watercan_list);
+
+            //get incentives for delivery person
+            //TODO::live_incentives
+            $live_incentives = null;
+
+            $delivery_person_info = array(
+                'id' => $user->ref_id,
+                'delivery_user_id' => $user->id,
+                'name' => $delivery_person->delivery_person_name,
+                'code' => $delivery_person->delivery_person_code,
+                'email' => $delivery_person->email,
+                'user_img_path' => $this->getBaseUrl() . '/' . $delivery_person->delivery_person_image,
+                'last_login' => $user->last_login,
+                'mobile' => $user->mobile,
+                'role' => $user->role->role_name,
+                'customer_rating' => $this->getDPRating($user->id),
+                'checked_in_date' => $delivery_person->checked_in,
+                'checked_in' => ($delivery_person->checked_in != null ? DateTime::createFromFormat('Y-m-d H:i:s', $delivery_person->checked_in)->format('d M,y h:i A') : null),
+                'month_summary' => $month_summary,
+                'new_orders' => $new_orders,
+                'pending_orders' => $pending_orders,
+                'pending_orders_by_type' => $product_watercan_list,
+                'orders_assigned' => $orders_assigned,
+                'orders_delivered' => $orders_delivered,
+                'could_not_deliver' => $orders_not_delivered,
+                'empty_cans' => $empty_cans,
+                'highlighted_order' => $highlighted_order,
+                'live_incentives' => $live_incentives
+            );
+
+            $response = array(
+                'message' => "Success",
+                'data' => $delivery_person_info,
+                'status' => true,
+            );
+
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    public function getDPEmptyCansCount($user_id)
+    {
+        $empty_can = 0;
+        $orders = $this->getOrders(StatusTypes::OrderShipped, $user_id)->get();
+
+        if ($orders) {
+            foreach ($orders as $key => $order) {
+                foreach ($order->orderDets as $key => $orderDet) {
+                    $empty_can += $orderDet->return_empty_cans_qty;
+                }
+            }
+        }
+        return $empty_can;
+    }
+
+    public function updateDPProfileImg(Request $request)
+    {
+        try {
+            $delivery_person = DeliveryPerson::where('id', Auth::user()->ref_id)->select('delivery_person_image')->first();
+
+            $file_path = $delivery_person->delivery_person_image;
+            if ($request->hasFile('image')) {
+                // Check the file exists at a given path
+                if (File::exists(public_path($delivery_person->delivery_person_image))) {
+                    // Delete the file at a given path
+                    File::delete(public_path($delivery_person->delivery_person_image));
+                }
+
+                $image = $request->file('image');
+                // Generate a unique file name for the image
+                $fileName = $delivery_person->id . '_' . $this->generateRandom(16) . '.' . $image->getClientOriginalExtension();
+
+                // Resize and save the image using the intervention/image package
+                $image = Image::make($image->getRealPath());
+                $image->resize(400, 400, function ($constraint) {
+                    $constraint->aspectRatio();
+                });
+                $file_path = 'upload/deliverypersons/' . $fileName;
+                $image->save(public_path($file_path));
+            }
+
+            DeliveryPerson::where('id', Auth::user()->ref_id)->update([
+                'delivery_person_image' => $file_path
+            ]);
+            $response = array(
+                'message' => "Success",
+                'data' => [],
+                'status' => true,
+            );
+
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    public function getDeliveryHistory(Request $request)
+    {
+        try {
+
+            $user_id = ($request->user_id ? $request->user_id : Auth::user()->id);
+            $user = User::where('id', $user_id)->first();
+
+            $delivery_person = DeliveryPerson::where('id', $user->ref_id)->first();
+            // dd($request->to_date);
+            $fromDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay();
+            $toDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay();
+
+            //get delivery persons monthly summary count
+            $assigned_orders = $this->getOrders(StatusTypes::AssignedToDelivery, $user_id)
+                ->whereBetween('order_deliveries.created_at', [$fromDate, $toDate])
+                ->count();
+            $delivered_orders = $this->getOrders(StatusTypes::OrderDelivered, $user_id)
+                ->whereBetween('order_deliveries.created_at', [$fromDate, $toDate])
+                ->count();
+            $on_time_deliveries = $this->getOrders(StatusTypes::OrderDelivered, $user_id)
+                ->whereBetween('order_deliveries.created_at', [$fromDate, $toDate])
+                ->whereColumn('order_deliveries.delivered_on', '<=', 'orders.exp_delivery_date')
+                ->count();
+            $same_day_deliveries = $this->getOrders(StatusTypes::OrderDelivered, $user_id)
+                ->whereBetween('order_deliveries.created_at', [$fromDate, $toDate])
+                ->where(DB::raw("DATE(order_deliveries.created_at)"), '=', DB::raw("DATE(order_deliveries.delivered_on)"))
+                ->count();
+            // dd($same_day_deliveries);
+            //TODO::missed_damaged_items
+            $missed_damaged_items = 0;
+
+            $delivered_orders_list =  $this->getOrders(StatusTypes::OrderDelivered, $user_id)
+                ->whereBetween('order_deliveries.created_at', [$fromDate, $toDate])
+                ->get();
+            $delivery_person_info = array(
+                'assigned_orders' => $assigned_orders,
+                'delivered' => $delivered_orders,
+                'on_time_deliveries' => $on_time_deliveries,
+                'same_day_deliveries' => $same_day_deliveries,
+                'missed_damaged_items' => $missed_damaged_items,
+                'delivered_orders_list' => DPDeliveredOrderResource::collection($delivered_orders_list)
+            );
+
+            $response = array(
+                'message' => "Success",
+                'data' => $delivery_person_info,
+                'status' => true,
+            );
+
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    public function updateDeliveryPersonCheckInStatus(Request $request)
+    {
+        try {
+
+            $delivery_person = DeliveryPerson::where('id', $this->getRefId(Auth::user()->id, RoleTypes::DeliveryPerson))
+                ->where('hub_id', $request->hub_id)->first();
+            if ($delivery_person) {
+                $delivery_person->is_online = 1;
+                $delivery_person->checked_in = Carbon::now();
+                $delivery_person->save();
+            }
+            $response = array(
+                'message' => ($delivery_person ? "Success" : "Failed"),
+                'data' => [],
+                'status' => ($delivery_person ? true : false),
+            );
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    public function updateDeliveryPersonCheckOutStatus()
+    {
+        try {
+            $delivery_person = DeliveryPerson::find($this->getRefId(Auth::user()->id, RoleTypes::DeliveryPerson));
+            $delivery_person->is_online = 0;
+            $delivery_person->checked_in = null;
+            $delivery_person->save();
+
+            $response = array(
+                'message' => "Success",
+                'data' => [],
+                'status' => true,
+            );
+
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    public function updateHighlightedOrder($order_id)
+    {
+        try {
+
+            $highlighted_order_count = OrderDelivery::where('order_id', $order_id)
+                ->where('delivery_user_id', Auth::user()->id)
+                ->where('is_highlighted', 1);
+
+            if ($highlighted_order_count->count() > 0) {
+                $highlighted_order_count->update(['is_highlighted' => 0]);
+            } else {
+                //remove highlighted orders for logged in delivery person
+                OrderDelivery::where('delivery_user_id', Auth::user()->id)
+                    ->update(['is_highlighted' => 0]);
+
+                //set highlighted order for given order id
+                OrderDelivery::where('order_id', $order_id)
+                    ->where('delivery_user_id', Auth::user()->id)
+                    ->where('is_notdelivered', 0)
+                    ->update(['is_highlighted' => 1]);
+            }
+            $response = array(
+                'message' => "Success",
+                'data' => [],
+                'status' => true,
+            );
+
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    public function updateDeliveryDetails(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+
+            //set highlighted order for given order id
+            OrderDelivery::where('order_id', $request->order_id)
+                ->where('delivery_user_id', Auth::user()->id)
+                ->where('is_notdelivered', 0)
+                ->update(
+                    [
+                        'floor' => $request->floor,
+                        'is_lift' => $request->is_lift,
+                        'delivery_user_notes' => $request->delivery_user_notes,
+                    ]
+                );
+
+            $response = array(
+                'message' => "Success",
+                'data' => [],
+                'status' => true,
+            );
+            DB::commit();
+            return response($response, 200);
+        } catch (\Exception $e) {
+            DB::rollback(); // Roll back the transaction if an error occurs
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    public function updateOrderCouldNotDeliverStatus(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+
+            //set highlighted order for given order id
+            OrderDelivery::where('order_id', $request->order_id)
+                ->where('delivery_user_id', Auth::user()->id)
+                ->where('is_notdelivered', 0)
+                ->update(
+                    [
+                        'delivery_reason' => $request->delivery_reason,
+                        'is_notdelivered' => 1
+                    ]
+                );
+
+            //Update order status
+            $this->saveOrderStatus($request->order_id, StatusTypes::OrderPlaced);
+
+            //Add order status history
+            $this->addOrderStatusHistory($request->order_id, StatusTypes::OrderNotDelivered);
+
+            //Send notification
+            $this->sendOrderNotification($request->order_id, StatusTypes::OrderNotDelivered);
+
+            $response = array(
+                'message' => "Success",
+                'data' => [],
+                'status' => true,
+            );
+            DB::commit();
+            return response($response, 200);
+        } catch (\Exception $e) {
+            DB::rollback(); // Roll back the transaction if an error occurs
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    public function acceptAllDPOrders()
+    {
+        try {
+
+            //set highlighted order for given order id
+            $orders = $this->getOrders(StatusTypes::AssignedToDelivery)->get();
+
+            if ($orders) {
+                foreach ($orders as $key => $order) {
+                    $this->acceptOrder($order->order_id);
+                }
+            }
+
+            $response = array(
+                'message' => "Success",
+                'data' => [],
+                'status' => true,
+            );
+
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    public function acceptDPOrders(Request $request)
+    {
+        try {
+
+            $this->acceptOrder($request->order_id);
+
+            $response = array(
+                'message' => "Success",
+                'data' => [],
+                'status' => true,
+            );
+
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    public function acceptOrder($order_id)
+    {
+        DB::beginTransaction();
+        try {
+            $order = Order::where('id', $order_id)->first();
+
+            if ($order->orderDets) {
+                foreach ($order->orderDets as $key => $orderDet) {
+                    $del_stock = DeliveryPersonStock::where('delivery_user_id', Auth::user()->id)
+                        ->where('product_id', $orderDet->product_id)->first();
+                    if ($del_stock) {
+                        $del_stock->qty = $orderDet->qty;
+                        $del_stock->extra_qty = 0;
+                        $del_stock->return_empty_qty = $orderDet->return_empty_cans_qty;
+                        $del_stock->collected_empty_qty = 0;
+                        $del_stock->return_damaged_qty = 0;
+                        $del_stock->lost_qty = 0;
+                        $del_stock->save();
+                    } else {
+                        DeliveryPersonStock::create([
+                            'hub_id' => $order->hub_id,
+                            'delivery_user_id' => Auth::user()->id,
+                            'product_id' => $orderDet->product_id,
+                            'qty' => $orderDet->qty,
+                            'extra_qty' => 0,
+                            'return_empty_qty' => $orderDet->return_empty_cans_qty,
+                            'collected_empty_qty' => 0,
+                            'return_damaged_qty' => 0,
+                            'lost_qty' => 0
+                        ]);
+                    }
+
+                    DeliveryPersonStockHistory::create([
+                        'hub_id' => $order->hub_id,
+                        'delivery_user_id' => Auth::user()->id,
+                        'product_type_id' => $orderDet->products->productType->id,
+                        'brand_id' => $orderDet->products->brand->id,
+                        'category_id' => $orderDet->products->category->id,
+                        'product_id' => $orderDet->product_id,
+                        'inward_from_customer_qty' => 0,
+                        'outward_to_hub_qty' => 0,
+                        'inward_from_hub_qty' => $orderDet->qty,
+                        'inward_return_qty' => 0,
+                        'outward_to_customer_qty' => 0,
+                        'outward_return_qty' => 0
+                    ]);
+                }
+            }
+
+            //Update order status
+            $this->saveOrderStatus($order_id, StatusTypes::OrderShipped);
+            //Add order status history
+            $this->addOrderStatusHistory($order_id, StatusTypes::OrderShipped);
+            DB::commit();
+
+            //Send notification
+            $this->sendOrderNotification($order_id, StatusTypes::OrderShipped);
+        } catch (\Exception $e) {
+            DB::rollback(); // Roll back the transaction if an error occurs
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    public function rejectDPOrder(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+
+            $delivery = OrderDelivery::where('delivery_user_id', $request->delivery_user_id)
+                ->where('order_id', $request->order_id)
+                ->where('is_notdelivered', 0)
+                ->whereNull('delivered_on')->first();
+            if ($delivery) {
+                $delivery->delete();
+
+                //Update order status
+                $this->saveOrderStatus($request->order_id, StatusTypes::OrderPlaced);
+                //Add order status history
+                $this->addOrderStatusHistory($request->order_id, StatusTypes::OrderPlaced);
+                //Send notification
+                $this->sendOrderNotification($request->order_id, StatusTypes::OrderPlaced);
+            }
+            $response = array(
+                'message' => "Success",
+                'data' => [],
+                'status' => true,
+            );
+
+            DB::commit();
+            return response($response, 200);
+        } catch (\Exception $e) {
+            DB::rollback(); // Roll back the transaction if an error occurs
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    public function confirmDelivery(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+
+            $order = Order::where('id', $request->order_id)->first();
+
+            if ($order->orderDets) {
+                foreach ($order->orderDets as $key => $orderDet) {
+                    if ($orderDet->products->is_emptycan_return) {
+                        $cus_stock = CustomerStock::where('address_id', $order->delivery_address_id)
+                            ->where('product_id', $orderDet->product_id)->first();
+                        //Get damaged qty
+                        $damaged_qty = $this->getCustomerDamagedQty($request->damaged_cans, $orderDet->product_id);
+                        if ($cus_stock) {
+                            $cus_stock->user_id = $order->user_id;
+                            $cus_stock->address_id = $order->delivery_address_id;
+                            $cus_stock->product_id = $orderDet->product_id;
+                            $cus_stock->empty_qty += ($orderDet->qty - ($orderDet->return_empty_cans_qty + $damaged_qty));
+                            $cus_stock->damaged_qty += $damaged_qty;
+                            $cus_stock->save();
+                        } else {
+                            CustomerStock::create([
+                                'user_id' => $order->user_id,
+                                'address_id' => $order->delivery_address_id,
+                                'product_id' => $orderDet->product_id,
+                                'empty_qty' => ($orderDet->qty - ($orderDet->return_empty_cans_qty + $damaged_qty)),
+                                'damaged_qty' => $damaged_qty
+                            ]);
+                        }
+
+                        CustomerStockHistory::create([
+                            'user_id' => $order->user_id,
+                            'product_type_id' => $orderDet->products->productType->id,
+                            'brand_id' => $orderDet->products->brand->id,
+                            'category_id' => $orderDet->products->category->id,
+                            'product_id' => $orderDet->product_id,
+                            'inward_from_delivery_qty' => $orderDet->qty,
+                            'outward_empty_to_delivery_qty' => $orderDet->return_empty_cans_qty,
+                            'outward_return_qty' => $damaged_qty
+                        ]);
+                    }
+                }
+            }
+
+            //Update delivery date
+            OrderDelivery::where('order_id', $request->order_id)
+                ->where('delivery_user_id', Auth::user()->id)
+                ->where('is_notdelivered', 0)->update([
+                    'delivered_on' => Carbon::now()
+                ]);
+            //Update order status
+            $this->saveOrderStatus($request->order_id, StatusTypes::OrderDelivered);
+
+            //Add order status history
+            $this->addOrderStatusHistory($request->order_id, StatusTypes::OrderDelivered);
+
+
+            $highlighted_order_count = OrderDelivery::where('order_id', $request->order_id)
+                ->where('delivery_user_id', Auth::user()->id)
+                ->where('is_highlighted', 1);
+
+            if ($highlighted_order_count->count() > 0) {
+                $highlighted_order_count->update(['is_highlighted' => 0]);
+            }
+
+            DB::commit();
+
+            //Send notification
+            $this->sendOrderNotification($request->order_id, StatusTypes::OrderDelivered);
+
+            $response = array(
+                'message' => "Success",
+                'data' => [],
+                'status' => true,
+            );
+
+            return response($response, 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    public function getCustomerDamagedQty($damaged_cans, $productId)
+    {
+        if ($damaged_cans) {
+            foreach ($damaged_cans as $value) {
+                if ($value['product_id'] == $productId) {
+                    return $value['damaged_qty'];
+                }
+            }
+        } else {
+            return 0;
+        }
+    }
+}

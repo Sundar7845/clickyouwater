@@ -1,0 +1,107 @@
+@extends('layouts.main_master') @section('content')
+@section('title')
+    Dashboard | {{ $documentTitle }} Document
+@endsection
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-1 mb-4">
+        {{ $documentTitle }} Document
+    </h4>
+    <!-- DataTable with Buttons -->
+    <div class="col-lg-12 mb-4 mb-lg-0">
+        <div class="card mb-3">
+            <table class="table" cellspacing="0" cellpadding="0">
+                <thead>
+                    <tr>
+                        <th>{{ $documentTitle }} Code</th>
+                        <th>{{ $documentTitle }} Name</th>
+                        <th>{{ $documentTitle }} Mobile</th>
+                        <th>{{ $documentTitle }} Address</th>
+                    </tr>
+                <tbody>
+                    <tr>
+                        <td>{{ $userCode }}</td>
+                        <td>{{ $userName }}</td>
+                        <td>{{ $userMobile }}</td>
+                        <td>{{ $userAddress }}</td>
+                    </tr>
+                </tbody>
+                </thead>
+            </table>
+        </div>
+        <div class="card">
+            {{-- <div class="card-header d-flex justify-content-between">
+            </div> --}}
+            <input type="hidden" id="hddocumentmodule_id" value="{{ $documentmodule_id }}">
+            <div class="card-datatable table-responsive pt-0">
+                <table class="table">
+                    <thead id="tblDocument" class="border-bottom">
+                        <tr>
+                            <th>S.No</th>
+                            <th>Document Name</th>
+                            <th>Document</th>
+                            <th>Verification</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @php
+                            $serialNo = 1;
+                        @endphp
+                        @foreach ($documents as $item)
+                            <tr>
+                                <td>{{ $serialNo }}</td>
+                                <td>{{ $item->documentType->documenttype_name }}</td>
+                                <td>
+                                    @if ($item->document_path)
+                                        <a href="{{ asset($item->document_path) }}" target="_blank"
+                                            class="badge bg-label-warning border-0">Preview</a>
+                                    @else
+                                        <a class="badge bg-label-danger border-0">NA</a>
+                                    @endif
+
+                                </td>
+                                <td>
+                                    <div class="col-sm-6">
+                                        <label class="switch">
+                                            <input onclick="doVerify({{ $item->id }});"
+                                                id="chkVerifyDocument{{ $item->id }}" name="chkVerifyDocument"
+                                                type="checkbox" class="switch-input"
+                                                @if ($item->is_verified == 1) checked @endif />
+                                            <span class="switch-toggle-slider">
+                                                <span class="switch-on"></span>
+                                                <span class="switch-off"></span>
+                                            </span>
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
+                            @php
+                                $serialNo++;
+                            @endphp
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--/ DataTable with Buttons -->
+</div>
+
+<!-- viewDocument Modal -->
+<div class="modal fade" id="viewDocument" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-simple">
+        <div class="modal-content p-3 p-md-5">
+            <div class="modal-body">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="text-center mb-4">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--/ viewDocument Modal -->
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/admin/document_update/updatedocument.js') }}"></script>
+@endsection

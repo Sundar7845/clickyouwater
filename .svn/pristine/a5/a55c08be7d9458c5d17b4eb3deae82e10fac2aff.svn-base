@@ -1,0 +1,138 @@
+@extends('layouts.main_master') @section('content')
+@section('title')
+    Dashboard | Report
+@endsection
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-1 mb-4">
+        Products Report
+    </h4>
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-12 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <form class="browser-default-validation">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Category Name
+                                    </label>
+                                    <select name="" id="" class="select2 form-select form-select-lg">
+                                        <option value="">Select</option>
+                                        <option value="TN">20L Watercan</option>
+                                        <option value="KL">Bottled Water / Beverages</option>
+                                        <option value="AP">Bulk Water</option>
+                                        <option value="TN">40L Watercan</option>
+                                        <option value="OR">Adiyogi</option>
+                                        <option value="WA">Smartblue</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Product Type
+                                    </label>
+                                    <select name="" id="" class="select2 form-select form-select-lg">
+                                        <option value="">Select</option>
+                                        <option value="TN">Elite</option>
+                                        <option value="KL">Premium</option>
+                                        <option value="AP">Classic</option>
+                                        <option value="KA">Agriya</option>
+                                        <option value="OR">Bulk water</option>
+                                        <option value="OR">Drinking water</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Product Name
+                                    </label>
+                                    <select name="" id="" class="select2 form-select form-select-lg">
+                                        <option value="">Select</option>
+                                        <option value="KL">Bottled Water / Beverages</option>
+                                        <option value="AP">Bulk Water</option>
+                                        <option value="TN">40L Watercan</option>
+                                        <option value="OR">Adiyogi</option>
+                                        <option value="WA">Smartblue</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Filter By Date</label>
+                                    <div class="input-group">
+                                        <button type="button" class="btn btn-flat btn-primary" id="btnDate"
+                                            style="height: 36px;">
+                                            <i class="fa fa-calendar"></i><span id="spnDate"
+                                                style="padding-left: 5px;">Today</span>
+                                            <i class="fa fa-caret-down"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+    <!-- DataTable with Buttons -->
+    <div class="col-lg-12 mb-4 mb-lg-0">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between">
+                <h5 class="card-title m-0 me-2">Products List</h5>
+            </div>
+            <div class="card-datatable table-responsive pt-0">
+                <table id="productreport" class="table">
+                    <thead class="border-bottom">
+                        <tr>
+                            <th>S.No</th>
+                            <th>Category Name</th>
+                            <th>Product Type</th>
+                            <th>Product Name</th>
+                            <th>Avl. Qty</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>20L Watercan</td>
+                            <td>Elite</td>
+                            <td>Bottled Water / Beverages</td>
+                            <td>200</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Smartblue</td>
+                            <td>Premium</td>
+                            <td>Bulk Water</td>
+                            <td>150</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>20L Watercan</td>
+                            <td>Classic</td>
+                            <td>Adiyogi</td>
+                            <td>400</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Smartblue</td>
+                            <td>Regular</td>
+                            <td>Drinking water</td>
+                            <td>320</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--/ DataTable with Buttons -->
+</div>
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/admin/reports/productreport.js') }}"></script>
+@endsection

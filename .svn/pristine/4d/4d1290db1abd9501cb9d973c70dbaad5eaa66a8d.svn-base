@@ -1,0 +1,157 @@
+@extends('layouts.main_master') @section('content')
+@section('title')
+    Dashboard | Feedback
+@endsection
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-1 mb-4">
+        Feedback
+    </h4>
+    <!-- DataTable with Buttons -->
+    <div class="col-lg-12 mb-4 mb-lg-0">
+        <div class="card h-100">
+            <div class="card-datatable table-responsive pt-0">
+                <table id="feedback" class="table">
+                    <thead class="border-bottom">
+                        <tr>
+                            <th>S.No</th>
+                            <th>Order ID</th>
+                            <th>Customer Name</th>
+                            <th>Date</th>
+                            <th>Quality</th>
+                            <th>Delivery</th>
+                            <th>Service</th>
+                            <th>Action Taken</th>
+                            <th>Upload Record</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>CUSORD004</td>
+                            <td>Jagan
+                                <div class="text-muted p-1">
+                                    <small class="bg-light p-1">8963254170</small>
+                                </div>
+                            </td>
+                            <td>12/12/2023</td>
+                            <td>5.0</td>
+                            <td>5.0</td>
+                            <td>5.0</td>
+                            <td>
+                                <select name="fdAction" id="fdAction" class="form-select">
+                                    <option value="">Select</option>
+                                    <option value="1">Problem Solved</option>
+                                    <option value="2">Need to vist directly</option>
+                                    <option value="2">Need to give offers</option>
+                                    <option value="2">Others</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="file" class="form-control">
+                            </td>
+                            <td>
+                                <button type="submit" class="btn btn-success">Save</button>
+                                <button type="button" class="btn btn-danger">Cancel</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>CUSORD006</td>
+                            <td>Rajan
+                                <div class="text-muted p-1">
+                                    <small class="bg-light p-1">7896543210</small>
+                                </div>
+                            </td>
+                            <td>12/12/2023</td>
+                            <td>5.0</td>
+                            <td>5.0</td>
+                            <td>5.0</td>
+                            <td>
+                                <select name="fdAction" id="fdAction" class="form-select">
+                                    <option value="">Select</option>
+                                    <option value="1">Problem Solved</option>
+                                    <option value="2">Need to vist directly</option>
+                                    <option value="2">Need to give offers</option>
+                                    <option value="2">Others</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="file" class="form-control">
+                            </td>
+                            <td>
+                                <button type="submit" class="btn btn-success">Save</button>
+                                <button type="button" class="btn btn-danger">Cancel</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>CUSORD008</td>
+                            <td>James
+                                <div class="text-muted p-1">
+                                    <small class="bg-light p-1">9632587410</small>
+                                </div>
+                            </td>
+                            <td>12/12/2023</td>
+                            <td>5.0</td>
+                            <td>5.0</td>
+                            <td>5.0</td>
+                            <td>
+                                <select name="fdAction" id="fdAction" class="form-select">
+                                    <option value="">Select</option>
+                                    <option value="1">Problem Solved</option>
+                                    <option value="2">Need to vist directly</option>
+                                    <option value="2">Need to give offers</option>
+                                    <option value="2">Others</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="file" class="form-control">
+                            </td>
+                            <td>
+                                <button type="submit" class="btn btn-success">Save</button>
+                                <button type="button" class="btn btn-danger">Cancel</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>CUSORD010</td>
+                            <td>John
+                                <div class="text-muted p-1">
+                                    <small class="bg-light p-1">9876543210</small>
+                                </div>
+                            </td>
+                            <td>12/12/2023</td>
+                            <td>5.0</td>
+                            <td>5.0</td>
+                            <td>5.0</td>
+                            <td>
+                                <select name="fdAction" id="fdAction" class="form-select">
+                                    <option value="">Select</option>
+                                    <option value="1">Problem Solved</option>
+                                    <option value="2">Need to vist directly</option>
+                                    <option value="2">Need to give offers</option>
+                                    <option value="2">Others</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="file" class="form-control">
+                            </td>
+                            <td>
+                                <button type="submit" class="btn btn-success">Save</button>
+                                <button type="button" class="btn btn-danger">Cancel</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--/ DataTable with Buttons -->
+</div>
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/admin/feedback/feedback.js') }}"></script>
+@endsection

@@ -1,0 +1,51 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Offer;
+
+use App\Http\Controllers\Controller;
+use App\Models\Offer;
+use App\Models\OfferAllocation;
+use App\Models\OfferType;
+use App\Models\State;
+use Illuminate\Http\Request;
+
+class OffersController extends Controller
+{
+   public function offers($id = NULL)
+   {
+      $states = State::orderBy('state_name', 'ASC')->get();
+      $offerTypes = OfferType::get();
+      $offerallocation = OfferAllocation::where('offer_id', $id)->pluck('state_id')->toArray();
+      return view('admin.offer.offers',compact('states','offerTypes','offerallocation'));
+   }
+
+   public function offersAllocate()
+   {
+      return view('admin.offer.offers_allocate');
+   }
+
+   public function offersCreate(Request $request){
+
+      $request->validate([
+         'ddlOfferType' => 'required',
+         'ddlState' => 'required',
+         'txtOfferName' => 'required',
+         'txtValidityDays' => 'required',
+         'txtStartDate' => 'required',
+         'txtEndDate' => 'required',
+         'txtOfferPoints' => 'required',
+         'txtfileImage' => 'required'
+      ]);
+
+      $data = $request->all();
+      $last_inserted_offer_id = Offer::insertGetId([
+         'offer_type_id' => $request->ddlOfferType,
+         'offer_name' => $request->txtOfferName,
+         'start_date' => $request->txtStartDate,
+         'end_date' => $request->txtEndDate,
+         'offer_points' => $request->txtOfferPoints,
+
+      ]);
+   }
+
+}

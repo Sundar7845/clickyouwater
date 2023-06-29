@@ -1,0 +1,67 @@
+<?php
+
+namespace App\Http\Controllers\API;
+
+use App\Http\Controllers\Controller;
+use App\Models\OfferCode;
+use Illuminate\Http\Request;
+use App\Traits\Common;
+use App\Traits\ResponseAPI;
+use Carbon\Carbon;
+
+class CouponController extends Controller
+{
+    //
+    use Common;
+    use ResponseAPI;
+
+    public function verifyCoupon($coupon = null)
+    {
+        # code...
+        try {
+
+            $offer_codes = OfferCode::with('offer')->where('offer_code', $coupon)->get();
+            if ($offer_codes->isEmpty()) {
+                $response = [
+                    'status' => true,
+                    'data' => [],
+                    'message' => "Code not Available"
+                ];
+                return response($response, 200);
+            }
+            // Offer
+
+            foreach ($offer_codes as $offer_code) {
+                $offer = $offer_code->offer;
+                $start_date = Carbon::parse($offer->start_date);
+                $end_date = Carbon::parse($offer->end_date);
+                $current_date = Carbon::now(); // current date and time
+
+                if ($current_date->gte($start_date) && $current_date->lte($end_date) &&$offer->is_active!=0) {
+                        // if($offer->offer_type_id==2){
+                        // }
+                        dd($offer->offerHubAllocation);
+
+
+                } else {
+                    $response = [
+                        'status' => true,
+                        'data' => [],
+                        'message' => "Code Expired!"
+                    ];
+                    return response($response, 200);
+                }
+            }
+
+            $response = [
+                'status' => true,
+                'data' => "empty",
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+}

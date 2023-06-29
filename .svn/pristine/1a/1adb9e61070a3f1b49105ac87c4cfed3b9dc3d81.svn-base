@@ -1,0 +1,67 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Masters;
+
+use App\Http\Controllers\Controller;
+use App\Models\City;
+use App\Models\Country;
+use App\Models\State;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+
+class StateController extends Controller
+{
+    public function state()
+    {
+        $state = State::get();
+        return view('admin.masters.state.state', compact('state'));
+    }
+
+    public function getStateData()
+    {
+        $state = State::get();
+        return datatables()->of($state)
+            ->addColumn('action', function ($row) {
+                $html = '<label class="switch">
+                                <input onclick="doStatus(' . $row->id . ');" id="chkState' . $row->id . '" type="checkbox" class="switch-input" 
+                                name="chkState" ' . ($row->is_active == 1 ? "checked" : "") . ' />
+                                <span class="switch-toggle-slider">
+                                    <span class="switch-on"></span>
+                                    <span class="switch-off"></span>
+                                </span>
+                            </label>';
+                return $html;
+            })->toJson();
+    }
+
+    public function syncState()
+    {
+        $country = Country::first();
+        $states = Http::withHeaders([
+            'X-CSCAPI-KEY' => 'WVo5c0hpUWVGNGhkRWNTSzZ2bmpVZkZYWmZFUHNjaENsSm16djE0UQ=='
+        ])->get("https://api.countrystatecity.in/v1/countries/IN/states")->collect();
+        foreach ($states as $state) {
+            $is_value_entered = State::where('state_name', $state['name'])->where('country_id', $country->id)->first();
+            if ($is_value_entered == null) {
+                State::create([
+                    'state_name'  => $state['name'],
+                    'state_code'  => $state['iso2'],
+                    'country_id'  => $country->id
+                ]);
+            }
+        }
+
+        $notification = array(
+            'message' => 'States Synced Successfully',
+            'alert-type' => 'success'
+        );
+        return redirect()->route('state')->with($notification);
+    }
+
+    public function activeStatus($id, $status)
+    {
+        State::findorfail($id)->update([
+            'is_active' => $status
+        ]);
+    }
+}

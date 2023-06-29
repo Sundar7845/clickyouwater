@@ -1,0 +1,244 @@
+<?php
+
+namespace App\Http\Controllers\Admin\LogisticManagement;
+
+use App\Enums\MenuPermissionType;
+use App\Enums\RoleTypes;
+use App\Http\Controllers\Controller;
+use App\Models\Hub;
+use App\Models\LogisticDriverInfo;
+use App\Models\LogisticPartner;
+use App\Models\LogisticVehicleInfo;
+use App\Models\User;
+use Illuminate\Http\Request;
+use App\Traits\Common;
+use Exception;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+
+class LogisticDriverInfoController extends Controller
+{
+    use common;
+    public function LogisticDriverInfo()
+    {
+        try {
+            if (Auth::user()->role_id == RoleTypes::LogisticPartner) {
+                $logistic_partner_id = User::select('ref_id')->where('id', Auth::user()->id)->pluck('ref_id')->first();
+            } else {
+                $logistic_partner_id = 0;
+            }
+
+            $logisticPartners = LogisticPartner::select('id', 'logistic_partner_name')->get();
+            $hubs = Hub::whereNull('deleted_at')->get();
+            return view('admin.logistic_management.add_logistic_driver_info', compact('logisticPartners', 'hubs', 'logistic_partner_id'));
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function addLogisticDriverInfo(Request $request)
+    {
+        $validatedData = $request->validate([
+            'ddlLogisticPartner' => 'required',
+            'ddlLogisticVehicle' => 'required',
+            'ddlHub' => 'required',
+            'txtDriverName' => 'required',
+            'txtLicenseNo' => 'required',
+            // 'fileLicense' => 'required',
+            'dtLicenseExpiry' => 'required',
+            'txtMobileNo' => 'required',
+            'txtPassword' => 'required|min:6',
+            'txtConfirmPassword' => 'required|same:txtPassword|min:6'
+        ]);
+
+        DB::beginTransaction();
+        try {
+
+            if ($request->hdLogisticDriverId == null) {
+
+                if ($request->hasFile('fileLicense')) {
+                    $file = $request->file('fileLicense');
+                    if ($file != null) {
+                        $extension = $file->getClientOriginalExtension();
+                        $fileName = $this->generateRandom(16) . '.' . $extension;
+                    } else {
+                        throw new Exception('File is null');
+                    }
+                }
+
+                $logist_partner_id = LogisticDriverInfo::insertGetId([
+                    'logistic_partner_id' => $request->ddlLogisticPartner,
+                    'logistic_vehicle_id' => $request->ddlLogisticVehicle,
+                    'hub_id' => $request->ddlHub,
+                    'driver_name' => $request->txtDriverName,
+                    'license_no' => $request->txtLicenseNo,
+                    'license_doc_path' => $this->fileUpload($file, 'upload/logistics/Drivers' . $request->hdLogisticDriverId, $fileName),
+                    'license_expiry' => $request->dtLicenseExpiry,
+                    'mobile_no' => $request->txtMobileNo,
+                    'created_by' => Auth::user()->id
+                ]);
+
+                //Create User Login Account For Driver
+                $this->createUser(
+                    $request->txtMobileNo,
+                    '',
+                    $request->txtPassword,
+                    $logist_partner_id,
+                    $request->txtDriverName,
+                    $request->txtMobileNo,
+                    18,
+                    1,
+                    Auth::user()->id
+                );
+
+                $notification = array(
+                    'message' => 'Driver Info Created Successfully!',
+                    'alert-type' => 'success'
+                );
+            } else {
+                $oldImgae = $request->hdFileLicense;
+                if ($request->hasFile('fileLicense')) {
+                    $file = $request->file('fileLicense');
+                    if ($file != null) {
+                        @unlink($oldImgae);
+                        $extension = $file->getClientOriginalExtension();
+                        $fileName = $this->generateRandom(16) . '.' . $extension;
+                        $oldImgae = dirname($oldImgae); // Use the same folder path as the old image
+                    } else {
+                        throw new Exception('File is null');
+                    }
+                }
+                LogisticDriverInfo::findorfail($request->hdLogisticDriverId)->update([
+                    'logistic_partner_id' => $request->ddlLogisticPartner,
+                    'logistic_vehicle_id' => $request->ddlLogisticVehicle,
+                    'hub_id' => $request->ddlHub,
+                    'driver_name' => $request->txtDriverName,
+                    'license_no' => $request->txtLicenseNo,
+                    'license_doc_path' => $request->hasFile('fileLicense') ? $this->fileUpload($file, $oldImgae, $fileName) : $oldImgae,
+                    'license_expiry' => $request->dtLicenseExpiry,
+                    'mobile_no' => $request->txtMobileNo,
+                    'updated_by' => Auth::user()->id
+                ]);
+
+
+
+                $notification = array(
+                    'message' => 'Driver Info Updated Successfully!',
+                    'alert-type' => 'success'
+                );
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            $notification = array(
+                'message' => 'Driver Info Not Created!',
+                'alert-type' => 'error'
+            );
+            $this->Log(__FUNCTION__, $request->method(), $e->getMessage(), Auth::user()->id, $request->ip(), gethostname());
+        }
+
+        return redirect()->route('logisticDriverInfo')->with($notification);
+    }
+
+    public function deletLogisticDriverInfo($id)
+    {
+        try {
+            $logisticDriverInfo = LogisticDriverInfo::findorfail($id);
+            $logisticDriverInfo->delete();
+            $logisticDriverInfo->Update([
+                'deleted_by' => Auth::user()->id
+            ]);
+
+            $notification = array(
+                'message' => 'Driver Info Deleted Successfully!',
+                'alert' => 'success'
+            );
+            return response()->json([
+                'responseData' => $notification
+            ]);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+            $notification = array(
+                'message' => 'Driver Info Could Not Be Deleted!',
+                'alert' => 'error'
+            );
+            return response()->json([
+                'responseData' => $notification
+            ]);
+        }
+    }
+
+    public function getLogisticDriverInfoById($id)
+    {
+        try {
+            $logisticDriverInfo = LogisticDriverInfo::where('id', $id)->whereNull('deleted_at')->first();
+            return response()->json([
+                'logisticDriverInfo' => $logisticDriverInfo
+            ]);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function getLogisticVehicleById($logistic_id)
+    {
+        try {
+            $logisticVehicle = LogisticVehicleInfo::where('logistic_partner_id', $logistic_id)->whereNull('deleted_at')->get();
+            return response()->json([
+                'logisticVehicle' => $logisticVehicle
+            ]);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function getHubsByLogisticId($id)
+    {
+        try {
+            $hubs = Hub::select('hubs.*')->join('logistics_hub_configs', 'logistics_hub_configs.hub_id', 'hubs.id')->where('logistics_hub_configs.logistic_partner_id', $id)->get();
+            return response()->json([
+                'hubs' => $hubs
+            ]);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+
+
+    public function getLogisticDriverInfoData()
+    {
+        try {
+            $logisticDriverInfoData = LogisticDriverInfo::select(
+                'logistic_driver_infos.*',
+                'logistic_partners.logistic_partner_name',
+                'logistic_vehicle_infos.reg_no',
+                'hubs.hub_name',
+                DB::raw("DATE_FORMAT(logistic_driver_infos.license_expiry, '%d/%m/%Y') as formatted_license_expiry")
+            )
+                ->join('logistic_partners', 'logistic_partners.id', 'logistic_driver_infos.logistic_partner_id')
+                ->join('logistic_vehicle_infos', 'logistic_vehicle_infos.id', 'logistic_driver_infos.logistic_vehicle_id')
+                ->join('hubs', 'hubs.id', 'logistic_driver_infos.hub_id')
+                ->whereNull('logistic_driver_infos.deleted_at')
+                ->whereNull('logistic_partners.deleted_at')
+                ->get();
+
+            return datatables()->of($logisticDriverInfoData)
+                ->addColumn('action', function ($row) {
+                    $html = "";
+                    if ($this->isUserHavePermission(MenuPermissionType::Edit)) {
+                        $html = '<i class="text-primary ti ti-pencil me-1"
+                onclick="doEdit(' . $row->id . ');"></i> ';
+                    }
+                    if ($this->isUserHavePermission(MenuPermissionType::Delete)) {
+                        $html .= '<i class="text-danger ti ti-trash me-1" id="confirm-color' . $row->id . '" onclick="showDelete(' . $row->id . ');"></i>';
+                    }
+                    return $html;
+                })->toJson();
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+}

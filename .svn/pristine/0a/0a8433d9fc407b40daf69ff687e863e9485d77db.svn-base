@@ -1,0 +1,368 @@
+<?php
+
+namespace App\Http\Controllers\Admin\HubManagement;
+
+use App\Http\Controllers\Controller;
+use App\Models\Area;
+use App\Models\BillNoSetting;
+use App\Models\City;
+use App\Models\DocumentConfig;
+use App\Models\Hub;
+use App\Models\HubDocuments;
+use App\Models\HubManufactureConfig;
+use App\Models\Manufacturer;
+use App\Models\State;
+use App\Models\User;
+use App\Traits\Common;
+use Illuminate\Database\QueryException;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+
+class HubController extends Controller
+{
+    use Common;
+    public function hub($id = NULL)
+    {
+        $manufacture = Manufacturer::all();
+        if ($id) {
+            $hub = Hub::find($id);
+            $states = State::all();
+            $citys = City::where('state_id', $hub->state_id)->get();
+            $areas = Area::where('city_id', $hub->city_id)->get();
+            $hubconfiq = HubManufactureConfig::where('hub_id', $id)->pluck('manufacturer_id')->toArray();
+            $hubExample = $hub->hub_id;
+            $documents = DocumentConfig::join('document_modules', 'document_modules.id', 'document_configs.documentmodule_id')
+                ->join('document_types', 'document_types.id', 'document_configs.documenttype_id')
+                ->where('documentmodule_id', 2)->where('is_active', 1)
+                ->select('document_configs.*', 'document_modules.module_name', 'document_types.documenttype_name')
+                ->get();
+            $hubDocuments = HubDocuments::where('hub_id', $id)->get();;
+            return view('admin.hub_management.hub', compact('states', 'documents', 'hub', 'hubExample', 'hubconfiq', 'citys', 'areas', 'manufacture', 'hubDocuments'));
+        }
+
+
+        $data = BillNoSetting::first();
+        $hubPrefix = $data->hub_prefix ?? 0;
+        $hubLength = $data->hub_length ?? 0;
+        $hubLive = (int)($data->hub_live ?? 0) + 1;
+        if ($hubLive) {
+            $hubNumber = $hubLive;
+        }
+        $hub = sprintf("%0{$hubLength}d", $hubNumber);
+        $hubExample = $hubPrefix . $hub;
+        $states = State::all();
+        $hubconfiq = HubManufactureConfig::where('hub_id', $id)->pluck('manufacturer_id')->toArray();
+        $documents = DocumentConfig::join('document_modules', 'document_modules.id', 'document_configs.documentmodule_id')
+            ->join('document_types', 'document_types.id', 'document_configs.documenttype_id')
+            ->where('documentmodule_id', 2)->where('is_active', 1)
+            ->select('document_configs.*', 'document_modules.module_name', 'document_types.documenttype_name')
+            ->get();
+        return view('admin.hub_management.hub', compact('states', 'documents', 'hubconfiq', 'hubExample', 'manufacture'));
+    }
+
+    public function hubCreate(Request $request)
+    {
+        // dd($request->all());
+        DB::beginTransaction();
+        try {
+            $request->validate([
+                "txthubId" => 'required',
+                "txthubName" => "required",
+                "ddlManufacturerName" => "required",
+                "txtYrsofExp" => "required",
+                "txtMobile" => "required|numeric|digits:10|unique:hubs,mobile",
+                "txtofficialEmail" => "required|email|unique:hubs,official_email",
+                "txtlatitude" => "required",
+                "txtlangtitute" => "required",
+                "txtgeolocation" => "required",
+                "txtRadius" => "required",
+                "txtcreditPeriod" => "required",
+                "txtsettlementPeriod" => "required",
+                "txtsecurityDeposit" => "required",
+                "ddlState" => "required",
+                "ddlCity" => "required",
+                "ddlArea" => "required",
+                "txtLandmark" => "required",
+                "txtpinCode" => "required",
+                "txtProprietorName" => "required",
+                "txtProprietorMobile" => "required|numeric|digits:10|unique:hubs,proprietor_mobile",
+                "txtProprietorEmail" => "required|email|unique:hubs,proprietor_email",
+                "txtContactPersonName" => "required",
+                "txtContactPersonMobile" => "required|numeric|digits:10|unique:hubs,contact_person_mobile",
+                "txtContactPersonEmail" => "required|email|unique:hubs,contact_person_email"
+            ]);
+
+            $data = $request->all();
+            $hub_data = Hub::insertGetId([
+                "hub_id" => $request->txthubId,
+                "hub_name" => $request->txthubName,
+                "years_of_experience" => $request->txtYrsofExp,
+                "mobile" => $request->txtMobile,
+                "official_email" => $request->txtofficialEmail,
+                "latitude" => $request->txtlatitude,
+                "longtitude" => $request->txtlangtitute,
+                "geo_location" => $request->txtgeolocation,
+                "radius" => $request->txtRadius,
+                "credit_period" => $request->txtcreditPeriod,
+                "settlement_period" => $request->txtsettlementPeriod,
+                "security_deposit" => $request->txtsecurityDeposit,
+                "state_id" => $request->ddlState,
+                "city_id" => $request->ddlCity,
+                "area_id" => $request->ddlArea,
+                "address" => $request->txtLandmark,
+                "pincode" => $request->txtpinCode,
+                "is_active" => 1,
+                "proprietor_name" => $request->txtProprietorName,
+                "proprietor_mobile" => $request->txtProprietorMobile,
+                "proprietor_email" => $request->txtProprietorEmail,
+                "contact_person_name" => $request->txtContactPersonName,
+                "contact_person_mobile" => $request->txtContactPersonMobile,
+                "contact_person_email" => $request->txtContactPersonEmail,
+                'created_by' => Auth::user()->id
+            ]);
+
+            foreach ($data['ddlManufacturerName'] as $value) {
+                HubManufactureConfig::create([
+                    'hub_id' => $hub_data,
+                    'manufacturer_id' => $value
+                ]);
+            }
+
+            $documents = DocumentConfig::join('document_modules', 'document_modules.id', 'document_configs.documentmodule_id')
+                ->join('document_types', 'document_types.id', 'document_configs.documenttype_id')
+                ->where('documentmodule_id', 2)->where('is_active', 1)
+                ->select('document_configs.*', 'document_modules.module_name', 'document_types.documenttype_name')
+                ->get();
+
+            foreach ($documents as $item) {
+                if ($item->is_mandatory == 1) {
+                    $doc = $request->doc_ . $item->id;
+                    $file = $request->file_ . $item->id;
+                    $notification = array(
+                        'message' => $item->documenttype_name . 'Required',
+                        'alert-type' => 'error'
+                    );
+                    return redirect()->route('hub')->withInput($notification);
+                }
+            }
+
+            foreach ($documents as $doc) {
+                if ($request->hasFile('file_' . $doc->id)) {
+                    $path = $request->file('file_' . $doc->id)->store('temp');
+                    $file = $request->file('file_' . $doc->id);
+                    $extension = $file->getClientOriginalExtension();
+                    $fileName = $this->generateRandom(16) . '.' . $extension;
+                }
+                $doc_id = 'doc_' . $doc->id;
+                HubDocuments::create([
+                    'hub_id' => $hub_data,
+                    'documentconfig_id' => $doc->id,
+                    'document_path' => ($request->hasFile('file_' . $doc->id)) ? $this->fileUpload($file, 'upload/hubs/' . $request->txthubId, $fileName) : '',
+                    'document_number' => $request->$doc_id
+                ]);
+            }
+
+
+            $data = BillNoSetting::first();
+            $data->hub_live = $data->hub_live + 1;
+            $data->save();
+
+            User::create([
+                'user_name' => $request->txthubName,
+                'email' => $request->txtofficialEmail,
+                'password' => Hash::make($request->txtMobile),
+                'role_id' => 4,
+                'display_name' => $request->txthubName,
+                'mobile' =>  $request->txtMobile,
+                'created_by' => Auth::user()->id
+            ]);
+
+            DB::commit(); // Commit the transaction
+            $notification = array(
+                'message' => 'Hub Created Successfully',
+                'alert-type' => 'success'
+            );
+
+            return redirect()->route('hub-list')->with($notification);
+        } catch (\Exception $e) {
+            DB::rollback(); // Roll back the transaction if an error occurs
+            $notification = array(
+                'message' => 'Something Went Wrong!',
+                'alert-type' => 'success'
+            );
+        }
+    }
+
+    public function hubUpdate(Request $request)
+    {
+        $request->validate([
+            "txthubId" => 'required',
+            "txthubName" => "required",
+            "ddlManufacturerName" => "required",
+            "txtYrsofExp" => "required",
+            "txtMobile" => "required|numeric|digits:10|unique:hubs,mobile,'.$request->id,",
+            "txtofficialEmail" => "required|email|unique:hubs,official_email,'.$request->id",
+            "txtlatitude" => "required",
+            "txtlangtitute" => "required",
+            "txtgeolocation" => "required",
+            "txtRadius" => "required",
+            "txtcreditPeriod" => "required",
+            "txtsettlementPeriod" => "required",
+            "txtsecurityDeposit" => "required",
+            "ddlState" => "required",
+            "ddlCity" => "required",
+            "ddlArea" => "required",
+            "txtLandmark" => "required",
+            "txtpinCode" => "required",
+            "txtProprietorName" => "required",
+            "txtProprietorMobile" => "required|numeric|digits:10|unique:hubs,proprietor_mobile,'.$request->id,",
+            "txtProprietorEmail" => "required|email|unique:hubs,proprietor_email,'.$request->id",
+            "txtContactPersonName" => "required",
+            "txtContactPersonMobile" => "required|numeric|digits:10|unique:hubs,contact_person_mobile,'.$request->id,",
+            "txtContactPersonEmail" => "required|email|unique:hubs,contact_person_email,'.$request->id"
+        ]);
+
+        $data = $request->all();
+        Hub::findorfail($request->id)->update([
+            "hub_id" => $request->txthubId,
+            "hub_name" => $request->txthubName,
+            "years_of_experience" => $request->txtYrsofExp,
+            "mobile" => $request->txtMobile,
+            "official_email" => $request->txtofficialEmail,
+            "latitude" => $request->txtlatitude,
+            "longtitude" => $request->txtlangtitute,
+            "geo_location" => $request->txtgeolocation,
+            "radius" => $request->txtRadius,
+            "credit_period" => $request->txtcreditPeriod,
+            "settlement_period" => $request->txtsettlementPeriod,
+            "security_deposit" => $request->txtsecurityDeposit,
+            "state_id" => $request->ddlState,
+            "city_id" => $request->ddlCity,
+            "area_id" => $request->ddlArea,
+            "address" => $request->txtLandmark,
+            "pincode" => $request->txtpinCode,
+            "proprietor_name" => $request->txtProprietorName,
+            "proprietor_mobile" => $request->txtProprietorMobile,
+            "proprietor_email" => $request->txtProprietorEmail,
+            "contact_person_name" => $request->txtContactPersonName,
+            "contact_person_mobile" => $request->txtContactPersonMobile,
+            "contact_person_email" => $request->txtContactPersonEmail,
+            'updated_by' => Auth::user()->id
+        ]);
+
+        HubManufactureConfig::where('hub_id', $request->id)->delete();
+        foreach ($data['ddlManufacturerName'] as $value) {
+            HubManufactureConfig::where('hub_id', $request->id)->updateorCreate([
+                'hub_id' => $request->id,
+                'manufacturer_id' => $value
+            ]);
+        }
+
+        $documents = DocumentConfig::join('document_modules', 'document_modules.id', 'document_configs.documentmodule_id')
+            ->join('document_types', 'document_types.id', 'document_configs.documenttype_id')
+            ->where('documentmodule_id', 2)->where('is_active', 1)
+            ->select('document_configs.*', 'document_modules.module_name', 'document_types.documenttype_name')
+            ->get();
+
+        foreach ($documents as $doc) {
+            if ($request->hasFile('file_' . $doc->id)) {
+                $path = $request->file('file_' . $doc->id)->store('temp');
+                $file = $request->file('file_' . $doc->id);
+                $extension = $file->getClientOriginalExtension();
+                $fileName = $this->generateRandom(16) . '.' . $extension;
+            }
+            $doc_id = 'doc_' . $doc->id;
+            HubDocuments::create([
+                'hub_id' => $request->id,
+                'documentconfig_id' => $doc->id,
+                'document_path' => ($request->hasFile('file_' . $doc->id)) ? $this->fileUpload($file, 'upload/hubs/' . $request->txthubId, $fileName) : $request->hdDocumentImg,
+                'document_number' => $request->$doc_id
+            ]);
+        }
+
+        $notification = array(
+            'message' => 'Hub Updated Successfully',
+            'alert-type' => 'success'
+        );
+        return redirect()->route('hub-list')->with($notification);
+    }
+
+    public function deleteHub($id)
+    {
+        try {
+            $hub = Hub::findorfail($id);
+            $hub->delete();
+
+            $hub->Update([
+                'deleted_by' => Auth::user()->id
+            ]);
+
+            $notification = array(
+                'message' => 'Hub Deleted Successfully',
+                'alert' => 'success'
+            );
+            return response()->json([
+                'responseData' => $notification
+            ]);
+        } catch (QueryException $e) {
+
+            $notification = array(
+                'message' => 'Hub could not be deleted',
+                'alert' => 'error'
+            );
+            return response()->json([
+                'responseData' => $notification
+            ]);
+        }
+    }
+
+    public function activeHubStatus($id, $status)
+    {
+        Hub::findorfail($id)->update([
+            'is_active' => $status,
+            'updated_by' => Auth::user()->id
+        ]);
+    }
+
+    public function hubList()
+    {
+        $states = State::orderBy('state_name', 'ASC')->get();
+        return view('admin.hub_management.hublist',compact('states'));
+    }
+
+    public function hubData(Request $request)
+    {
+        $manufacturerData = "";
+        $query = Hub::join('hub_manufacture_configs', 'hub_manufacture_configs.hub_id', 'hubs.id')
+            ->join('manufacturers', 'manufacturers.id', 'hub_manufacture_configs.manufacturer_id')
+            ->select('hubs.*', 'manufacturers.manufacturer_name')
+            ->groupby('hub_manufacture_configs.hub_id')
+            ->distinct();
+
+            if ($request->state_id > 0) {
+                $query = $query->where('hubs.state_id', $request->state_id);
+            }
+            if ($request->city_id > 0) {
+                $query = $query->where('hubs.city_id', $request->city_id);
+            }
+            if ($request->area_id > 0) {
+                $query = $query->where('hubs.area_id', $request->area_id);
+            }
+            
+            $manufacturerData = $query->get();
+
+        return datatables()->of($manufacturerData)
+            ->addColumn('action', function ($row) {
+                $html = '<a href="hub/' . $row->id . '"><i class="text-primary ti ti-pencil me-1"></i></a> ';
+                $html .= '<i class="text-danger ti ti-trash me-1" id="confirm-color' . $row->id . '" onclick="showDelete(' . $row->id . ');"></i>';
+                return $html;
+            })->toJson();
+    }
+
+    public function hubDocument()
+    {
+        return view('admin.hub_management.hub_document');
+    }
+}

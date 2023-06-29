@@ -1,0 +1,50 @@
+<?php
+
+namespace App\Http\Controllers\API;
+
+use App\Http\Controllers\Controller;
+use App\Http\Resources\WalletResource;
+use App\Models\UserWallet;
+use App\Models\WalletTransactionThrough;
+use App\Traits\Common;
+use App\Traits\ResponseAPI;
+use Illuminate\Support\Facades\Auth;
+
+class WalletController extends Controller
+{
+    use Common;
+    use ResponseAPI;
+
+    // This method gets the wallet history for a specific user
+    public function getWalletHistory()
+    {
+        try {
+            // Query the UserWallet model to get the wallet history for user
+            $wallethistory = UserWallet::with('walletTransactionType')->where('user_id', Auth::user()->id)
+                ->select('id', 'amount', 'balance', 'credit_debit', 'wallet_transaction_type_id', 'transaction_date', 'transaction_status', 'transaction_response', 'transaction_id')
+                ->get();
+
+            $wallethistory = WalletResource::collection($wallethistory);
+
+            foreach ($wallethistory as $history) {
+                $wallet_msg = WalletTransactionThrough::where('wallet_transaction_type_id', $history->wallet_transaction_type_id)
+                    ->pluck('msg_format')
+                    ->first();
+
+                $history->wallet_transaction_msg = str_replace("{{}}", $history->amount, $wallet_msg);;
+            }
+
+            // Build a response with the payment methods and a success status
+            $response = [
+                'status' => true,
+                'data' => $wallethistory,
+            ];
+            // Return the response with a 200 status code
+            return response($response, 200);
+        } catch (\Exception $e) {
+            // Log any exceptions that occur and return an error response with a 200 status code
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+}

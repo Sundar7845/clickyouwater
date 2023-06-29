@@ -1,0 +1,43 @@
+<?php
+
+namespace App\Http\Controllers\Admin\OrderManagement;
+
+use App\Http\Controllers\Controller;
+use App\Models\CustomerAddress;
+use App\Models\Order;
+use Illuminate\Http\Request;
+use App\Traits\Common;
+use Illuminate\Support\Facades\DB;
+
+class OrderDetailController extends Controller
+{
+    use Common;
+    public function orderDetail($id)
+    {
+       
+        $customeraddress = Order::select('orders.delivery_address')
+        ->join('users','users.id','orders.user_id')
+        ->join('customers','customers.id','users.ref_id')
+        ->where('customers.id',$id)
+        ->first();
+
+        $data = json_decode($customeraddress,true);
+
+        $billingaddress = CustomerAddress::select('customer_addresses.*','states.state_name','cities.city_name','customers.email')
+        ->join('customers','customers.id','customer_addresses.customer_id')
+        ->join('states','states.id','customer_addresses.state_id')
+        ->join('cities','cities.id','customer_addresses.city_id')
+        ->where('customers.id',$id)
+        ->where('customer_addresses.is_default',1)
+        ->first();
+
+        $invoicedetails = Order::select('orders.*','statuses.status', DB::raw("DATE_FORMAT(orders.created_at, '%d/%m/%Y %H:%i:%s %p') as formatted_order_date"),
+        'customers.customer_name')
+        ->join('users','users.id','orders.user_id')
+        ->join('customers','customers.id','users.ref_id')
+        ->join('statuses','statuses.id','orders.status_id')
+        ->where('customers.id',$id)
+        ->first();
+        return view('admin.order_management.order_detail.orders_view',compact('data','invoicedetails','billingaddress'));
+    }
+}

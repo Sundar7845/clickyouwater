@@ -1,0 +1,11 @@
+$(document).ready(function () {
+    $("#tblAreaList").DataTable();
+    BindCity();
+});
+
+function doEdit(id) 
+{
+    $("#txtAreaName").val($("#trarea" + id + " td:eq(3)").text());
+    $("#ddlState").val($("#trarea" + id).attr("SID")).trigger("change");
+    setTimeout(function () { $("#ddlCity").val($("#trarea" + id).attr("CID")).trigger("change");}, 1500);
+}

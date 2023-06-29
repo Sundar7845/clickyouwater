@@ -1,0 +1,103 @@
+//DataTable
+$(document).ready(function () {
+    $("#tblPaymentMethod").DataTable({
+        processing: true,
+        serverSide: true,
+        order: [[0, "ASC"]],
+        ajax: "paymentmethod/data",
+        fnRowCallback: function (nRow, aData, iDisplayIndex) {
+            $("td:first", nRow).html(iDisplayIndex + 1);
+            return nRow;
+        },
+        columns: [
+            { data: "id" },
+            { data: "customer_type" },
+            { data: "payment_method" },
+            {
+                data: "is_active",
+                render: function (data, type, row) {
+                    return `<label class="switch">
+                        <input onclick="doStatus(${row.id});" id="chkPaymentMethod${row.id}" type="checkbox" class="switch-input"
+                        name="chkPaymentMethod" '  ${(data == 1 ? "checked" : "")} ' />
+                        <span class="switch-toggle-slider">
+                            <span class="switch-on"></span>
+                            <span class="switch-off"></span>
+                        </span>
+                    </label>`;
+                }
+            },
+            { data: "action" },
+        ],
+    });
+});
+
+//Edit Data
+function doEdit(id) {
+    $("#hdPaymentMethodId").val(id);
+    $("#ddlCustomerType").focus();
+    $("#btnSave").text("Update");
+    getPaymentMethodById(id);
+}
+
+//Update Status
+function doStatus(id) {
+    var status = $("#chkPaymentMethod" + id).is(":checked");
+    confirmStatusChange(id, "paymentmethod/", "tblPaymentMethod", (status == true ? 1 : 0), "chkPaymentMethod");
+}
+
+//Delete Data
+function showDelete(id) {
+    confirmDelete(id, "delete/paymentmethod/", "tblPaymentMethod");
+}
+
+//Get Payment Method
+function getPaymentMethodById(id) {
+    $.ajax({
+        type: "GET",
+        url: "getpaymentmethod/" + id,
+        dataType: "json",
+        success: function (data) {
+            $("#ddlCustomerType").val(data.PaymentMethod.customer_type_id).trigger("change");
+            setTimeout(function () {
+                var paymentTypeIds = data.PaymentMethod.payment_method_id.split(",");console.log(paymentTypeIds);
+                $.each(paymentTypeIds, function (index, paymentTypeId) {
+                    $("#ddlPaymentMethod").append("<option value='" + paymentTypeId + "'>" + paymentTypeId + "</option>");
+                });
+            }, 2000);
+        },
+    });
+}
+
+
+
+//Cancel
+function cancel() {
+    $("#hdPaymentMethodId").val("");
+    $("#ddlCustomerType").val("").trigger("change");
+    $("#ddlPaymentMethod").val("").trigger("change");
+    $("#ddlCustomerType").focus();
+    $("#btnSave").text("Save");
+}
+
+// jquery Validation
+$(function () {
+
+    $("form[name='paymentmethod']").validate({
+
+        rules: {
+            ddlCustomerType: "required",
+            ddlPaymentMethod: "required",
+        },
+        errorPlacement: function (error, element) {
+            if (element.is(":radio")) {
+                error.appendTo(element.parents(".form-group"));
+            } else {
+                if (element.siblings(".error").html() == undefined) {
+                    error.appendTo(element.parent().next(".error"));
+                } else {
+                    error.appendTo(element.siblings(".error"));
+                }
+            }
+        },
+    });
+});

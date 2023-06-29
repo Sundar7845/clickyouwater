@@ -1,0 +1,86 @@
+//DataTable
+$(document).ready(function () {
+    $("#tblDesignation").DataTable({
+        processing: true,
+        serverSide: true,
+        order: [[0, "ASC"]],
+        ajax: "designation/data",
+        fnRowCallback: function (nRow, aData, iDisplayIndex) {
+            $("td:first", nRow).html(iDisplayIndex + 1);
+            return nRow;
+        },
+        columns: [
+            { data: "id" },
+            { data: "designation_name" },
+            { data: "designation_name" },
+            { data: "action" },
+        ],
+    });
+});
+
+//Edit Data
+function doEdit(id) {
+    $("#hdDesignationId").val(id);
+    $("#txtDesignationName").focus();
+    $("#btnSave").text("Update");
+    getDesignationById(id);
+}
+
+//Delete Confirmation
+function confirmDelete(id) {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        customClass: {
+            confirmButton: "btn btn-primary me-3",
+            cancelButton: "btn btn-label-secondary",
+        },
+        buttonsStyling: false,
+    }).then(function (result) {
+        if (result.value) {
+            doDelete(id);
+            Swal.fire({
+                icon: "success",
+                title: "Deleted!",
+                text: "Your file has been deleted.",
+                customClass: {
+                    confirmButton: "btn btn-success",
+                },
+            });
+        }
+    });
+}
+
+//Delete Data
+function doDelete(id) {
+    $.ajax({
+        type: "GET",
+        url: "delete/designation/" + id,
+        dataType: "json",
+        success: function (data) {
+        },
+    });
+}
+
+//Get Designation
+function getDesignationById(id) {
+    $.ajax({
+        type: "GET",
+        url: "getdesignation/" + id,
+        dataType: "json",
+        success: function (data) {
+            $("#txtDesignationName").val(data.designation.designation_name);
+        },
+    });
+}
+
+//Cancel
+function cancel() {
+    $("#hdDesignationId").val("");
+    $("#txtDesignationName").val("");
+    $("#txtDesignationName").focus();
+    $("#btnSave").text("Save");
+}

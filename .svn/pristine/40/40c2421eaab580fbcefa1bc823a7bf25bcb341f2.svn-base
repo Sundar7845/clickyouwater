@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Http\Controllers\Hub\Document;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class DocumentController extends Controller
+{
+    public function document()
+    {
+        return view('hub.document.document');
+    }
+}

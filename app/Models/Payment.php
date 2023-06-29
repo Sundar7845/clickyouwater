@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Payment extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'payment_date',
+        'payment_code',
+        'ledger_id',
+        'company_ledger_id',
+        'employee_user_id',
+        'payment_type_id',
+        'payment_mode_id',
+        'amount_paid',
+        'notes',
+        'bank_id',
+        'branch_name',
+        'transaction_date',
+        'transaction_number',
+        'is_cancelled',
+        'created_by',
+        'updated_by',
+    ];
+}

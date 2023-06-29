@@ -1,0 +1,24 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Settings;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class SettingsController extends Controller
+{
+    public function settings()
+    {
+        return view('admin.settings.settings');
+    }
+
+    public function BillSettings()
+    {
+        return view('admin.settings.bill_settings');
+    }
+
+    public function referralPoints()
+    {
+        return view('admin.settings.referral_points');
+    }
+}

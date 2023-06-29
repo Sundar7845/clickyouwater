@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Http\Controllers\Masters;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class DeliveryPersonController extends Controller
+{
+  public function DeliveryPerson()
+  {
+    return view('masters.delivery_person.delivery_person');
+  }
+}

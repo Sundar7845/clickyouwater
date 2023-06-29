@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Http\Controllers\DiscountManagement;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class OffersController extends Controller
+{
+   public function Offers()
+   {
+      return view('discount_management.offers');
+   }
+}

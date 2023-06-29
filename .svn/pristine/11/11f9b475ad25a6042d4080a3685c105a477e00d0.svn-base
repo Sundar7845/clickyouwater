@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Http\Controllers\Manufacturer\DamageCan;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class DamageCanController extends Controller
+{
+    public function damageCan()
+    {
+       return view('manufacturer.damagecan.damagecan');
+    }
+}

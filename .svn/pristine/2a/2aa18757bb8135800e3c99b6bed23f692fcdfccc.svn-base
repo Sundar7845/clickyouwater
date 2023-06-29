@@ -1,0 +1,82 @@
+//DataTable
+$(document).ready(function () {
+    $("#tblPaymentMethod").DataTable({
+        processing: true,
+        serverSide: true,
+        order: [[0, "ASC"]],
+        ajax: "paymentmethod/data",
+        fnRowCallback: function (nRow, aData, iDisplayIndex) {
+            $("td:first", nRow).html(iDisplayIndex + 1);
+            return nRow;
+        },
+        columns: [
+            { data: "id" },
+            { data: "customer_type" },
+            { data: "action" },
+        ],
+    });
+});
+
+//Edit Data
+function doEdit(id) {
+    $("#hdPaymentMethodId").val(id);
+    $("#ddlCustomerType").focus();
+    $("#btnSave").text("Update");
+    getPaymentMethodById(id);
+}
+
+//Get Payment Method
+function getPaymentMethodById(id) {
+    $.ajax({
+        type: "GET",
+        url: "getpaymentmethod/" + id,
+        dataType: "json",
+        success: function (data) {
+            console.log(data);
+            $("#ddlCustomerType").val(data.PaymentMethod.customer_type_id).trigger("change");
+            var paymentTypeIds = data.PaymentMethod.payment_method_id.split(",");
+            $("#ddlPaymentMethod").val(paymentTypeIds).trigger("change");
+        },
+    });
+}
+
+//Update Status
+function doStatus(id) {
+    var status = $("#chkPaymentMethod" + id).is(":checked");
+    confirmStatusChange(id, "paymentmethod/", "tblPaymentMethod", (status == true ? 1 : 0), "chkPaymentMethod");
+}
+
+//Delete Data
+function showDelete(id) {
+    confirmDelete(id, "delete/paymentmethod/", "tblPaymentMethod");
+}
+
+//Cancel
+function cancel() {
+    $("#hdPaymentMethodId").val("");
+    $("#ddlCustomerType").val("").trigger("change");
+    $("#ddlPaymentMethod").val("").trigger("change");
+    $("#ddlCustomerType").focus();
+    $("#btnSave").text("Save");
+}
+
+// jquery Validation
+$(function () {
+    $("form[name='paymentmethod']").validate({
+        rules: {
+            ddlCustomerType: "required",
+            ddlPaymentMethod: "required",
+        },
+        errorPlacement: function (error, element) {
+            if (element.is(":radio")) {
+                error.appendTo(element.parents(".form-group"));
+            } else {
+                if (element.siblings(".error").html() == undefined) {
+                    error.appendTo(element.parent().next(".error"));
+                } else {
+                    error.appendTo(element.siblings(".error"));
+                }
+            }
+        },
+    });
+});

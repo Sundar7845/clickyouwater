@@ -1,0 +1,177 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Masters;
+
+use App\Enums\MenuPermissionType;
+use App\Http\Controllers\Controller;
+use App\Models\Asset;
+use App\Models\AssetType;
+use App\Traits\Common;
+use Carbon\Carbon;
+use Illuminate\Database\QueryException;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
+
+class AssetController extends Controller
+{
+    use Common;
+    public function asset()
+    {
+        try {
+            $assetType = AssetType::whereNull('deleted_at')->get();
+            $assetData = Asset::select('assets.*', 'asset_types.prefix')
+                ->join('asset_types', 'asset_types.id', 'assets.asset_id')->get();
+            return view('admin.masters.asset.asset', compact('assetType', 'assetData'));
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function addAsset(Request $request)
+    {
+        $request->validate([
+            'txtAssetPrefix' => 'required',
+            'ddlAssetType' => 'required',
+            'txtAssetName' => [
+                'required',
+                Rule::unique('assets', 'asset_name')->ignore($request->hdAssetId),
+            ],
+            'txtAssetDetail' => 'required'
+        ], [
+            'txtAssetName.unique' => 'Asset name already exists!.'
+        ]);
+
+        DB::beginTransaction();
+        try {
+            if ($request->hdAssetId == null) {
+                Asset::create([
+                    'asset_id' => $request->txtAssetPrefix,
+                    'asset_type_id' => $request->ddlAssetType,
+                    'asset_name' => $request->txtAssetName,
+                    'asset_detail' => $request->txtAssetDetail,
+                    'created_by' => Auth::user()->id,
+                    'created_at' => Carbon::now()
+                ]);
+
+                $notification = array(
+                    'message' => 'Asset Created Successfully',
+                    'alert-type' => 'success'
+                );
+            } else {
+
+                Asset::findorfail($request->hdAssetId)->update([
+                    'asset_id' => $request->txtAssetPrefix,
+                    'asset_type_id' => $request->ddlAssetType,
+                    'asset_name' => $request->txtAssetName,
+                    'asset_detail' => $request->txtAssetDetail,
+                    'updated_by' => Auth::user()->id
+                ]);
+
+                $notification = array(
+                    'message' => 'Asset Updated Successfully',
+                    'alert-type' => 'success'
+                );
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            $notification = array(
+                'message' => 'Asset Not Created!',
+                'alert-type' => 'error'
+            );
+            $this->Log(__FUNCTION__, $request->method(), $e->getMessage(), Auth::user()->id, $request->ip(), gethostname());
+        }
+        return redirect()->route('asset')->with($notification);
+    }
+
+    public function getAssetData()
+    {
+        try {
+            $assetData = Asset::select('assets.*', 'asset_types.asset_type')
+                ->join('asset_types', 'asset_types.id', 'assets.asset_type_id')->get();
+            return datatables()->of($assetData)
+                ->addColumn('action', function ($row) {
+                    $html = "";
+                    if ($this->isUserHavePermission(MenuPermissionType::Edit)) {
+                        $html = '<i class="text-primary ti ti-pencil me-1"
+                onclick="doEdit(' . $row->id . ');"></i> ';
+                    }
+                    if ($this->isUserHavePermission(MenuPermissionType::Delete)) {
+                        $html .= '<i class="text-danger ti ti-trash me-1" id="confrim-color(' . $row->id . ')" onclick="showDelete(' . $row->id . ');"></i>';
+                    }
+                    return $html;
+                })->toJson();
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, 'GET', $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function getAssetById($id)
+    {
+        try {
+            $asset = Asset::select('assets.*', 'asset_types.asset_type', 'asset_types.prefix')
+                ->join('asset_types', 'asset_types.id', 'assets.asset_type_id')->where('assets.id', $id)->first();
+            return response()->json([
+                'asset' => $asset
+            ]);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, 'GET', $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function deleteAsset($id)
+    {
+        try {
+            $asset = Asset::findorfail($id);
+            $asset->delete();
+            $asset->update([
+                'deleted_by' => Auth::user()->id
+            ]);
+
+            $notification = array(
+                'message' => 'Asset Deleted Successfully',
+                'alert' => 'success'
+            );
+            return response()->json([
+                'responseData' => $notification
+            ]);
+        } catch (QueryException $e) {
+
+            $notification = array(
+                'message' => 'Asset Could Not Be Deleted!',
+                'alert' => 'error'
+            );
+            return response()->json([
+                'responseData' => $notification
+            ]);
+        }
+    }
+
+    public function getAssetId(Request $request)
+    {
+        try {
+            $assetid = AssetType::where("id", $request->asset_type_id)->first();
+            if ($assetid) {
+                $prefix = $assetid->prefix; // Set the prefix
+                $lastId = DB::table('assets')->orderBy('id', 'desc')->first(); // Get the last ID from the database
+                $length = strlen($assetid->prefix);
+                if ($lastId) {
+                    $id = substr($lastId->asset_id, $length);
+                    $id = intval($id); // Extract the numeric part of the ID
+                    $nextId = $prefix . str_pad($id + 1, 4, '0', STR_PAD_LEFT); // Increment the ID and add the prefix
+                } else {
+                    $nextId = $prefix . '0001'; // If no IDs exist, start with EMP0001
+                }
+            } else {
+                $nextId = '';
+            }
+            return response()->json([
+                'assetid' => $nextId
+            ]);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, 'GET', $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+}

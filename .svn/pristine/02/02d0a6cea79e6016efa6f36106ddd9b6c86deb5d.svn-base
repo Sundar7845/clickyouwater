@@ -1,0 +1,152 @@
+@extends('layouts.main_master') @section('content') @section('title')
+Dashboard | Product Type
+@endsection
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+<h4 class="fw-bold py-1 mb-4">
+    <span class="text-muted fw-light">Product Management /</span> Product Type
+</h4>
+<div class="row mb-4">
+    <!-- Browser Default -->
+    <div class="col-md-12 mb-4 mb-md-0">
+        <div class="card">
+            <div class="card-body">
+                <form class="browser-default-validation">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-default-email">Product Type</label>
+                                <input type="text" id="basic-default-email" class="form-control"
+                                    placeholder="Product Type" required />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-default-email">Delivery Charge</label>
+                                <input type="text" id="basic-default-email" class="form-control"
+                                    placeholder="Delivery Charge" required />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-default-email">Delivery Duration</label>
+                                <input type="text" id="basic-default-email" class="form-control"
+                                    placeholder="Delivery Duration" required />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="flatpickr-basic" class="form-label">Order Before</label>
+                                <input type="text" id="flatpickr-time" placeholder="HH:MMam"
+                                    class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-default-email">New Can Deposit</label>
+                                <input type="text" id="basic-default-email" class="form-control"
+                                    placeholder="New Can Deposit" required />
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label" for="basic-default-name">&nbsp;</label>
+                            <div class="input-group">
+                                <span class="input-group-text" id="basic-addon11">Min. Order Qty</span>
+                                <input type="text" class="form-control" aria-label="Username"
+                                    aria-describedby="basic-addon11" />
+                                <span class="input-group-text" id="basic-addon11">Max. Order Qty</span>
+                                <input type="text" class="form-control" aria-label="Username"
+                                    aria-describedby="basic-addon11" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mt-4 mb-3">
+                                <button type="submit" class="btn btn-primary">Save</button>
+                                <button type="button" class="btn btn-danger">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- /Browser Default -->
+</div>
+
+<h5 class="fw-bold py-1 mb-4">Product Type List</h5>
+<!-- DataTable with Buttons -->
+<div class="col-lg-12 mb-4 mb-lg-0">
+    <div class="card h-100">
+        <div class="table-responsive">
+            <table class="table table-borderless">
+                <thead class="border-bottom">
+                    <tr>
+                        <th>S.No</th>
+                        <th>Product Type</th>
+                        <th>Delivery Charge</th>
+                        <th>Delivery Duration (Hrs)</th>
+                        <th>Order Before (PM)</th>
+                        <th>New Can Deposit</th>
+                        <th>Min Order Qty</th>
+                        <th>Max Order Qty</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Elite</td>
+                        <td>₹150</td>
+                        <td>1</td>
+                        <td>7 PM</td>
+                        <td>₹200</td>
+                        <td>1</td>
+                        <td>10</td>
+                        <td><a><i class="text-primary ti ti-pencil me-1"></i></a> <a><i
+                                    class="text-danger ti ti-trash me-1"></i></a></td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Premium</td>
+                        <td>₹150</td>
+                        <td>24</td>
+                        <td>12 PM</td>
+                        <td>₹200</td>
+                        <td>1</td>
+                        <td>10</td>
+                        <td><a><i class="text-primary ti ti-pencil me-1"></i></a> <a><i
+                                    class="text-danger ti ti-trash me-1"></i></a></td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Classic</td>
+                        <td>₹150</td>
+                        <td>48</td>
+                        <td>12 PM</td>
+                        <td>₹200</td>
+                        <td>1</td>
+                        <td>10</td>
+                        <td><a><i class="text-primary ti ti-pencil me-1"></i></a> <a><i
+                                    class="text-danger ti ti-trash me-1"></i></a></td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Regular</td>
+                        <td>₹150</td>
+                        <td>72</td>
+                        <td>12 PM</td>
+                        <td>₹200</td>
+                        <td>1</td>
+                        <td>10</td>
+                        <td><a><i class="text-primary ti ti-pencil me-1"></i></a> <a><i
+                                    class="text-danger ti ti-trash me-1"></i></a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!--/ DataTable with Buttons -->
+
+</div>
+<!-- / Content --> @endsection

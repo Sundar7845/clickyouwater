@@ -1,0 +1,39 @@
+<?php
+
+namespace App\Http\Controllers\API;
+
+use App\Http\Controllers\Controller;
+use App\Models\Category;
+use App\Traits\Common;
+use App\Traits\ResponseAPI;
+use Illuminate\Http\Request;
+
+class CategoryController extends Controller
+{
+    //
+    use Common;
+    use ResponseAPI;
+
+    public function getCategories()
+    {
+        try {
+
+            $categorys = Category::where('is_active', 1)->get(['category_name', 'category_image', 'id']);
+            // dd($brands);
+            // Append base URL to product_image field
+            foreach ($categorys as $category) {
+                $category->category_image = $this->getBaseUrl() . '/' . $category->category_image;
+            }
+            $response = [
+                'status' => true,
+                'data' => $categorys,
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            // return response($response, 200);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+}

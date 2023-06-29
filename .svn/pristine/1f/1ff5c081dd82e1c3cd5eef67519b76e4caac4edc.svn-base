@@ -1,0 +1,84 @@
+$(document).ready(function () {
+    BindCity();
+    BindArea();
+
+    //Create Or Get Area ID
+    $('#ddlArea').select2({
+        tags: true,
+        dropdownParent: $('#areaId'),
+        placeholder: "Select a area or type new area"
+    });
+
+    //Check user mobile number if already exists
+    $('#txtMobile').on('focusout', function (e) {
+        var mobileNumber = $(this).val();
+        checkMobileNumberExists(mobileNumber, function (result) {
+            if (result == true) {
+                $('#txtMobile').val("");
+                $('#txtMobile').focus();
+            }
+        });
+    });
+});
+
+//Third Party Tie-up
+$("#chkIsThirdParty").click(function () {
+    if ($("#chkIsThirdParty").is(":checked")) {
+        $(".ThirdParty").show();
+    } else {
+        $(".ThirdParty").hide();
+    }
+});
+
+//Validation
+$(function () {
+    $("form[name='manufacture']").validate({
+        rules: {
+            txtManufacturerName: "required",
+            txtMobile: "required",
+            txtOffEmail: "required",
+            txtLatitude: "required",
+            txtLongtitude: "required",
+            txtGeoLocation: "required",
+            txtCreditPeriod: "required",
+            txtSettlementPeriod: "required",
+            password: "required",
+            password_confirmation: "required",
+            yearOfExp: "required",
+            txtNoOfBrands: "required",
+            txtAnnualTurnOver: "required",
+            txtSecurityDeposit: "required",
+            ddlState: "required",
+            ddlCity: "required",
+            ddlArea: "required",
+            txtAddress: "required",
+            txtPincode: "required",
+            comm_pincode: "required",
+            txtProprietorName: "required",
+            txtProprietorMobile: "required",
+            txtProprietorEmail: "required",
+            txtContactPersonName: "required",
+            txtContactPersonMobile: "required",
+            txtContactPersonEmail: "required",
+        },
+        messages: {
+            required: "This field is required",
+        },
+        errorPlacement: function (error, element) {
+            if (element.is(":radio")) {
+                error.appendTo(element.parents(".form-group"));
+            } else {
+                // This is the default behavior
+                // error.insertAfter(element);
+                if (element.siblings(".error").html() == undefined) {
+                    error.appendTo(element.parent().next(".error"));
+                } else {
+                    error.appendTo(element.siblings(".error"));
+                }
+            }
+        },
+        submitHandler: function (form) {
+            form.submit();
+        },
+    });
+});

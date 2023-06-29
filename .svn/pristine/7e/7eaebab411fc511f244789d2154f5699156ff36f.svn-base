@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Http\Controllers\CustomerManagement;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class CustomerController extends Controller
+{
+    public function Customers()
+    {
+        return view('customer_management.customers');
+    }
+
+    public function CustomersPerformance()
+    {
+        return view('customer_management.customer_performance');
+    }
+}

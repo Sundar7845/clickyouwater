@@ -1,0 +1,255 @@
+<?php
+
+namespace App\Http\Controllers\API;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\RegisterRequests;
+use App\Http\Resources\UserProfileResource;
+use App\Models\Customer;
+use App\Models\CustomerType;
+use App\Models\PaymentGatewaySettings;
+use App\Models\User;
+use App\Models\UserFeedback;
+use App\Models\UserNotifications;
+use App\Traits\Common;
+use App\Traits\ResponseAPI;
+use DateTime;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+use Illuminate\Validation\Rule;
+use Intervention\Image\Facades\Image;
+
+class CustomerProfile extends Controller
+{
+    use Common;
+    use ResponseAPI;
+
+    public function getCustomerType()
+    {
+        try {
+            $cust_type = CustomerType::where('is_active', 1)->get();
+            $response = [
+                'status' => true,
+                'data' => $cust_type,
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            // return $this->error($e->getMessage(), 200);
+            $response = array(
+                'message' => $this->errorMessage,
+                'status' => false,
+            );
+            return response($response, 500);
+        }
+    }
+
+
+    public function getUserInfo()
+    {
+        try {
+            $users = User::where('id', Auth::user()->id)->get();
+            $res = UserProfileResource::collection($users);
+            $response = [
+                'status' => true,
+                'data' => $res,
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            // return $this->error($e->getMessage(), 200);
+            $response = array(
+                'message' => $this->errorMessage,
+                'status' => false,
+            );
+            return response($response, 500);
+        }
+    }
+
+    public function updateUserInfo(Request $request)
+    {
+
+        // Validate the input data.
+        $validated_data = $request->validate([
+            'user_name' => 'required',
+            'email' => Rule::unique('users')->ignore(Auth::user()->id),
+            'customertype_id' => 'required'
+        ]);
+
+        DB::beginTransaction();
+        try {
+
+            $user = User::where('id', Auth::user()->id)->select('ref_id', 'user_img_path')->first();
+
+            $file_path = $user->user_img_path;
+            if ($request->hasFile('image')) {
+                // Check the file exists at a given path
+                if (File::exists(public_path($user->user_img_path))) {
+                    // Delete the file at a given path
+                    File::delete(public_path($user->user_img_path));
+                }
+
+                $image = $request->file('image');
+                // Generate a unique file name for the image
+                $fileName = $user->ref_id . '_' . $this->generateRandom(16) . '.' . $image->getClientOriginalExtension();
+
+                // Resize and save the image using the intervention/image package
+                $image = Image::make($image->getRealPath());
+                $image->resize(400, 400, function ($constraint) {
+                    $constraint->aspectRatio();
+                });
+                $file_path = 'upload/customers/' . $fileName;
+                $image->save(public_path($file_path));
+            }
+
+            Customer::findOrfail($user->ref_id)->update([
+                'customer_name' => $validated_data['user_name'],
+                'email' => $request->email,
+                'customertype_id' => $validated_data['customertype_id']
+            ]);
+
+            User::findOrfail(Auth::user()->id)->update([
+                'user_name' => $validated_data['user_name'],
+                'display_name' => $validated_data['user_name'],
+                'email' => $request->email,
+                'user_img_path' => $file_path,
+                'is_approved' => ($validated_data['customertype_id'] == 1 ? 1 : 0),
+                'account_holder_name' => $request->account_holder_name,
+                'account_no' => $request->account_no,
+                'ifsc_code' => $request->ifsc_code,
+                'bank_name' => $request->bank_name,
+                'branch_name' => $request->branch_name
+            ]);
+
+            $response = [
+                'status' => true,
+                'data' => [],
+                'message' => 'Updated Successfully'
+            ];
+            DB::commit();
+            return response($response, 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            // return $this->error($e->getMessage(), 200);
+            $response = array(
+                'message' => $this->errorMessage,
+                'status' => false,
+            );
+            return response($response, 500);
+        }
+    }
+
+    public function getNotifications()
+    {
+        try {
+            $usernotifications = [];
+            $notificationsQuery = UserNotifications::with('notification_type')->where('user_id', Auth::user()->id)
+                ->orderBy('id', 'desc');
+
+            //update viewed status 1 to all notiications for given user
+            UserNotifications::with('notification_type')
+                ->where('user_id', Auth::user()->id)
+                ->update([
+                    'is_viewed' => true
+                ]);
+
+            $notifications = $notificationsQuery->paginate($this->recordsperpage);
+
+            foreach ($notifications as $notification) {
+                $not_msg = json_decode($notification->notification_msg);
+                $usernotifications[] = [
+                    "id" => $notification->id,
+                    "notification_msg" => $not_msg->body,
+                    "notification_type_id" => $notification->notification_type->notification_type,
+                    "notified_on" => DateTime::createFromFormat('Y-m-d H:i:s', $notification->notified_on)->format('d M,y, h:i A'),
+                ];
+            }
+            $response = [
+                'status' => true,
+                'data' => $usernotifications,
+                'pagination' => [
+                    'total' => $notifications->total(),
+                    'per_page' => $notifications->perPage(),
+                    'current_page' => $notifications->currentPage(),
+                    'last_page' => $notifications->lastPage(),
+                    'next_page_url' => $notifications->nextPageUrl(),
+                    'prev_page_url' => $notifications->previousPageUrl(),
+                ]
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            // return $this->error($e->getMessage(), 200);
+            $response = array(
+                'message' => $this->errorMessage,
+                'status' => false,
+            );
+            return response($response, 500);
+        }
+    }
+
+    public function userFeedback(Request $request)
+    {
+
+        // Validate the input data.
+        $validated_data = $request->validate([
+            'app_experience' => 'required',
+            'product_quality' => 'required',
+            'service' => 'required',
+        ]);
+
+        DB::beginTransaction();
+        try {
+
+            UserFeedback::create([
+                'user_id' => Auth::user()->id,
+                'app_experience' => $validated_data['app_experience'],
+                'product_quality' => $validated_data['product_quality'],
+                'service' => $validated_data['service'],
+                'suggestions' => $request->suggestions
+            ]);
+
+            $response = [
+                'status' => true,
+                'data' => [],
+                'message' => 'Updated Successfully'
+            ];
+            DB::commit();
+            return response($response, 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            // return $this->error($e->getMessage(), 200);
+            $response = array(
+                'message' => $this->errorMessage,
+                'status' => false,
+            );
+            return response($response, 500);
+        }
+    }
+
+    public function checkUserActive()
+    {
+        try {
+
+            $active_user = User::where('id', Auth::user()->id)->where('is_active', 1)->count();
+            $response = [
+                'status' => ($active_user ? true : false),
+                'data' => [],
+                'message' => ($active_user ? 'Success' : 'Failed'),
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            // return $this->error($e->getMessage(), 200);
+            $response = array(
+                'message' => $this->errorMessage,
+                'status' => false,
+            );
+            return response($response, 500);
+        }
+    }
+}

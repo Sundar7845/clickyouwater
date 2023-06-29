@@ -1,0 +1,143 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+Dashboard | Purchase Invoice List
+@endsection
+
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+  <h4 class="fw-bold py-1 mb-4">
+    <span class="text-muted fw-light">Purchase Management /</span> Purchase Invoice List
+  </h4>
+  <div class="row mb-4">
+    <!-- Browser Default -->
+    <div class="col-md-12 mb-4 mb-md-0">
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-2">
+              <div class="form-group">
+                <label>Report Type</label>
+                <select id="ddlRtype" class="select2 form-select form-select-lg" control="ddl" data-live-search="true">
+                  <option value="1">Summary</option>
+                  <option value="2">Detail View </option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label>&nbsp; </label>
+              <div class="form-group" id="divsearchsummary">
+                <input type="text" class="form-control" id="txtSearch" maxlength="50" placeholder="Search by Ledger Name" autocomplete="off" />
+              </div>
+              <div class="form-group" id="divsearch" style="display: none;">
+                <div>
+                  <input type="text" class="form-control" id="txtProductSearch" autocomplete="off" placeholder="Search by Item/ Ledger Name" />
+                </div>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <label>&nbsp; </label>
+              <div class="form-group">
+                <a href="{{ route('purchaseinvoice') }}">
+                  <button type="button" id="btnNew" class="btn btn-primary"> Add New</button>
+                </a>
+              </div>
+            </div>
+            <div class="col-md-1">
+              <label>&nbsp; </label>
+              <div class="text-sm-right">
+                <button type="button" id="btnexport" class="btn btn-success btn-rounded waves-effect waves-light mb-3">
+                  <i></i>Export </button>
+              </div>
+            </div>
+            <div class="col-md-4 mt-4">
+              <label>&nbsp;</label>
+              <button type="button" class="btn btn-flat btn-primary" id="btnDate" style="height: 36px;">
+                <i class="fa fa-calendar"></i><span id="spnDate" style="padding-left: 5px;">Today</span>
+                <i class="fa fa-caret-down"></i>
+              </button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 mt-3">
+            <h5>Purchase Invoice List</h5>
+              <div class="table-responsive">
+                <table id="tblPOList" class="table table-sm table-bordered dt-responsive" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                  <thead>
+                    <tr>
+                      <th>S.No </th>
+                      <th>PO.No</th>
+                      <th>PO.Date</th>
+                      <th>Ledger Name</th>
+                      <th>Tax Amt</th>
+                      <th>BIll Amt</th>
+                      <th>Paid Amt</th>
+                      <th>Balance Amt</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbodyList">
+                    <tr>
+                      <td colspan="9" align="center">No Records Found </td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th colspan="4">TOTAL </th>
+                      <th>0.00</th>
+                      <th>0.00</th>
+                      <th>0.00</th>
+                      <th>0.00</th>
+                      <th></th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="table-responsive">
+                <table id="gridProfiledetail" cellpadding="0" cellspacing="0" border="0" width="100%;" style="margin-top: 15px; display: none;" class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>S.No</th>
+                      <th>PO.No </th>
+                      <th>PO.Date</th>
+                      <th>Ledger Name</th>
+                      <th>Item Name</th>
+                      <th>Unit</th>
+                      <th>Quantity </th>
+                      <th>Rate </th>
+                      <th>Discount </th>
+                      <th>Tax </th>
+                      <th>Amount </th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbodydetaillist">
+                    <tr>
+                      <td colspan="11" align="center">No Records Found </td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th colspan="7">TOTAL </th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /Browser Default -->
+  </div>
+</div>
+<!-- / Content -->
+
+@endsection

@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Enums;
+
+use Illuminate\Validation\Rules\Enum;
+
+final class NotificationTypes extends Enum
+{
+    const OrderPlaced = "1";
+    const PaymentSuccess = "2";
+    const PaymentFailed = "3";
+    const WholesaleCustomerApproved = "4";
+    const WholesaleCustomerRejected = "5";
+    const InvoiceDownloaded = "6";
+    const OrderCancelled = "7";
+    const OrderShipped = "8";
+    const OrderDelivered = "9";
+    const WalletPending = "10";
+    const WalletSuccess = "11";
+    const WalletFailed = "12";
+}

@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class LogisticDriverInfo extends Model
+{
+    use HasFactory;
+
+    public $timestamps= false;
+
+    protected $fillable = [
+        'logistic_partner_id',
+        'driver_name',
+        'license_no',
+        'license_doc_path',
+        'license_expiry'
+    ];
+}

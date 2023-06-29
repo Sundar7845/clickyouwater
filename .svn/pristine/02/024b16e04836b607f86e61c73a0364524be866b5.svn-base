@@ -1,0 +1,23 @@
+$(document).ready(function () {
+   ManufacturerDashboardRecentOrderList();
+});
+
+function ManufacturerDashboardRecentOrderList() {
+    var customer_id = $('#hduserid').val();
+    $('#tblCans').DataTable({
+        processing: true,
+        serverSide: true,
+        responsive: true,
+        order: [[0, "ASC"]],
+        bDestroy: true,
+        ajax: "/cansorderdata",
+        "fnRowCallback": serialNoCount,
+        columns: [
+            { data: "id", orderable: false },
+            { data: "Product_name", orderable: false },
+            { data: "order_no", orderable: false },
+            { data: "order_no", orderable: false },
+            { data: "order_no", orderable: false }
+        ],
+    });
+}

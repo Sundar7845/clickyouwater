@@ -1,0 +1,186 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Settings;
+
+use App\Enums\MenuPermissionType;
+use App\Http\Controllers\Controller;
+use App\Models\NotificationConfig;
+use App\Models\NotificationType;
+use App\Models\NotificationTypeVariables;
+use App\Traits\Common;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Validator;
+
+class NotificationConfigController extends Controller
+{
+    use Common;
+    public function notificationConfig()
+    {
+        try {
+            $notificationType = NotificationType::get();
+            return view('admin.settings.notification_config', compact('notificationType'));
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function addNotificationConfig(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'ddlNotificationType' => [
+                'required',
+                Rule::unique('notification_configs', 'notification_type_id')
+                    ->where(function ($query) {
+                        $query->whereNull('deleted_by');
+                    })
+                    ->ignore($request->hdNotificationConfigId),
+            ],
+            'ddlMessageFormat' => [
+                'required',
+                Rule::unique('notification_configs', 'notification_msg_format')
+                    ->where(function ($query) {
+                        $query->whereNull('deleted_by');
+                    })
+                    ->ignore($request->hdNotificationConfigId),
+            ],
+        ], [
+            'ddlNotificationType.unique' => 'Notification Type Already Exists.',
+            'ddlMessageFormat.unique' => 'Message Format Already Exists.',
+        ]);
+
+
+        if ($validator->fails()) {
+            return redirect()->back()->withInput()->withErrors($validator);
+        }
+
+        try {
+
+            $arrayData = $request->ddlMessageFormat;
+            $commaSeparatedString = implode(',', $arrayData);
+
+            if ($request->hdNotificationConfigId == null) {
+
+                NotificationConfig::create([
+                    'notification_type_id' => $request->ddlNotificationType,
+                    'notification_msg_format' => $commaSeparatedString,
+                    'created_by' => Auth::user()->id,
+                    'created_at' => Carbon::now()
+                ]);
+
+                $notification = array(
+                    'message' => 'Notification Config Created Successfully',
+                    'alert-type' => 'success'
+                );
+            } else {
+
+                NotificationConfig::findorfail($request->hdNotificationConfigId)->update([
+                    'notification_type_id' => $request->ddlNotificationType,
+                    'notification_msg_format' => $commaSeparatedString,
+                    'updated_by' => Auth::user()->id
+                ]);
+
+                $notification = array(
+                    'message' => 'Notification Config Updated Successfully',
+                    'alert-type' => 'success'
+                );
+            }
+        } catch (\Exception $e) {
+            $notification = array(
+                'message' => 'Notification Type Already Exists!',
+                'alert-type' => 'error'
+            );
+            $this->Log(__FUNCTION__, $request->method(), $e->getMessage(), Auth::user()->id, $request->ip(), gethostname());
+        }
+        return redirect()->back()->with($notification);
+    }
+
+    public function getNotificationConfigData()
+    {
+
+        try {
+            $notificationConfigData = NotificationConfig::select('notification_configs.*', 'notification_types.notification_type')
+                ->join('notification_types', 'notification_types.id', 'notification_configs.notification_type_id')->get();
+            return datatables()->of($notificationConfigData)
+                ->addColumn('action', function ($row) {
+                    $html = "";
+                    if ($this->isUserHavePermission(MenuPermissionType::Edit)) {
+                        $html = '<i class="text-primary ti ti-pencil me-1"
+                onclick="doEdit(' . $row->id . ');"></i> ';
+                    }
+                    if ($this->isUserHavePermission(MenuPermissionType::Delete)) {
+                        $html .= '<i class="text-danger ti ti-trash me-1" id="confrim-color(' . $row->id . ')" onclick="showDelete(' . $row->id . ');"></i>';
+                    }
+                    return $html;
+                })->toJson();
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, 'GET', $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function getNotificationConfigById($id)
+    {
+        try {
+            $notificationConfig = NotificationConfig::select('notification_configs.*', 'notification_types.notification_type')
+                ->join('notification_types', 'notification_types.id', '=', 'notification_configs.notification_type_id')
+                ->where('notification_configs.id', $id)
+                ->first();
+
+            if ($notificationConfig) {
+                return response()->json([
+                    'notificationConfig' => $notificationConfig
+                ]);
+            } else {
+                return response()->json([
+                    'message' => 'Notification config not found'
+                ], 404);
+            }
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, 'GET', $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+
+            return response()->json([
+                'message' => 'An error occurred'
+            ], 500);
+        }
+    }
+
+    public function deletegetNotificationConfig($id)
+    {
+        try {
+            $notificationConfig = NotificationConfig::findorfail($id);
+            $notificationConfig->delete();
+            $notificationConfig->update([
+                'deleted_by' => Auth::user()->id
+            ]);
+
+            $notification = array(
+                'message' => 'Notification Config Deleted Successfully',
+                'alert' => 'success'
+            );
+            return response()->json([
+                'responseData' => $notification
+            ]);
+        } catch (\Exception $e) {
+
+            $notification = array(
+                'message' => 'Notification Config Could Not Be Deleted!',
+                'alert' => 'error'
+            );
+            return response()->json([
+                'responseData' => $notification
+            ]);
+        }
+    }
+
+    public function getMessageFormat(Request $request)
+    {
+        try {
+            $data = NotificationTypeVariables::where('notification_type_id',$request->notification_type_id)->get();
+            return response()->json($data);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, $request->method(), $e->getMessage(), Auth::user()->id, $request->ip(), gethostname());
+        }
+    }
+}

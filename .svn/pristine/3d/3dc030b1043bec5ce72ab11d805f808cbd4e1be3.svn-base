@@ -1,0 +1,120 @@
+@extends('layouts.main_master') @section('content')
+@section('title')
+    Dashboard | Stock Entry
+@endsection
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold mb-4">
+        <span class="fw-light">Stock Management /</span> Stock Entry
+    </h4>
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-12 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <form class="browser-default-validation">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Product Name</label>
+                                    <select name="" id="" class="select2 form-select form-select-lg">
+                                        <option value="TN">Smartblue</option>
+                                        <option value="TN">Adiyogi</option>
+                                        <option value="KL">Agriya</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Qty</label>
+                                    <input type="tetx" id="basic-default-email" class="form-control"
+                                        placeholder="Qty" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label" for="basic-default-email">Upload Bill</label>
+                                <div class="mb-3">
+                                    <input id="txtfileattachment" type="file" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mt-4 mb-3">
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                    <button type="button" class="btn btn-danger">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+    <h5 class="mb-4">
+        <span class="fw-light"></span> Stock List
+    </h5>
+    <!-- DataTable with Buttons -->
+    <div class="col-lg-12 mb-4 mb-lg-0">
+        <div class="card h-100">
+            <div class="card-datatable table-responsive pt-0">
+                <table id="stock" class="table">
+                    <thead class="border-bottom">
+                        <tr>
+                            <th>S.No</th>
+                            <th>Product Name</th>
+                            <th>Qty</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Smartblue</td>
+                            <td>150</td>
+                            <td>
+                                <a>
+                                    <i class="text-primary ti ti-pencil me-1"></i>
+                                </a>
+                                <a>
+                                    <i class="text-danger ti ti-trash me-1"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Agriya</td>
+                            <td>100</td>
+                            <td>
+                                <a>
+                                    <i class="text-primary ti ti-pencil me-1"></i>
+                                </a>
+                                <a>
+                                    <i class="text-danger ti ti-trash me-1"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Adiyogi</td>
+                            <td>200</td>
+                            <td>
+                                <a>
+                                    <i class="text-primary ti ti-pencil me-1"></i>
+                                </a>
+                                <a>
+                                    <i class="text-danger ti ti-trash me-1"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--/ DataTable with Buttons -->
+</div>
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/stockmanagement/stock.js') }}"></script>
+@endsection

@@ -1,0 +1,349 @@
+<?php
+
+namespace App\Http\Controllers\API;
+
+use App\Http\Controllers\Controller;
+use App\Http\Resources\UserAddressResource;
+use App\Models\AddressType;
+use App\Models\CustomerAddress;
+use Illuminate\Http\Request;
+use App\Traits\Common;
+use App\Traits\Maps;
+use App\Traits\ResponseAPI;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+
+class AddressController extends Controller
+{
+    use Common;
+    use Maps;
+    use ResponseAPI;
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+
+    public function checkServiceAvailable(Request $request)
+    {
+        return $this->getServiceAvailable($request->latitude, $request->longitude, Auth::user()->id);
+    }
+
+    public function addEditAddress(Request $request, $id = Null)
+    {
+        $validatedData = $request->validate([
+            'addresstype_id' => 'required',
+            'building_no' => 'required',
+            'street' => 'required',
+            'area' => 'required',
+            'landmark' => 'required',
+            'city_id' => 'required',
+            'state_id' => 'required',
+            'country_id' => 'required',
+            'pincode' => 'required',
+            'floor' => 'required',
+            'is_lift_avail_working' => 'required',
+            'contact_person_name' => 'required',
+            'contact_person_mobile' => 'required',
+        ]);
+        DB::beginTransaction();
+
+        // longitude
+        // geolocation
+        // apikey=AIzaSyCxSrT3mnTnRnbUSW1DGhTKAu2kGpdgm5Y
+        try {
+            // if ($request->latitude == '' || $request->latitude == null && $request->longitude == '' || $request->longitude == null) {
+
+            //     $address = $request->building_no . ' ' . $request->street . ' ' . $request->area . ' ' . $request->city_name . ' ' . $request->state_name . ' ' . $request->country_name;
+            //     $mapDetails = $this->getMapDetails();
+
+            //     $apiKey = $mapDetails->api_key;
+
+            //     $response = Http::get($mapDetails->api_url, [
+            //         'address' => urlencode($address),
+            //         'key' => $apiKey,
+            //     ]);
+            //     $location = $response->json()['results'][0]['geometry']['location'];
+
+            //     $request['latitude'] = $location['lat'];
+            //     $request['longitude'] = $location['lng'];
+            // }
+
+            $request['customer_id'] = Auth::user()->customer->id;
+            unset($request['country_name']);
+            unset($request['city_name']);
+            unset($request['state_name']);
+
+            if ($id != null) {
+                unset($request['customer_id']);
+                $request['updated_by'] = Auth::user()->id;
+
+                $address = CustomerAddress::find($id);
+                $address->update($request->all());
+
+                $response = [
+                    'status' => true,
+                    'message' => "Address Updated Successfully",
+                    'data' => $address,
+                ];
+            } else {
+                $addresses = CustomerAddress::where('customer_id', Auth::user()->customer->id)->get();
+                if ($addresses->count() > 0) {
+                    $request['is_default'] = 0;
+                } else {
+                    $request['is_default'] = 1;
+                }
+                $request['created_by'] = Auth::user()->id;
+                $address = CustomerAddress::create($request->all());
+
+                $response = [
+                    'status' => true,
+                    'message' => "Address added Successfully",
+                    'data' => $address,
+                ];
+            }
+            DB::commit(); // Commit the transaction
+
+            $response = [
+                'status' => true,
+                'message' => "Address added Successfully",
+                'data' => $address,
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+            DB::rollback(); // Roll back the transaction if an error occurs
+
+            $response = array(
+                'message' => "Failed",
+                'status' => false,
+
+            );
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            // return response($response, 200);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    public function getCustomerAddress($id = Null)
+    {
+        try {
+            $res = UserAddressResource::collection($this->getCustomerAddress_details($id));
+
+            $response = [
+                'status' => true,
+                'data' => $res,
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+
+            $response = array(
+                'message' => "Failed",
+                'status' => false,
+
+            );
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            // return response($response, 200);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+    public function setDefaultAddress($id)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            $addresses = CustomerAddress::where('customer_id', Auth::user()->customer->id)->update(['is_default' => 0]);
+
+            $address = CustomerAddress::find($id);
+            $address->is_default = 1;
+            $address->save();
+            $res = UserAddressResource::collection($this->getCustomerAddress_details());
+            DB::commit(); // Commit the transaction
+
+            $response = [
+                'status' => true,
+                'message' => "Updated Successfully",
+                'data' => $res,
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+            DB::rollback(); // Roll back the transaction if an error occurs
+
+            $response = array(
+                'message' => "Failed",
+                'status' => false,
+
+            );
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            // return response($response, 200);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+    public function getState($id = 1)
+    {
+
+        try {
+
+            $response = [
+                'status' => true,
+                'data' => $this->getStates($id),
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+
+            $response = array(
+                'message' => "Failed",
+                'status' => false,
+
+            );
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            // return response($response, 200);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+    public function deleteAddress($id)
+    {
+        # code...
+
+
+        DB::beginTransaction();
+
+        try {
+            $address = CustomerAddress::find($id);
+            if ($address->is_default == 1) {
+                $address_default = CustomerAddress::where('customer_id', Auth::user()->id)->first();
+                $address_default->is_default = 1;
+                $address_default->save();
+            }
+            if ($address) {
+                $address->is_default = 0;
+                $address->deleted_by = Auth::user()->id;
+                $address->delete();
+            }
+            DB::commit(); // Commit the transaction
+
+            $response = [
+                'status' => true,
+                'message' => "Deleted Successfully",
+                'data' => []
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+            DB::rollback(); // Roll back the transaction if an error occurs
+
+            $response = array(
+                'message' => "Failed",
+                'status' => false,
+
+            );
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            // return response($response, 200);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    public function getCitie($id = NULL)
+    {
+        try {
+
+            $response = [
+                'status' => true,
+                'data' => $this->getCities($id),
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+
+            $response = array(
+                'message' => "Failed",
+                'status' => false,
+
+            );
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            // return response($response, 200);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+    public function getArea($id = NULL)
+    {
+        try {
+
+            $response = [
+                'status' => true,
+                'data' => $this->getAreas($id),
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+
+            $response = array(
+                'message' => "Failed",
+                'status' => false,
+
+            );
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            // return response($response, 200);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getAddressType()
+    {
+        try {
+            $adress_type = AddressType::all();
+            $response = [
+                'status' => true,
+                'data' => $adress_type,
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+
+            $response = array(
+                'message' => "Failed",
+                'status' => false,
+
+            );
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            // return response($response, 200);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        //
+    }
+}

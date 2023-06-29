@@ -1,0 +1,24 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class OfferCode extends Model
+{
+    use HasFactory;
+
+    protected $fillabel = [
+        'offer_id',
+        'offer_code',
+        'offer_code_type',
+        'created_by',
+        'upated_by',
+        'deleted_by'
+    ];
+    public function offer()
+    {
+        return $this->belongsTo(Offer::class, 'offer_id');
+    }
+}

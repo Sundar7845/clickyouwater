@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Http\Controllers\Admin\SalesManagement;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class SalesReturnController extends Controller
+{
+    public function salesReturn()
+    {
+        return view('admin.sales_management.sales_return.sales_return');
+    }
+
+    public function salesReturnList()
+    {
+        return view('admin.sales_management.sales_return.sales_return_list');
+    }
+}

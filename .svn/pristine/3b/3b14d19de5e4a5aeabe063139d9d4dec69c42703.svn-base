@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Http\Controllers\OrderManagement;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class BulkOrdersController extends Controller
+{
+    public function BulkOrders()
+    {
+        return view('order_management.bulk_orders.bulk_orders');
+    }
+
+    public function BulkOrderView()
+    {
+        return view('order_management.bulk_orders.bulk_order_detail');
+    }
+}

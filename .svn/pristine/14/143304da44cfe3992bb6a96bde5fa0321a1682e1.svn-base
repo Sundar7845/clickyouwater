@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Http\Controllers\Admin\PurchaseManagement;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class PurchaseReturnController extends Controller
+{
+    public function PurchaseReturn()
+    {
+        return view('Admin.purchase_management.purchase_return.purchase_return');
+    }
+
+    public function PurchaseReturnList()
+    {
+        return view('Admin.purchase_management.purchase_return.purchase_return_list');
+    }
+}

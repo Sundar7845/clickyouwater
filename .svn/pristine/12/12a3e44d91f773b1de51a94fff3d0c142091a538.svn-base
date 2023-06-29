@@ -1,0 +1,95 @@
+<?php
+
+namespace App\Http\Controllers\Admin\UserRightsManagement;
+
+use App\Http\Controllers\Controller;
+use App\Models\Menu;
+use App\Models\Role;
+use App\Models\RolePermission;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class UserRightsController extends Controller
+{
+    public function rights()
+    {
+        $roles = Role::get();
+        return view('admin.users_rights_management.users_rights', compact('roles'));
+    }
+
+    public function getMenus()
+    {
+        $menus = Menu::get();
+        return response()->json([
+            'menus' => $menus
+        ]);
+    }
+
+    public function createPermission(Request $request)
+    {
+        $request->validate([
+            'ddlRole' => 'required'
+        ]);
+
+        if ($request->hdPermission_id == null) {
+            $createPermission = ([
+                'menu_id' => $request->permission_id,
+                'role_id' => $request->ddlRole,
+                'created_by' => Auth::user()->id
+            ]);
+            RolePermission::create($createPermission);
+            $notification = array(
+                'message' => 'Permission Created Successfully',
+                'alert-type' => 'success'
+            );
+        } else {
+            RolePermission::findorfail($request->hdPermission_id)->update([
+                'menu_id' => $request->permission_id,
+                'role_id' => $request->ddlRole,
+                'updated_by' => Auth::user()->id
+            ]);
+
+            $notification = array(
+                'message' => 'Permission Updated Successfully',
+                'alert-type' => 'success'
+            );
+        }
+        return redirect()->route('rights')->with($notification);
+    }
+
+    public function deletePermission($id)
+    {
+        $permission = RolePermission::findorfail($id);
+        $permission->delete();
+
+        $permission->Update([
+            'deleted_by' => Auth::user()->id
+        ]);
+
+        return response()->json([
+            'success' => 'Permission Deleted Successfully'
+        ]);
+    }
+
+    public function getPermissionById($id)
+    {
+        $permission = RolePermission::where('id', $id)->first();
+        return response()->json([
+            'permission' => $permission
+        ]);
+    }
+
+    public function getPermissionData(Request $request)
+    {
+
+        $permissionData = RolePermission::get();
+
+        return datatables()->of($permissionData)
+            ->addColumn('action', function ($row) {
+                $html = '<i class="text-primary ti ti-pencil me-1"
+                onclick="doEdit(' . $row->id . ');"></i> ';
+                $html .= '<i class="text-danger ti ti-trash me-1" id="confirm-color' . $row->id . '" onclick="showDelete(' . $row->id . ');"></i>';
+                return $html;
+            })->toJson();
+    }
+}

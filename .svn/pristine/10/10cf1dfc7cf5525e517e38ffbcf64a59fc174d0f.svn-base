@@ -1,0 +1,44 @@
+<?php
+
+namespace App\Http\Resources;
+
+use App\Traits\Common;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class ProductResource extends JsonResource
+{
+    use Common;
+    /**
+     * Transform the resource into an array.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
+     */
+    public function toArray($request)
+    {
+        return [
+            'product_id' => $this->id,
+            'product_name' => $this->product_name,
+            'product_type_id' => $this->product_type_id,
+            'product_type_name' => $this->productType->product_type_name,
+            'product_type_desc' => $this->productType->desc,
+            'order_before_time' => $this->productType->order_before_time,
+            'delivery_info' => $this->getDeliveryInfo($this->product_type_id, $this->productType->order_before_time, $this->productType->delivery_duration),
+            'brand_id' => $this->brand_id,
+            'brand' => $this->brand->brand_name,
+            "category_id" => $this->category_id,
+            "category_name" => $this->category->category_name,
+            "product_image" => $this->product_image,
+            "customer_price" => $this->customer_price,
+            "wholesale_price" => $this->wholesale_price,
+            "capacity" => $this->capacity,
+            "desc" => $this->desc,
+            "is_emptycan_return" => $this->is_emptycan_return,
+            //TODO::need to croos chcek get can in hand (bcz if a customer place a order they must go with product wise empty can only not brand wise empty can )
+            'return_empty_cans' => $this->getCansInHand($this->id),
+            "CGST" => $this->CGST,
+            "SGST" => $this->SGST,
+            "is_cart" => $this->is_cart
+        ];
+    }
+}

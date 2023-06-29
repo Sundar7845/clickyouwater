@@ -1,0 +1,83 @@
+$(document).ready(function () {
+    $("#tblBrandAllocation").DataTable({
+        processing: true,
+        serverSide: true,
+        order: [[0, "ASC"]],
+        ajax: "brandallocate/data",
+        fnRowCallback: function (nRow, aData, iDisplayIndex) {
+            $("td:first", nRow).html(iDisplayIndex + 1);
+            return nRow;
+        },
+        columns: [{ data: "id" }, { data: "state_name" }, { data: "city_name" },  { data: "action" }],
+    });
+    BindCity();
+});
+
+function doEdit(id) {
+    $("#hdBrandAllocateId").val(id);
+    $("#ddlState").focus();
+    $("#btnallocate").text("Update");
+    $("#brandTitle").text("Update State Brand Allocation");
+    $("input[type^='checkbox']").attr("checked", false);
+    getBrandAllocateById(id);
+}
+
+function getBrandAllocateById(id) {
+    $.ajax({
+        type: "GET",
+        url: "getbrandallocate/" + id,
+        dataType: "json",
+        success: function (data) {
+            
+            $("#ddlState").val(data.brandallocation.state_id).trigger("change");
+            setTimeout(function () {
+                $("#ddlCity").val(data.brandallocation.city_id).trigger("change");
+            }, 1000);
+
+            var brand_id = data.brandallocation.brand_id;
+            var splits_date = brand_id.split(",");
+            $.each(splits_date, function (key, val) {
+                $("#chkBrandName" + val).attr("checked", true);
+            });
+        },
+    });
+}   
+
+function showDelete(id) {
+    confirmDelete(id, "delete/brandallocate/", "tblBrandAllocation");
+}
+
+function cancel() {
+    $("#btnallocate").text("Allocate");
+    $("#brandTitle").text("State Brand Allocation");
+    $("#hdBrandAllocateId").val("");
+    $("#ddlState").val('').trigger("change");
+    $("#ddlCity").val(0).trigger("change");
+    $('input[type="checkbox"]').prop('checked', false);
+    $("#ddlState").focus();
+    $("#btnSave").text("save");
+}
+
+// jquery Validation
+$(function () {
+    $("form[name='brand_allocation']").validate({
+        rules: {
+            ddlState: "required",
+            ddlCity: "required",
+            //chkBrandName: "required",
+        },
+        errorPlacement: function (error, element) {
+            if (element.is(":radio")) {
+                error.appendTo(element.parents(".form-group"));
+            } else {
+                // This is the default behavior
+                // error.insertAfter(element);
+                if (element.siblings(".error").html() == undefined) {
+                    error.appendTo(element.parent().next(".error"));
+                } else {
+                    error.appendTo(element.siblings(".error"));
+                }
+            }
+        },
+    });
+});

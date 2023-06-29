@@ -1,0 +1,94 @@
+$(document).ready(function () {
+    $("#tblcustomerfeedback").DataTable({
+        processing: true,
+        serverSide: true,
+        responsive: true,
+        order: [[0, "ASC"]],
+        bDestroy: true,
+        ajax: "/customerfeedbackData",
+        fnRowCallback: serialNoCount,
+        columns: [
+            { data: "id", orderable: false },
+            {
+                data: "created_at",
+                render: function (data, type, row) {
+                    // Parse the date string into a Date object
+                    var date = new Date(data);
+                    // Format the date using the moment.js library
+                    return moment(date).format("DD-MM-YYYY hh:mm A");
+                },
+            },
+            { data: "user_name" },
+            {
+                data: "app_experience",
+                render: function (data, type, row) {
+                    html = `<div class="read-only-ratings" data-rateyo-read-only="true"></div>`;
+                    return html;
+                },
+                createdCell: function (
+                    cell,
+                    cellData,
+                    rowData,
+                    rowIndex,
+                    colIndex
+                ) {
+                    // Initialize the rating plugin for each cell with the appropriate data
+                    $(cell).find(".read-only-ratings").rateYo({
+                        rating: cellData, // Assuming 'cellData' represents the rating value
+                        readOnly: true,
+                        starHeight: "20px",
+                        starWidth: "20px",
+                        // You can also specify other options for customization
+                    });
+                },
+            },
+            {
+                data: "product_quality",
+                render: function (data, type, row) {
+                    html = `<div class="read-only-ratings" data-rateyo-read-only="true"></div>`;
+                    return html;
+                },
+                createdCell: function (
+                    cell,
+                    cellData,
+                    rowData,
+                    rowIndex,
+                    colIndex
+                ) {
+                    // Initialize the rating plugin for each cell with the appropriate data
+                    $(cell).find(".read-only-ratings").rateYo({
+                        rating: cellData, // Assuming 'cellData' represents the rating value
+                        readOnly: true,
+                        starHeight: '20px',
+                        starWidth: '20px',
+                        // You can also specify other options for customization
+                    });
+                },
+            },
+            {
+                data: "service",
+                render: function (data, type, row) {
+                    html = `<div class="read-only-ratings" data-rateyo-read-only="true"></div>`;
+                    return html;
+                },
+                createdCell: function (
+                    cell,
+                    cellData,
+                    rowData,
+                    rowIndex,
+                    colIndex
+                ) {
+                    // Initialize the rating plugin for each cell with the appropriate data
+                    $(cell).find(".read-only-ratings").rateYo({
+                        rating: cellData, // Assuming 'cellData' represents the rating value
+                        readOnly: true,
+                        starHeight: '20px',
+                        starWidth: '20px',
+                        // You can also specify other options for customization
+                    });
+                },
+            },
+            { data: "suggestions" },
+        ],
+    });
+});

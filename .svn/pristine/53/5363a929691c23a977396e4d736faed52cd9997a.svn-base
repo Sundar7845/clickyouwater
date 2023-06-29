@@ -1,0 +1,149 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Manufacturer Stock | Dashboard | Click Your Water
+@endsection
+
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold mb-4">Product Wise Stock Report - Agriya</h4>
+
+    <div class="row mt-3">
+        <div class="col-xl-12">
+            <div class="nav-align-top nav-tabs-shadow mb-4">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item">
+                        <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab"
+                            data-bs-target="#navs-justified-empty" aria-controls="navs-justified-empty"
+                            aria-selected="true">
+                            Empty
+                            <span class="badge rounded-pill badge-center h-px-20 w-px-20 bg-label-danger ms-1">43</span>
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button type="button" class="nav-link" role="tab" data-bs-toggle="tab"
+                            data-bs-target="#navs-justified-filled" aria-controls="navs-justified-filled"
+                            aria-selected="false">
+                            Filled
+                            <span
+                                class="badge rounded-pill badge-center h-px-20 w-px-20 bg-label-primary ms-1">32</span>
+                        </button>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="navs-justified-empty" role="tabpanel">
+                        <div class="card-datatable table-responsive pt-0">
+                            <table id="tblEmpty" class="table">
+                                <thead class="border-bottom">
+                                    <tr>
+                                        <th>S.No</th>
+                                        <th>Date</th>
+                                        <th>InWard From Admin</th>
+                                        <th>Admin InWard Return</th>
+                                        <th>From Logistic</th>
+                                        <th>Damage</th>
+                                        <th>Outward for Filling</th>
+                                        <th>Filling Outward Return</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>12-06-2023</td>
+                                        <td>20</td>
+                                        <td>15</td>
+                                        <td>30</td>
+                                        <td>12</td>
+                                        <td>23</td>
+                                        <td>18</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>13-06-2023</td>
+                                        <td>23</td>
+                                        <td>17</td>
+                                        <td>32</td>
+                                        <td>15</td>
+                                        <td>28</td>
+                                        <td>19</td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td>14-06-2023</td>
+                                        <td>23</td>
+                                        <td>14</td>
+                                        <td>34</td>
+                                        <td>18</td>
+                                        <td>22</td>
+                                        <td>19</td>
+                                    </tr>
+                                    <tr>
+                                        <td>4</td>
+                                        <td>15-06-2023</td>
+                                        <td>23</td>
+                                        <td>19</td>
+                                        <td>34</td>
+                                        <td>14</td>
+                                        <td>29</td>
+                                        <td>11</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="navs-justified-filled" role="tabpanel">
+                        <div class="card-datatable table-responsive pt-0">
+                            <table id="tblFilled" class="table">
+                                <thead class="border-bottom">
+                                    <tr>
+                                        <th>S.No</th>
+                                        <th>Date</th>
+                                        <th>InWard For Production</th>
+                                        <th>OutWard To Logistic</th>
+                                        <th>Logistic Return</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>13-06-2023</td>
+                                        <td>20</td>
+                                        <td>24</td>
+                                        <td>23</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>14-06-2023</td>
+                                        <td>25</td>
+                                        <td>26</td>
+                                        <td>22</td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td>15-06-2023</td>
+                                        <td>18</td>
+                                        <td>22</td>
+                                        <td>18</td>
+                                    </tr>
+                                    <tr>
+                                        <td>4</td>
+                                        <td>16-06-2023</td>
+                                        <td>30</td>
+                                        <td>18</td>
+                                        <td>23</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/manufacturer/stock/stock.js') }}"></script>
+@endsection

@@ -1,0 +1,25 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\ReasonType;
+use Illuminate\Database\Seeder;
+
+class ReasonTypeSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        $data = [
+            ['reason_type' => 'Surrender'],
+            ['reason_type' => 'Delivery'],
+            // ['reason_type' => 'Customer']
+        ];
+
+        ReasonType::insert($data);
+    }
+}

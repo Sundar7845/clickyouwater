@@ -1,0 +1,213 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Dashboard | Offers
+@endsection
+
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold mb-4">
+        <span class="fw-light">Discount Management /</span> Offers
+    </h4>
+
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-12 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <form class="browser-default-validation">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Offer Name<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" id="basic-default-email" class="form-control"
+                                        placeholder="Offer Name" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Validity<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" id="basic-default-email" class="form-control"
+                                        placeholder="Enter Validity" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Start Date<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" id="basic-default-email" class="form-control"
+                                        placeholder="Enter Start Date" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">End Date<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" id="basic-default-email" class="form-control"
+                                        placeholder="Enter End Date" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Offer Points<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" id="basic-default-email" class="form-control"
+                                        placeholder="Enter Offer Points" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Offer Type<span
+                                            class="text-danger">*</span></label>
+                                    <select name="" id="ddloffer" class="select2 form-select form-select-lg">
+                                        <option value="">SELECT</option>
+                                        <option value="1">Common</option>
+                                        <option value="2">Introduction</option>
+                                        <option value="3">Seasonal</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Offer Image</label>
+                                    <input id="txtfileattachment" type="file" class="form-control" tabindex="-1"
+                                        multiple="multiple" />
+                                </div>
+                            </div>
+                            <div class="col-md-4" id="stateName" style="display:none;">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">State Name<span
+                                            class="text-danger">*</span></label>
+                                    <select name="" id="state" class="select2 form-select form-select-lg">
+                                        <option value="">SELECT</option>
+                                        <option value="TN">Tamilnadu</option>
+                                        <option value="KL">Kerala</option>
+                                        <option value="AN">Andra</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mt-4 mb-3">
+                                    <button type="submit" class="btn btn-success">Save</button>
+                                    <button type="button" class="btn btn-danger">Cancel</button>
+                                    <a href="{{route('offers-allocate')}}" class="btn btn-primary">Go To Allocate</a>
+                                </div>
+                            </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+    <!-- DataTable with Buttons -->
+    <div class="col-lg-12 mb-4 mb-lg-0">
+        <div class="card h-100">
+            <div class="table-responsive">
+                <table class="table table-borderless">
+                    <thead class="border-bottom">
+                        <tr>
+                            <th>S.No</th>
+                            <th>Offer Image</th>
+                            <th>Offer Name</th>
+                            <th>Validity
+                                <div class="text-muted p-1">
+                                    <small class="bg-light p-1">(DAYS)</small>
+                                </div>
+                            </th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td><img src="{{ asset('assets/img/branding/smart_blue.jpg') }}" width="100"
+                                    height="60" class="img-fluid"></td>
+                            <td>Offer 1</td>
+                            <td>30</td>
+                            <td>10/02/2023</td>
+                            <td>10/03/2023</td>
+                            <td>
+                                <div class="col-sm-6">
+                                    <label class="switch">
+                                        <input type="checkbox" class="switch-input" />
+                                        <span class="switch-toggle-slider">
+                                            <span class="switch-on"></span>
+                                            <span class="switch-off"></span>
+                                        </span>
+                                    </label>
+                                </div>
+                            </td>
+                            <td>
+                                <a><i class="text-primary ti ti-pencil me-1"></i></a>
+                                <a><i class="text-danger ti ti-trash me-1"></i></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>
+                                <img src="{{ asset('assets/img/branding/smart_blue.jpg') }}" width="100"
+                                    height="60" class="img-fluid">
+                            </td>
+                            <td>Offer 2</td>
+                            <td>15</td>
+                            <td>15/02/2023</td>
+                            <td>15/03/2023</td>
+                            <td>
+                                <div class="col-sm-6">
+                                    <label class="switch">
+                                        <input type="checkbox" class="switch-input" />
+                                        <span class="switch-toggle-slider">
+                                            <span class="switch-on"></span>
+                                            <span class="switch-off"></span>
+                                        </span>
+                                    </label>
+                                </div>
+                            </td>
+                            <td>
+                                <a><i class="text-primary ti ti-pencil me-1"></i></a>
+                                <a><i class="text-danger ti ti-trash me-1"></i></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>
+                                <img src="{{ asset('assets/img/branding/smart_blue.jpg') }}" width="100"
+                                    height="60" class="img-fluid">
+                            </td>
+                            <td>Offer 3</td>
+                            <td>60</td>
+                            <td>20/02/2023</td>
+                            <td>20/03/2023</td>
+                            <td>
+                                <div class="col-sm-6">
+                                    <label class="switch">
+                                        <input type="checkbox" class="switch-input" />
+                                        <span class="switch-toggle-slider">
+                                            <span class="switch-on"></span>
+                                            <span class="switch-off"></span>
+                                        </span>
+                                    </label>
+                                </div>
+                            </td>
+                            <td>
+                                <a><i class="text-primary ti ti-pencil me-1"></i></a>
+                                <a><i class="text-danger ti ti-trash me-1"></i></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--/ DataTable with Buttons -->
+</div>
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/offers/offers.js') }}"></script>
+@endsection

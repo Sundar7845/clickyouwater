@@ -1,0 +1,169 @@
+<?php
+
+namespace App\Http\Controllers\API;
+
+use App\Http\Controllers\Controller;
+use App\Http\Resources\CartProductDetails;
+use App\Models\Products;
+use App\Models\QuickCart;
+use App\Traits\Common;
+use App\Traits\ResponseAPI;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class QuickCartController extends Controller
+{
+    use Common;
+    use ResponseAPI;
+    public function addQuickCart(Request $request)
+    {
+        $fields = $request->validate([
+            'product_id' => 'required',
+            'qty' => 'required',
+            'return_empty_cans_qty' => 'nullable'
+        ]);
+        DB::beginTransaction();
+        try {
+
+            //delete existing quick cart products for user
+            QuickCart::where('user_id', Auth::user()->id)->delete();
+
+            $fields['user_id'] = Auth::user()->id;
+
+            $cart = QuickCart::create($fields);
+
+            $response = [
+                'status' => true,
+                'data' => $cart,
+                'message' => "Added to quick cart successfully"
+            ];
+            DB::commit();
+            return response($response, 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            // return $this->error($e->getMessage(), 200);
+            $response = array(
+                'message' => $this->errorMessage,
+                'status' => false,
+            );
+            return response($response, 500);
+        }
+    }
+
+    public function getQuickCartDetails(Request $request)
+    {
+
+        try {
+
+            $cartDetails = QuickCart::with('products.brand')->where('user_id', Auth::user()->id)->get();
+            $cartResponse = CartProductDetails::collection($cartDetails);
+            foreach ($cartResponse as $cart) {
+                $return_empty_cans = $this->getCansInHand($cart->product_id, $request->address_id);
+                $cart->return_empty_cans = $return_empty_cans;
+                if ($return_empty_cans > 0) {
+                    $cart->min_order_qty = 1;
+                } else {
+                    $cart->min_order_qty = $cart->products->productType->min_order_qty;
+                }
+            }
+            $response = [
+                'status' => true,
+                'data' => $cartResponse,
+                'message' => "Quick Cart Details Retrived successfully"
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            // return $this->error($e->getMessage(), 200);
+            $response = array(
+                'message' => $this->errorMessage,
+                'status' => false,
+            );
+            return response($response, 500);
+        }
+    }
+
+    public function updateQuickCart(Request $request, $id)
+    {
+        $fields = $request->validate([
+            'qty' => 'required',
+            'return_empty_cans_qty' => 'nullable'
+        ]);
+        try {
+
+            $cart = QuickCart::where('id', $id)
+                ->where('user_id', Auth::user()->id)
+                ->update([
+                    'qty' => $request->qty,
+                    'return_empty_cans_qty' => ($request->qty < $request->return_empty_cans_qty ? 0 : $request->return_empty_cans_qty)
+                ]);
+
+            $updatedCart = QuickCart::where('id', $id)->where('user_id', Auth::user()->id)->first();
+
+            $response = [
+                'status' => true,
+                'data' => $updatedCart,
+                'message' => "Quick Cart Updated successfully"
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            // return $this->error($e->getMessage(), 200);
+            $response = array(
+                'message' => $this->errorMessage,
+                'status' => false,
+            );
+            return response($response, 500);
+        }
+    }
+    public function deleteQuickCart()
+    {
+
+        try {
+            $cart = QuickCart::where('user_id', Auth::user()->id)->delete();
+            $response = [
+                'status' => true,
+                'data' => [],
+                'message' => "Product removed from quick cart"
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            // return $this->error($e->getMessage(), 200);
+            $response = array(
+                'message' => $this->errorMessage,
+                'status' => false,
+            );
+            return response($response, 500);
+        }
+    }
+
+    public function getQuickCartSummary($address_id)
+    {
+
+        try {
+            $carts = QuickCart::with('products')
+                ->where('user_id', Auth::user()->id)
+                ->get();
+            $cart_summary = $this->getCartSummaryData($carts, $address_id);
+            // dd($cart_summary);
+
+            $response = [
+                'status' => true,
+                'data' => $cart_summary,
+                'message' => "Success"
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            // return $this->error($e->getMessage(), 200);
+            $response = array(
+                'message' => $this->errorMessage,
+                'status' => false,
+            );
+            return response($response, 500);
+        }
+    }
+}

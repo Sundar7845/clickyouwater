@@ -1,0 +1,36 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateSurrenderPickupsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('surrender_pickups', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('surrender_id');
+            $table->foreign('surrender_id')->references('id')->on('surrenders');
+            $table->unsignedBigInteger('delivery_user_id');
+            $table->foreign('delivery_user_id')->references('id')->on('delivery_people');
+            $table->longText('notes')->nullable();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('surrender_pickups');
+    }
+}

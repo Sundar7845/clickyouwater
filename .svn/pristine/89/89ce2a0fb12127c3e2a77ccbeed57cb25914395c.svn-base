@@ -1,0 +1,76 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Masters;
+
+use App\Http\Controllers\Controller;
+use App\Models\Department;
+use Illuminate\Http\Request;
+
+class DepartmentController extends Controller
+{
+    public function department()
+    {
+        return view('admin.masters.department.department');
+    }
+
+    public function addDepartment(Request $request)
+    {
+        $request->validate([
+            'txtDepartmentName' => 'required'
+        ]);
+
+        if ($request->hdDepartmentId == null) {
+            Department::create([
+                'department_name' => $request->txtDepartmentName
+            ]);
+        } else {
+
+            Department::findorfail($request->hdDepartmentId)->update([
+                'department_name' => $request->txtDepartmentName
+            ]);
+        }
+
+        $notification = array(
+            'message' => 'Department Created Successfully',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->route('department')->with($notification);
+    }
+
+    public function deleteDepartment($id)
+    {
+        $department = Department::findorfail($id);
+        $department->delete();
+
+        $notification = array(
+            'message' => 'Department Deleted Successfully',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->route('department')->with($notification);
+    }
+
+    public function getDepartmentById($id)
+    {
+        $department = Department::select('departments.*')->where('departments.id', $id)->first();
+        return response()->json([
+            'dapartment' => $department
+        ]);
+    }
+
+    public function getDepartmentData(Request $request)
+    {
+
+        $departmentData = Department::select('departments.*')->get();
+        return datatables()->of($departmentData)
+            ->addColumn('action', function ($row) {
+                $html = '<i class="text-primary ti ti-pencil me-1"
+                onclick="doEdit(' . $row->id . ');"></i> ';
+                $html .= '<a href="delete/department/' . $row->id . '">
+                <i class="text-danger ti ti-trash me-1" id="confrim-text"></i>
+            </a>';
+                return $html;
+            })->toJson();
+    }
+}

@@ -1,0 +1,58 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Dashboard;
+
+use App\Http\Controllers\Controller;
+use App\Models\Menu;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use App\Traits\Common;
+use Intervention\Image\Facades\Image;
+
+class DashboardController extends Controller
+{
+  use Common;
+  public function dashboard()
+  {
+    return view('admin.dashboard.dashboard');
+  }
+
+  public function profile()
+  {
+    $profiledetails = Auth::user();
+    return view('admin.dashboard.profile', compact('profiledetails'));
+  }
+
+  public function ProfileUpdate(Request $request)
+  {
+    $request->validate([
+      'txtUserName' => 'required',
+      'txtMobile' => 'required|numeric|digits:10|unique:users,mobile,' . $request->hdProfileId,
+      'txtPassword' => 'required|same:txtConfirmPassword',
+      'txtConfirmPassword' => 'required'
+    ]);
+   
+    if ($request->file('ProfileImage')) {
+      $path = $request->file('ProfileImage')->store('temp');
+      $file = $request->file('ProfileImage');
+      $extension = $file->getClientOriginalExtension();
+      $fileName = $this->generateRandom(16) . '.' . $extension;
+    }
+
+    User::findorFail($request->hdProfileId)->update([
+      'user_name' => $request->txtUserName,
+      'mobile' => $request->txtMobile,
+      'password' => Hash::make($request->txtPassword),
+      'user_img_path' => ($request->hasFile('ProfileImage')) ? $this->fileUpload($file, 'upload/users/' . $request->hdProfileId, $fileName) : $request->hdProfileImg,
+      'updated_by' => Auth::user()->id
+    ]);
+
+    $notification = array(
+      'message' => 'Profile Updated Successfully',
+      'alert' => 'success'
+    );
+    return redirect()->route('profile')->with($notification);
+  }
+}

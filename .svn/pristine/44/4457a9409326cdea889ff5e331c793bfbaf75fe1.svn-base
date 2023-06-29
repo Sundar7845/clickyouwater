@@ -1,0 +1,177 @@
+<?php
+
+namespace App\Http\Controllers\Admin\DiscountManagement;
+
+use App\Enums\MenuPermissionType;
+use App\Http\Controllers\Controller;
+use App\Models\Coupon;
+use App\Models\CouponType;
+use App\Models\DiscountType;
+use App\Traits\Common;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class CouponController extends Controller
+{
+    use common;
+    public function generateCoupon()
+    {
+        try {
+            $coupontypes = CouponType::get();
+            $discountTypes = DiscountType::get();
+            return view('admin.discount_management.generate_coupon', compact('coupontypes', 'discountTypes'));
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function addgenerateCoupon(Request $request)
+    {
+        try {
+            if ($request->hdgeneratecouponId == null) {
+                $request->validate([
+                    'ddlCouponType' => 'required',
+                    'txtCouponName' => 'required|unique:coupons,coupon_name',
+                    'txtCouponCode' => 'required|unique:coupons,coupon_code',
+                    'ddlStartDate' => 'required',
+                    'ddlEndDate' => 'required',
+                    'ddlDiscountType' => 'required',
+                    'txtdiscount_value' => 'required',
+                    'txtMaxDiscount' => 'required',
+                    'txtMinOrderQty' => 'required',
+                ]);
+                Coupon::create([
+                    'coupon_type_id' => $request->ddlCouponType,
+                    'coupon_name' => $request->txtCouponName,
+                    'coupon_code' => $request->txtCouponCode,
+                    'start_date' => $request->ddlStartDate,
+                    'end_date' => $request->ddlEndDate,
+                    'discount_type_id' => $request->ddlDiscountType,
+                    'discount_value' => $request->txtdiscount_value,
+                    'same_user_limit' => $request->txtSameuserlimit,
+                    'max_discount' => $request->txtMaxDiscount,
+                    'min_order_qty' => $request->txtMinOrderQty,
+                    'is_active' => 1,
+                    'created_by' => Auth::user()->id
+                ]);
+                $notification = array(
+                    'message' => 'Coupon Created Successfully',
+                    'alert-type' => 'success'
+                );
+            } else {
+
+                $request->validate([
+                    'ddlCouponType' => 'required',
+                    'txtCouponName' => 'required|unique:coupons,coupon_name,' . $request->hdgeneratecouponId,
+                    'txtCouponCode' => 'required|unique:coupons,coupon_code,' . $request->hdgeneratecouponId,
+                    'ddlStartDate' => 'required',
+                    'ddlEndDate' => 'required',
+                    'ddlDiscountType' => 'required',
+                    'txtdiscount_value' => 'required',
+                    'txtMaxDiscount' => 'required',
+                    'txtMinOrderQty' => 'required',
+                ]);
+                Coupon::findorfail($request->hdgeneratecouponId)->update([
+                    'coupon_type_id' => $request->ddlCouponType,
+                    'coupon_name' => $request->txtCouponName,
+                    'coupon_code' => $request->txtCouponCode,
+                    'start_date' => $request->ddlStartDate,
+                    'end_date' => $request->ddlEndDate,
+                    'discount_type_id' => $request->ddlDiscountType,
+                    'discount_value' => $request->txtdiscount_value,
+                    'same_user_limit' => $request->txtSameuserlimit,
+                    'max_discount' => $request->txtMaxDiscount,
+                    'min_order_qty' => $request->txtMinOrderQty,
+                    'updated_by' => Auth::user()->id
+                ]);
+
+                $notification = array(
+                    'message' => 'Coupon Updated Successfully',
+                    'alert-type' => 'success'
+                );
+            }
+            return redirect()->route('generate-coupon')->with($notification);
+        } catch (\Exception $e) {
+            dd($e);
+            $notification = array(
+                'message' => 'Coupon Not Created!',
+                'alert-type' => 'error'
+            );
+            $this->Log(__FUNCTION__, $request->method(), $e->getMessage(), Auth::user()->id, $request->ip(), gethostname());
+        }
+    }
+
+    public function getgenerateCouponData()
+    {
+        try {
+            $couponData = Coupon::select('coupons.*', 'coupon_types.coupon_type', DB::raw("DATE_FORMAT(coupons.start_date, '%d/%m/%Y %h:%i %p') as formatted_start_date"), DB::raw("DATE_FORMAT(coupons.end_date, '%d/%m/%Y %h:%i %p') as formatted_end_date"))
+                ->join('coupon_types', 'coupon_types.id', 'coupons.coupon_type_id')->get();
+            return datatables()->of($couponData)
+                ->addColumn('action', function ($row) {
+                    $html = "";
+                    if ($this->isUserHavePermission(MenuPermissionType::Edit)) {
+                        $html = '<i class="text-primary ti ti-pencil me-1"
+                onclick="doEdit(' . $row->id . ');"></i> ';
+                    }
+                    if ($this->isUserHavePermission(MenuPermissionType::Delete)) {
+                        $html .= '<i class="text-danger ti ti-trash me-1" id="confrim-color(' . $row->id . ')" onclick="showDelete(' . $row->id . ');"></i>';
+                    }
+                    return $html;
+                })->toJson();
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, 'GET', $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function activeStatus($id, $status)
+    {
+        try {
+            Coupon::findorfail($id)->update([
+                'is_active' => $status,
+                'updated_by' => Auth::user()->id
+            ]);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, 'POST', $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function getCouponById($id)
+    {
+        try {
+            $coupon = Coupon::select('coupons.*')->where('coupons.id', $id)->first();
+            return response()->json([
+                'coupon' => $coupon
+            ]);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, 'GET', $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function deleteCoupon($id)
+    {
+        try {
+            $coupon = Coupon::findorfail($id);
+            $coupon->delete();
+            $coupon->update([
+                'deleted_by' => Auth::user()->id
+            ]);
+
+            $notification = array(
+                'message' => 'Coupon Deleted Successfully',
+                'alert' => 'success'
+            );
+            return response()->json([
+                'responseData' => $notification
+            ]);
+        } catch (\Exception $e) {
+            $notification = array(
+                'message' => 'Coupon Could Not Be Deleted!',
+                'alert' => 'error'
+            );
+            return response()->json([
+                'responseData' => $notification
+            ]);
+        }
+    }
+}

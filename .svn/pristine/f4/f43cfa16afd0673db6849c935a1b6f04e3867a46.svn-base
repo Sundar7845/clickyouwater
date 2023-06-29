@@ -1,0 +1,402 @@
+<?php
+
+namespace App\Http\Controllers\Admin\HubManagement;
+
+use App\Http\Controllers\Controller;
+use App\Models\Area;
+use App\Models\BillNoSetting;
+use App\Models\City;
+use App\Models\DocumentConfig;
+use App\Models\Hub;
+use App\Models\HubDocuments;
+use App\Models\HubManufactureConfig;
+use App\Models\Manufacturer;
+use App\Models\State;
+use App\Models\User;
+use App\Traits\Common;
+use Illuminate\Database\QueryException;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use App\Enums\DocumentModulesType;
+
+class HubController extends Controller
+{
+    use Common;
+    public function hub($id = NULL)
+    {
+        $manufacture = Manufacturer::all();
+        $documents = $this->getDocumentsByModule(DocumentModulesType::Hub);
+        $states = State::all();
+        if ($id) {
+            $hub = Hub::find($id);
+            $citys = City::where('state_id', $hub->state_id)->get();
+            $areas = Area::where('city_id', $hub->city_id)->get();
+            $hubconfiq = HubManufactureConfig::where('hub_id', $id)->pluck('manufacturer_id')->toArray();
+            $hubExample = $hub->hub_id;
+
+            $bindDocuments = $this->getDocumentConfigsByModule(DocumentModulesType::Hub, $id);
+            return view('admin.hub_management.hub', compact('states', 'bindDocuments', 'documents', 'hub', 'hubExample', 'hubconfiq', 'citys', 'areas', 'manufacture'));
+        }
+
+        $hub =  null;
+        $bindDocuments = "";
+        $data = BillNoSetting::first();
+        $hubPrefix = $data->hub_prefix ?? 0;
+        $hubLength = $data->hub_length ?? 0;
+        $hubLive = (int)($data->hub_live ?? 0) + 1;
+        if ($hubLive) {
+            $hubNumber = $hubLive;
+        }
+        $hubs = sprintf("%0{$hubLength}d", $hubNumber);
+        $hubExample = $hubPrefix . $hubs;
+        $states = State::all();
+        $hubconfiq = HubManufactureConfig::where('hub_id', $id)->pluck('manufacturer_id')->toArray();
+        return view('admin.hub_management.hub', compact('states', 'hub', 'bindDocuments', 'documents', 'hubconfiq', 'hubExample', 'manufacture'));
+    }
+
+    public function hubCreate(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $request->validate([
+                "txthubId" => 'required',
+                "txthubName" => 'required',
+                "ddlManufacturerName" => 'required',
+                "txtYrsofExp" => 'required',
+                "txtMobile" => 'required|numeric|digits:10|unique:hubs,mobile',
+                "txtofficialEmail" => 'required|email|unique:hubs,official_email',
+                "txtlatitude" => 'required',
+                "txtlangtitute" => 'required',
+                "txtgeolocation" => 'required',
+                "txtRadius" => 'required',
+                "txtcreditPeriod" => 'required',
+                "txtsettlementPeriod" => 'required',
+                "txtsecurityDeposit" => 'required',
+                'password' => 'required|min:6|confirmed',
+                "ddlState" => 'required',
+                "ddlCity" => 'required',
+                "ddlArea" => 'required',
+                "txtLandmark" => 'required',
+                "txtpinCode" => 'required',
+                "txtProprietorName" => 'required',
+                "txtProprietorMobile" => 'required|numeric|digits:10|unique:hubs,proprietor_mobile',
+                "txtProprietorEmail" => 'required|email|unique:hubs,proprietor_email',
+                "txtContactPersonName" => 'required',
+                "txtContactPersonMobile" => 'required|numeric|digits:10|unique:hubs,contact_person_mobile',
+                "txtContactPersonEmail" => 'required|email|unique:hubs,contact_person_email'
+            ]);
+
+            //Validate the documents for hub
+            $this->validateDocuments($request, DocumentModulesType::Hub, 'hub');
+
+            $data = $request->all();
+            $last_inserted_hub_id = Hub::insertGetId([
+                "hub_id" => $request->txthubId,
+                "hub_name" => $request->txthubName,
+                "years_of_experience" => $request->txtYrsofExp,
+                "mobile" => $request->txtMobile,
+                "official_email" => $request->txtofficialEmail,
+                "latitude" => $request->txtlatitude,
+                "longtitude" => $request->txtlangtitute,
+                "geo_location" => $request->txtgeolocation,
+                "radius" => $request->txtRadius,
+                "credit_period" => $request->txtcreditPeriod,
+                "settlement_period" => $request->txtsettlementPeriod,
+                "security_deposit" => $request->txtsecurityDeposit,
+                'password' => Hash::make($request->password),
+                "state_id" => $request->ddlState,
+                "city_id" => $request->ddlCity,
+                "area_id" => $request->ddlArea,
+                "address" => $request->txtLandmark,
+                "pincode" => $request->txtpinCode,
+                "is_active" => 1,
+                "proprietor_name" => $request->txtProprietorName,
+                "proprietor_mobile" => $request->txtProprietorMobile,
+                "proprietor_email" => $request->txtProprietorEmail,
+                "contact_person_name" => $request->txtContactPersonName,
+                "contact_person_mobile" => $request->txtContactPersonMobile,
+                "contact_person_email" => $request->txtContactPersonEmail,
+                'created_by' => Auth::user()->id
+            ]);
+
+            foreach ($data['ddlManufacturerName'] as $value) {
+                HubManufactureConfig::create([
+                    'hub_id' => $last_inserted_hub_id,
+                    'manufacturer_id' => $value
+                ]);
+            }
+
+            $documents = $this->getDocumentsByModule(DocumentModulesType::Hub);
+
+            //Create hub documents in create mode
+            $this->createHubDocuments($request, $documents, $last_inserted_hub_id);
+
+            // foreach ($documents as $doc) {
+            //     if ($request->hasFile('file_' . $doc->id)) {
+            //         $path = $request->file('file_' . $doc->id)->store('temp');
+            //         $file = $request->file('file_' . $doc->id);
+            //         $extension = $file->getClientOriginalExtension();
+            //         $fileName = $this->generateRandom(16) . '.' . $extension;
+            //     }
+            //     $doc_id = 'doc_' . $doc->id;
+            //     HubDocuments::create([
+            //         'hub_id' => $hub_data,
+            //         'documentconfig_id' => $doc->id,
+            //         'document_path' => ($request->hasFile('file_' . $doc->id)) ? $this->fileUpload($file, 'upload/hubs/' . $request->txthubId, $fileName) : '',
+            //         'document_number' => $request->$doc_id
+            //     ]);
+            // }
+
+            //Increase hublive count in settings table
+            $this->UpdateLiveCount(DocumentModulesType::Hub, 1);
+            // $data = BillNoSetting::first();
+            // $data->hub_live = $data->hub_live + 1;
+            // $data->save();
+
+            //Create hub user account for login
+            $this->createUser(
+                $request->txtMobile,
+                $request->txtofficialEmail,
+                $request->password,
+                $last_inserted_hub_id,
+                $request->txthubName,
+                $request->txtMobile,
+                4,
+                1,
+                Auth::user()->id
+            );
+
+            // User::create([
+            //     'user_name' => $request->txtMobile,
+            //     'email' => $request->txtofficialEmail,
+            //     'password' => Hash::make($request->password),
+            //     'role_id' => 4,
+            //     'is_active' => 1,
+            //     'display_name' => $request->txthubName,
+            //     'mobile' =>  $request->txtMobile,
+            //     'created_by' => Auth::user()->id
+            // ]);
+
+            DB::commit(); // Commit the transaction
+            $notification = array(
+                'message' => 'Hub Created Successfully',
+                'alert-type' => 'success'
+            );
+        } catch (\Exception $e) {
+            DB::rollback(); // Roll back the transaction if an error occurs
+            $notification = array(
+                'message' => 'Something Went Wrong!',
+                'alert-type' => 'success'
+            );
+            return redirect()->route('hub')->with($notification);
+        }
+        return redirect()->route('hub-list')->with($notification);
+    }
+
+    public function hubUpdate(Request $request)
+    {
+        // dd($request->all());
+        $request->validate([
+            "txthubId" => 'required',
+            "txthubName" => 'required',
+            "ddlManufacturerName" => 'required',
+            "txtYrsofExp" => 'required',
+            "txtMobile" => 'required|numeric|digits:10|unique:hubs,mobile,' . $request->id,
+            "txtofficialEmail" => 'required|email|unique:hubs,official_email,' . $request->id,
+            "txtlatitude" => 'required',
+            "txtlangtitute" => 'required',
+            "txtgeolocation" => 'required',
+            "txtRadius" => 'required',
+            "txtcreditPeriod" => 'required',
+            "txtsettlementPeriod" => 'required',
+            "txtsecurityDeposit" => 'required',
+            'password' => 'required|min:6|confirmed',
+            "ddlState" => 'required',
+            "ddlCity" => 'required',
+            "ddlArea" => 'required',
+            "txtLandmark" => 'required',
+            "txtpinCode" => 'required',
+            "txtProprietorName" => 'required',
+            "txtProprietorMobile" => 'required|numeric|digits:10|unique:hubs,proprietor_mobile,' . $request->id,
+            "txtProprietorEmail" => 'required|email|unique:hubs,proprietor_email,' . $request->id,
+            "txtContactPersonName" => 'required',
+            "txtContactPersonMobile" => 'required|numeric|digits:10|unique:hubs,contact_person_mobile,' . $request->id,
+            "txtContactPersonEmail" => 'required|email|unique:hubs,contact_person_email,' . $request->id
+        ]);
+
+        $data = $request->all();
+        Hub::findorfail($request->id)->update([
+            "hub_id" => $request->txthubId,
+            "hub_name" => $request->txthubName,
+            "years_of_experience" => $request->txtYrsofExp,
+            "mobile" => $request->txtMobile,
+            "official_email" => $request->txtofficialEmail,
+            "latitude" => $request->txtlatitude,
+            "longtitude" => $request->txtlangtitute,
+            "geo_location" => $request->txtgeolocation,
+            "radius" => $request->txtRadius,
+            "credit_period" => $request->txtcreditPeriod,
+            "settlement_period" => $request->txtsettlementPeriod,
+            "security_deposit" => $request->txtsecurityDeposit,
+            'password' => Hash::make($request->password),
+            "state_id" => $request->ddlState,
+            "city_id" => $request->ddlCity,
+            "area_id" => $request->ddlArea,
+            "address" => $request->txtLandmark,
+            "pincode" => $request->txtpinCode,
+            "proprietor_name" => $request->txtProprietorName,
+            "proprietor_mobile" => $request->txtProprietorMobile,
+            "proprietor_email" => $request->txtProprietorEmail,
+            "contact_person_name" => $request->txtContactPersonName,
+            "contact_person_mobile" => $request->txtContactPersonMobile,
+            "contact_person_email" => $request->txtContactPersonEmail,
+            'updated_by' => Auth::user()->id
+        ]);
+
+        HubManufactureConfig::where('hub_id', $request->id)->delete();
+        foreach ($data['ddlManufacturerName'] as $value) {
+            HubManufactureConfig::Create([
+                'hub_id' => $request->id,
+                'manufacturer_id' => $value
+            ]);
+        }
+
+        $documents = $this->getDocumentConfigsByModule(DocumentModulesType::Hub, $request->id);
+
+        $nullDocuments = $this->getDocumentsByModule(DocumentModulesType::Hub);
+
+        if ($request->id) {
+            foreach ($documents as $doc) {
+                // ($request->doc_ . $doc->id != null ?: @unlink($doc->document_path));
+                if ($request->doc_ . $doc->id == null) {
+                    @unlink($doc->document_path);
+                }
+            }
+            HubDocuments::where('hub_id', $request->id)->delete();
+        }
+
+        //Create hub documents in edit mode
+        $this->createHubDocuments($request, $documents == null ? $documents : $nullDocuments, $request->id);
+
+        // foreach ($documents == null ? $documents : $nullDocuments as $doc) {
+        //     if ($request->hasFile('file_' . $doc->id)) {
+        //         $path = $request->file('file_' . $doc->id)->store('temp');
+        //         $file = $request->file('file_' . $doc->id);
+        //         $extension = $file->getClientOriginalExtension();
+        //         $fileName = $this->generateRandom(16) . '.' . $extension;
+        //     }
+        //     $doc_id = 'doc_' . $doc->id;
+        //     $file_id = 'hdDocumentImg_' . $doc->id;
+        //     HubDocuments::create([
+        //         'hub_id' => $request->id,
+        //         'documentconfig_id' => $doc->id,
+        //         'document_path' => ($request->hasFile('file_' . $doc->id)) ? $this->fileUpload($file, 'upload/hubs/' . $request->txthubId, $fileName) : $request->$file_id,
+        //         'document_number' => $request->$doc_id
+        //     ]);
+        // }
+
+        $notification = array(
+            'message' => 'Hub Updated Successfully',
+            'alert-type' => 'success'
+        );
+        return redirect()->route('hub-list')->with($notification);
+    }
+
+    public function createHubDocuments(Request $request, $documents, $hub_id)
+    {
+        foreach ($documents as $doc) {
+            if ($request->hasFile('file_' . $doc->id)) {
+                $path = $request->file('file_' . $doc->id)->store('temp');
+                $file = $request->file('file_' . $doc->id);
+                $extension = $file->getClientOriginalExtension();
+                $fileName = $this->generateRandom(16) . '.' . $extension;
+            }
+            $doc_no = 'doc_' . $doc->id;
+            $existingfile_path = 'hdDocumentImg_' . $doc->id;
+            HubDocuments::create([
+                'hub_id' => $hub_id,
+                'documentconfig_id' => $doc->id,
+                'document_path' => ($request->hasFile('file_' . $doc->id)) ? $this->fileUpload($file, 'upload/hubs/' . $request->txthubId, $fileName) : (!isset($request->$existingfile_path) ? '' : $request->$existingfile_path),
+                'document_number' => $request->$doc_no
+            ]);
+        }
+    }
+    public function deleteHub($id)
+    {
+        try {
+            $hub = Hub::findorfail($id);
+            $hub->delete();
+
+            $hub->Update([
+                'deleted_by' => Auth::user()->id
+            ]);
+
+            $notification = array(
+                'message' => 'Hub Deleted Successfully',
+                'alert' => 'success'
+            );
+            return response()->json([
+                'responseData' => $notification
+            ]);
+        } catch (QueryException $e) {
+
+            $notification = array(
+                'message' => 'Hub could not be deleted',
+                'alert' => 'error'
+            );
+            return response()->json([
+                'responseData' => $notification
+            ]);
+        }
+    }
+
+    public function activeHubStatus($id, $status)
+    {
+        Hub::findorfail($id)->update([
+            'is_active' => $status,
+            'updated_by' => Auth::user()->id
+        ]);
+    }
+
+    public function hubList()
+    {
+        $states = State::orderBy('state_name', 'ASC')->get();
+        return view('admin.hub_management.hublist', compact('states'));
+    }
+
+    public function hubData(Request $request)
+    {
+        $manufacturerData = "";
+        $query = Hub::join('hub_manufacture_configs', 'hub_manufacture_configs.hub_id', 'hubs.id')
+            ->join('manufacturers', 'manufacturers.id', 'hub_manufacture_configs.manufacturer_id')
+            ->select('hubs.*', 'manufacturers.manufacturer_name')
+            ->groupby('hub_manufacture_configs.hub_id')
+            ->distinct();
+
+        if ($request->state_id > 0) {
+            $query = $query->where('hubs.state_id', $request->state_id);
+        }
+        if ($request->city_id > 0) {
+            $query = $query->where('hubs.city_id', $request->city_id);
+        }
+        if ($request->area_id > 0) {
+            $query = $query->where('hubs.area_id', $request->area_id);
+        }
+
+        $manufacturerData = $query->get();
+
+        return datatables()->of($manufacturerData)
+            ->addColumn('action', function ($row) {
+                $html = '<a href="hub/' . $row->id . '"><i class="text-primary ti ti-pencil me-1"></i></a> ';
+                $html .= '<i class="text-danger ti ti-trash me-1" id="confirm-color' . $row->id . '" onclick="showDelete(' . $row->id . ');"></i>';
+                return $html;
+            })->toJson();
+    }
+
+    public function hubDocument()
+    {
+        return view('admin.hub_management.hub_document');
+    }
+}

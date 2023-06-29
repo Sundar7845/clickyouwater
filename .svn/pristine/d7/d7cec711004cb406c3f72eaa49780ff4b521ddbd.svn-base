@@ -1,0 +1,71 @@
+@extends('layouts.manufacturer')
+@section('content')
+@section('title')
+    Dashboard | Orders
+@endsection
+
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold mb-4">
+        Orders List
+    </h4>
+    <!-- DataTable with Buttons -->
+    <div class="col-lg-12 mb-4 mb-lg-0 mt-3">
+        <div class="card h-100">
+            <div class="card-datatable table-responsive pt-0">
+                <table id="offers" class="table">
+                    <thead class="border-bottom">
+                        <tr>
+                            <th>S.No</th>
+                            <th>Delivery Person</th>
+                            <th>Date</th>
+                            <th>Product Name</th>
+                            <th>Brand</th>
+                            <th>Product Count</th>
+                            <th>Empty Can</th>
+                            <th>Delivery Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Surya</td>
+                            <td>10/02/2023 10:00 AM</td>
+                            <td>20 Ltrs</td>
+                            <td>Brand 1</td>
+                            <td>4</td>
+                            <td>0</td>
+                            <td>Delivered</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Nabil</td>
+                            <td>11/02/2023 12:00 AM</td>
+                            <td>2 Ltrs</td>
+                            <td>Brand 2</td>
+                            <td>7</td>
+                            <td>2</td>
+                            <td>Delivered</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Raja</td>
+                            <td>10/02/2023 11:00 AM</td>
+                            <td>5 Ltrs</td>
+                            <td>Brand 3</td>
+                            <td>9</td>
+                            <td>2</td>
+                            <td>Pending</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--/ DataTable with Buttons -->
+</div>
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/offers/offers.js') }}"></script>
+@endsection

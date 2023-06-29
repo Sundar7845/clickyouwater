@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Http\Controllers\Login;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class LoginController extends Controller
+{
+    public function LoginForm()
+    {
+        return view('login');
+    }
+
+    public function ForgetPassword()
+    {
+        return view('forget_password');
+    }
+}

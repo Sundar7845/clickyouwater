@@ -1,0 +1,428 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Dashboard | Employee
+@endsection
+
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold mb-4">
+        Employee
+    </h4>
+
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-12 mb-4 mb-md-0">
+            <form>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="card-header p-0">
+                            <h4>Identity Details</h4>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Name of the Employee<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" placeholder="Enter the Name">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Father’s/ Spouse Name<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control"
+                                        placeholder="Enter the Father’s/ Spouse Name">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Gender<span class="text-danger">*</span></label>
+                                    <div class="form-group">
+                                        <input type="radio" class="form-check-input" value="1" /> Male
+                                        <input type="radio" class="form-check-input" value="2" /> Female
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Date of birth<span class="text-danger">*</span></label>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="DD/MM/YYYY">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Nationality<span class="text-danger">*</span></label>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="Enter Nationality">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Status
+                                        <sup>(Resident/Non-Resident/Foreign National)</sup> </label>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="Enter Nationality">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">PAN<span class="text-danger">*</span></label>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="Enter PAN No">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Aadhaar Number, if any</label>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="Enter Aadhaar No">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Passport Number<sup>(In case of
+                                            overseas)</sup></label>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="Enter Passport No">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <div class="card-header p-0">
+                            <h4>Address Details</h4>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <strong class="form-label" for="basic-default-name">Communication Address</strong>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Country<span class="text-danger">*</span></label>
+                                    <select name="" id="" class="select2 form-select form-select-md">
+                                        <option value="IN">India</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">State<span class="text-danger">*</span></label>
+                                    <select name="" id="" class="select2 form-select form-select-lg">
+                                        <option value="">Select</option>
+                                        <option value="TN">Tamilnadu</option>
+                                        <option value="KL">Kerala</option>
+                                        <option value="AP">Andra Pradesh</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">City/town/village<span class="text-danger">*</span></label>
+                                    <select name="" id="" class="select2 form-select form-select-lg">
+                                        <option value="">Select</option>
+                                        <option value="TN">Coimbatore</option>
+                                        <option value="KL">Kannur</option>
+                                        <option value="AP">Nellor</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Door No/Street<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" placeholder="Enter Door No/Street">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Pin Code<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" placeholder="Enter Pin Code">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <strong class="form-label" for="basic-default-name">Permanent
+                                                Address</strong>
+                                        </div>
+                                        <div class="col-md-6 text-end">
+                                            <input type="checkbox"> Same as Communication
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 mt-3">
+                                        <label class="form-label" for="basic-default-name">Country<span class="text-danger">*</span></label>
+                                        <select name="" id=""
+                                            class="select2 form-select form-select-md">
+                                            <option value="IN">India</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="basic-default-name">State<span class="text-danger">*</span></label>
+                                        <select name="" id=""
+                                            class="select2 form-select form-select-lg">
+                                            <option value="">Select</option>
+                                            <option value="TN">Tamilnadu</option>
+                                            <option value="KL">Kerala</option>
+                                            <option value="AP">Andra Pradesh</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="basic-default-name">City/town/village<span class="text-danger">*</span></label>
+                                        <select name="" id=""
+                                            class="select2 form-select form-select-lg">
+                                            <option value="">Select</option>
+                                            <option value="TN">Coimbatore</option>
+                                            <option value="KL">Kannur</option>
+                                            <option value="AP">Nellor</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="basic-default-name">Door No/Street<span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control"
+                                            placeholder="Enter Door No/Street">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="basic-default-name">Pin Code<span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" placeholder="Enter Pin Code">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <div class="card-header p-0">
+                            <h4>Contact Details</h4>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Mobile 1<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" placeholder="Enter Mobile 1">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Mobile 2</label>
+                                    <input type="text" class="form-control" placeholder="Enter Mobile 2">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Email id<span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control" placeholder="Enter Email 1">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Email id 2
+                                        <sup>(Optional)</sup></label>
+                                    <input type="email" class="form-control" placeholder="Enter Email 2">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <div class="card-header p-0">
+                            <h4>Previous Company Details</h4>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Previous company experience
+                                        years</label>
+                                    <input type="text" class="form-control"
+                                        placeholder="Enter Previous company experience years">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Previous company Name</label>
+                                    <input type="text" class="form-control"
+                                        placeholder="Enter Previous company Name">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Ref By</label>
+                                    <input type="text" class="form-control" placeholder="Enter Ref By">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <div class="card-header p-0">
+                            <h4>Bank Details</h4>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Name as printed on the
+                                        passbook<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control"
+                                        placeholder="Enter Name as printed on the passbook">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Account Number<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" placeholder="Enter Account Number">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Account Type<span class="text-danger">*</span></label>
+                                    <div class="form-group">
+                                        <input type="radio" class="form-check-input" value="1" /> Savings
+                                        <input type="radio" class="form-check-input" value="2" /> Current
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Bank Name<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" placeholder="Enter Bank Name">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Branch Name<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" placeholder="Enter Branch Name">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">IFSC Code<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" placeholder="Enter IFSC Code">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Employee Image</label>
+                                    <input type="file" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <div class="card-header p-0">
+                            <h4>For Office Use Only</h4>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Employee ID<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" disabled value="EMP001">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Department<span class="text-danger">*</span></label>
+                                    <select name="" id="" class="select2 form-select form-select-lg">
+                                        <option value="">Select</option>
+                                        <option value="TN">Department 1</option>
+                                        <option value="KL">Department 2</option>
+                                        <option value="AP">Department 3</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Desingation<span class="text-danger">*</span></label>
+                                    <select name="" id="" class="select2 form-select form-select-lg">
+                                        <option value="">Select</option>
+                                        <option value="TN">Desingation 1</option>
+                                        <option value="KL">Desingation 2</option>
+                                        <option value="AP">Desingation 3</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Reporting To<span class="text-danger">*</span></label>
+                                    <select name="" id="" class="select2 form-select form-select-lg">
+                                        <option value="">Select</option>
+                                        <option value="TN">Reporting To 1</option>
+                                        <option value="KL">Reporting To 2</option>
+                                        <option value="AP">Reporting To 3</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Package<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" placeholder="Enter Package">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Date of joining<span class="text-danger">*</span></label>
+                                    <input type="date" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Company Mail ID<span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control" placeholder="Company Mail ID">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Company Phone Number<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" placeholder="Enter Phone Number">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Originals verified by<span class="text-danger">*</span></label>
+                                    <select name="" id="" class="select2 form-select form-select-lg">
+                                        <option value="">Select</option>
+                                        <option value="TN">Originals verified by 1</option>
+                                        <option value="KL">Originals verified by 2</option>
+                                        <option value="AP">Originals verified by 3</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Originals Given<span class="text-danger">*</span></label>
+                                    <select name="" id="" class="select2 form-select form-select-lg">
+                                        <option value="">Select</option>
+                                        <option value="TN">Originals Given 1</option>
+                                        <option value="KL">Originals Given 2</option>
+                                        <option value="AP">Originals Given 3</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mt-4 mb-3">
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                    <button type="button" class="btn btn-danger">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+</div>
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/admin/masters/employee.js') }}"></script>
+@endsection

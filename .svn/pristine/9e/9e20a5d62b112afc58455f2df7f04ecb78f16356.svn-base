@@ -1,0 +1,12 @@
+//document update
+function doVerify(id) {
+    var status = $("#chkDeliveryPersonDocument" + id).is(":checked");
+    if (status == true) {
+        $("#chkDeliveryPersonDocument").val(1);
+        status = 1;
+    } else {
+        $("#chkDeliveryPersonDocument").val(0);
+        status = 0;
+    }
+    confirmVerification(id, "/verifydeliverypeopledocument/", status);
+}

@@ -1,0 +1,26 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class ProductType extends Model
+{
+    use HasFactory,SoftDeletes;
+
+    protected $fillable = [
+        'product_type_name',
+        'delivery_charge',
+        'delivery_duration',
+        'order_before_time',
+        'newcan_deposit_amt',
+        'min_order_qty',
+        'max_order_qty',
+        'is_active',
+        'created_by',
+        'updated_by',
+        'deleted_by'
+    ];
+}

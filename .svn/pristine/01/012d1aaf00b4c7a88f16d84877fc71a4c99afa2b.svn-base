@@ -1,0 +1,168 @@
+[10260] Log opened at 2023-04-05 10:22:57.870150
+[10260] [Step Debug] INFO: Connecting to configured address/port: 127.0.0.1:60566.
+[10260] [Step Debug] INFO: Connected to debugging client: 127.0.0.1:60566 (through xdebug.client_host/xdebug.client_port).
+[10260] [Step Debug] -> <init xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" fileuri="file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php" language="PHP" xdebug:language_version="8.2.0" protocol_version="1.0" appid="10260" idekey="VSCODE"><engine version="3.2.1"><![CDATA[Xdebug]]></engine><author><![CDATA[Derick Rethans]]></author><url><![CDATA[https://xdebug.org]]></url><copyright><![CDATA[Copyright (c) 2002-2023 by Derick Rethans]]></copyright></init>
+
+[10260] [Step Debug] <- feature_set -i 1 -n resolved_breakpoints -v 1
+[10260] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="feature_set" transaction_id="1" feature="resolved_breakpoints" success="1"></response>
+
+[10260] [Step Debug] <- feature_set -i 2 -n notify_ok -v 1
+[10260] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="feature_set" transaction_id="2" feature="notify_ok" success="1"></response>
+
+[10260] [Step Debug] <- feature_set -i 3 -n extended_properties -v 1
+[10260] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="feature_set" transaction_id="3" feature="extended_properties" success="1"></response>
+
+[10260] [Step Debug] <- feature_set -i 4 -n breakpoint_include_return_value -v 1
+[10260] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="feature_set" transaction_id="4" feature="breakpoint_include_return_value" success="1"></response>
+
+[10260] [Step Debug] <- feature_set -i 5 -n max_children -v 100
+[10260] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="feature_set" transaction_id="5" feature="max_children" success="1"></response>
+
+[10260] [Step Debug] <- breakpoint_set -i 6 -t line -f file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php -n 20
+[10260] [Step Debug] -> <notify xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" name="breakpoint_resolved"><breakpoint type="line" resolved="resolved" filename="file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php" lineno="20" state="enabled" hit_count="0" hit_value="0" id="102600001"></breakpoint></notify>
+
+[10260] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="breakpoint_set" transaction_id="6" id="102600001" resolved="resolved"></response>
+
+[10260] [Step Debug] <- breakpoint_get -i 7 -d 102600001
+[10260] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="breakpoint_get" transaction_id="7"><breakpoint type="line" resolved="resolved" filename="file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php" lineno="20" state="enabled" hit_count="0" hit_value="0" id="102600001"></breakpoint></response>
+
+[10260] [Step Debug] <- breakpoint_set -i 8 -t line -f file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php -n 21
+[10260] [Step Debug] -> <notify xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" name="breakpoint_resolved"><breakpoint type="line" resolved="resolved" filename="file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php" lineno="21" state="enabled" hit_count="0" hit_value="0" id="102600002"></breakpoint></notify>
+
+[10260] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="breakpoint_set" transaction_id="8" id="102600002" resolved="resolved"></response>
+
+[10260] [Step Debug] <- breakpoint_get -i 9 -d 102600002
+[10260] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="breakpoint_get" transaction_id="9"><breakpoint type="line" resolved="resolved" filename="file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php" lineno="21" state="enabled" hit_count="0" hit_value="0" id="102600002"></breakpoint></response>
+
+[10260] [Step Debug] <- breakpoint_set -i 10 -t line -f file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php -n 27
+[10260] [Step Debug] -> <notify xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" name="breakpoint_resolved"><breakpoint type="line" resolved="resolved" filename="file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php" lineno="27" state="enabled" hit_count="0" hit_value="0" id="102600003"></breakpoint></notify>
+
+[10260] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="breakpoint_set" transaction_id="10" id="102600003" resolved="resolved"></response>
+
+[10260] [Step Debug] <- breakpoint_get -i 11 -d 102600003
+[10260] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="breakpoint_get" transaction_id="11"><breakpoint type="line" resolved="resolved" filename="file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php" lineno="27" state="enabled" hit_count="0" hit_value="0" id="102600003"></breakpoint></response>
+
+[10260] [Step Debug] <- breakpoint_set -i 12 -t line -f file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php -n 83
+[10260] [Step Debug] -> <notify xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" name="breakpoint_resolved"><breakpoint type="line" resolved="resolved" filename="file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php" lineno="83" state="enabled" hit_count="0" hit_value="0" id="102600004"></breakpoint></notify>
+
+[10260] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="breakpoint_set" transaction_id="12" id="102600004" resolved="resolved"></response>
+
+[10260] [Step Debug] <- breakpoint_get -i 13 -d 102600004
+[10260] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="breakpoint_get" transaction_id="13"><breakpoint type="line" resolved="resolved" filename="file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php" lineno="83" state="enabled" hit_count="0" hit_value="0" id="102600004"></breakpoint></response>
+
+[10260] [Step Debug] <- run -i 14
+[10260] [Step Debug] -> <notify xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" name="error"><xdebug:message filename="file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php" lineno="15" type="Fatal error"><![CDATA[Uncaught Error: Class "App\Http\Controllers\Controller" not found]]></xdebug:message></notify>
+
+[10260] [Step Debug] -> <notify xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" name="error"><xdebug:message filename="file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php" lineno="15" type="Fatal error"><![CDATA[Uncaught Error: Class "App\Http\Controllers\Controller" not found]]></xdebug:message></notify>
+
+[10260] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="run" transaction_id="14" status="stopping" reason="ok"></response>
+
+[10260] [Step Debug] <- stop -i 15
+[10260] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="stop" transaction_id="15" status="stopped" reason="ok"></response>
+
+[10260] Log closed at 2023-04-05 10:22:58.029108
+
+[5184] Log opened at 2023-04-05 10:32:49.696189
+[5184] [Step Debug] INFO: Connecting to configured address/port: 127.0.0.1:60895.
+[5184] [Step Debug] INFO: Connected to debugging client: 127.0.0.1:60895 (through xdebug.client_host/xdebug.client_port).
+[5184] [Step Debug] -> <init xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" fileuri="file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php" language="PHP" xdebug:language_version="8.2.0" protocol_version="1.0" appid="5184" idekey="VSCODE"><engine version="3.2.1"><![CDATA[Xdebug]]></engine><author><![CDATA[Derick Rethans]]></author><url><![CDATA[https://xdebug.org]]></url><copyright><![CDATA[Copyright (c) 2002-2023 by Derick Rethans]]></copyright></init>
+
+[5184] [Step Debug] <- feature_set -i 1 -n resolved_breakpoints -v 1
+[5184] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="feature_set" transaction_id="1" feature="resolved_breakpoints" success="1"></response>
+
+[5184] [Step Debug] <- feature_set -i 2 -n notify_ok -v 1
+[5184] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="feature_set" transaction_id="2" feature="notify_ok" success="1"></response>
+
+[5184] [Step Debug] <- feature_set -i 3 -n extended_properties -v 1
+[5184] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="feature_set" transaction_id="3" feature="extended_properties" success="1"></response>
+
+[5184] [Step Debug] <- feature_set -i 4 -n breakpoint_include_return_value -v 1
+[5184] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="feature_set" transaction_id="4" feature="breakpoint_include_return_value" success="1"></response>
+
+[5184] [Step Debug] <- feature_set -i 5 -n max_children -v 100
+[5184] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="feature_set" transaction_id="5" feature="max_children" success="1"></response>
+
+[5184] [Step Debug] <- breakpoint_set -i 6 -t line -f file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php -n 20
+[5184] [Step Debug] -> <notify xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" name="breakpoint_resolved"><breakpoint type="line" resolved="resolved" filename="file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php" lineno="20" state="enabled" hit_count="0" hit_value="0" id="51840001"></breakpoint></notify>
+
+[5184] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="breakpoint_set" transaction_id="6" id="51840001" resolved="resolved"></response>
+
+[5184] [Step Debug] <- breakpoint_get -i 7 -d 51840001
+[5184] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="breakpoint_get" transaction_id="7"><breakpoint type="line" resolved="resolved" filename="file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php" lineno="20" state="enabled" hit_count="0" hit_value="0" id="51840001"></breakpoint></response>
+
+[5184] [Step Debug] <- breakpoint_set -i 8 -t line -f file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php -n 21
+[5184] [Step Debug] -> <notify xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" name="breakpoint_resolved"><breakpoint type="line" resolved="resolved" filename="file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php" lineno="21" state="enabled" hit_count="0" hit_value="0" id="51840002"></breakpoint></notify>
+
+[5184] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="breakpoint_set" transaction_id="8" id="51840002" resolved="resolved"></response>
+
+[5184] [Step Debug] <- breakpoint_get -i 9 -d 51840002
+[5184] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="breakpoint_get" transaction_id="9"><breakpoint type="line" resolved="resolved" filename="file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php" lineno="21" state="enabled" hit_count="0" hit_value="0" id="51840002"></breakpoint></response>
+
+[5184] [Step Debug] <- breakpoint_set -i 10 -t line -f file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php -n 27
+[5184] [Step Debug] -> <notify xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" name="breakpoint_resolved"><breakpoint type="line" resolved="resolved" filename="file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php" lineno="27" state="enabled" hit_count="0" hit_value="0" id="51840003"></breakpoint></notify>
+
+[5184] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="breakpoint_set" transaction_id="10" id="51840003" resolved="resolved"></response>
+
+[5184] [Step Debug] <- breakpoint_get -i 11 -d 51840003
+[5184] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="breakpoint_get" transaction_id="11"><breakpoint type="line" resolved="resolved" filename="file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php" lineno="27" state="enabled" hit_count="0" hit_value="0" id="51840003"></breakpoint></response>
+
+[5184] [Step Debug] <- breakpoint_set -i 12 -t line -f file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php -n 83
+[5184] [Step Debug] -> <notify xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" name="breakpoint_resolved"><breakpoint type="line" resolved="resolved" filename="file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php" lineno="83" state="enabled" hit_count="0" hit_value="0" id="51840004"></breakpoint></notify>
+
+[5184] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="breakpoint_set" transaction_id="12" id="51840004" resolved="resolved"></response>
+
+[5184] [Step Debug] <- breakpoint_get -i 13 -d 51840004
+[5184] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="breakpoint_get" transaction_id="13"><breakpoint type="line" resolved="resolved" filename="file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php" lineno="83" state="enabled" hit_count="0" hit_value="0" id="51840004"></breakpoint></response>
+
+[5184] [Step Debug] <- run -i 14
+[5184] [Step Debug] -> <notify xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" name="error"><xdebug:message filename="file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php" lineno="15" type="Fatal error"><![CDATA[Uncaught Error: Class "App\Http\Controllers\Controller" not found]]></xdebug:message></notify>
+
+[5184] [Step Debug] -> <notify xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" name="error"><xdebug:message filename="file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php" lineno="15" type="Fatal error"><![CDATA[Uncaught Error: Class "App\Http\Controllers\Controller" not found]]></xdebug:message></notify>
+
+[5184] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="run" transaction_id="14" status="stopping" reason="ok"></response>
+
+[5184] [Step Debug] <- stop -i 15
+[5184] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="stop" transaction_id="15" status="stopped" reason="ok"></response>
+
+[5184] Log closed at 2023-04-05 10:32:49.808985
+
+[7872] Log opened at 2023-04-05 10:55:07.873642
+[7872] [Step Debug] INFO: Connecting to configured address/port: 127.0.0.1:61372.
+[7872] [Step Debug] INFO: Connected to debugging client: 127.0.0.1:61372 (through xdebug.client_host/xdebug.client_port).
+[7872] [Step Debug] -> <init xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" fileuri="file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php" language="PHP" xdebug:language_version="8.2.0" protocol_version="1.0" appid="7872" idekey="VSCODE"><engine version="3.2.1"><![CDATA[Xdebug]]></engine><author><![CDATA[Derick Rethans]]></author><url><![CDATA[https://xdebug.org]]></url><copyright><![CDATA[Copyright (c) 2002-2023 by Derick Rethans]]></copyright></init>
+
+[7872] [Step Debug] <- feature_set -i 1 -n resolved_breakpoints -v 1
+[7872] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="feature_set" transaction_id="1" feature="resolved_breakpoints" success="1"></response>
+
+[7872] [Step Debug] <- feature_set -i 2 -n notify_ok -v 1
+[7872] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="feature_set" transaction_id="2" feature="notify_ok" success="1"></response>
+
+[7872] [Step Debug] <- feature_set -i 3 -n extended_properties -v 1
+[7872] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="feature_set" transaction_id="3" feature="extended_properties" success="1"></response>
+
+[7872] [Step Debug] <- feature_set -i 4 -n breakpoint_include_return_value -v 1
+[7872] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="feature_set" transaction_id="4" feature="breakpoint_include_return_value" success="1"></response>
+
+[7872] [Step Debug] <- feature_set -i 5 -n max_children -v 100
+[7872] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="feature_set" transaction_id="5" feature="max_children" success="1"></response>
+
+[7872] [Step Debug] <- breakpoint_set -i 6 -t line -f file:///d:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php -n 83
+[7872] [Step Debug] -> <notify xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" name="breakpoint_resolved"><breakpoint type="line" resolved="resolved" filename="file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php" lineno="83" state="enabled" hit_count="0" hit_value="0" id="78720001"></breakpoint></notify>
+
+[7872] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="breakpoint_set" transaction_id="6" id="78720001" resolved="resolved"></response>
+
+[7872] [Step Debug] <- breakpoint_get -i 7 -d 78720001
+[7872] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="breakpoint_get" transaction_id="7"><breakpoint type="line" resolved="resolved" filename="file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php" lineno="83" state="enabled" hit_count="0" hit_value="0" id="78720001"></breakpoint></response>
+
+[7872] [Step Debug] <- run -i 8
+[7872] [Step Debug] -> <notify xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" name="error"><xdebug:message filename="file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php" lineno="15" type="Fatal error"><![CDATA[Uncaught Error: Class "App\Http\Controllers\Controller" not found]]></xdebug:message></notify>
+
+[7872] [Step Debug] -> <notify xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" name="error"><xdebug:message filename="file:///D:/Sakthi/Working/Laravel/Laravel-Clickyourwater/app/Http/Controllers/Admin/Masters/AreaController.php" lineno="15" type="Fatal error"><![CDATA[Uncaught Error: Class "App\Http\Controllers\Controller" not found]]></xdebug:message></notify>
+
+[7872] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="run" transaction_id="8" status="stopping" reason="ok"></response>
+
+[7872] [Step Debug] <- stop -i 9
+[7872] [Step Debug] -> <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="stop" transaction_id="9" status="stopped" reason="ok"></response>
+
+[7872] Log closed at 2023-04-05 10:55:08.036077
+

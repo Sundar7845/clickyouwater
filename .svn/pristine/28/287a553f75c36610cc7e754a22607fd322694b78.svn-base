@@ -1,0 +1,30 @@
+$(document).ready(function () {
+    $("#tblState").DataTable({
+        processing: true,
+        serverSide: true,
+        order: [[0, "ASC"]],
+        ajax: "state/data",
+        fnRowCallback: function (nRow, aData, iDisplayIndex) {
+            $("td:first", nRow).html(iDisplayIndex + 1);
+            return nRow;
+        },
+        columns: [
+            { data: "id" },
+            { data: "state_code" },
+            { data: "state_name" },
+            { data: "action" },
+        ],
+    });
+});
+
+function doStatus(id) {
+    var status = $("#chkState"+id).is(":checked");
+    if (status == true) {
+        $("#chkState").val(1);
+        status = 1;
+    } else {
+        $("#chkState").val(0);
+        status = 0;
+    }
+    confirmStatusChange(id, "state/", "tblState", status);
+}

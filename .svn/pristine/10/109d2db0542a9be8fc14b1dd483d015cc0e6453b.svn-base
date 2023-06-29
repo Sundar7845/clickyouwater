@@ -1,0 +1,58 @@
+$(document).ready(function () {
+	$("#tblUsers").DataTable({
+		// processing: true,
+		// serverSide: true,
+		// order: [[0, "ASC"]],
+		// ajax: "permission/data",
+		// fnRowCallback: function (nRow, aData, iDisplayIndex) {
+		// 	$("td:first", nRow).html(iDisplayIndex + 1);
+		// 	return nRow;
+		// },
+		// columns: [
+		// 	{ data: "id" },
+		// 	{ data: "role_name" },
+		// 	{ data: "action" },
+		// ],
+	});
+});
+
+
+$("#ddlRoleName").on("change", function () {
+    LoadMenus(id);
+});
+
+
+function LoadMenus(id) {
+	var RID = $("#ddlRoleName option:selected").val();
+	$("#divMenuList").dynatree("getRoot").visit(function (node) {
+		node.select(false);
+	});
+	jQuery.ajax( {
+		type: "GET",
+		url: "getpermission/" + id,
+		async: false,
+		data: {
+			"id": RID
+		},
+		dataType: 'json',
+		success: function ( data ) {
+
+			var MList = "";
+			var menuID = data.permission.menu_id;
+            var MList = menuID.split(",");
+
+			$("#divMenuList").dynatree("getRoot").visit(function (node) {
+				node.select(false);
+			});
+
+			$.each(MList, function (idx, val) {
+				$("#divMenuList").dynatree("getRoot").visit(function (node) {
+					if (node.data.key == $.trim(val)) {
+						node.select(true);
+					}
+				});
+			});
+			
+		}	
+	});
+}

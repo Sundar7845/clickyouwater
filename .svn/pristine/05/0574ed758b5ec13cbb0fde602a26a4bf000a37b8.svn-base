@@ -1,0 +1,94 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Dashboard | Debit Note
+@endsection
+
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-1 mb-4">
+        Debit Note
+    </h4>
+
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-12 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <form class="browser-default-validation">
+                        <div class="row">
+                            <div class="col-md-4"></div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label" for="basic-default-name">&nbsp;</label>
+                                <div class="input-group">
+                                    <span class="input-group-text" id="basic-addon11">Debit Note No</span>
+                                    <input type="text" class="form-control" disabled placeholder="CRDN001"
+                                        aria-label="Username" aria-describedby="basic-addon11" />
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label" for="basic-default-name">&nbsp;</label>
+                                <div class="input-group">
+                                    <span class="input-group-text" id="basic-addon11">Debit Note Date</span>
+                                    <input type="date" class="form-control" id="purorddate" disabled
+                                        placeholder="Debit Note Date" aria-label="Username"
+                                        aria-describedby="basic-addon11" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Ledger Type</label>
+                                    <select name="" id="" class="select2 form-select form-select-lg">
+                                        <option value="0">Select</option>
+                                        <option value="AK">Ledger Type 1</option>
+                                        <option value="HI">Ledger Type 2</option>
+                                        <option value="CA">Ledger Type 3</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Ledger Name</label>
+                                    <select name="" id="" class="select2 form-select form-select-lg">
+                                        <option value="0">Select</option>
+                                        <option value="AK">Ledger 1</option>
+                                        <option value="HI">Ledger 2</option>
+                                        <option value="CA">Ledger 3</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-text">Debit Type</label>
+                                    <select name="" id="" class="select2 form-select form-select-lg">
+                                        <option value="0">Select</option>
+                                        <option value="Sales">Sales</option>
+                                        <option value="Service">Service</option>
+                                        <option value="Opening">Opening</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-text">Amount</label>
+                                    <input type="text" id="basic-default-text" class="form-control"
+                                        placeholder="Amount" required />
+                                </div>
+                                <div class="mb-3">
+                                    <label>Remarks</label>
+                                    <textarea id="txtRemark" class="form-control" maxlength="250" cols="1" rows="5" style="resize: none;"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mt-4 mb-3">
+                                    <button type="submit" class="btn btn-success">Save</button>
+                                    <button type="button" class="btn btn-danger">Cancel</button>
+                                    <a href="{{route('debitnotelist')}}" class="btn btn-primary">Go to List</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+</div>
+<!-- / Content -->
+@endsection

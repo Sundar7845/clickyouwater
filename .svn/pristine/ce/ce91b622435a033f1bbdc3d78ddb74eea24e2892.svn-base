@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Http\Controllers\Admin\ProductsManagement;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class ProductTypeController extends Controller
+{
+    public function ProdctType()
+    {
+        return view('Admin.product_management.product_type.product_type');
+    }
+}

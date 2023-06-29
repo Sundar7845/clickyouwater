@@ -1,0 +1,23 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+
+class WalletTransactionThroughSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        $data = [
+            ['wallet_transaction_type' => 'Type_one'],
+            ['wallet_transaction_type' => 'Type_two'],
+            ['wallet_transaction_type' => 'Type_three']
+        ];
+
+    }
+}

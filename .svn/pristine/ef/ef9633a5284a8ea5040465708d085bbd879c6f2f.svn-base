@@ -1,0 +1,274 @@
+<?php
+
+namespace App\Http\Controllers\Admin\LogisticManagement;
+
+use App\Http\Controllers\Controller;
+use App\Models\Area;
+use App\Models\BillNoSetting;
+use App\Models\City;
+use App\Models\Hub;
+use App\Models\LogisticPartner;
+use App\Models\Manufacturer;
+use App\Models\State;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class LogisticController extends Controller
+{
+   public function addLogisticPartner($id = NULL)
+   {
+
+      if ($id) {
+
+         $log = LogisticPartner::find($id);
+         $states = State::all();
+         $man = Manufacturer::all();
+         $hub = Hub::all();
+         $citys = City::where('state_id', $log->state_id)->get();
+         $areas = Area::where('city_id', $log->city_id)->get();
+         $logExample = $log->logistic_partner_id;
+         return view('admin.logistic_management.add_logistic', compact('states', 'log', 'hub', 'man', 'logExample', 'citys', 'areas'));
+      }
+      $logistic = LogisticPartner::first();
+      $data = BillNoSetting::first();
+      $logPrefix = $data->logistics_prefix ?? 0;
+      $logLength = $data->logistics_length ?? 0;
+      $logLive = (int)($data->logistics_live ?? 0) + 1;
+      if ($logLive) {
+         $logNumber = $logLive;
+      }
+      $log = sprintf("%0{$logLength}d", $logNumber);
+      $logExample = $logPrefix . $log;
+      $man = Manufacturer::all();
+      $hub = Hub::all();
+      $states = State::all();
+      return view('admin.logistic_management.add_logistic', compact('man', 'hub', 'states', 'logExample'));
+   }
+
+   public function addLogisticPartnerCreate(Request $request)
+   {
+dd($request->all());
+      $request->validate([
+         'txtLogisticId' =>  'required',
+         'txtLogisticName' =>  'required',
+         'ddlManufacturerName' =>  'required',
+         'ddlHubName' =>  'required',
+         'txtYearsOfExperience' =>  'required',
+         'txtMobile' =>  'required',
+         'txtEmail' =>  'required',
+         'txtPincode1' =>  'required',
+         'txtCreditPeriod' =>  'required',
+         'txtSettlementPeriod' =>  'required',
+         'ddlState' =>  'required',
+         'ddlCity' =>  'required',
+         'ddlArea' =>  'required',
+         'txtAddress' =>  'required',
+         'txtPincode2' =>  'required',
+         'txtProprietorName' =>  'required',
+         'txtProprietorMobile' =>  'required',
+         'txtProprietorEmail' =>  'required',
+         'txtContactPersonName' =>  'required',
+         'txtContactPersonMobile' =>  'required',
+         'txtContactPersonEmail' =>  'required'
+
+      ]);
+
+
+
+      // DB::beginTransaction();
+
+      // try {
+
+
+      //    LogisticPartner::create([
+      //       'logistic_partner_id' => $request->txtLogisticId,
+      //       'logistic_partner_name' => $request->txtLogisticName,
+      //       'manufacturer_id' => $request->ddlManufacturerName,
+      //       'hub_id' => $request->ddlHubName,
+      //       'years_of_experience' => $request->txtYearsOfExperience,
+      //       'mobile' => $request->txtMobile,
+      //       'email' => $request->txtEmail,
+      //       'credit_period' => $request->txtCreditPeriod,
+      //       'settlement_period' => $request->txtSettlementPeriod,
+      //       'state_id' => $request->ddlState,
+      //       'city_id' => $request->ddlCity,
+      //       'area_id' => $request->ddlArea,
+      //       'address' => $request->txtAddress,
+      //       'pincode' => $request->txtPincode2,
+      //       'proprietor_name' => $request->txtProprietorName,
+      //       'proprietor_mobile' => $request->txtProprietorMobile,
+      //       'proprietor_email' => $request->txtProprietorEmail,
+      //       'contact_person_name' => $request->txtContactPersonName,
+      //       'contact_person_mobile' => $request->txtContactPersonMobile,
+      //       'contact_person_email' => $request->txtContactPersonEmail,
+
+      //    ]);
+
+
+      //    $data = BillNoSetting::first();
+      //    $data->logistics_live = $data->logistics_live1 + 1;
+      //    // throw new \ErrorException('Error found');
+      //    $data->save();
+
+
+      //    $notification = array(
+      //       'message' => 'Logistic Created Successfully',
+      //       'alert-type' => 'success'
+      //    );
+
+      //    DB::commit();
+      // } catch (\Exception $e) {
+      //    DB::rollback();
+      //    $notification = array(
+      //       'message' => 'Logistic Partner Not Created!',
+      //       'alert-type' => 'error'
+      //    );
+      // }
+
+      LogisticPartner::create([
+         'logistic_partner_id' => $request->txtLogisticId,
+         'logistic_partner_name' => $request->txtLogisticName,
+         // 'manufacturer_id' => $request->ddlManufacturerName,
+         // 'hub_id' => $request->ddlHubName,
+         'years_of_experience' => $request->txtYearsOfExperience,
+         'mobile' => $request->txtMobile,
+         'email' => $request->txtEmail,
+         'credit_period' => $request->txtCreditPeriod,
+         'settlement_period' => $request->txtSettlementPeriod,
+         'state_id' => $request->ddlState,
+         'city_id' => $request->ddlCity,
+         'area_id' => $request->ddlArea,
+         'address' => $request->txtAddress,
+         'pincode' => $request->txtPincode2,
+         'proprietor_name' => $request->txtProprietorName,
+         'proprietor_mobile' => $request->txtProprietorMobile,
+         'proprietor_email' => $request->txtProprietorEmail,
+         'contact_person_name' => $request->txtContactPersonName,
+         'contact_person_mobile' => $request->txtContactPersonMobile,
+         'contact_person_email' => $request->txtContactPersonEmail,
+
+      ]);
+      foreach ($data['ddlManufacturerName'] as $value) {
+         if(isset($request->chkMandatory[$value])){
+
+             $chkMandatory=$request->chkMandatory[$value];
+         }else{
+             $chkMandatory=0;
+         }
+         $datas= Manufacturer::create([
+             'documenttype_id' => $request->ddlDocumentType,
+             'documentmodule_id' => $value,
+             'is_mandatory' => $chkMandatory
+         ]);
+     }
+
+      $data = BillNoSetting::first();
+      $data->logistics_live = $data->logistics_live + 1;
+      // throw new \ErrorException('Error found');
+      $data->save();
+
+
+      $notification = array(
+         'message' => 'Logistic Created Successfully',
+         'alert-type' => 'success'
+      );
+
+      return redirect()->route('logistic-list')->with($notification);
+   }
+
+   public function logisticData()
+   {
+      $logisticData = LogisticPartner::get();
+
+      return datatables()->of($logisticData)
+         ->addColumn('action', function ($row) {
+            $html = '<a href="addlogistic/' . $row->id . '"><i class="text-primary ti ti-pencil me-1"></i></a> ';
+            $html .= '<i class="text-danger ti ti-trash me-1" id="confirm-color' . $row->id . '" onclick="showDelete(' . $row->id . ');"></i>';
+            return $html;
+         })->toJson();
+   }
+
+   public function activeStatus($id, $status)
+   {
+
+      LogisticPartner::findorfail($id)->update([
+         'is_active' => $status,
+         'updated_by' => Auth::user()->id
+      ]);
+   }
+
+   public function logisticUpdate(Request $request)
+   {
+
+      # code...
+      $request->validate([
+         'txtLogisticId' =>  'required',
+         'txtLogisticName' =>  'required',
+         'ddlManufacturerName' =>  'required',
+         'ddlHubName' =>  'required',
+         'txtYearsOfExperience' =>  'required',
+         'txtMobile' =>  'required',
+         'txtEmail' =>  'required',
+         'txtPincode1' =>  'required',
+         'txtCreditPeriod' =>  'required',
+         'txtSettlementPeriod' =>  'required',
+         'ddlState' =>  'required',
+         'ddlCity' =>  'required',
+         'ddlArea' =>  'required',
+         'txtAddress' =>  'required',
+         'txtPincode2' =>  'required',
+         'txtProprietorName' =>  'required',
+         'txtProprietorMobile' =>  'required',
+         'txtProprietorEmail' =>  'required',
+         'txtContactPersonName' =>  'required',
+         'txtContactPersonMobile' =>  'required',
+         'txtContactPersonEmail' =>  'required'
+
+      ]);
+
+      $affectedRows = LogisticPartner::where("id", $request->id)->update([
+         'logistic_partner_id' => $request->txtLogisticId,
+         'logistic_partner_name' => $request->txtLogisticName,
+         // 'manufacturer_id' => $request->ddlManufacturerName,
+         // 'hub_id' => $request->ddlHubName,
+         'years_of_experience' => $request->txtYearsOfExperience,
+         'mobile' => $request->txtMobile,
+         'email' => $request->txtEmail,
+         'credit_period' => $request->txtCreditPeriod,
+         'settlement_period' => $request->txtSettlementPeriod,
+         'state_id' => $request->ddlState,
+         'city_id' => $request->ddlCity,
+         'area_id' => $request->ddlArea,
+         'address' => $request->txtAddress,
+         'pincode' => $request->txtPincode2,
+         'proprietor_name' => $request->txtProprietorName,
+         'proprietor_mobile' => $request->txtProprietorMobile,
+         'proprietor_email' => $request->txtProprietorEmail,
+         'contact_person_name' => $request->txtContactPersonName,
+         'contact_person_mobile' => $request->txtContactPersonMobile,
+         'contact_person_email' => $request->txtContactPersonEmail,
+
+      ]);
+      return redirect()->route('logistic-list')->with('success', 'Logistic Updated successfully!');
+   }
+
+   public function deletelogisticPartner($id)
+   {
+      $logistic = LogisticPartner::findorfail($id);
+      $logistic->delete();
+
+      $logistic->Update([
+         'deleted_by' => Auth::user()->id
+      ]);
+
+      return response()->json([
+         'success' => 'LogisticPartner Deleted Successfully'
+      ]);
+   }
+
+   public function logisticPartnerList()
+   {
+      return view('admin.logistic_management.logistic_list');
+   }
+}

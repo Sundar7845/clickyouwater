@@ -1,0 +1,87 @@
+$(document).ready(function () {
+   // adminDashboardRecentOrderList();
+});
+
+function adminDashboardRecentOrderList() {
+    var customer_id = $('#hduserid').val();
+    $('#tblAdminDashboardOrders').DataTable({
+        processing: true,
+        serverSide: true,
+        responsive: true,
+        order: [[0, "ASC"]],
+        bDestroy: true,
+        ajax: "/adminordersData/" + customer_id,
+        "fnRowCallback": serialNoCount,
+        columns: [
+            { data: "id", orderable: false },
+            {
+                data: "created_at",
+                render: function (data, type, row) {
+                    // Parse the date string into a Date object
+                    var date = new Date(data);
+
+                    // Format the date using the moment.js library
+                    return moment(date).format("DD-MM-YYYY hh:mm A");
+                },
+            },
+            { data: "order_no" },
+            {
+                data: null,
+                render: function (data, type, row) {
+                    if (data) {
+                        let html = `<h>${data.customer_name}</h>`;
+                        if (data.mobile) {
+                            html += `<div class="text-muted p-1">
+                                        <small class="bg-light p-1">${data.mobile}</small>
+                                    </div>`;
+                        }
+                        return html;
+                    } else {
+                        return "";
+                    }
+                }
+            },
+            { data: "hub_name" },
+            { data: "total_qty" },
+            {
+                data: null,
+                render: function (data, type, row) {
+                    let html = `<span class="rupee-symbol">&#8377;${data.transaction_amount}</span>`
+                    return html;
+                }
+            },
+            {
+                data: null,
+                render: function (data, type, row) {
+                    let html = "";
+                    if (data.transaction_status !== null) {
+                        html = `<span class="badge bg-label-success">${data.transaction_status}</span>`;
+                    }
+                    return html;
+                }
+            },
+            {
+                data: null,
+                render: function (data, type, row) {
+                    let html = "";
+                    if (data.status === "Success") {
+                        html = `<span class="badge bg-label-success">${data.status}</span>`;
+                    }
+                    if (data.status == "Order Delivered") {
+                        html = `<span class="badge bg-label-primary">${data.status}</span>`;
+                    }
+                    if (data.status == "Order Placed") {
+                        html = `<span class="badge bg-label-warning">${data.status}</span>`;
+                    }
+                    return html;
+                }
+            },
+            {
+                data: "order_no", orderable: false,
+                render: function (data, type, row) {
+                    return `<a href="/orderdetail/${row.id}" class="btn btn-primary">View</a>`;
+                }
+            },
+        ],
+    });
+}

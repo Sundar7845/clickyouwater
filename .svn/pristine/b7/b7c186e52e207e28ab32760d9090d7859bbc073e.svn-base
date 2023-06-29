@@ -1,0 +1,37 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\NotificationType;
+use Illuminate\Database\Seeder;
+
+class NotificationTypeSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        $data = [
+            ['notification_type' => 'Order Placed'],
+            ['notification_type' => 'Payment Success'],
+            ['notification_type' => 'Payment Failed'],
+            ['notification_type' => 'Wholesale Customer Approved'],
+            ['notification_type' => 'Wholesale Customer Rejected'],
+            ['notification_type' => 'Invoice Downloaded'],
+            ['notification_type' => 'Order Cancelled'],
+            ['notification_type' => 'Order Shipped'],
+            ['notification_type' => 'Order Delivered'],
+            ['notification_type' => 'Wallet Pending'],
+            ['notification_type' => 'Wallet Success'],
+            ['notification_type' => 'Wallet Failed'],
+            ['notification_type' => 'Referral'],
+            ['notification_type' => 'Used'],
+            ['notification_type' => 'Offers'],
+            ['notification_type' => 'Order Not Delivered']
+        ];
+        NotificationType::insert($data);
+    }
+}

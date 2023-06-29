@@ -1,0 +1,50 @@
+<?php
+
+namespace App\Traits;
+
+use GuzzleHttp\Client;
+use GeometryLibrary\PolyUtil;
+use GoogleMaps\Facade\GoogleMapsFacade;
+
+trait Maps
+{
+    // private $api_key = 'AIzaSyCxSrT3mnTnRnbUSW1DGhTKAu2kGpdgm5Y';
+    public function getDistance($fromLatLng, $toLatLng)
+    {
+        $response = GoogleMapsFacade::load('directions')
+            ->setParam(['destination' => $toLatLng, 'origin' => $fromLatLng])
+            ->get();
+
+        // $url = 'https://maps.googleapis.com/maps/api/directions/json?destination=' . $toLatLng . '&origin=' . $fromLatLng . '&key=' . $this->api_key;
+
+        // $client = new Client();
+        // $response = $client->request('GET', $url);
+        // $data = json_decode($response->getBody(), true);
+
+        $data = json_decode($response, true);
+
+        $distance = $data['routes'][0]['legs'][0]['distance'];
+        $duration = $data['routes'][0]['legs'][0]['duration'];
+
+        $result = [
+            'distance' => $distance,
+            'duration' => $duration,
+        ];
+
+        return response()->json($result)->content();
+    }
+
+    public function getServiceAvailable()
+    {
+        $response =  PolyUtil::containsLocation(
+            ['lat' => 25.774, 'lng' => -80.190], // point array [lat, lng]
+            [ // poligon arrays of [lat, lng]
+                ['lat' => 25.774, 'lng' => -80.190],
+                ['lat' => 18.466, 'lng' => -66.118],
+                ['lat' => 32.321, 'lng' => -64.757]
+            ]
+        );
+
+        return $response; // false  
+    }
+}

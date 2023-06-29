@@ -1,0 +1,60 @@
+$(document).ready(function () {
+    $("#tblDocumentType").DataTable({
+        processing: true,
+        serverSide: true,
+        order: [[0, "ASC"]],
+        ajax: "documenttype/data",
+        fnRowCallback: function (nRow, aData, iDisplayIndex) {
+            $("td:first", nRow).html(iDisplayIndex + 1);
+            return nRow;
+        },
+        columns: [
+            { data: "id" },
+            { data: "documenttype_name" },
+            { data: "action" },
+        ],
+    });
+});
+
+function doEdit(id) {
+    $("#hdDocumentTypeNameId").val(id);
+    $("#txtDocumenttypeName").focus();
+    $("#btnSave").text("Update");
+    getDocumentTypeById(id);
+}
+
+function getDocumentTypeById(id) {
+    $.ajax({
+        type: "GET",
+        url: "getdocumenttype/" + id,
+        dataType: "json",
+        success: function (data) {
+            $("#txtDocumenttypeName").val(data.document.documenttype_name);
+        },
+    });
+}
+
+function cancel() {
+    $("#hdDocumentTypeNameId").val("");
+    $("#txtDocumenttypeName").val("");
+    $("#ddlState").focus();
+    $("#btnSave").text("Save");
+}
+
+function showDelete(id) {
+    confirmDelete(id, "delete/documenttype/", "tblDocumentType");
+}
+
+
+// jquery Validation
+$(function () {
+
+    $("form[name='documenttype']").validate({
+
+        rules: {
+            txtDocumenttypeName: "required",
+            
+        },
+    });
+});
+

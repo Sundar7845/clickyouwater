@@ -1,0 +1,138 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\Status;
+use Illuminate\Database\Seeder;
+
+class StatusSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        $data = [
+            [
+                'status' => 'Success',
+                'status_msg' => 'Success'
+            ],
+            [
+                'status' => 'Failed',
+                'status_msg' => 'Failed'
+            ],
+            [
+                'status' => 'Pending',
+                'status_msg' => 'Pending'
+            ],
+            [
+                'status' => 'Approved',
+                'status_msg' => 'Approved'
+            ],
+            [
+                'status' => 'Rejected',
+                'status_msg' => 'Rejected'
+            ],
+            [
+                'status' => 'Accepted',
+                'status_msg' => 'Accepted'
+            ],
+            [
+                'status' => 'Onprocess',
+                'status_msg' => 'Onprocess'
+            ],
+            [
+                'status' => 'Cancelled',
+                'status_msg' => 'Cancelled'
+            ],
+            [
+                'status' => 'Payment Initiated',
+                'status_msg' => 'Payment Initiated Successfully'
+            ],
+            [
+                'status' => 'Signature Mismatch',
+                'status_msg' => 'Signature Mismatched'
+            ],
+            [
+                'status' => 'Invoice Generated',
+                'status_msg' => 'Invoice Generated Successfully'
+            ],
+            [
+                'status' => 'Transaction Failed',
+                'status_msg' => 'Transaction Failed'
+            ],
+            [
+                'status' => 'Refund Initiated',
+                'status_msg' => 'Refund Initiated Successfully'
+            ],
+            [
+                'status' => 'Refund Processed',
+                'status_msg' => 'Refund Processed Successfully'
+            ],
+            [
+                'status' => 'Order Placed',
+                'status_msg' => 'Order Placed Successfully'
+            ],
+            [
+                'status' => 'Order Shipped',
+                'status_msg' => 'Waiting for your order to be dispatched from the hub'
+            ],
+            [
+                'status' => 'Order Delivered',
+                'status_msg' => 'Order Delivered Successfully'
+            ],
+            [
+                'status' => 'Order Completed',
+                'status_msg' => 'Order Completed Successfully'
+            ],
+            [
+                'status' => 'Assigned to Delivery',
+                'status_msg' => 'Assigned to Delivery'
+            ],
+            [
+                'status' => 'Order Not Delivered',
+                'status_msg' => 'Order Not Delivered'
+            ],
+            [
+                'status' => 'Order Moved to Admin',
+                'status_msg' => 'Order Moved to Admin'
+            ],
+            [
+                'status' => 'Order Cancelled by Admin',
+                'status_msg' => 'Order Cancelled by Admin'
+            ],
+            [
+                'status' => 'Assigned to Hub',
+                'status_msg' => 'Assigned to Hub Successfully'
+            ],
+            [
+                'status' => 'Refund Requested',
+                'status_msg' => 'Refund Requested Successfully'
+            ],
+            [
+                'status' => 'Surrender Requested',
+                'status_msg' => 'Surrender Requested Successfully'
+            ],
+            [
+                'status' => 'Surrender Approved',
+                'status_msg' => 'Surrender Approved Successfully'
+            ],
+            [
+                'status' => 'Surrender Rejected',
+                'status_msg' => 'Surrender Rejected Successfully'
+            ],
+            [
+                'status' => 'Surrender Can Collected',
+                'status_msg' => 'Surrender Can Collected Successfully'
+            ],
+            [
+                'status' => 'Surrender Request Cancelled',
+                'status_msg' => 'Surrender Request Cancelled Successfully'
+            ]
+        ];
+
+        Status::insert($data);
+    }
+}

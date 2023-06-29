@@ -1,0 +1,217 @@
+@extends('layouts.main_master') @section('content')
+@section('title')
+    Dashboard | Users
+@endsection
+@if ($errors->any())
+    @foreach ($errors->all() as $error)
+        <div>{{ $error }}</div>
+    @endforeach
+@endif
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-1 mb-4" id="rolePermissionTitle">
+        Users
+    </h4>
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <form action="{{ route('create-user') }}" id="permissionList" method="post" style="display: flex;">
+            <div class="col-md-12 mb-4 mb-md-0">
+                <div class="card">
+                    <div class="card-body">
+                        @csrf
+                        <input type="hidden" name="hdRolePermissionId" id="hdRolePermissionId" value="">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Employee Name</label>
+                                    <select name="ddlEmployee" id="ddlEmployee" class="select2 form-select" required>
+                                        <option value="0">Select</option>
+                                        @foreach ($employee as $item)
+                                            <option value="{{ $item->id }}">
+                                                {{ $item->employee_name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('ddlEmployee')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                                <div class="mb-3">
+                                    <label>Role Name</label>
+                                    <select name="ddlRoleName" id="ddlRoleName" class="select2 form-select" required>
+                                        <option value="0">Select</option>
+                                        @foreach ($roles as $item)
+                                            <option value="{{ $item->id }}">
+                                                {{ $item->role_name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('ddlRoleName')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Display Name <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" name="txtDisplayName" id="txtDisplayName"
+                                        placeholder="Display Name" required />
+                                    @error('txtDisplayName')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Mobile <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" name="txtUserMobile" id="txtUserMobile"
+                                        placeholder="Mobile" required />
+                                    @error('txtUserMobile')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Email <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <input type="email" class="form-control" name="txtUserEmail" id="txtUserEmail"
+                                        placeholder="Email" required />
+                                    @error('txtUserEmail')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Password <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group input-group-merge">
+                                        <input type="password" class="form-control" name="password" id="password"
+                                            placeholder="Password" required />
+                                        <span class="input-group-text cursor-pointer">
+                                            <i class="ti ti-eye-off"></i>
+                                        </span>
+                                    </div>
+                                    @error('password')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Confirm Password <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group input-group-merge">
+                                        <input type="password" class="form-control" name="password_confirmation"
+                                            id="password_confirmation" placeholder="Password" required />
+                                        <span class="input-group-text cursor-pointer">
+                                            <i class="ti ti-eye-off"></i>
+                                        </span>
+                                    </div>
+                                    @error('password_confirmation')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                                <div class="mt-4 mb-3">
+                                    <button type="submit" id="btnSave" class="btn btn-success">Save</button>
+                                    <button type="button" id="btnCancel" class="btn btn-danger"
+                                        onclick="Cancel();">Cancel</button>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <h6>List of Menu Permissions <span class="text-danger">*</span>
+                                        <span class="d-flex justify-content-end">
+                                            <label class="switch switch-primary">
+                                                <input type="checkbox" id="chkall" class="switch-input" />
+                                                <span class="switch-toggle-slider">
+                                                    <span class="switch-on">
+                                                        <i class="ti ti-check"></i>
+                                                    </span>
+                                                    <span class="switch-off">
+                                                        <i class="ti ti-x"></i>
+                                                    </span>
+                                                </span>
+                                                <span class="switch-label">Select All</span>
+                                            </label>
+                                        </span>
+                                    </h6>
+                                    <div class="card-datatable table-responsive pt-0 scrollUser">
+                                        <table class="table">
+                                            <thead class="border-bottom">
+                                                <tr>
+                                                    <th>S.No</th>
+                                                    <th>Menu</th>
+                                                    <th>Edit</th>
+                                                    <th>Delete</th>
+                                                    <th>Print</th>
+                                                    <th>View</th>
+                                                    <th>Approval</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tbodyMenuList">
+                                                <tr>
+                                                    <td colspan="7" class="text-center">Please Choose Role Name
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <!-- /Browser Default -->
+    </div>
+    <div class="col-md-12 mb-4 mb-md-0">
+        <div class="card">
+            <div class="card-body">
+                <h5>Role List</h5>
+                <div class="row">
+                    <div class="col-lg-12 mb-4 mb-lg-0">
+                        <div class="card h-100">
+                            <div class="card-datatable table-responsive pt-0">
+                                <table id="tblUsers" class="table">
+                                    <thead class="border-bottom">
+                                        <tr>
+                                            <th>S.No</th>
+                                            <th>ROLE NAME</th>
+                                            <th>USER NAME</th>
+                                            <th>DISPLAY NAME</th>
+                                            <th>EMAIL</th>
+                                            <th>STATUS</th>
+                                            <th>ACTION</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- / Content -->
+
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/admin/roles/assignrole.js') }}"></script>
+@endsection

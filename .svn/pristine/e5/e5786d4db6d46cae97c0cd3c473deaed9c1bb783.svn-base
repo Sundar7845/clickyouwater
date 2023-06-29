@@ -1,0 +1,91 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Dashboard | Wallet Transaction Type
+@endsection
+
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold mb-4">
+        Wallet Transaction Config
+    </h4>
+
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-12 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <form action="{{ route('add.wallet.transaction.through') }}" method="POST" id="walletTransactionType">
+                        @csrf
+                        <input type="hidden" name="hdWalletTransactionTypeId" id="hdWalletTransactionTypeId" value="">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Wallet Transaction Type</label>
+                                    <select name="ddlwalletTransactionType" id="ddlwalletTransactionType" class="select2 form-select" title="Select Wallet Transaction Type" required>
+                                        <option value="">Select Wallet Transaction Type</option>
+                                        @foreach ($walletTransactionType as $item)
+                                            <option value="{{ $item->id }}" {{ old('ddlwalletTransactionType') ? 'selected' : '' }}>{{ $item->wallet_transaction_type }}</option>
+                                        @endforeach
+                                    </select>
+                                    @if ($errors->has('ddlwalletTransactionType'))
+                                    <div  class="text-danger">{{ $errors->first('ddlwalletTransactionType') }}</div>
+                                @endif
+                                    <span  class="error"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Message Format</label>
+                                    <input type="text" name="txtMessageFormat" id="txtMessageFormat" class="form-control"
+                                        placeholder="Enter Message format" title="Enter Message Format" value="{{ old('txtMessageFormat') }}" required>
+                                        @if ($errors->has('txtMessageFormat'))
+                                        <div  class="text-danger">{{ $errors->first('txtMessageFormat') }}</div>
+                                        @endif
+                                        <span  class="error"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mt-4 mb-3">
+                                <button type="submit" id="btnSave" class="btn btn-success">Save</button>
+                                <button type="button" class="btn btn-danger" onclick="cancel();">Cancel</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+    <!-- DataTable with Buttons -->
+    <div class="col-lg-12 mb-4 mb-lg-0">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between">
+                <h5 class="card-title m-0 me-2">Wallet Transaction Config List</h5>
+            </div>
+            <div class="card-datatable table-responsive pt-0">
+                <table id="tblWalletTransactionThrough" class="table">
+                    <thead class="border-bottom">
+                        <tr>
+                            <th>S.No</th>
+                            <th>Wallet Transaction Type</th>
+                            <th>Message Format</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--/ DataTable with Buttons -->
+</div>
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/admin/masters/wallet_transaction_through.js') }}"></script>
+@endsection

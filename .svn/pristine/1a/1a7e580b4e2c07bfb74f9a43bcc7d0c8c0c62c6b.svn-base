@@ -1,0 +1,24 @@
+<?php
+
+namespace App\Http\Controllers\DiscountManagement;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class ReferralPointsController extends Controller
+{
+    public function ReferralPoints()
+    {
+        return view('discount_management.referral_points');
+    }
+
+    public function ReferralHistory()
+    {
+        return view('discount_management.referral_history');
+    }
+
+    public function ReferralCode()
+    {
+        return view('discount_management.referral_code');
+    }
+}

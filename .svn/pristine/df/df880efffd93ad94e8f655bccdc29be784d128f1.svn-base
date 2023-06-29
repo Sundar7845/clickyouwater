@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Http\Controllers\OrderManagement;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class ManufacturerOrdersController extends Controller
+{
+  public function ManufacturerOrders()
+  {
+    return view('order_management.manufacturer_orders.manufacturer_orders');
+  }
+}

@@ -1,0 +1,870 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\Menu;
+use Illuminate\Database\Seeder;
+
+class MenuSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        $data = [
+            [
+                'menu_name' => 'Dashboard',
+                'parent_id' => '0',
+                'is_mainmenu' => '1',
+                'menu_url' => '/dashboard',
+                'icon' => 'menu-icon tf-icons ti ti-smart-home'
+            ],
+            [
+                'menu_name' =>  'Order Management',
+                'parent_id' => '0',
+                'is_mainmenu' => '1',
+                'menu_url' => null,
+                'icon' => 'menu-icon tf-icons ti ti-layout-sidebar'
+            ],
+            [
+                'menu_name' =>  'Customer Orders',
+                'parent_id' => '2',
+                'is_mainmenu' => '0',
+                'menu_url' => '/customerorders',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Wholesale Orders',
+                'parent_id' => '2',
+                'is_mainmenu' => '0',
+                'menu_url' => '/wholesaleorders',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Manufacturer Orders',
+                'parent_id' => '2',
+                'is_mainmenu' => '0',
+                'menu_url' => '/manufacturerorders',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Hub Orders',
+                'parent_id' => '2',
+                'is_mainmenu' => '0',
+                'menu_url' => '/hub/orders',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Cancelled Orders',
+                'parent_id' => '2',
+                'is_mainmenu' => '0',
+                'menu_url' => '/cancelledorders',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Pending Orders',
+                'parent_id' => '2',
+                'is_mainmenu' => '0',
+                'menu_url' => '/pendingorders',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Bulk Orders',
+                'parent_id' => '2',
+                'is_mainmenu' => '0',
+                'menu_url' => '/bulkorders',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Accounts',
+                'parent_id' => '0',
+                'is_mainmenu' => '1',
+                'menu_url' => null,
+                'icon' => 'menu-icon tf-icons ti ti-file-dollar'
+            ],
+            [
+                'menu_name' =>  'Credit Note',
+                'parent_id' => '10',
+                'is_mainmenu' => '0',
+                'menu_url' => '/creditnote',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Credit Note List',
+                'parent_id' => '10',
+                'is_mainmenu' => '0',
+                'menu_url' => '/creditnotelist',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Debit Note',
+                'parent_id' => '10',
+                'is_mainmenu' => '0',
+                'menu_url' => '/debitnote',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Debit Note List',
+                'parent_id' => '10',
+                'is_mainmenu' => '0',
+                'menu_url' => '/debitnotelist',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Payments',
+                'parent_id' => '10',
+                'is_mainmenu' => '0',
+                'menu_url' => '/payments',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Payments List',
+                'parent_id' => '10',
+                'is_mainmenu' => '0',
+                'menu_url' => '/paymentslist',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Receipt',
+                'parent_id' => '10',
+                'is_mainmenu' => '0',
+                'menu_url' => '/receipt',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Receipt List',
+                'parent_id' => '10',
+                'is_mainmenu' => '0',
+                'menu_url' => '/receiptlist',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Expenses',
+                'parent_id' => '10',
+                'is_mainmenu' => '0',
+                'menu_url' => '/expenses',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Expenses List',
+                'parent_id' => '10',
+                'is_mainmenu' => '0',
+                'menu_url' => '/expenselist',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Referral Payments',
+                'parent_id' => '10',
+                'is_mainmenu' => '0',
+                'menu_url' => '/referralpayments',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Discount',
+                'parent_id' => '0',
+                'is_mainmenu' => '1',
+                'menu_url' => null,
+                'icon' => 'menu-icon tf-icons ti ti-forms'
+            ],
+            [
+                'menu_name' =>  'Generate Coupons',
+                'parent_id' => '22',
+                'is_mainmenu' => '0',
+                'menu_url' => '/generatecoupon',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Refferal History',
+                'parent_id' => '22',
+                'is_mainmenu' => '0',
+                'menu_url' => '/referralhistory',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Offers',
+                'parent_id' => '0',
+                'is_mainmenu' => '1',
+                'menu_url' => null,
+                'icon' => 'menu-icon tf-icons ti ti-percentage'
+            ],
+            [
+                'menu_name' =>  'Offers',
+                'parent_id' => '25',
+                'is_mainmenu' => '0',
+                'menu_url' => '/offers',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Offers Allocate',
+                'parent_id' => '25',
+                'is_mainmenu' => '0',
+                'menu_url' => '/offersallocate',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Purchase',
+                'parent_id' => '0',
+                'is_mainmenu' => '1',
+                'menu_url' => null,
+                'icon' => 'menu-icon tf-icons ti ti-building-store'
+            ],
+            [
+                'menu_name' =>  'Purchase Order',
+                'parent_id' => '28',
+                'is_mainmenu' => '0',
+                'menu_url' => '/purchaseorder',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Purchase Order List',
+                'parent_id' => '28',
+                'is_mainmenu' => '0',
+                'menu_url' => '/purchaseorderlist',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Purchase Invoice',
+                'parent_id' => '28',
+                'is_mainmenu' => '0',
+                'menu_url' => '/purchaseinvoice',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Purchase Invoice List',
+                'parent_id' => '28',
+                'is_mainmenu' => '0',
+                'menu_url' => '/purchaseinvoicelist',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Purchase Return',
+                'parent_id' => '28',
+                'is_mainmenu' => '0',
+                'menu_url' => '/purchasereturn',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Purchase Return List',
+                'parent_id' => '28',
+                'is_mainmenu' => '0',
+                'menu_url' => '/purchasereturnlist',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Sales',
+                'parent_id' => '0',
+                'is_mainmenu' => '1',
+                'menu_url' => null,
+                'icon' => 'menu-icon tf-icons ti ti-arrows-sort'
+            ],
+            [
+                'menu_name' =>  'Sales Order',
+                'parent_id' => '35',
+                'is_mainmenu' => '0',
+                'menu_url' => '/salesorder',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Sales Order List',
+                'parent_id' => '35',
+                'is_mainmenu' => '0',
+                'menu_url' => '/salesorderlist',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Sales Invoice',
+                'parent_id' => '35',
+                'is_mainmenu' => '0',
+                'menu_url' => '/salesinvoice',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Sales Order List',
+                'parent_id' => '35',
+                'is_mainmenu' => '0',
+                'menu_url' => '/salesinvoicelist',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Sales Return',
+                'parent_id' => '35',
+                'is_mainmenu' => '0',
+                'menu_url' => '/salesreturn',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Sales Return List',
+                'parent_id' => '35',
+                'is_mainmenu' => '0',
+                'menu_url' => '/salesreturnlist',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Stock Mangement',
+                'parent_id' => '0',
+                'is_mainmenu' => '1',
+                'menu_url' => null,
+                'icon' => 'menu-icon tf-icons ti ti-components'
+            ],
+            [
+                'menu_name' =>  'Stock Entry',
+                'parent_id' => '42',
+                'is_mainmenu' => '0',
+                'menu_url' => '/stockentry',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Hub Stock',
+                'parent_id' => '42',
+                'is_mainmenu' => '0',
+                'menu_url' => '/hubstock',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Manufacturer Stock',
+                'parent_id' => '42',
+                'is_mainmenu' => '0',
+                'menu_url' => '/manufacturerstock',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Customers',
+                'parent_id' => '0',
+                'is_mainmenu' => '1',
+                'menu_url' => null,
+                'icon' => 'menu-icon tf-icons ti ti-users'
+            ],
+            [
+                'menu_name' =>  'Customers List',
+                'parent_id' => '46',
+                'is_mainmenu' => '0',
+                'menu_url' => '/customers',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Customer Performance',
+                'parent_id' => '46',
+                'is_mainmenu' => '0',
+                'menu_url' => '/customersperformance',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Surrender Can',
+                'parent_id' => '46',
+                'is_mainmenu' => '0',
+                'menu_url' => '/surrendercan',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Performance',
+                'parent_id' => '0',
+                'is_mainmenu' => '1',
+                'menu_url' => null,
+                'icon' => 'menu-icon tf-icons ti ti-star'
+            ],
+            [
+                'menu_name' =>  'Manufacturer',
+                'parent_id' => '50',
+                'is_mainmenu' => '0',
+                'menu_url' => '/manufacturerperformance',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Hub',
+                'parent_id' => '50',
+                'is_mainmenu' => '0',
+                'menu_url' => '/hubperformance',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Logistic Partner',
+                'parent_id' => '50',
+                'is_mainmenu' => '0',
+                'menu_url' => '/logisticsperformance',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Delivery Person',
+                'parent_id' => '50',
+                'is_mainmenu' => '0',
+                'menu_url' => '/deliverypersonperformance',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Feedback',
+                'parent_id' => '0',
+                'is_mainmenu' => '1',
+                'menu_url' => '/feedback',
+                'icon' => 'menu-icon tf-icons ti ti-map'
+            ],
+            [
+                'menu_name' =>  'Reports',
+                'parent_id' => '0',
+                'is_mainmenu' => '1',
+                'menu_url' => null,
+                'icon' => 'menu-icon tf-icons ti ti-flag'
+            ],
+            [
+                'menu_name' =>  'Manufacturer Report',
+                'parent_id' => '56',
+                'is_mainmenu' => '0',
+                'menu_url' => '/manufacturerreports',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Hub Report',
+                'parent_id' => '56',
+                'is_mainmenu' => '0',
+                'menu_url' => '/hubreports',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Delivery Report',
+                'parent_id' => '56',
+                'is_mainmenu' => '0',
+                'menu_url' => '/deliveryreports',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Products Report',
+                'parent_id' => '56',
+                'is_mainmenu' => '0',
+                'menu_url' => '/productsreports',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Orders Report',
+                'parent_id' => '56',
+                'is_mainmenu' => '0',
+                'menu_url' => '/ordersreports',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Payments Report',
+                'parent_id' => '56',
+                'is_mainmenu' => '0',
+                'menu_url' => '/paymentsreports',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Unavailable Report',
+                'parent_id' => '56',
+                'is_mainmenu' => '0',
+                'menu_url' => '/unavailablereports',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Approval',
+                'parent_id' => '0',
+                'is_mainmenu' => '1',
+                'menu_url' => null,
+                'icon' => 'menu-icon tf-icons ti ti-check'
+            ],
+            [
+                'menu_name' =>  'Manufacturer Approval',
+                'parent_id' => '64',
+                'is_mainmenu' => '0',
+                'menu_url' => '/manufacturerapproval',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Logistic Approval',
+                'parent_id' => '64',
+                'is_mainmenu' => '0',
+                'menu_url' => '/logisticapproval',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Hub Approval',
+                'parent_id' => '64',
+                'is_mainmenu' => '0',
+                'menu_url' => '/hubapproval',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Settings',
+                'parent_id' => '0',
+                'is_mainmenu' => '1',
+                'menu_url' => null,
+                'icon' => 'menu-icon tf-icons ti ti-settings'
+            ],
+            [
+                'menu_name' =>  'Settings',
+                'parent_id' => '68',
+                'is_mainmenu' => '0',
+                'menu_url' => '/settings',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Bill No Settings',
+                'parent_id' => '68',
+                'is_mainmenu' => '0',
+                'menu_url' => '/billnosettings',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Refferal Settings',
+                'parent_id' => '68',
+                'is_mainmenu' => '0',
+                'menu_url' => '/referralpoints',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Roles & Permission',
+                'parent_id' => '0',
+                'is_mainmenu' => '1',
+                'menu_url' => null,
+                'icon' => 'menu-icon tf-icons ti ti-lock'
+            ],
+            [
+                'menu_name' =>  'Roles',
+                'parent_id' => '72',
+                'is_mainmenu' => '0',
+                'menu_url' => '/roles-permission',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Users',
+                'parent_id' => '72',
+                'is_mainmenu' => '0',
+                'menu_url' => '/users',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Manufacturer',
+                'parent_id' => '0',
+                'is_mainmenu' => '1',
+                'menu_url' => null,
+                'icon' => 'menu-icon tf-icons ti ti-building-factory'
+            ],
+            [
+                'menu_name' =>  'Add Manufacturer',
+                'parent_id' => '75',
+                'is_mainmenu' => '0',
+                'menu_url' => '/manufacturer',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Manufacturer List',
+                'parent_id' => '75',
+                'is_mainmenu' => '0',
+                'menu_url' => '/manufacturerlist',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Hub',
+                'parent_id' => '0',
+                'is_mainmenu' => '1',
+                'menu_url' => null,
+                'icon' => 'menu-icon tf-icons ti ti-bolt'
+            ],
+            [
+                'menu_name' =>  'Add Hub',
+                'parent_id' => '78',
+                'is_mainmenu' => '0',
+                'menu_url' => '/hub',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Hub List',
+                'parent_id' => '78',
+                'is_mainmenu' => '0',
+                'menu_url' => '/hublist',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Logistic Partner',
+                'parent_id' => '0',
+                'is_mainmenu' => '1',
+                'menu_url' => null,
+                'icon' => 'menu-icon tf-icons ti ti-packge-export'
+            ],
+            [
+                'menu_name' =>  'Add Logistic',
+                'parent_id' => '81',
+                'is_mainmenu' => '0',
+                'menu_url' => '/addlogistic',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Logistic List',
+                'parent_id' => '81',
+                'is_mainmenu' => '0',
+                'menu_url' => '/logisticlist',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Delivery Person',
+                'parent_id' => '0',
+                'is_mainmenu' => '1',
+                'menu_url' => null,
+                'icon' => 'menu-icon tf-icons ti ti-truck'
+            ],
+            [
+                'menu_name' =>  'Add Delivery Person',
+                'parent_id' => '84',
+                'is_mainmenu' => '0',
+                'menu_url' => '/deliveryperson',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Delivery Person List',
+                'parent_id' => '84',
+                'is_mainmenu' => '0',
+                'menu_url' => '/deliverypersonlist',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'wholesale Partner',
+                'parent_id' => '0',
+                'is_mainmenu' => '1',
+                'menu_url' => null,
+                'icon' => 'menu-icon tf-icons ti ti-home'
+            ],
+            [
+                'menu_name' =>  'Add wholesale Partner',
+                'parent_id' => '87',
+                'is_mainmenu' => '0',
+                'menu_url' => '/wholesalepartner',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'wholesale Partner List',
+                'parent_id' => '87',
+                'is_mainmenu' => '0',
+                'menu_url' => '/wholesale-partnerlist',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Products',
+                'parent_id' => '0',
+                'is_mainmenu' => '1',
+                'menu_url' => null,
+                'icon' => 'menu-icon tf-icons ti ti-color-swatch'
+            ],
+            [
+                'menu_name' =>  'Category',
+                'parent_id' => '90',
+                'is_mainmenu' => '0',
+                'menu_url' => '/category',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Product Type',
+                'parent_id' => '90',
+                'is_mainmenu' => '0',
+                'menu_url' => '/producttype',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Brands',
+                'parent_id' => '90',
+                'is_mainmenu' => '0',
+                'menu_url' => '/brands',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Products',
+                'parent_id' => '90',
+                'is_mainmenu' => '0',
+                'menu_url' => '/products',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Masters',
+                'parent_id' => '0',
+                'is_mainmenu' => '1',
+                'menu_url' => null,
+                'icon' => 'menu-icon tf-icons ti ti-layout-grid'
+            ],
+            [
+                'menu_name' =>  'State',
+                'parent_id' => '95',
+                'is_mainmenu' => '0',
+                'menu_url' => '/state',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'City',
+                'parent_id' => '95',
+                'is_mainmenu' => '0',
+                'menu_url' => '/city',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Area',
+                'parent_id' => '95',
+                'is_mainmenu' => '0',
+                'menu_url' => '/area',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Document Type',
+                'parent_id' => '95',
+                'is_mainmenu' => '0',
+                'menu_url' => '/documenttype',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Config Documents',
+                'parent_id' => '95',
+                'is_mainmenu' => '0',
+                'menu_url' => '/documentconfig',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Tax',
+                'parent_id' => '95',
+                'is_mainmenu' => '0',
+                'menu_url' => '/tax',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Expense Group',
+                'parent_id' => '95',
+                'is_mainmenu' => '0',
+                'menu_url' => '/expensegroup',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Ledger',
+                'parent_id' => '95',
+                'is_mainmenu' => '0',
+                'menu_url' => '/ledger',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Asset',
+                'parent_id' => '95',
+                'is_mainmenu' => '0',
+                'menu_url' => '/asset',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Asset Type',
+                'parent_id' => '95',
+                'is_mainmenu' => '0',
+                'menu_url' => '/assettype',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Employee',
+                'parent_id' => '95',
+                'is_mainmenu' => '0',
+                'menu_url' => '/employee',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Employee List',
+                'parent_id' => '95',
+                'is_mainmenu' => '0',
+                'menu_url' => '/employeelist',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Brand Allocation',
+                'parent_id' => '95',
+                'is_mainmenu' => '0',
+                'menu_url' => '/allocation',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Department',
+                'parent_id' => '95',
+                'is_mainmenu' => '0',
+                'menu_url' => '/department',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Designation',
+                'parent_id' => '95',
+                'is_mainmenu' => '0',
+                'menu_url' => '/designation',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Roles',
+                'parent_id' => '95',
+                'is_mainmenu' => '0',
+                'menu_url' => '/role',
+                'icon' => null
+            ],
+            [
+                'menu_name' =>  'Manufacturer Oders',
+                'parent_id' => '0',
+                'is_mainmenu' => '1',
+                'menu_url' => '/manufactuererorders',
+                'icon' => "menu-icon tf-icons ti ti-layout-sidebar"
+            ],
+            [
+                'menu_name' =>  'Manufacturer Stock',
+                'parent_id' => '0',
+                'is_mainmenu' => '1',
+                'menu_url' => '/manufactuererstocks',
+                'icon' => "menu-icon tf-icons ti ti-file-dollar"
+            ],
+            [
+                'menu_name' =>  'Manufacturer Documents',
+                'parent_id' => '0',
+                'is_mainmenu' => '1',
+                'menu_url' => '/manufactuererdocuments',
+                'icon' => "menu-icon tf-icons ti ti-forms"
+            ],
+            [
+                'menu_name' =>  'Manufacturer Reports',
+                'parent_id' => '0',
+                'is_mainmenu' => '1',
+                'menu_url' => '/manufactuererreport',
+                'icon' => "menu-icon tf-icons ti ti-building-store"
+            ],
+            [
+                'menu_name' =>  'Damage Can Entry',
+                'parent_id' => '0',
+                'is_mainmenu' => '1',
+                'menu_url' => '/manufactuererdamagecan',
+                'icon' => "menu-icon tf-icons ti ti-building-store"
+            ],
+            [
+                'menu_name' =>  'Hub Oders',
+                'parent_id' => '0',
+                'is_mainmenu' => '1',
+                'menu_url' => '/huborders',
+                'icon' => "menu-icon tf-icons ti ti-layout-sidebar"
+            ],
+            [
+                'menu_name' =>  'Hub Stock',
+                'parent_id' => '0',
+                'is_mainmenu' => '1',
+                'menu_url' => '/hubstocks',
+                'icon' => "menu-icon tf-icons ti ti-file-dollar"
+            ],
+            [
+                'menu_name' =>  'Hub Documents',
+                'parent_id' => '0',
+                'is_mainmenu' => '1',
+                'menu_url' => '/hubdocuments',
+                'icon' => "menu-icon tf-icons ti ti-forms"
+            ],
+            [
+                'menu_name' =>  'Hub Reports',
+                'parent_id' => '0',
+                'is_mainmenu' => '1',
+                'menu_url' => '/hubreport',
+                'icon' => "menu-icon tf-icons ti ti-building-store"
+            ],
+            [
+                'menu_name' =>  'Damage Can Entry',
+                'parent_id' => '0',
+                'is_mainmenu' => '1',
+                'menu_url' => '/hubdamagecan',
+                'icon' => "menu-icon tf-icons ti ti-building-store"
+            ]
+
+        ];
+
+        Menu::insert($data);
+    }
+}

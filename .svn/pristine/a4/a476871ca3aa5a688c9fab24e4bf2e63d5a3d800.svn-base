@@ -1,0 +1,39 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Reports;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class ReportsController extends Controller
+{
+    public function manufacturerReports()
+    {
+        return view('Admin.reports.manufacturer_reports');
+    }
+
+    public function hubReports()
+    {
+        return view('Admin.reports.hub_reports');
+    }
+
+    public function deliveryReports()
+    {
+        return view('Admin.reports.delivery_reports');
+    }
+
+    public function productsReports()
+    {
+        return view('Admin.reports.products_reports');
+    }
+
+    public function ordersReports()
+    {
+        return view('Admin.reports.orders_reports');
+    }
+
+    public function paymentsReports()
+    {
+        return view('Admin.reports.payments_reports');
+    }
+}

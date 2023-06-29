@@ -1,0 +1,165 @@
+<?php
+
+namespace App\Http\Controllers\API;
+
+use App\Enums\WalletTransactionTypes;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\WalletResource;
+use App\Models\User;
+use App\Models\UserWallet;
+use App\Models\WalletTransactionThrough;
+use App\Traits\Common;
+use App\Traits\ResponseAPI;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class WalletController extends Controller
+{
+    use Common;
+    use ResponseAPI;
+
+    // This method gets the wallet history for a specific user
+    public function getWalletHistory()
+    {
+        try {
+            // Query the UserWallet model to get the wallet history for user
+            $wallethistory_details = UserWallet::with('walletTransactionType')
+                ->where('user_id', Auth::user()->id)
+                ->select('id', 'amount', 'balance', 'credit_debit', 'wallet_transaction_type_id', 'transaction_date', 'transaction_status', 'transaction_response', 'transaction_id')
+                ->orderBy('id', 'desc');
+            $wallethistory = $wallethistory_details->paginate($this->recordsperpage);
+
+            $wallethistory = WalletResource::collection($wallethistory);
+
+            foreach ($wallethistory as $history) {
+                $wallet_msg = WalletTransactionThrough::where('wallet_transaction_type_id', $history->wallet_transaction_type_id)
+                    ->value('msg_format');
+
+                $history->wallet_transaction_msg = str_replace("{{}}", $history->amount, $wallet_msg);
+            }
+
+            // Build a response with the payment methods and a success status
+            $response = [
+                'status' => true,
+                'data' => $wallethistory,
+                'pagination' => [
+                    'total' => $wallethistory->total(),
+                    'per_page' => $wallethistory->perPage(),
+                    'current_page' => $wallethistory->currentPage(),
+                    'last_page' => $wallethistory->lastPage(),
+                    'next_page_url' => $wallethistory->nextPageUrl(),
+                    'prev_page_url' => $wallethistory->previousPageUrl(),
+                ]
+            ];
+            // Return the response with a 200 status code
+            return response($response, 200);
+        } catch (\Exception $e) {
+            // Log any exceptions that occur and return an error response with a 200 status code
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    public function addWallet(Request $request)
+    {
+        $validator = $request->validate([
+            'amount' => 'required'
+        ]);
+        try {
+            //Get current wallet points for user
+
+            $user_wallet_points = User::where('id', Auth::user()->id)
+                ->value('wallet_points');
+
+            $wallets = UserWallet::create([
+                'user_id' => Auth::user()->id,
+                'amount' => $request->amount,
+                'balance' => $user_wallet_points,
+                'wallet_transaction_type_id' => WalletTransactionTypes::WalletPending,
+                'transaction_date' => now(),
+                'transaction_status' => 'Payment Initiated'
+            ]);
+
+
+            // Build a response with the payment methods and a success status
+            $response = [
+                'status' => true,
+                'data' => ['wallet_id' => $wallets->id],
+                'message' => 'Payment Initiated'
+            ];
+
+            // Return the response with a 200 status code
+            return response($response, 200);
+        } catch (\Exception $e) {
+
+            // Log any exceptions that occur and return an error response with a 200 status code
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    //Update the payment status of a user wallet.
+    public function updateWalletPaymentStatus(Request $request)
+    {
+        // Validate the input data.
+        $validated_data = $request->validate([
+            'wallet_id' => 'required',
+            'transaction_response' => 'required',
+            'transaction_status' => 'required',
+            'transaction_id' => 'required',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            // Find the wallet by the given ID.
+            $wallet = UserWallet::find($validated_data['wallet_id']);
+            // Prepare the response message.
+            $message = ($wallet ? 'Updated Successfully' : 'Invalid Wallet Id');
+            // Initialize data and status variables.
+            $data = [];
+            $status = ($message === 'Updated Successfully');
+            // If the wallet exists, update its payment status.
+            if ($status) {
+
+                $wallet_trans_id = (strtolower($validated_data['transaction_status']) == 'success' ? WalletTransactionTypes::WalletSuccess : WalletTransactionTypes::WalletFailed);
+                $wallet->wallet_transaction_type_id = $wallet_trans_id;
+                $wallet->transaction_response = $validated_data['transaction_response'];
+                $wallet->transaction_id = $validated_data['transaction_id'];
+                $wallet->transaction_status = $validated_data['transaction_status'];
+                $wallet->save();
+
+                if (strtolower($validated_data['transaction_status']) == 'success') {
+                    $user_wallet_points = User::where('id', Auth::user()->id)
+                        ->value('wallet_points');
+
+                    $current_wallet_points = ($user_wallet_points + $wallet->amount);
+                    User::where('id', Auth::id())->update([
+                        'wallet_points' => $current_wallet_points
+                    ]);
+                }
+                $this->sendWalletNotification($wallet, $wallet_trans_id);
+            }
+
+                //Send notification
+
+
+            // Prepare the HTTP response.
+            $response = array(
+                'message' => $message,
+                'data' => $data,
+                'status' => $status,
+            );
+            // Commit the transaction
+            DB::commit();
+            // Return the response with a 200 status code
+            return response($response, 200);
+        } catch (\Exception $e) {
+            // Roll back the transaction if an error occurs
+            DB::rollback();
+            // Log any exceptions that occur and return an error response with a 200 status code
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+}

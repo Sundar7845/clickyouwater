@@ -1,0 +1,48 @@
+<?php
+
+namespace App\Http\Controllers\API;
+
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Models\UserReferralHistory;
+use App\Traits\Common;
+use App\Traits\ResponseAPI;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class ReferralController extends Controller
+{
+    use Common;
+    use ResponseAPI;
+
+    public function verifyReferral($code)
+    {
+        try {
+            $referred_by =User::where('referral_code',$code)->first();
+            $update_user_referral=UserReferralHistory::create([
+                'user_id'=>Auth::user()->id,
+                'referred_by'=>$referred_by->id,
+                'referred_on'=>Carbon::today()
+            ]);
+            $response = [
+                'status' => true,
+                'data' => [],
+                'message'=>"Updated Successfully"
+            ];
+            // dd($response);
+            return response($response, 200);
+        } catch (\Exception $e) {
+
+            $response = array(
+                'message' => "Failed",
+                'status' => false,
+
+            );
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            // return response($response, 200);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+}

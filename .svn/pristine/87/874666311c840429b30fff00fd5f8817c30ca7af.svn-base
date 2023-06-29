@@ -1,0 +1,72 @@
+//Init DataTable
+$(document).ready(function () {
+    LoadStockOutwardListData();
+});
+
+//Load Stock Outward List Data
+$("#ddlManufacturerName").change(function () {
+    LoadStockOutwardListData();
+});
+
+//Load DataTable
+function LoadStockOutwardListData() {
+    var manufacturer_id =
+        $("#ddlManufacturerName option:selected").val() == undefined
+            ? 0
+            : $("#ddlManufacturerName option:selected").val();
+
+    $("#tblStockOutwardList").DataTable({
+        processing: true,
+        serverSide: true,
+        order: [[1, "asc"]],
+        bDestroy: true,
+        ajax: {
+            url: "/stockoutwarddata/",
+            data: function (stockOutwardData) {
+                stockOutwardData.manufacturer_id = manufacturer_id;
+            }
+        },
+        columns: [
+            { data: "manufacturer_name" },
+            {
+                data: "outward_no",
+                render: function (data, type, row, meta) {
+                    var formattedDate = moment(row.created_at).format("DD-MM-YYYY");
+                    var list =
+                        "<div class='text-muted'><small class='bg-light p-1'>" +
+                        row.outward_no +
+                        "</small></div>";
+                    return formattedDate + " " + list;
+                },
+            },
+            { data: "product_name" },
+            { data: "qty" }
+        ],
+        rowGroup: {
+            dataSrc: "manufacturer_name",
+            startRender: function (rows, group) {
+                return $("<tr>").addClass("group").append($("<td>").attr("colspan", 5).text(group));
+            }
+        },
+        drawCallback: function (settings) {
+            var api = this.api();
+            var rows = api.rows({ page: "current" }).nodes();
+            var lastManufacturerName = null;
+
+            $(rows).removeClass("subgroup");
+
+            api.column(0, { page: "current" }).data().each(function (manufacturerName, i) {
+                if (lastManufacturerName !== manufacturerName) {
+                    $(rows).eq(i).addClass("subgroup");
+                    lastManufacturerName = manufacturerName;
+                }
+            });
+        }
+    });
+
+}
+
+
+
+
+

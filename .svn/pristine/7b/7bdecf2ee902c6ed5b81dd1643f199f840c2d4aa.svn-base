@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class ProductTypeSetting extends Model
+{
+    use HasFactory;
+    protected $fillable = [
+        'product_type_id',
+        'manufacture_price',
+        'hub_price',
+        'logistic_price',
+        'before_ship_mins_alert',
+        'after_ship_alert'
+    ];
+}

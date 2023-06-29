@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class ManufacturerDocuments extends Model
+{
+    use HasFactory;
+
+    public $timestamps = false;
+
+    protected $fillable = [
+        'manufacture_id',
+        'documentconfig_id',
+        'document_path',
+        'document_number',
+        'is_verified'
+    ];
+}

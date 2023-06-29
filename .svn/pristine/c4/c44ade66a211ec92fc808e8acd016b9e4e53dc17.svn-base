@@ -1,0 +1,397 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Dashboard | Delivery Person
+@endsection
+<!-- Content -->
+@if ($errors->any())
+    @foreach ($errors->all() as $error)
+        <div>{{ $error }}</div>
+    @endforeach
+@endif
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-1 mb-4">
+        Delivery Person
+    </h4>
+    <form action="{{ route('deliverypersoncreate') }}" method="POST" name="delivery_person" enctype="multipart/form-data">
+        @csrf
+        <input type="hidden" name="hdDelPerId" id="hdDelPerId" value="{{ $deliveryPerson->id ?? '' }}">
+        <input type="hidden" name="hdDeliveryPerImg" id="hdBrandImg" value="">
+        <div class="row mb-4">
+            <!-- Browser Default -->
+            <div class="col-md-12 mb-4 mb-md-0">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Delivery Person ID<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" name="txtDeliveryPersonId"
+                                        id="txtDeliveryPersonId"
+                                        value="{{ $deliveryPerson->delivery_person_id ?? $delExample }}" readonly />
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Delivery Person Name<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" name="txtDeliveryPersonName"
+                                        id="txtDeliveryPersonName" placeholder="Delivery Person Name"
+                                        value="@isset($deliveryPerson){{ $deliveryPerson ? $deliveryPerson->delivery_person_name : '' }}@endisset"
+                                        required />
+                                    @if ($errors->has('txtDeliveryPersonName'))
+                                        <div class="text-danger">{{ $errors->first('txtDeliveryPersonName') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Mobile<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control mobilenumber"
+                                        name="txtDeliveryPersonMobile" id="txtDeliveryPersonMobile" placeholder="Mobile"
+                                        value="@isset($deliveryPerson){{ $deliveryPerson ? $deliveryPerson->mobile : '' }}@endisset"
+                                        required />
+
+                                    @if ($errors->has('txtDeliveryPersonMobile'))
+                                        <div class="text-danger">{{ $errors->first('txtDeliveryPersonMobile') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Email<span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control" name="deliveryPersonEmail"
+                                        id="deliveryPersonEmail" placeholder="Email"
+                                        value="@isset($deliveryPerson){{ $deliveryPerson ? $deliveryPerson->email : '' }}@endisset"
+                                        required />
+                                    @if ($errors->has('deliveryPersonEmail'))
+                                        <div class="text-danger">{{ $errors->first('deliveryPersonEmail') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">State Name<span class="text-danger">*</span>
+                                    </label>
+                                    <select name="ddlState" id="ddlState" class="select2 form-select" required>
+                                        <option value="">Select</option>
+                                        @if (!empty($states))
+                                            @foreach ($states as $state)
+                                                <option value="{{ $state->id }}"
+                                                    @if (isset($deliveryPerson->state_id) == $state->id) {{ 'selected' }} @endif>
+                                                    {{ $state->state_name }}
+                                                </option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                    @if ($errors->has('ddlState'))
+                                        <div class="text-danger">{{ $errors->first('ddlState') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">City Name<span class="text-danger">*</span>
+                                    </label>
+                                    <select name="ddlCity" id="ddlCity" class="select2 form-select" required>
+                                        @isset($deliveryPerson)
+                                            @if (!empty($cities))
+                                                @foreach ($cities as $city)
+                                                    <option value="{{ $city->id }}"
+                                                        @isset($deliveryPerson)@if ($deliveryPerson->city_id == $city->id) {{ 'selected' }}@endif @endisset>
+                                                        {{ $city->city_name }}
+                                                    </option>
+                                                @endforeach
+                                            @endif
+                                        @endisset
+                                    </select>
+                                    @if ($errors->has('ddlCity'))
+                                        <div class="text-danger">{{ $errors->first('ddlCity') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Area Name<span class="text-danger">*</span></label>
+                                    <select name="ddlArea" id="ddlArea" class="select2 form-select" required>
+                                        @isset($deliveryPerson)
+                                            @if (!empty($areas))
+                                                {{-- @foreach ($areas as $area) --}}
+                                                <option value="{{ $areas->id }}"
+                                                    @isset($deliveryPerson)@if ($deliveryPerson->area_id == $areas->id) {{ 'selected' }}@endif @endisset>
+                                                    {{ $areas->area_name }}
+                                                </option>
+                                                {{-- @endforeach --}}
+                                            @endif
+                                        @endisset
+                                    </select>
+                                    @if ($errors->has('ddlArea'))
+                                        <div class="text-danger">{{ $errors->first('ddlArea') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Door No / Street / Landmark <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" name="txtDoorNo" id="txtDoorNo" class="form-control"
+                                        placeholder="Enter Door No / Street / Landmark"
+                                        value="@isset($deliveryPerson){{ $deliveryPerson ? $deliveryPerson->address : '' }}@endisset"
+                                        required>
+
+                                    @if ($errors->has('txtDoorNo'))
+                                        <div class="text-danger">{{ $errors->first('txtDoorNo') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Pincode<span class="text-danger">*</span></label>
+                                    <input type="text" name="txtPincode" id="txtPincode"
+                                        class="form-control numvalidate" placeholder="Pincode"
+                                        value="@isset($deliveryPerson){{ $deliveryPerson ? $deliveryPerson->pincode : '' }}@endisset"
+                                        required />
+
+                                    @if ($errors->has('txtPincode'))
+                                        <div class="text-danger">{{ $errors->first('txtPincode') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Hub Name<span class="text-danger">*</span></label>
+                                    <select name="ddlHub" id="ddlHub" class="select2 form-select" required>
+                                        <option value="">Select</option>
+                                        @if (!empty($hubs))
+                                            @foreach ($hubs as $hub)
+                                                <option value="{{ $hub->id }}"
+                                                    @if (isset($deliveryPerson->hub_id) == $hub->id) {{ 'selected' }} @endif>
+                                                    {{ $hub->hub_name }}
+                                                </option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                    @if ($errors->has('ddlHub'))
+                                        <div class="text-danger">{{ $errors->first('ddlHub') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Password<span class="text-danger">*</span></label>
+                                    <input type="password" name="DeliveryPersonPassword" id="DeliveryPersonPassword"
+                                        class="form-control" placeholder="Password" required />
+
+                                    @if ($errors->has('DeliveryPersonPassword'))
+                                        <div class="text-danger">{{ $errors->first('DeliveryPersonPassword') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Confirm Password<span
+                                            class="text-danger">*</span></label>
+                                    <input type="password" name="DeliveryPersonConfirmPassword"
+                                        id="DeliveryPersonConfirmPassword" class="form-control"
+                                        placeholder="Confirm Password" required />
+
+                                    @if ($errors->has('DeliveryPersonConfirmPassword'))
+                                        <div class="text-danger">{{ $errors->first('DeliveryPersonConfirmPassword') }}
+                                        </div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Delivery Person Image<span
+                                            class="text-danger">*</span></label>
+                                    <div class="upload__box">
+                                        <div class="upload__btn-box">
+                                            <label class="upload__btn">
+                                                Upload image
+                                                <input type="file" name="fileDelPersonImage"
+                                                    id="fileDelPersonImage" class="upload__inputfile" >
+                                            </label>
+                                            <div class="img mt-2">
+                                                @if ($deliveryPerson)
+                                                    <img src="{{ asset($deliveryPerson->delivery_person_image) }}"
+                                                        id="previewImage1" width="100" height="100">
+                                                @else
+                                                    <img src="{{ asset('assets\img\avatars\14.png') }}"
+                                                        id="previewImage1" width="100" height="100">
+                                                @endif
+                                            </div>
+                                            @if ($errors->has('fileDelPersonImage'))
+                                                <div class="text-danger">{{ $errors->first('fileDelPersonImage') }}
+                                                </div>
+                                            @endif
+                                            <span class="error"></span>
+                                        </div>
+                                        {{-- <div class="upload__img-wrap"></div> --}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /Browser Default -->
+        </div>
+        <div class="card mt-3">
+            <div class="card-body">
+                <div class="card-header p-0">
+                    <h4>Vehicle info</h4>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        <div class="mb-3">
+                            <label class="form-label">Fuel/Electric<span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select">
+                                <option value="">Select</option>
+                                <option value="1">Fuel</option>
+                                <option value="2">Electric</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label class="form-label">Vehicle Type<span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select">
+                                <option value="">Select</option>
+                                <option value="1">2 Wheeler</option>
+                                <option value="2">4 Wheeler</option>
+                                <option value="3">12 Wheeler</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label class="form-label">Brand<span class="text-danger">*</span>
+                            </label>
+                            <select class="select2 form-select">
+                                <option value="">Select</option>
+                                <option value="1">TATA</option>
+                                <option value="2">HONDA</option>
+                                <option value="3">BAJAJ</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label class="form-label">Reg No<span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" placeholder="Enter Reg No">
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="mb-3">
+                            <img src="{{ asset('add.png') }}" class="img-fluid" width="50px" height="50px"
+                                style="margin-top:18px;">
+                        </div>
+                    </div>
+                </div>
+                <div class="card-datatable table-responsive pt-0">
+                    <table class="table table-responsive">
+                        <tr>
+                            <th>Fuel/Electric</th>
+                            <th>Vehicle Type</th>
+                            <th>Brand</th>
+                            <th>Reg No</th>
+                            <th>Action</th>
+                        </tr>
+                        <tr>
+                            <td>FUEL</td>
+                            <td>2 Wheeler</td>
+                            <td>TATA</td>
+                            <td>TN99W2538</td>
+                            <td>
+                                <a>
+                                    <i class="text-primary ti ti-pencil me-1"></i>
+                                </a>
+                                <a>
+                                    <i class="text-danger ti ti-trash me-1"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-body">
+                <div class="card-header p-0">
+                    <h4>Upload Documents</h4>
+                </div>
+                <div class="row">
+                    @foreach ($documents as $item)
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">{{ $item->documenttype_name }}
+                                    @if ($item->is_mandatory == 1)
+                                        <span class="text-danger">*</span>
+                                    @endif
+                                </label>
+                                <div class="upload__box">
+                                    <div class="upload__btn-box">
+                                        <label class="upload__btn">
+                                            Upload image
+                                            <input type="file" name="{{ $item->documenttype_name }}"
+                                                id="{{ $item->documenttype_name }}" class="upload__inputfile"
+                                                /><br>
+                                        </label>
+                                    </div>
+                                    <div class="upload__img-wrap"></div>
+                                </div>
+                                {{-- <img src="" id="img1" class="img1" height="100px" width="100px" style="display:none;" > --}}
+                                {{-- <canvas id="pdfViewer"></canvas> --}}
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+                <div class="col-md-4">
+                    <div class="mt-4 mb-3">
+                        <button type="submit" id="btnSave" class="btn btn-success">Save</button>
+                        <button type="button" class="btn btn-danger">Cancel</button>
+                        <a href="{{ route('deliverypersonlist') }}"><button type="button"
+                                class="btn btn-primary">Go
+                                To List</button></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<!-- / Content -->
+
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/admin/deliverypersonmanagement/deliveryperson.js') }}"></script>
+@endsection

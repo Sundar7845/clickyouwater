@@ -1,0 +1,111 @@
+@extends('layouts.main_master') @section('content')
+@section('title')
+    Hub Orders
+@endsection
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-1 mb-4">
+        Hub Orders - ({{ $hubOrderDetail->hub_name }})
+    </h4>
+    <input type="hidden" name="hdHubId" id="hdHubId" value="{{ $hubOrderDetail->id }}">
+    {{-- <div class="card">
+        <div class="card-body">
+            <form class="browser-default-validation">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <strong class="form-label" for="basic-default-name">State Name</strong>
+                            <select name="ddlState" id="ddlState" class="select2 form-select ">
+                                <option value="">Select State</option>
+                                @foreach ($state as $item)
+                                    <option value="{{ $item->id }}">{{ $item->state_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <strong class="form-label" for="basic-default-email">District Name</strong>
+                            <select name="ddlCity" id="ddlCity" class="select2 form-select ">
+                                <option value="">Select</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mt-3">
+                        <button type="button" class="btn btn-flat btn-primary" id="btnDate" style="height: 36px;">
+                            <i class="fa fa-calendar"></i>
+                            <span id="spnDate" style="padding-left: 5px;">Today</span>
+                            <i class="fa fa-caret-down" style="padding-left: 5px;"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div> --}}
+    <!-- DataTable with Buttons -->
+    <div class="col-lg-12 mb-4 mb-lg-0">
+        <div class="card h-100">
+            <div class="card-datatable table-responsive pt-0">
+                <table id="tblHubAllOrders" class="table">
+                    <thead class="border-bottom">
+                        <tr>
+                            <th>S.No</th>
+                            <th>ORDER NO</th>
+                            <th>ORDER DATE</th>
+                            <th>CUSTOMER NAME</th>
+                            <th>QTY</th>
+                            <th>AMOUNT</th>
+                            <th>PAYMENT</th>
+                            <th>ORDER STATUS</th>
+                            <th>ACTION</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--/ DataTable with Buttons -->
+</div>
+<!-- / Content -->
+<!-- Enable OTP Modal -->
+<div class="modal fade" id="deliveryPersonPopup" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-simple modal-enable-otp modal-dialog-centered">
+        <div class="modal-content p-3 p-md-5">
+            <div class="modal-body">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <form action="{{ route('assignorder') }}" method="POST" class="row g-3" name="assignDeliveryPerson">
+                    @csrf
+                    <div class="col-12">
+                        <label class="form-label">Delivery Person Name <span class="text-danger">*</span></label>
+                        <select name="ddlDeliveryPerson" id="ddlDeliveryPerson" class="form-select select2"
+                            title="Select Deliver Person" required>
+                            <option value="">Select Deliver Person</option>
+                            @foreach ($deliveryPerson as $item)
+                                <option value="{{ $item->id }}">{{ $item->delivery_person_name }}</option>
+                            @endforeach
+                        </select>
+                        @if ($errors->has('ddlDeliveryPerson'))
+                            <div class="text-danger">{{ $errors->first('ddlDeliveryPerson') }}</div>
+                        @endif
+                        <span class="error"></span>
+                    </div>
+                    <div class="col-12">
+                        <input type="hidden" name="hdOrderId" id="hdOrderId" value="0">
+                        <button type="submit" class="btn btn-primary me-sm-3 me-1">Submit</button>
+                        <button type="reset" class="btn btn-label-secondary" data-bs-dismiss="modal"
+                            aria-label="Close">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!--/ Enable OTP Modal -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/admin/orders/huborders/huborder_details.js') }}"></script>
+@endsection

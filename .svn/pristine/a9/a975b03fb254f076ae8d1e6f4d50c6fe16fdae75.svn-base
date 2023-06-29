@@ -1,0 +1,53 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Masters;
+
+use App\Http\Controllers\Controller;
+use App\Models\Area;
+use App\Models\State;
+use App\Traits\Common;
+use Illuminate\Http\Request;
+
+class AreaController extends Controller
+{
+    use Common;
+    public function area()
+    {
+        $area = Area::with('state','city')->get();
+        $states = State::get();
+        return view('admin.masters.area.area', compact('states', 'area'));
+    }
+
+    public function getCity(Request $request)
+    {
+        $data = $this->getCities($request->state_id);
+        return response()->json($data);
+    }
+
+    public function addArea(Request $request)
+    {
+        $request->validate([
+            'ddlState' => 'required',
+            'ddlCity' => 'required',
+            'area_name' => 'required'
+        ]);
+
+        Area::create([
+            'state_id' => $request->ddlState,
+            'city_id' => $request->ddlCity,
+            'area_name' => $request->area_name
+        ]);
+        $notification = array(
+            'message' => 'Area Created Successfully',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->route('area')->with($notification);
+    }
+
+    public function editArea($id)
+    {
+        $area = Area::find($id);
+        return view('admin.masters.area.area',compact('area'));
+    }
+}

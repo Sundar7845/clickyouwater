@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Http\Controllers\Manufacturer\Document;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class DocumentController extends Controller
+{
+    public function documents()
+    {
+       return view('manufacturer.document.document');
+    }
+}

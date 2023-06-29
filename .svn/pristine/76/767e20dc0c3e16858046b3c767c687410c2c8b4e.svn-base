@@ -1,0 +1,16 @@
+<?php
+
+namespace App\Enums;
+
+use Illuminate\Validation\Rules\Enum;
+
+final class DocumentModulesType extends Enum
+{
+    const Manufacturer = '1';
+    const Hub = '2';
+    const Logistic = '3';
+    const DeliveryPerson = '4';
+    const WholeslePartner = '5';
+    const Employee = '6';
+    const Driver = '7';
+}

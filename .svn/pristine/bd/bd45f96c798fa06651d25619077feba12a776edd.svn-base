@@ -1,0 +1,60 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class Area extends Model
+{
+    use HasFactory, SoftDeletes;
+
+    protected $fillable = [
+        'area_name',
+        'city_id',
+        'state_id',
+        'radius',
+        'is_active',
+        'created_by',
+        'updated_by',
+        'deleted_by'
+    ];
+
+    public function state()
+    {
+        return $this->belongsTo(State::class, 'state_id', 'id');
+    }
+
+    public function city()
+    {
+        return $this->belongsTo(City::class, 'city_id', 'id');
+    }
+
+    protected $dates = ['deleted_at'];
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::bootSoftDeletes();
+    }
+
+    public static function bootSoftDeletes()
+    {
+        static::deleting(function ($area) {
+            if ($area->deliverypersons()->count() > 0) {
+                throw new \Exception('Cannot delete asset type because there are associated assets.');
+            }
+        });
+
+        static::restoring(function ($area) {
+            // add any restoring logic here if necessary
+        });
+    }
+
+    public function deliverypersons()
+    {
+        return $this->hasMany(DeliveryPerson::class);
+    }
+}

@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Masters;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class LedgerController extends Controller
+{
+  public function ledger()
+  {
+    return view('Admin.masters.ledger.ledger');
+  }
+}

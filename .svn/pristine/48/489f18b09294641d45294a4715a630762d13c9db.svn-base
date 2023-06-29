@@ -1,0 +1,73 @@
+<?php
+
+namespace App\Http\Resources;
+
+use DateTime;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class OrderResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
+     */
+    // public function toArray($request)
+    // {
+    //     return parent::toArray($request);
+    // }
+    // public function toArray($request)
+    // {
+    //     $products = $this->products->map(function ($product) {
+
+    //         return [
+    //             'product_name' => $product->product_name,
+    //             'quantity' => $product->orderDets->qty
+    //         ];
+    //     });
+
+    //     return [
+    //         'order_id' => $this->id,
+    //         'products' => $products,
+    //     ];
+    // }
+
+    public function toArray($request)
+    {
+        return [
+            'order_id' => $this->id,
+            'order_no' => $this->order_no,
+            'invoice_no' => $this->invoice_no,
+            'delivery_address' => $this->delivery_address,
+            'delivery_desc' => $this->desc,
+            'delivery_charge' => $this->delivery_charge,
+            'coupon_code' => $this->coupon_code,
+            'total_discount_amount' => $this->total_discount_amount,
+            'total_igst_amount' => $this->total_igst_amount,
+            'total_sgst_amount' => $this->total_sgst_amount,
+            'total_cgst_amount' => $this->total_cgst_amount,
+            'total_qty' => $this->total_qty,
+            'wallet_points_used' => $this->wallet_points_used,
+            'deposit_amount' => $this->deposit_amount,
+            'total_tax_amount' => $this->total_tax_amount,
+            'sub_total' => $this->sub_total,
+            'taxable_amount' => $this->taxable_amount,
+            'roundoff' => $this->roundoff,
+            'grand_total' => $this->grand_total,
+            'status_id' => $this->status_id,
+            'status_name' => $this->status->status,
+            'status_msg' => $this->status->status_msg,
+            'is_cancel' => $this->is_cancel,
+            'transaction_date' => DateTime::createFromFormat('Y-m-d H:i:s', $this->transaction_date)->format('d M,y'),
+            'transaction_amount' => $this->transaction_amount,
+            'transaction_status' => $this->transaction_status,
+            'order_details' => $this->orderDets->map(function ($orderdet) {
+                return [
+                    'product_name' => $orderdet->products->product_name,
+                    'quantity' => $orderdet->qty,
+                ];
+            }),
+        ];
+    }
+}

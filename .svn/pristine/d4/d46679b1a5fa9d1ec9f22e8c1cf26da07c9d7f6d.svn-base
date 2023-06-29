@@ -1,0 +1,164 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Dashboard | User Rights
+@endsection
+
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-1 mb-4">
+        <span class="text-muted fw-light">Masters /</span> User Rights
+    </h4>
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-6 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <form class="browser-default-validation">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">User Group / Role Name<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="basic-default-name"
+                                        placeholder="User Rights Group" required />
+                                </div>
+                                <div class="mt-4 mb-3">
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                    <button type="button" class="btn btn-danger">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <form class="browser-default-validation">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <h5><label class="form-label" for="basic-default-name">Menu List<span
+                                                class="text-danger">*</span></label></h5>
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="chkAll">
+                                        <label class="custom-control-label" for="chkAll">Dashboard</label>
+                                    </div>
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="chkAll">
+                                        <label class="custom-control-label" for="chkAll">Accounts Management</label>
+                                    </div>
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="chkAll">
+                                        <label class="custom-control-label" for="chkAll">Discounts Management</label>
+                                    </div>
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="chkAll">
+                                        <label class="custom-control-label" for="chkAll">Purchase Management</label>
+                                    </div>
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="chkAll">
+                                        <label class="custom-control-label" for="chkAll">Sales Management</label>
+                                    </div>
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="chkAll">
+                                        <label class="custom-control-label" for="chkAll">Logistic Management</label>
+                                    </div>
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="chkAll">
+                                        <label class="custom-control-label" for="chkAll">Stock Management</label>
+                                    </div>
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="chkAll">
+                                        <label class="custom-control-label" for="chkAll">Customers</label>
+                                    </div>
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="chkAll">
+                                        <label class="custom-control-label" for="chkAll">Feedback</label>
+                                    </div>
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="chkAll">
+                                        <label class="custom-control-label" for="chkAll">Reports</label>
+                                    </div>
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="chkAll">
+                                        <label class="custom-control-label" for="chkAll">Settings</label>
+                                    </div>
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="chkAll">
+                                        <label class="custom-control-label" for="chkAll">User Rights</label>
+                                    </div>
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="chkAll">
+                                        <label class="custom-control-label" for="chkAll">Products</label>
+                                    </div>
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="chkAll">
+                                        <label class="custom-control-label" for="chkAll">Masters</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+    <div class="col-md-12 mb-4 mb-md-0">
+        <div class="card">
+            <div class="card-body">
+                <h5>User Rights List</h5>
+                <form class="browser-default-validation">
+                    <div class="row">
+                        <div class="col-lg-12 mb-4 mb-lg-0">
+                            <div class="card h-100">
+                                <div class="table-responsive">
+                                    <table class="table table-borderless">
+                                        <thead class="border-bottom">
+                                            <tr>
+                                                <th>S.No</th>
+                                                <th>USER GROUP / ROLE NAME</th>
+                                                <th>ACTION</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>1</td>
+                                                <td>Admin</td>
+                                                <td><a><i class="text-primary ti ti-pencil me-1"></i></a> <a><i
+                                                            class="text-danger ti ti-trash me-1"></i></a></td>
+                                            </tr>
+                                            <tr>
+                                                <td>2</td>
+                                                <td>Office Staff</td>
+                                                <td><a><i class="text-primary ti ti-pencil me-1"></i></a> <a><i
+                                                            class="text-danger ti ti-trash me-1"></i></a></td>
+                                            </tr>
+                                            <tr>
+                                                <td>3</td>
+                                                <td>Add Products</td>
+                                                <td><a><i class="text-primary ti ti-pencil me-1"></i></a> <a><i
+                                                            class="text-danger ti ti-trash me-1"></i></a></td>
+                                            </tr>
+                                            <tr>
+                                                <td>4</td>
+                                                <td>Orders Manager</td>
+                                                <td><a><i class="text-primary ti ti-pencil me-1"></i></a> <a><i
+                                                            class="text-danger ti ti-trash me-1"></i></a></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- / Content -->
+@endsection

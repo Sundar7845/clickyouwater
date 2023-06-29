@@ -1,0 +1,212 @@
+$(document).ready(function () {
+    // listHub();
+    BindCity();
+    BindArea();
+});
+
+
+var RowIndex = 1;
+
+function validateVehicleInfo() {
+    var ddlfueltype = $("#ddlfueltype").val();
+    var ddlvehicletype = $("#ddlvehicletype").val();
+    var ddlvehiclebrand = $("#ddlvehiclebrand").val();
+    var txtregno = $("#txtregno").val();
+
+    if (ddlfueltype.value == "") {
+        alert('Select Fuel Type');
+        ddlfueltype.focus();
+        return false;
+    }
+
+    if (ddlvehicletype.value == "") {
+        alert('Select Vehicle Type');
+        ddlvehicletype.focus();
+        return false;
+    }
+
+    if (ddlvehiclebrand.value == "") {
+        alert('Select Vehicle Brand');
+        ddlvehiclebrand.focus();
+        return false;
+    }
+
+    if (txtregno.value == "") {
+        alert('Select Register Number');
+        txtregno.focus();
+        return false;
+    }
+    return true;
+}
+
+function addVehicleInfo() {
+   
+    if (validateVehicleInfo()) {
+    //   var  jsonObj = [];
+        var editRowIndex = $("#hdEditVehicleInfoRowId").val();
+        var vehicleinfodata = "";
+        var FUL = $("#ddlfueltype option:selected").val();
+        var FUT = $("#ddlfueltype option:selected").text();
+        var VHL = $("#ddlvehicletype option:selected").val();
+        var VHT = $("#ddlvehicletype option:selected").text();
+        var VHB = $("#ddlvehiclebrand option:selected").val();
+        var VBT = $("#ddlvehiclebrand option:selected").text();
+        var RNO = $("#txtregno").val();
+
+        if (($("tr[FUL=" + FUL + "]" + "[VHL=" + VHL + "]" + "[VHB=" + VHB + "]" + "[RNO=" + RNO + "]").length == 0)) { 
+            if (editRowIndex == 0) {
+               
+                vehicleinfodata += "<tr id='trvehicle" + RowIndex + "' FUL=" + FUL + " VHL=" + VHL + " VHB=" + VHB + " RNO=" + RNO + " >";
+                vehicleinfodata += "<td><input type='hidden'  class ='vehicleinfo' id=tabfueltype name='tabFuel[]'  value=" + FUL + ">" + FUT + "</td>";
+                vehicleinfodata += "<td><input type='hidden'  class = 'vehicleinfo' id=tabvehicletype name='tabVehicleType[]'  value=" + VHL + ">" + VHT + "</td>";
+                vehicleinfodata += "<td><input type='hidden'  class = 'vehicleinfo' id=tabvehiclebrand name='tabVehicleBrand[]'  value=" + VHB + ">" + VBT + "</td>";
+                vehicleinfodata += "<td><input type='hidden'  class = 'vehicleinfo' id= tabregno name='tabRegNo[]'  value=" + RNO + ">" + RNO + "</td>";
+                vehicleinfodata += "<td><a><i class='text-primary ti ti-pencil me-1' onclick = 'doEdit(" + RowIndex + ");'></i></a><a><i class='text-danger ti ti-trash me-1' onclick ='removeRow(" + RowIndex + ");'></i></a></td>";
+                vehicleinfodata += "</tr>";
+                // item = {}
+                // item["fuel"] = FUL;
+                // item["vehicleinfo"] = VHL;
+                // item["brand"] = VHB;
+                // item["regno"] = RNO;
+                RowIndex++;
+                $("#tbodyVehicleType").append(vehicleinfodata);
+            }
+            else if (editRowIndex > 0) {
+                $("#trvehicle" + editRowIndex + " td:eq(0)").text(FUT);
+                $("#trvehicle" + editRowIndex + " td:eq(1)").text(VHT);
+                $("#trvehicle" + editRowIndex + " td:eq(2)").text(VBT);
+                $("#trvehicle" + editRowIndex + " td:eq(3)").text(RNO);
+                showAddImage();
+                $("#hdEditVehicleInfoRowId").val(0);
+            }
+            formClear();
+        } else {
+            alert('Item Alredy exist');
+        } 
+        // jsonObj.push(item);
+        //  jsonString = JSON.stringify(jsonObj);
+        //  console.log(jsonString);
+    }
+}
+
+function doEdit(SID) {
+    $("#hdEditVehicleInfoRowId").val(SID);
+    $("#ddlfueltype").val($("#trvehicle" + SID).attr("FUL")).trigger("change");
+    $("#ddlvehicletype").val($("#trvehicle" + SID).attr("VHL")).trigger("change");
+    $("#ddlvehiclebrand").val($("#trvehicle" + SID).attr("VHB")).trigger("change");
+    $("#txtregno").val($("#trvehicle" + SID + " td:eq(3)").text());
+    showEditImage();
+
+}
+
+function showAddImage() {
+    $("#btnUpdate").css("display", "none");
+    $("#btnAdd").css("display", "block");
+}
+function showEditImage() {
+    $("#btnUpdate").css("display", "block");
+    $("#btnAdd").css("display", "none");
+}
+
+function removeRow(SID) {
+    $("#trvehicle" + SID).remove();
+}
+
+function formClear() {
+    $("#ddlfueltype").val("");
+    $("#ddlvehicletype").val("");
+    $("#ddlvehiclebrand").val("").trigger('change');
+    $("#txtregno").val("");
+}
+
+$(function () {
+    $("form[name='hub']").validate({
+        rules: {
+            txthubId: "required",
+            txthubName: "required",
+            "ddlManufacturerName[]": {
+                required: true,
+            },
+            txtYrsofExp: "required",
+            txtMobile: "required",
+            txtofficialEmail: "required",
+            txtlatitude: "required",
+            txtlangtitute: "required",
+            txtgeolocation: "required",
+            txtRadius: "required",
+            txtcreditPeriod: "required",
+            txtsettlementPeriod: "required",
+            txtsecurityDeposit: "required",
+            password: "required",
+            password_confirmation: "required",
+            ddlState: "required",
+            ddlCity: "required",
+            ddlArea: "required",
+            txtLandmark: "required",
+            txtpinCode: "required",
+            txtProprietorName: "required",
+            txtProprietorMobile: "required",
+            txtProprietorEmail: "required",
+            txtContactPersonName: "required",
+            txtContactPersonMobile: "required",
+            txtContactPersonEmail: "required",
+            // ddlfueltype: "required",
+            // ddlvehicletype: "required",
+            // ddlvehiclebrand: "required",
+            // txtregno: "required",
+        },
+        messages: {
+            required: "This field is required",
+        },
+        errorPlacement: function (error, element) {
+            if (element.is(":radio")) {
+                error.appendTo(element.parents(".form-group"));
+            } else {
+                // This is the default behavior
+                // error.insertAfter(element);
+                if (element.siblings(".error").html() == undefined) {
+                    error.appendTo(element.parent().next(".error"));
+                } else {
+                    error.appendTo(element.siblings(".error"));
+                }
+            }
+        },
+        submitHandler: function (form) {
+            form.submit();
+        },
+    });
+});
+
+
+$('form').submit(function () {
+
+    var fueltype = $('input[name="tabFuel[]"]').map(function () {
+        return this.value;
+    }).get();
+    $('#hdfueltype').val(fueltype);
+    var vehicleType = $('input[name="tabVehicleType[]"]').map(function () {
+        return this.value;
+    }).get();
+    $('#hdvehicletype').val(vehicleType);
+    var vehiclebrand = $('input[name="tabVehicleBrand[]"]').map(function () {
+        return this.value;
+    }).get();
+    $('#hdvehiclebrand').val(vehiclebrand);
+    var regNo = $('input[name="tabRegNo[]"]').map(function () {
+        return this.value;
+    }).get();
+    $('#hdregNo').val(regNo);
+
+});
+
+
+
+
+
+
+
+
+
+
+
+

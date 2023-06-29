@@ -1,0 +1,19 @@
+$(document).ready(function() {
+    //$('#tax').DataTable();
+});
+
+
+//jquery Validation
+$(function () {
+
+    $("form[name='tax']").validate({
+
+        rules: {
+            txtTaxName: "required",
+            txtIgst: "required",
+            txtCgst: "required",
+            txtSgst: "required",
+        },
+    });
+    
+});

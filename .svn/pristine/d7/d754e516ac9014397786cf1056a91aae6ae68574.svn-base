@@ -1,0 +1,185 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Masters;
+
+use App\Http\Controllers\Controller;
+use App\Models\Asset;
+use App\Models\AssetType;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class AssetController extends Controller
+{
+    public function assetType()
+    {
+        return view('admin.masters.asset_type.asset_type');
+    }
+
+    public function addAssetType(Request $request)
+    {
+        $request->validate([
+            'txtAssetType' => 'required',
+            'txtPrefix' => 'required'
+        ]);
+
+        if ($request->hdAssetTypeId == null) {
+            AssetType::create([
+                'asset_type' => $request->txtAssetType,
+                'prefix' => $request->txtPrefix,
+                'created_by' => Auth::user()->id
+            ]);
+
+            $notification = array(
+                'message' => 'Asset Type Created Successfully',
+                'alert-type' => 'success'
+            );
+        } else {
+
+            AssetType::findorfail($request->hdAssetTypeId)->update([
+                'asset_type' => $request->txtAssetType,
+                'prefix' => $request->txtPrefix,
+                'updated_by' => Auth::user()->id
+            ]);
+
+            $notification = array(
+                'message' => 'Asset Type Updated Successfully',
+                'alert-type' => 'success'
+            );
+        }
+        return redirect()->route('asset-type')->with($notification);
+    }
+
+    public function getAssetTypeById($id)
+    {
+        $assettype = AssetType::select('asset_types.*')->where('asset_types.id', $id)->first();
+        return response()->json([
+            'assettype' => $assettype
+        ]);
+    }
+
+    public function getAssetTypeData(Request $request)
+    {
+        $assetTypeData = AssetType::select('asset_types.*')->get();
+        return datatables()->of($assetTypeData)
+            ->addColumn('action', function ($row) {
+                $html = '<i class="text-primary ti ti-pencil me-1"
+                onclick="doEdit(' . $row->id . ');"></i> ';
+                $html .= '<i class="text-danger ti ti-trash me-1" id="confrim-color(' . $row->id . ')" onclick="showDelete(' . $row->id . ');"></i>';
+                return $html;
+            })->toJson();
+    }
+
+    public function deleteAssetType($id)
+    {
+        $assetType = AssetType::findorfail($id);
+        $assetType->delete();
+        $assetType->update([
+            'deleted_by' => Auth::user()->id
+        ]);
+
+        $notification = array(
+            'message' => 'AssetType Deleted Successfully',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->route('asset-type')->with($notification);
+    }
+
+
+    ////Asset Controllers/////
+    public function asset()
+    {
+        $assetType = AssetType::get();
+        $assetData = Asset::select('assets.*', 'asset_types.prefix')
+            ->join('asset_types', 'asset_types.id', 'assets.asset_id')->get();
+        return view('admin.masters.asset.asset', compact('assetType', 'assetData'));
+    }
+
+    public function addAsset(Request $request)
+    {
+
+        $request->validate([
+            'txtAssetPrefix' => 'required',
+            'ddlAssetType' => 'required',
+            'txtAssetName' => 'required',
+            'txtAssetDetail' => 'required'
+
+        ]);
+
+        if ($request->hdAssetId == null) {
+            Asset::create([
+                'asset_id' => $request->txtAssetPrefix,
+                'asset_type_id' => $request->ddlAssetType,
+                'asset_name' => $request->txtAssetName,
+                'asset_detail' => $request->txtAssetDetail,
+                'created_by' => Auth::user()->id
+            ]);
+
+            $notification = array(
+                'message' => 'Asset Created Successfully',
+                'alert-type' => 'success'
+            );
+        } else {
+
+            Asset::findorfail($request->hdAssetId)->update([
+                'asset_id' => $request->txtAssetPrefix,
+                'asset_type_id' => $request->ddlAssetType,
+                'asset_name' => $request->txtAssetName,
+                'asset_detail' => $request->txtAssetDetail,
+                'updated_by' => Auth::user()->id
+            ]);
+
+            $notification = array(
+                'message' => 'Asset Updated Successfully',
+                'alert-type' => 'success'
+            );
+        }
+        return redirect()->route('asset')->with($notification);
+    }
+
+    public function getAssetData(Request $request)
+    {
+        $assetData = Asset::select('assets.*', 'asset_types.asset_type')
+            ->join('asset_types', 'asset_types.id', 'assets.asset_type_id')->get();
+        return datatables()->of($assetData)
+            ->addColumn('action', function ($row) {
+                $html = '<i class="text-primary ti ti-pencil me-1"
+                onclick="doEdit(' . $row->id . ');"></i> ';
+                $html .= '<i class="text-danger ti ti-trash me-1" id="confrim-color(' . $row->id . ')" onclick="showDelete(' . $row->id . ');"></i>';
+                return $html;
+            })->toJson();
+    }
+
+    public function getAssetById($id)
+    {
+        $asset = Asset::select('assets.*', 'asset_types.asset_type', 'asset_types.prefix')
+            ->join('asset_types', 'asset_types.id', 'assets.asset_type_id')->where('assets.id', $id)->first();
+        return response()->json([
+            'asset' => $asset
+        ]);
+    }
+
+    public function deleteAsset($id)
+    {
+        $asset = Asset::findorfail($id);
+        $asset->delete();
+        $asset->update([
+            'deleted_by' => Auth::user()->id
+        ]);
+
+        $notification = array(
+            'message' => 'Asset Deleted Successfully',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->route('asset')->with($notification);
+    }
+
+    public function getAssetId(Request $request)
+    {
+        $assetid = AssetType::where("id", $request->asset_type_id)->first();
+        return response()->json([
+            'assetid' => $assetid
+        ]);
+    }
+}

@@ -1,0 +1,270 @@
+<?php
+
+namespace App\Http\Controllers\Admin\LogisticManagement;
+
+use App\Http\Controllers\Controller;
+use App\Models\Area;
+use App\Models\BillNoSetting;
+use App\Models\City;
+use App\Models\Hub;
+use App\Models\LogisticPartner;
+use App\Models\LogisticsHubConfig;
+use App\Models\LogisticsManufactureConfig;
+use App\Models\Manufacturer;
+use App\Models\State;
+use Illuminate\Database\QueryException;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class LogisticController extends Controller
+{
+   public function addLogisticPartner($id = NULL)
+   {
+
+      if ($id) {
+         $log = LogisticPartner::find($id);
+         $states = State::all();
+         $manconfiq = LogisticsManufactureConfig::where('logistic_partner_id', $id)->pluck('manufacture_id')->toArray();
+         $hubconfiq = LogisticsHubConfig::where('logistic_partner_id', $id)->pluck('hub_id')->toArray();
+         $man = Manufacturer::all();
+         $hub = Hub::all();
+         $cities = City::where('state_id', $log->state_id)->get();
+         $areas = Area::where('city_id', $log->city_id)->first();
+         $logExample = $log->logistic_partner_id;
+         return view('admin.logistic_management.add_logistic', compact('states', 'log', 'hub', 'manconfiq', 'hubconfiq', 'man', 'logExample', 'cities', 'areas'));
+      }
+
+      $logistic = LogisticPartner::first();
+      $data = BillNoSetting::first();
+      $logPrefix = $data->logistics_prefix ?? 0;
+      $logLength = $data->logistics_length ?? 0;
+      $logLive = (int)($data->logistics_live ?? 0) + 1;
+      if ($logLive) {
+         $logNumber = $logLive;
+      }
+      $log = sprintf("%0{$logLength}d", $logNumber);
+      $logExample = $logPrefix . $log;
+      $man = Manufacturer::all();
+      $manconfiq = LogisticsManufactureConfig::where('logistic_partner_id', $id)->pluck('manufacture_id')->toArray();
+      $hubconfiq = LogisticsHubConfig::where('logistic_partner_id', $id)->pluck('hub_id')->toArray();
+      $hub = Hub::all();
+      $states = State::all();
+      return view('admin.logistic_management.add_logistic', compact('man', 'manconfiq', 'hubconfiq', 'hub', 'states', 'logExample'));
+   }
+
+   public function addLogisticPartnerCreate(Request $request)
+   {
+
+      $request->validate([
+         'txtLogisticId' =>  'required',
+         'txtLogisticName' =>  'required',
+         'ddlManufacturerName' =>  'required',
+         'ddlHubName' =>  'required',
+         'txtYearsOfExperience' =>  'required',
+         'txtMobile' =>  'required',
+         'txtEmail' =>  'required',
+         'txtCreditPeriod' =>  'required',
+         'txtSettlementPeriod' =>  'required',
+         'ddlState' =>  'required',
+         'ddlCity' =>  'required',
+         'ddlArea' =>  'required',
+         'txtAddress' =>  'required',
+         'txtPincode2' =>  'required',
+         'txtProprietorName' =>  'required',
+         'txtProprietorMobile' =>  'required',
+         'txtProprietorEmail' =>  'required',
+         'txtContactPersonName' =>  'required',
+         'txtContactPersonMobile' =>  'required',
+         'txtContactPersonEmail' =>  'required'
+      ]);
+
+      if ($request->hdLogisticId == null) {
+         $data = $request->all();
+         DB::beginTransaction();
+
+         try {
+
+            $Logistc_data = LogisticPartner::insertGetId([
+               'logistic_partner_id' => $request->txtLogisticId,
+               'logistic_partner_name' => $request->txtLogisticName,
+               'years_of_experience' => $request->txtYearsOfExperience,
+               'mobile' => $request->txtMobile,
+               'email' => $request->txtEmail,
+               'credit_period' => $request->txtCreditPeriod,
+               'settlement_period' => $request->txtSettlementPeriod,
+               'state_id' => $request->ddlState,
+               'city_id' => $request->ddlCity,
+               'area_id' => $request->ddlArea,
+               'address' => $request->txtAddress,
+               'pincode' => $request->txtPincode2,
+               'proprietor_name' => $request->txtProprietorName,
+               'proprietor_mobile' => $request->txtProprietorMobile,
+               'proprietor_email' => $request->txtProprietorEmail,
+               'contact_person_name' => $request->txtContactPersonName,
+               'contact_person_mobile' => $request->txtContactPersonMobile,
+               'contact_person_email' => $request->txtContactPersonEmail,
+
+            ]);
+            foreach ($data['ddlManufacturerName'] as $value) {
+               LogisticsManufactureConfig::create([
+                  'logistic_partner_id' => $Logistc_data,
+                  'manufacture_id' => $value
+
+               ]);
+            }
+
+            foreach ($data['ddlHubName'] as $value) {
+               $datas = LogisticsHubConfig::create([
+                  'logistic_partner_id' => $Logistc_data,
+                  'hub_id' => $value
+
+               ]);
+            }
+
+            $data = BillNoSetting::first();
+            $data->logistics_live = $data->logistics_live + 1;
+            // throw new \ErrorException('Error found');
+            $data->save();
+
+            $notification = array(
+               'message' => 'Logistic Created Successfully',
+               'alert-type' => 'success'
+            );
+            DB::commit();
+         } catch (\Exception $e) {
+            DB::rollback();
+            $notification = array(
+               'message' => 'Logistic Partner Not Created!',
+               'alert-type' => 'error'
+            );
+         }
+      } else {
+
+         $data = $request->all();
+         DB::beginTransaction();
+
+         try {
+
+            $Logistc_data =  LogisticPartner::findorfail($request->hdLogisticId)->update([
+               'logistic_partner_id' => $request->txtLogisticId,
+               'logistic_partner_name' => $request->txtLogisticName,
+               'years_of_experience' => $request->txtYearsOfExperience,
+               'mobile' => $request->txtMobile,
+               'email' => $request->txtEmail,
+               'credit_period' => $request->txtCreditPeriod,
+               'settlement_period' => $request->txtSettlementPeriod,
+               'state_id' => $request->ddlState,
+               'city_id' => $request->ddlCity,
+               'area_id' => $request->ddlArea,
+               'address' => $request->txtAddress,
+               'pincode' => $request->txtPincode2,
+               'proprietor_name' => $request->txtProprietorName,
+               'proprietor_mobile' => $request->txtProprietorMobile,
+               'proprietor_email' => $request->txtProprietorEmail,
+               'contact_person_name' => $request->txtContactPersonName,
+               'contact_person_mobile' => $request->txtContactPersonMobile,
+               'contact_person_email' => $request->txtContactPersonEmail,
+            ]);
+
+            LogisticsManufactureConfig::where('logistic_partner_id', $request->hdLogisticId)->delete();
+            foreach ($data['ddlManufacturerName'] as $value) {
+               LogisticsManufactureConfig::where('logistic_partner_id', $request->hdLogisticId)->updateorCreate([
+                  'logistic_partner_id' => $request->hdLogisticId,
+                  'manufacture_id' => $value
+
+               ]);
+            }
+
+            LogisticsHubConfig::where('logistic_partner_id', $request->hdLogisticId)->delete();
+            foreach ($data['ddlHubName'] as $value) {
+               LogisticsHubConfig::where('logistic_partner_id', $request->hdLogisticId)->updateorCreate([
+                  'logistic_partner_id' => $request->hdLogisticId,
+                  'hub_id' => $value
+
+               ]);
+            }
+
+            $notification = array(
+               'message' => 'Logistic Partner Updated Successfully',
+               'alert-type' => 'success'
+            );
+            DB::commit();
+         } catch (\Exception $e) {
+            DB::rollback();
+            $notification = array(
+               'message' => 'Logistic Partner Not Created!',
+               'alert-type' => 'error'
+            );
+         }
+      }
+
+      return redirect()->route('logistic-list')->with($notification);
+   }
+
+   public function logisticData()
+   {
+      $logisticData = DB::table('logistic_partners')
+         ->join('logistics_manufacture_configs', 'logistic_partners.id', '=', 'logistics_manufacture_configs.logistic_partner_id')
+         ->join('logistics_hub_configs', 'logistics_hub_configs.logistic_partner_id', '=', 'logistic_partners.id')
+         ->join('manufacturers', 'logistics_manufacture_configs.manufacture_id', '=', 'manufacturers.id')
+         ->join('hubs', 'logistics_hub_configs.hub_id', '=', 'hubs.id')
+         ->select('logistic_partners.*', 'manufacturers.manufacturer_name', 'hubs.hub_name')
+         ->groupby('logistics_manufacture_configs.logistic_partner_id')->distinct()->get();
+
+
+      return datatables()->of($logisticData)
+         ->addColumn('action', function ($row) {
+            $html = '<a href="addlogistic/' . $row->id . '"><i class="text-primary ti ti-pencil me-1"></i></a> ';
+            $html .= '<i class="text-danger ti ti-trash me-1" id="confrim-color(' . $row->id . ')" onclick="showDelete(' . $row->id . ');"></i>';
+            return $html;
+         })->toJson();
+   }
+
+   public function activeStatus($id, $status)
+   {
+
+      LogisticPartner::findorfail($id)->update([
+         'is_active' => $status,
+         'updated_by' => Auth::user()->id
+      ]);
+   }
+
+
+   public function DeletelogisticList($id)
+   {
+
+      try {
+         $logistic = LogisticPartner::findorfail($id);
+         $logistic->delete();
+         LogisticsManufactureConfig::where('logistic_partner_id', $id)->delete();
+         LogisticsHubConfig::where('logistic_partner_id', $id)->delete();
+
+         $logistic->Update([
+            'deleted_by' => Auth::user()->id
+         ]);
+
+         $notification = array(
+            'message' => 'LogisticPartner Deleted Successfully',
+            'alert' => 'success'
+         );
+         return response()->json([
+            'responseData' => $notification
+         ]);
+      } catch (QueryException $e) {
+
+         $notification = array(
+            'message' => 'LogisticPartner could not be deleted',
+            'alert' => 'error'
+         );
+         return response()->json([
+            'responseData' => $notification
+         ]);
+      }
+   }
+
+   public function logisticPartnerList()
+   {
+      return view('admin.logistic_management.logistic_list');
+   }
+}

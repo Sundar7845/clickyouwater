@@ -1,0 +1,50 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class Category extends Model
+{
+    use HasFactory, SoftDeletes;
+
+    protected $fillable = [
+        'category_name',
+        'category_desc',
+        'category_image',
+        'is_active',
+        'is_watercan',
+        'created_by',
+        'updated_by',
+        'deleted_by'
+    ];
+
+    protected $dates = ['deleted_at'];
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::bootSoftDeletes();
+    }
+
+    public static function bootSoftDeletes()
+    {
+        static::deleting(function ($categorys) {
+            if ($categorys->products()->count() > 0) {
+                throw new \Exception('Cannot delete product type because there are associated products.');
+            }
+        });
+
+        static::restoring(function ($category) {
+            // add any restoring logic here if necessary
+        });
+    }
+
+    public function products()
+    {
+        return $this->hasMany(Products::class);
+    }
+}

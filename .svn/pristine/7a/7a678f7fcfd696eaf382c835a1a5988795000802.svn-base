@@ -1,0 +1,632 @@
+<!-- Menu -->
+<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+    <div class="app-brand demo">
+        <a href="{{ route('dashboard') }}" class="app-brand-link">
+            <img src="{{ asset('assets/img/layouts/logos.jpeg') }}" class="img-fluid img-responsive" alt="">
+        </a>
+        <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
+            <i class="ti menu-toggle-icon d-none d-xl-block ti-sm align-middle"></i>
+            <i class="ti ti-x d-block d-xl-none ti-sm align-middle"></i>
+        </a>
+    </div>
+    <div class="menu-inner-shadow"></div>
+    <ul class="menu-inner py-1">
+        <!-- Dashboards -->
+        <li class="menu-item active open">
+            <a href="{{ route('dashboard') }}" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-smart-home"></i>
+                <div data-i18n="Dashboard">Dashboard</div>
+            </a>
+        </li>
+        <!-- Layouts -->
+        <li class="menu-item">
+            <a href="javascript:void(1);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-layout-sidebar"></i>
+                <div data-i18n="Order Management">Order Management</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item">
+                    <a href="{{ route('customerorders') }}" class="menu-link">
+                        <div data-i18n="Customer Orders">Customer Orders</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('wholesaleorders') }}" class="menu-link">
+                        <div data-i18n="Wholesale Orders">Wholesale Orders</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('manufacturerorders') }}" class="menu-link">
+                        <div data-i18n="Manufacture Orders">Manufacture Orders</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('huborders') }}" class="menu-link">
+                        <div data-i18n="Hub Orders">Hub Orders</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('cancelledorders') }}" class="menu-link">
+                        <div data-i18n="Cancelled Orders">Cancelled Orders</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('pendingorders') }}" class="menu-link">
+                        <div data-i18n="Pending Orders">Pending Orders</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('bulkorders') }}" class="menu-link">
+                        <div data-i18n="Bulk Orders">Bulk Orders</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="menu-item">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-file-dollar"></i>
+                <div data-i18n="Accounts">Accounts</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item">
+                    <a href="{{ route('creditnote') }}" class="menu-link">
+                        <div data-i18n="Credit Note">Credit Note</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('creditnotelist') }}" class="menu-link">
+                        <div data-i18n="Credit Note List">Credit Note List</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('debitnote') }}" class="menu-link">
+                        <div data-i18n="Debit Note">Debit Note</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('debitnotelist') }}" class="menu-link">
+                        <div data-i18n="Debit Note List">Debit Note List</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('payments') }}" class="menu-link">
+                        <div data-i18n="Payments">Payments</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('paymentslist') }}" class="menu-link">
+                        <div data-i18n="Payments List">Payments List</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('receipt') }}" class="menu-link">
+                        <div data-i18n="Receipt">Receipt</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('receiptlist') }}" class="menu-link">
+                        <div data-i18n="Receipt List">Receipt List</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('expenses') }}" class="menu-link">
+                        <div data-i18n="Expenses">Expenses</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('expenselist') }}" class="menu-link">
+                        <div data-i18n="Expense List">Expense List</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('referralpayments') }}" class="menu-link">
+                        <div data-i18n="Referral Payments">Referral Payments</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="menu-item">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-forms"></i>
+                <div data-i18n="Discount">Discount</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item">
+                    <a href="{{ route('generate-coupon') }}" class="menu-link">
+                        <div data-i18n="Generate Coupoun">Generate Coupoun</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('referral-history') }}" class="menu-link">
+                        <div data-i18n="Referral History">Referral History</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="menu-item">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-percentage"></i>
+                <div data-i18n="Offers">Offers</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item">
+                    <a href="{{ route('offers') }}" class="menu-link">
+                        <div data-i18n="Offers">Offers</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('offers-allocate') }}" class="menu-link">
+                        <div data-i18n="Offers Allocate">Offers Allocate</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="menu-item">
+            <a href="javascript:void(0)" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-building-store"></i>
+                <div data-i18n="Purchase">Purchase</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item">
+                    <a href="{{ route('purchaseorder') }}" class="menu-link">
+                        <div data-i18n="Purchase Order">Purchase Order</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('purchaseorderlist') }}" class="menu-link">
+                        <div data-i18n="Purchase Order List">Purchase Order List</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('purchaseinvoice') }}" class="menu-link">
+                        <div data-i18n="Purchase Invoice">Purchase Invoice</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('purchaseinvoicelist') }}" class="menu-link">
+                        <div data-i18n="Purchase Invoice List">Purchase Invoice List</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('purchasereturn') }}" class="menu-link">
+                        <div data-i18n="Purchase Return">Purchase Return</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('purchasereturnlist') }}" class="menu-link">
+                        <div data-i18n="Purchase Return List">Purchase Return List</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="menu-item">
+            <a href="javascript:void(0)" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-arrows-sort"></i>
+                <div data-i18n="Sales">Sales</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item">
+                    <a href="{{ route('salesorder') }}" class="menu-link">
+                        <div data-i18n="Sales Order">Sales Order</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('salesorderlist') }}" class="menu-link">
+                        <div data-i18n="Sales Order List">Sales Order List</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('salesinvoice') }}" class="menu-link">
+                        <div data-i18n="Sales Invoice">Sales Invoice</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('salesinvoicelist') }}" class="menu-link">
+                        <div data-i18n="Sales Invoice List">Sales Invoice List</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('salesreturn') }}" class="menu-link">
+                        <div data-i18n="Sales Return">Sales Return</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('salesreturnlist') }}" class="menu-link">
+                        <div data-i18n="Sales Return List">Sales Return List</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <!-- Extended components -->
+        <li class="menu-item">
+            <a href="javascript:void(0)" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-components"></i>
+                <div data-i18n="Stock Management">Stock Management</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item">
+                    <a href="{{ route('stock-entry') }}" class="menu-link">
+                        <div data-i18n="Stock Entry">Stock Entry</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('hub-stock') }}" class="menu-link">
+                        <div data-i18n="Hub Stock">Hub Stock</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('manufacturer-stock') }}" class="menu-link">
+                        <div data-i18n="Manufacturer Stock">Manufacturer Stock</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="menu-item">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-users"></i>
+                <div data-i18n="Customers">Customers</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item">
+                    <a href="{{ route('customers') }}" class="menu-link">
+                        <div data-i18n="Customers">Customers</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('customers-performance') }}" class="menu-link">
+                        <div data-i18n="Customer Performance">Customer Performance</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('surrender-can') }}" class="menu-link">
+                        <div data-i18n="Surrender Can">Surrender Can</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="menu-item">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-star"></i>
+                <div data-i18n="Performance">Performance</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item">
+                    <a href="{{ route('manufacturer-performance') }}" class="menu-link">
+                        <div data-i18n="Manufacturer">Manufacturer</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('hub-performance') }}" class="menu-link">
+                        <div data-i18n="Hub">Hub</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('logistics-performance') }}" class="menu-link">
+                        <div data-i18n="Logistic Partner">Logistic Partner</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('delivery-person-performance') }}" class="menu-link">
+                        <div data-i18n="Delivery Person">Delivery Person</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="menu-item">
+            <a href="{{ route('feedback') }}" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-map"></i>
+                <div data-i18n="Feedback">Feedback</div>
+            </a>
+        </li>
+        <li class="menu-item">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-flag"></i>
+                <div data-i18n="Reports">Reports</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item">
+                    <a href="{{ route('manufacturer-reports') }}" class="menu-link">
+                        <div data-i18n="Manufacturers Report">Manufacturers Report</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('hub-reports') }}" class="menu-link">
+                        <div data-i18n="Hub Report">Hub Report</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('delivery-reports') }}" class="menu-link">
+                        <div data-i18n="Delivery Report">Delivery Report</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('products-reports') }}" class="menu-link">
+                        <div data-i18n="Products Report">Products Report</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('orders-reports') }}" class="menu-link">
+                        <div data-i18n="Orders Report">Orders Report</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('payments-reports') }}" class="menu-link">
+                        <div data-i18n="Payments Report">Payments Report</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('unavailable-reports') }}" class="menu-link">
+                        <div data-i18n="Unavailable Report">Unavailable Report</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="menu-item">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-check"></i>
+                <div data-i18n="Approval">Approval</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item">
+                    <a href="{{ route('manufacturer-approval') }}" class="menu-link">
+                        <div data-i18n="Manufacturer Approval">Manufacturer Approval</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('logistic-approval') }}" class="menu-link">
+                        <div data-i18n="Logistic Approval">Logistic Approval</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('hub-approval') }}" class="menu-link">
+                        <div data-i18n="Hub Approval">Hub Approval</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="menu-item">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-settings"></i>
+                <div data-i18n="Settings">Settings</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item">
+                    <a href="{{ route('settings') }}" class="menu-link">
+                        <div data-i18n="Settings">Settings</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('bill-settings') }}" class="menu-link">
+                        <div data-i18n="Bill No Settings">Bill No Settings</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('referral-points') }}" class="menu-link">
+                        <div data-i18n="Referral Settings">Referral Points</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="menu-item">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-lock"></i>
+                <div data-i18n="Roles & Permission">Roles & Permission</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item">
+                    <a href="{{ route('rights') }}" class="menu-link">
+                        <div data-i18n="Roles">Roles</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('users') }}" class="menu-link">
+                        <div data-i18n="Users">Users</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="menu-item">
+            <a href="javascript:void(0)" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-building-factory"></i>
+                <div data-i18n="Manufacturer">Manufacturer</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item">
+                    <a href="{{ route('manufacturer') }}" class="menu-link">
+                        <div data-i18n="Add Manufacturer">Add Manufacturer</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('manufacturer-list') }}" class="menu-link">
+                        <div data-i18n="Manufacturer List">Manufacturer List</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="menu-item">
+            <a href="javascript:void(0)" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-bolt"></i>
+                <div data-i18n="Hub">Hub</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item">
+                    <a href="{{ route('hub') }}" class="menu-link">
+                        <div data-i18n="Add Hub">Add Hub</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('hub-list') }}" class="menu-link">
+                        <div data-i18n="Hub List">Hub List</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="menu-item">
+            <a href="javascript:void(0)" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-packge-export"></i>
+                <div data-i18n="Logistic Partner">Logistic Partner</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item">
+                    <a href="{{ route('add-logistic') }}" class="menu-link">
+                        <div data-i18n="Add Logistic">Add Logistic</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('logistic-list') }}" class="menu-link">
+                        <div data-i18n="Logistic List">Logistic List</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="menu-item">
+            <a href="javascript:void(0)" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-truck"></i>
+                <div data-i18n="Delivery Person">Delivery Person</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item">
+                    <a href="{{ route('delivery-person') }}" class="menu-link">
+                        <div data-i18n="Add Delivery Person">Add Delivery Person</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('delivery-person-list') }}" class="menu-link">
+                        <div data-i18n="Delivery Person List">Delivery Person List</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="menu-item">
+            <a href="javascript:void(0)" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-home"></i>
+                <div data-i18n="Wholesale Partner">Wholesale Partner</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item">
+                    <a href="{{ route('wholesale-partner') }}" class="menu-link">
+                        <div data-i18n="Add Wholesale Partner">Add Wholesale Partner</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('wholesale-partner-list') }}" class="menu-link">
+                        <div data-i18n="Wholesale Partner List">Wholesale Partner List</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="menu-item">
+            <a href="javascript:void(0)" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-color-swatch"></i>
+                <div data-i18n="Products">Products</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item">
+                    <a href="{{ route('category') }}" class="menu-link">
+                        <div data-i18n="Category">Category</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('product-type') }}" class="menu-link">
+                        <div data-i18n="Product Type">Product Type</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('brands') }}" class="menu-link">
+                        <div data-i18n="Brands">Brands</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('products') }}" class="menu-link">
+                        <div data-i18n="Products">Products</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <!-- Masters -->
+        <li class="menu-item">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-layout-grid"></i>
+                <div data-i18n="Masters">Masters</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item">
+                    <a href="{{ route('state') }}" class="menu-link">
+                        <div data-i18n="State">State</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('city') }}" class="menu-link">
+                        <div data-i18n="City">City</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('area') }}" class="menu-link">
+                        <div data-i18n="Area">Area</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('document') }}" class="menu-link">
+                        <div data-i18n="Document Type">Document Type</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('tax') }}" class="menu-link">
+                        <div data-i18n="Tax">Tax</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('expensegroup') }}" class="menu-link">
+                        <div data-i18n="Expense Group">Expense Group</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('ledger') }}" class="menu-link">
+                        <div data-i18n="Ledger">Ledger</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('asset-type') }}" class="menu-link">
+                        <div data-i18n="Asset Type">Asset Type</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('asset') }}" class="menu-link">
+                        <div data-i18n="Asset">Asset</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('employee') }}" class="menu-link">
+                        <div data-i18n="Employee">Employee</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('employee-list') }}" class="menu-link">
+                        <div data-i18n="Employee List">Employee List</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('allocations') }}" class="menu-link">
+                        <div data-i18n="Brand Allocation">Brand Allocation</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('department') }}" class="menu-link">
+                        <div data-i18n="Department">Department</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('designation') }}" class="menu-link">
+                        <div data-i18n="Designation">Designation</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('userrole') }}" class="menu-link">
+                        <div data-i18n="Roles">Roles</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</aside>
+<!-- / Menu -->

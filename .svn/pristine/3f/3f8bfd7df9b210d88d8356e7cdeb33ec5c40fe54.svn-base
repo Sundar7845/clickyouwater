@@ -1,0 +1,54 @@
+<!-- Menu -->
+<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+    <div class="app-brand demo">
+        <a href="{{ route('hub-dashboard') }}" class="app-brand-link">
+            <img src="{{ asset('assets/img/layouts/logos.jpeg') }}" class="img-fluid img-responsive" alt="">
+        </a>
+        <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
+            <i class="ti menu-toggle-icon d-none d-xl-block ti-sm align-middle"></i>
+            <i class="ti ti-x d-block d-xl-none ti-sm align-middle"></i>
+        </a>
+    </div>
+    <div class="menu-inner-shadow"></div>
+    <ul class="menu-inner py-1">
+        <!-- Dashboards -->
+        <li class="menu-item active open">
+            <a href="{{ route('hub-dashboard') }}" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-smart-home"></i>
+                <div data-i18n="Dashboard">Dashboard</div>
+            </a>
+        </li>
+        <!-- Layouts -->
+        <li class="menu-item">
+            <a href="{{route('hub-orders')}}" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-layout-sidebar"></i>
+                <div data-i18n="Orders">Orders</div>
+            </a>
+        </li>
+        <li class="menu-item">
+            <a href="{{route('hub-stocks')}}" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-file-dollar"></i>
+                <div data-i18n="Stock">Stock</div>
+            </a>
+        </li>
+        <li class="menu-item">
+            <a href="{{route('hub-report')}}" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-building-store"></i>
+                <div data-i18n="Reports">Reports</div>
+            </a>
+        </li>
+        <li class="menu-item">
+            <a href="{{route('hub-document')}}" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-forms"></i>
+                <div data-i18n="Document">Document</div>
+            </a>
+        </li>
+        <li class="menu-item">
+            <a href="{{route('hub-damagecan')}}" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-arrows-sort"></i>
+                <div data-i18n="Damage Can Entry">Damage Can Entry</div>
+            </a>
+        </li>
+    </ul>
+</aside>
+<!-- / Menu -->

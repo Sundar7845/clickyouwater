@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class SurrenderPickup extends Model
+{
+    use HasFactory, SoftDeletes;
+
+    protected $fillable = [
+        'surrender_id',
+        'delivery_person_id',
+        'pickup_status',
+        'pickup_date',
+        'can_count',
+        'notes'
+    ];
+}

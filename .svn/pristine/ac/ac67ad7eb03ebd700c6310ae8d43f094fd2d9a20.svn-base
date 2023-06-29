@@ -1,0 +1,308 @@
+<?php
+
+namespace App\Http\Controllers\API\Auth;
+
+use App\Enums\RoleTypes;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\RegisterRequests;
+use App\Models\Customer;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use App\Traits\Common;
+use App\Traits\ResponseAPI;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image;
+use GuzzleHttp\Client;
+
+class AuthController extends Controller
+{
+    use Common;
+    use ResponseAPI;
+    public function signup(RegisterRequests $request)
+    {
+
+        DB::beginTransaction();
+        try {
+            // dd($request);
+            $fields = $request->validated();
+            $customer = Customer::create([
+                'customer_name' => $fields['user_name'],
+                'mobile' => $fields['mobile'],
+                'email' => $fields['email'],
+                'customertype_id' => $fields['customertype_id'],
+
+            ]);
+
+            $image = $request->file('image');
+
+            // Generate a unique file name for the image
+            $fileName = $customer->id . '_' . $this->generateRandom(16) . '.' . $image->getClientOriginalExtension();
+
+            // Resize and save the image using the intervention/image package
+            $image = Image::make($image->getRealPath());
+            $image->resize(400, 400, function ($constraint) {
+                $constraint->aspectRatio();
+            });
+            $file_path = 'upload/customers/' . $fileName;
+            $image->save(public_path($file_path));
+            $user = User::create([
+                'user_name' => $fields['user_name'],
+                'display_name' => $fields['user_name'],
+                'email' => $fields['email'],
+                'mobile' => $fields['mobile'],
+                'device_id' => $request['device_id'],
+                'fcm_token' => $request['fcm_token'],
+                'user_img_path' => $file_path,
+                'password' => bcrypt($fields['mobile']),
+                'ref_id' => $customer->id,
+                'role_id' => RoleTypes::Customer,
+                'is_active' => 1,
+                'referral_code'=>$this->generateReferralCode(),
+            ]);
+
+
+            $token = $user->createToken('myapptoken')->plainTextToken;
+            $otp = $this->sendOTP($user->mobile);
+
+            DB::commit(); // Commit the transaction
+
+            $response = [
+                'status' => true,
+                'message' => 'Success',
+                'user' => $user,
+                'token' => $token
+            ];
+            return response($response, 201);
+        } catch (\Exception $e) {
+            DB::rollback(); // Roll back the transaction if an error occurs
+            $response = array(
+                'message' => "Failed",
+                'status' => false,
+
+            );
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            // return response($response, 200);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    public function sendOTP($mobile = 0)
+    {
+
+        try {
+            $smsdetails = $this->getSmsDetails();
+            $msg = $smsdetails->otp_msg;
+            $entityid = $smsdetails->entityid;
+            $tempid = $smsdetails->otp_msg_tempid;
+
+            $otpdetails = $this->getOtpDetails();
+            $otp = $this->generateRandom($otpdetails->otp_length);
+            // $otp = $this->generateRandom(4);
+            // $msg = "Your GLOBAL CREATORS, OTP is " . $otp . ". Please DO NOT SHARE this OTP with anyone.";
+            $msg = str_replace("{{}}", $otp, $msg);
+
+            // $url = 'http://www.smsintegra.com/api/smsapi.aspx';
+            $url = $smsdetails->api_url;
+            // Set SMSIntegra API parameters
+            $params = [
+                'uid' => $smsdetails->uid,
+                'pwd' => $smsdetails->pwd,
+                'mobile' => $mobile,
+                'msg' => $msg,
+                'sid' => $smsdetails->senderid,
+                'type' => 0,
+                'dtTimeNow' => date('Y-m-d H:i:s'),
+                'entityid' => $entityid,
+                'tempid' => $tempid,
+            ];
+            // Send HTTP POST request to SMSIntegra API
+            $client = new Client();
+            $response = $client->request('POST', $url, ['query' => $params]);
+            $smsShootId = (string) $response->getBody();
+            $codes_res = explode('-', $smsShootId);
+            if ($codes_res) {
+                // Check if SMS is sent successfully
+                if ($codes_res[0] == 100) {
+                    DB::table('users')
+                        ->where('mobile', $mobile)
+                        ->update(['OTP' =>  $otp, 'otp_expiry' => now()->addMinutes($otpdetails->otp_expiry_duration)]);
+                    return $otp;
+                } else {
+                    return 0;
+                }
+            } else {
+                return 0;
+            }
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 0, request()->ip(), gethostname(), 1);
+
+            // return response()->json(['success' => false]);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    public function login(Request $request)
+    {
+        $fields = $request->validate([
+            'mobile' => 'required|numeric|digits_between:10,12',
+            'otp' => 'required'
+        ]);
+        try {
+
+            // Check email
+            // dd($fields);
+            $user = User::where('mobile', $fields['mobile'])->first();
+            // dd($user,$request->otp);
+            if ($user->OTP == $request->otp) {
+                if (Carbon::now() < $user->otp_expiry) {
+
+
+                    $token = $user->createToken('myapptoken')->plainTextToken;
+                    // if ($user->mobile_verified_at != '') {
+                    DB::table('users')
+                        ->where('id', $user->id)
+                        ->update(['last_login' => now()]);
+                    // } else {
+                    //     DB::table('users')
+                    //         ->where('id', $user->id)
+                    //         ->update(['mobile_verified_at' => now(), 'last_login' => now()]);
+                    // }
+                    $response = [
+                        'status' => true,
+                        'message' => 'Success',
+                        'user' => $user,
+                        'token' => $token
+                    ];
+
+                    return response($response, 200);
+                } else {
+                    $response = array(
+                        'message' => "Your otp is expired!",
+                        'status' => false,
+                    );
+                    return response($response, 200);
+                }
+            } else {
+                $response = array(
+                    'message' => "Incorrect OTP!",
+                    'status' => false,
+                );
+                return response($response, 200);
+
+                // OTP is invalid or has expired
+                // Redirect user to the OTP verification page with an error message
+            }
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 0, request()->ip(), gethostname(), 1);
+            $response = array(
+                'message' => "Something Went Wrong!",
+                'status' => false,
+            );
+            // return response($response, 200);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+    public function verifyOTP(Request $request)
+    {
+        $fields = $request->validate([
+            'otp' => 'required'
+        ]);
+        try {
+
+            // Check email
+            // dd($fields);
+            $user = User::where('mobile', auth()->user()->mobile)->first();
+            // dd($user,$request->otp);
+            if ($user->OTP == $request->otp) {
+                if (Carbon::now() < $user->otp_expiry) {
+
+
+                    // $token = $user->createToken('myapptoken')->plainTextToken;
+                    // if ($user->mobile_verified_at != '') {
+                    //     DB::table('users')
+                    //         ->where('id', $user->id)
+                    //         ->update(['last_login' => now()]);
+                    // } else {
+                    DB::table('users')
+                        ->where('id', $user->id)
+                        ->update(['mobile_verified_at' => now(), 'last_login' => now()]);
+                    // }
+                    $response = [
+                        'status' => true,
+                        'message' => 'Success',
+                        'user' => $user,
+                        // 'token' => $token
+                    ];
+
+                    return response($response, 200);
+                } else {
+                    $response = array(
+                        'message' => "Your otp is expired!",
+                        'status' => false,
+                    );
+                    return response($response, 200);
+                }
+            } else {
+                $response = array(
+                    'message' => "Incorrect OTP!",
+                    'status' => false,
+                );
+                return response($response, 200);
+
+                // OTP is invalid or has expired
+                // Redirect user to the OTP verification page with an error message
+            }
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), auth()->user()->id, request()->ip(), gethostname(), 1);
+            $response = array(
+                'message' => "Something Went Wrong!",
+                'status' => false,
+            );
+            // return response($response, 200);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    public function verifyMobile($mobile)
+    {
+
+        try {
+
+
+            $user = User::where('mobile', $mobile)->get()->toArray();
+            if(count($user)>0){
+
+                $response = array(
+                    'message' => "success",
+                    'status' => true,
+                );
+                return response($response, 200);
+            }else{
+                $response = array(
+                    'message' => "Invalid Mobile Number",
+                    'status' => false,
+                );
+                return response($response, 200);
+
+            }
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            $response = array(
+                'message' => "Something Went Wrong!",
+                'status' => false,
+            );
+            // return response($response, 200);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+        return response()->json(['message' => 'Logged out successfully']);
+    }
+}

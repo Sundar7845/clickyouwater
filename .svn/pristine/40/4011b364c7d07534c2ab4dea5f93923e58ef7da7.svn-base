@@ -1,0 +1,56 @@
+<?php
+
+namespace App\Http\Controllers\Manufacturer\Stock;
+
+use App\Http\Controllers\Controller;
+use App\Models\Category;
+use App\Models\ManufactureStock;
+use App\Models\Products;
+use App\Models\StockInProduction;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class StockController extends Controller
+{
+
+    public function manStocksView()
+    {
+        $categories = Category::where('is_active', 1)->whereNull('deleted_at')->get();
+        return view('manufacturer.stock.manstock', compact('categories'));
+    }
+    public function stock()
+    {
+        return view('manufacturer.stock.stock');
+    }
+
+    public function manufacturerProductStockData(Request $request)
+    {
+        try {
+            $manufacturerProductStock = "";
+
+            $query = StockInProduction::select('stock_in_productions.*', 'categories.category_name', 'product_types.product_type_name', 'products.product_name', 'products.id as product_id')
+                ->join('products', 'products.id', 'stock_in_productions.product_id')
+                ->join('product_types', 'product_types.id', 'products.product_type_id')
+                ->join('categories', 'categories.id', 'products.category_id')
+                ->join('users', 'users.ref_id', 'stock_in_productions.manufacture_id')
+                ->where('users.id', Auth::user()->id)
+                ->where('users.role_id', Auth::user()->role_id)
+                ->where('stock_in_productions.qty', '>', 0);
+
+            if ($request->category_id > 0) {
+                $query = $query->where('categories.id', $request->category_id);
+            }
+
+            $manufacturerProductStock = $query->get();
+
+            return datatables()->of($manufacturerProductStock)
+                ->addColumn('action', function ($row) {
+                    $html = '<a href="/manufactuererstocks/' . $row->product_id . '" class="btn btn-xs btn-primary">View</a>';
+                    return $html;
+                })
+                ->toJson();
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+}

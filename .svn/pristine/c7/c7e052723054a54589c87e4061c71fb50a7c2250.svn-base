@@ -1,0 +1,24 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class UserWallet extends Model
+{
+    use HasFactory, SoftDeletes;
+
+    protected $fillabel = [
+        'user_id',
+        'amount',
+        'balance',
+        'credit_debit',
+        'transaction_through_id',
+        'transaction_date',
+        'transaction_status',
+        'transaction_response',
+        'transaction_id'
+    ];
+}

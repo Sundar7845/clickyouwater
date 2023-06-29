@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cancellation & Refund Policy | Click Your Order</title>
+
+  <!-- icofont-css-link -->
+  <link rel="stylesheet" href="css/icofont.min.css">
+  <!-- Owl-Carosal-Style-link -->
+  <link rel="stylesheet" href="css/owl.carousel.min.css">
+  <!-- Bootstrap-Style-link -->
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <!-- Aos-Style-link -->
+  <link rel="stylesheet" href="css/aos.css">
+  <!-- Coustome-Style-link -->
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Responsive-Style-link -->
+  <link rel="stylesheet" href="css/responsive.css">
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon">
+
+</head>
+
+<body>
+
+  <!-- Page-wrapper-Start -->
+  <div class="page_wrapper">
+
+    <!-- Preloader -->
+    <div id="preloader">
+      <div id="loader"></div>
+    </div>
+
+    <!-- Header Start -->
+    <header>
+      <!-- container start -->
+      <div class="container">
+        <!-- navigation bar -->
+        <nav class="navbar navbar-expand-lg">
+          <a class="navbar-brand" href="index.html">
+            <img src="images/logo.png" alt="image">
+          </a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon">
+              <!-- <i class="icofont-navigation-menu ico_menu"></i> -->
+              <div class="toggle-wrap">
+                <span class="toggle-bar"></span>
+              </div>
+            </span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+              <li class="nav-item">
+                <a class="nav-link" href="index.html">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="index.html#about_us">About Us</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="index.html#how_it_work">How it works</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="index.html#contact">Contact</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link dark_btn" href="index.html#getstarted">DOWNLOAD APP</a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+        <!-- navigation end -->
+      </div>
+      <!-- container end -->
+    </header>
+
+    <!-- Blog Details Block -->
+    <section class="blog_detail_section">
+      <div class="container">
+        <div class="blog_inner_pannel">
+          <div class="section_title mt-5 mb-3">
+            <h2>Cancellation & Refund Policy</h2>
+          </div>
+          <div class="info mb-5">
+            <h6>(A) Security Rules</h6>
+            <ul>
+              <li>
+                <p><span class="icon"><i class="icofont-check-circled"></i></span> Refundable Deposit is applicable only
+                  for (20L Water). Customers will be able to identify such brands clearly whilst placing their orders.
+                </p>
+              </li>
+              <li>
+                <p><span class="icon"><i class="icofont-check-circled"></i></span> Customers can initiate Refund from
+                  their Order History.</p>
+              </li>
+              <li>
+                <p><span class="icon"><i class="icofont-check-circled"></i></span> Whenever a customer wants rebate on
+                  the deposit, customer has to initiate a refund request with Click Your Order.com. It is reviewed and
+                  paid only if the following conditions are met.</p>
+              </li>
+              <li>
+                <p><span class="icon"><i class="icofont-check-circled"></i></span> Customer has to return the empty jars
+                  in the same condition as received from CLICK YOUR ORDER and / or it’s Sellers.</p>
+              </li>
+              <li>
+                <p><span class="icon"><i class="icofont-check-circled"></i></span> Customer has to request a refund
+                  within 60 days from the last order placed in Click Your Order.com. Customers forfeit their rebate if
+                  they did not place any order for 60 days from their last order.</p>
+              </li>
+              <li>
+                <p><span class="icon"><i class="icofont-check-circled"></i></span> CLICK YOUR ORDER deducts 20% from the
+                  original deposit amount towards processing, depreciation charges and pay the balance to customer.</p>
+              </li>
+              <li>
+                <p><span class="icon"><i class="icofont-check-circled"></i></span> The processing of refund (after
+                  deducting the processing charge incurred) will take maximum 15 working days from the day of refund
+                  initiation.</p>
+              </li>
+              <li>
+                <p><span class="icon"><i class="icofont-check-circled"></i></span> Unless a proof of deposit (either
+                  invoice/receipt, SMS or email from CLICK YOUR ORDER) is provided, customer will not get refund. Under
+                  no circumstances, refund is given without returning the empty jars to CLICK YOUR ORDER or Vendor /
+                  Seller.</p>
+              </li>
+              <li>
+                <p><span class="icon"><i class="icofont-check-circled"></i></span> Refund is given only to customers who
+                  have deposited with CLICK YOUR ORDER. Under no circumstances, refund is given to customers who did not
+                  deposit with CLICK YOUR ORDER</p>
+              </li>
+              <li>
+                <p><span class="icon"><i class="icofont-check-circled"></i></span> Regarding refund requested during
+                  delivery due to partial or full cancellation by customer: In case, during delivery at door step,
+                  customer wants to cancel the delivery due to non availability of empty jars or whatever reasons, CLICK
+                  YOUR ORDER can cancel the order and refund the order amount after deducting service charge. The
+                  remaining amount will be credited to customer wallet and the same can be utilized for subsequent
+                  orders. The customer is liable to pay service charge despite cancellation of order because delivery
+                  team has already incurred cost of logistics.
+                </p>
+              </li>
+            </ul>
+
+
+            <h6>(B) Cancellation</h6>
+            <p>Cancellation charge is applicable as follows:</p>
+            <ul>
+              <li>
+                <p><span class="icon"><i class="icofont-check-circled"></i></span> If Customer cancels the order where
+                  the delivery has not started yet, then 5% deduction is applicable from your total Order value.</p>
+              </li>
+              <li>
+                <p><span class="icon"><i class="icofont-check-circled"></i></span> Customer can request to cancel the
+                  order (calling our customer care support) where the delivery has already started and in-transit, then
+                  the full delivery charge per quantity will be deducted from your total Order value.</p>
+              </li>
+            </ul>
+
+            <h6>(C) Return</h6>
+            <p>All our customers can return the product at the time of delivery only if items arrive in bad condition,
+              damaged or leaked. Returns will only be offered if the product is in its original packaging, unopened,
+              unused and returned with the same delivery driver on the same delivery day. We will take the returned
+              product back with us and a credit note for the value of the return products which will be credited to your
+              wallet account, which is not applicable for Payments made upon delivery. This can be used to pay your
+              subsequent shopping bills on the site. No return / refund is acceptable for any product that arrives in
+              good condition, and CLICK YOUR ORDER has the right to limit or refuse the acceptance of return of certain
+              products at any time and for any reason.</p>
+
+            <h6>(D) Can Usage Policy</h6>
+            <p>The prevailing market price of an empty Can is approximately Rs.150. CLICK YOUR ORDER has come up with a
+              concept of Can Usage option for their customers under which customers pay lesser than the market price for
+              their Usage only. At the same time, the empty Can is a property of the Seller(s) who supplied at customers
+              door-step hence customers are liable/accountable/responsible for the empty Cans received through this
+              option/policy.</p>
+
+            <p>
+              If customers have not placed orders (10 orders within 4 months), then the Seller(s) have all rights to
+              come and collect the empty Cans from the customers. The customers are liable to return the empty Cans to
+              the Seller(s) else balance amount of Rs.75 per Can to be paid to the Seller(s) directly.
+            </p>
+
+            <p>
+              The Can Usage amount is non-refundable and the customer is not eligible to claim this amount whenever they
+              decided to close their account with CLICK YOUR ORDER.
+            </p>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer-Section start -->
+    <footer>
+      <!-- section bg -->
+      <div class="top_footer" id="contact">
+        <!-- container start -->
+        <div class="container mt-5">
+          <!-- row start -->
+          <div class="row">
+            <!-- footer link 1 -->
+            <div class="col-lg-4 col-md-6 col-12">
+              <div class="abt_side">
+                <div class="logo"> <img src="images/footer_logo.png" alt="image"></div>
+                <ul>
+                  <li><a href="#">info@globalcreators.in</a></li>
+                  <li><a href="#">+91 97879 33322</a></li>
+                  <li><a href="#">No.157/1C1, 1C2, Vellarugampalayam, Thondamuthur, Coimbatore-641 109</a></li>
+                </ul>
+                <ul class="social_media">
+                  <li><a href="#"><i class="icofont-facebook"></i></a></li>
+                  <li><a href="#"><i class="icofont-twitter"></i></a></li>
+                  <li><a href="#"><i class="icofont-instagram"></i></a></li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- footer link 2 -->
+            <div class="col-lg-3 col-md-6 col-12">
+              <div class="links">
+                <h3>Useful Links</h3>
+                <ul>
+                  <li><a href="index.html">Home</a></li>
+                  <li><a href="index.html#about_us">About Us</a></li>
+                  <li><a href="index.html#how_it_work">How It Works</a></li>
+                  <li><a href="index.html#contact">Contact Us</a></li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- footer link 3 -->
+            <div class="col-lg-3 col-md-6 col-12">
+              <div class="links">
+                <h3>Help & Support</h3>
+                <ul>
+                  <li><a href="terms-conditions.html">Terms & Conditions</a></li>
+                  <li><a href="privacy-policy.html">Privacy Policy</a></li>
+                  <li><a href="cancellation-refund-policy.html">Cancellation & Refund Policy</a></li>
+                  <li><a href="shipping-delivery-policy.html">Shipping & Delivery Policy</a></li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- footer link 4 -->
+            <div class="col-lg-2 col-md-6 col-12">
+              <div class="try_out">
+                <h3>Let’s Try Out</h3>
+                <ul class="app_btn">
+                  <li>
+                    <a href="#">
+                      <img src="images/appstore_blue.png" alt="image">
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#">
+                      <img src="images/googleplay_blue.png" alt="image">
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <!-- row end -->
+        </div>
+        <!-- container end -->
+      </div>
+
+      <!-- last footer -->
+      <div class="bottom_footer">
+        <!-- container start -->
+        <div class="container">
+          <!-- row start -->
+          <div class="row">
+            <div class="col-md-6">
+              <p>© Copyrights 2023. All rights reserved.</p>
+            </div>
+            <div class="col-md-6">
+              <p class="developer_text">Design & developed by <a href="https://adhocsoftwares.com" target="blank">Adhoc
+                  Softwares</a></p>
+            </div>
+          </div>
+          <!-- row end -->
+        </div>
+        <!-- container end -->
+      </div>
+
+      <!-- go top button -->
+      <div class="go_top">
+        <span><img src="images/go_top.png" alt="image"></span>
+      </div>
+    </footer>
+    <!-- Footer-Section end -->
+
+  </div>
+  <!-- Page-wrapper-End -->
+
+  <!-- Jquery-js-Link -->
+  <script src="js/jquery.js"></script>
+  <!-- owl-js-Link -->
+  <script src="js/owl.carousel.min.js"></script>
+  <!-- bootstrap-js-Link -->
+  <script src="js/bootstrap.min.js"></script>
+  <!-- aos-js-Link -->
+  <script src="js/aos.js"></script>
+  <!-- main-js-Link -->
+  <script src="js/main.js"></script>
+
+</body>
+
+</html>

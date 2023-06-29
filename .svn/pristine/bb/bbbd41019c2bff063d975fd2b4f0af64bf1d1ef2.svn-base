@@ -1,0 +1,205 @@
+<?php
+
+namespace App\Http\Controllers\Admin\HubManagement;
+
+use App\Http\Controllers\Controller;
+use App\Models\Area;
+use App\Models\BillNoSetting;
+use App\Models\City;
+use App\Models\Hub;
+use App\Models\Manufacturer;
+use App\Models\State;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class HubController extends Controller
+{
+    public function hub($id = NULL)
+    {
+        $manufacture = Manufacturer::all();
+
+        if ($id) {
+            $man = Hub::find($id);
+            $states = State::all();
+            $citys = City::where('state_id', $man->state_id)->get();
+            $areas = Area::where('city_id', $man->city_id)->get();
+            $manExample = $man->hub_id;
+            return view('admin.hub_management.hub', compact('states', 'man', 'manExample', 'citys', 'areas','manufacture'));
+        }
+
+
+        $data = BillNoSetting::first();
+
+        $manPrefix = $data->hub_prefix ?? 0;
+        $ManLength = $data->hub_length ?? 0;
+        $manLive = (int)($data->hub_live ?? 0) + 1;
+        if ($manLive) {
+            $manNumber = $manLive;
+        }
+        $man = sprintf("%0{$ManLength}d", $manNumber);
+        $manExample = $manPrefix . $man;
+        $states = State::all();
+        return view('admin.hub_management.hub',compact('states', 'manExample','manufacture'));
+    }
+    public function hubCreate(Request $request)
+    {
+        $request->validate([
+            "txthubId" => 'required',
+            "txthubName" => "required",
+            "ddlManufacturerName" => "required",
+            "txtYrsofExp" => "required",
+            "txtMobile" => "required",
+            "txtofficialEmail" => "required",
+            "txtlatitude" => "required",
+            "txtlangtitute" => "required",
+            "txtgeolocation" => "required",
+            "txtRadius" => "required",
+            "txtcreditPeriod" => "required",
+            "txtsettlementPeriod" => "required",
+            "txtsecurityDeposit" => "required",
+            "ddlState" => "required",
+            "ddlCity" => "required",
+            "ddlArea" => "required",
+            "txtLandmark" => "required",
+            "txtpinCode" => "required",
+            "txtProprietorName" => "required",
+            "txtProprietorMobile" => "required",
+            "txtProprietorEmail" => "required",
+            "txtContactPersonName" => "required",
+            "txtContactPersonMobile" => "required",
+            "txtContactPersonEmail" => "required"
+        ]);
+
+        Hub::create([
+            "hub_id" => $request->txthubId,
+            "hub_name" => $request->txthubName,
+            "manufacturer_id" => $request->ddlManufacturerName,
+            "years_of_experience" => $request->txtYrsofExp,
+            "official_email" => $request->txtMobile,
+            "latitude" => $request->txtlatitude,
+            "longtitude" => $request->txtlangtitute,
+            "geo_location" => $request->txtgeolocation,
+            "radius" => $request->txtRadius,
+            "credit_period" => $request->txtcreditPeriod,
+            "settlement_period" => $request->txtsettlementPeriod,
+            "security_deposit" => $request->txtsecurityDeposit,
+            "state_id" => $request->ddlState,
+            "city_id" => $request->ddlCity,
+            "area_id" => $request->ddlArea,
+            "address" => $request->txtLandmark,
+            "pincode" => $request->txtpinCode,
+            "proprietor_name" => $request->txtProprietorName,
+            "proprietor_mobile" => $request->txtProprietorMobile,
+            "proprietor_email" => $request->txtProprietorEmail,
+            "contact_person_name" => $request->txtContactPersonName,
+            "contact_person_mobile" => $request->txtContactPersonMobile,
+            "contact_person_email" => $request->txtContactPersonEmail,
+            'created_by' => Auth::user()->id
+        ]);
+
+        $data = BillNoSetting::first();
+        $data->hub_live = $data->hub_live + 1;
+        $data->save();
+
+        $notification = array(
+            'message' => 'Hub Created Successfully',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->route('hub-list')->with($notification);
+    }
+
+    public function hubUpdate(Request $request)
+    {
+        # code...
+        $request->validate([
+            "txthubId" => 'required',
+            "txthubName" => "required",
+            "ddlManufacturerName" => "required",
+            "txtYrsofExp" => "required",
+            "txtMobile" => "required",
+            "txtofficialEmail" => "required",
+            "txtlatitude" => "required",
+            "txtlangtitute" => "required",
+            "txtgeolocation" => "required",
+            "txtRadius" => "required",
+            "txtcreditPeriod" => "required",
+            "txtsettlementPeriod" => "required",
+            "txtsecurityDeposit" => "required",
+            "ddlState" => "required",
+            "ddlCity" => "required",
+            "ddlArea" => "required",
+            "txtLandmark" => "required",
+            "txtpinCode" => "required",
+            "txtProprietorName" => "required",
+            "txtProprietorMobile" => "required",
+            "txtProprietorEmail" => "required",
+            "txtContactPersonName" => "required",
+            "txtContactPersonMobile" => "required",
+            "txtContactPersonEmail" => "required"
+        ]);
+
+        $fillable=[
+            "hub_id" => $request->txthubId,
+            "hub_name" => $request->txthubName,
+            "manufacturer_id" => $request->ddlManufacturerName,
+            "years_of_experience" => $request->txtYrsofExp,
+            "official_email" => $request->txtMobile,
+            "latitude" => $request->txtlatitude,
+            "longtitude" => $request->txtlangtitute,
+            "geo_location" => $request->txtgeolocation,
+            "radius" => $request->txtRadius,
+            "credit_period" => $request->txtcreditPeriod,
+            "settlement_period" => $request->txtsettlementPeriod,
+            "security_deposit" => $request->txtsecurityDeposit,
+            "state_id" => $request->ddlState,
+            "city_id" => $request->ddlCity,
+            "area_id" => $request->ddlArea,
+            "address" => $request->txtLandmark,
+            "pincode" => $request->txtpinCode,
+            "proprietor_name" => $request->txtProprietorName,
+            "proprietor_mobile" => $request->txtProprietorMobile,
+            "proprietor_email" => $request->txtProprietorEmail,
+            "contact_person_name" => $request->txtContactPersonName,
+            "contact_person_mobile" => $request->txtContactPersonMobile,
+            "contact_person_email" => $request->txtContactPersonEmail,
+            'updated_by' => Auth::user()->id
+        ];
+
+
+
+        $notification = array(
+            'message' => 'Hub Updated Successfully',
+            'alert-type' => 'success'
+        );
+
+
+        $affectedRows = Hub::where("id", $request->id)->update($fillable);
+        return redirect()->route('hub-list')->with($notification);
+    }
+
+
+
+    public function hubList()
+    {
+        return view('admin.hub_management.hublist');
+    }
+    public function hubData()
+    {
+        $manufacturerData = Hub::join('manufacturers', 'hubs.manufacturer_id', '=', 'manufacturers.id')
+                                ->select('hubs.id','hubs.hub_id','hubs.hub_name','hubs.radius','hubs.pincode', 'manufacturers.manufacturer_name')
+                            ->get();
+
+        return datatables()->of($manufacturerData)
+            ->addColumn('action', function ($row) {
+                $html = '<a href="hub/' . $row->id . '"><i class="text-primary ti ti-pencil me-1"></i></a> ';
+                $html .= '<i class="text-danger ti ti-trash me-1" id="confirm-color' . $row->id . '" onclick="showDelete(' . $row->id . ');"></i>';
+                return $html;
+            })->toJson();
+    }
+
+    public function hubDocument()
+    {
+        return view('admin.hub_management.hub_document');
+    }
+}

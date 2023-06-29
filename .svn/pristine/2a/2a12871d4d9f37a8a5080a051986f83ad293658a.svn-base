@@ -1,0 +1,108 @@
+$(document).ready(function () {
+   
+});
+
+var RowIndex = 1;
+
+function validateDriverInfo() {
+    var txtdriverName = document.forms["logistic_driver_info"]["txtdriverName"];
+    var txtlicenseNo = document.forms["logistic_driver_info"]["txtlicenseNo"];
+    var licenseImg = document.forms["logistic_driver_info"]["licenseImg"];
+    var dtlicenseExpiry = document.forms["logistic_driver_info"]["dtlicenseExpiry"];
+
+    if (txtdriverName.value == "") {
+        alert('Enter Driver Name');
+        txtdriverName.focus();
+        return false;
+    }
+
+    if (txtlicenseNo.value == "") {
+        alert('Enter License Number');
+        txtlicenseNo.focus();
+        return false;
+    }
+
+    if (licenseImg.value == "") {
+        alert('Upload License Image');
+        licenseImg.focus();
+        return false;
+    }
+
+    if (dtlicenseExpiry.value == "") {
+        alert('Enter License Expiry Date');
+        dtlicenseExpiry.focus();
+        return false;
+    }
+    return true;
+}
+function addDriverInfo() {
+
+    //Validate vehicle info
+    if (validateDriverInfo()) {
+
+        var editRowIndex = $("#hdEditDriverInfoRowId").val();
+        var driverinfodata = "";
+        var DRN = $("#txtdriverName").val();
+        var LIN = $("#txtlicenseNo").val();
+        var LIM = $("#licenseImg").val();
+        var LDE = $("#dtlicenseExpiry").val();
+
+        if (($("tr[DRN=" + DRN + "]" + "[LIN=" + LIN + "]" + "[LDE=" + LDE + "]").length == 0)) {
+        if (editRowIndex == 0) 
+        {
+            driverinfodata += "<tr id='trdriver" + RowIndex + "' DRN=" + DRN + " LIN=" + LIN + " LIM=" + LIM + " LDE=" + LDE + " >";
+            driverinfodata += "<td><input type='hidden' class ='vehicleinfo' name='tabDriverName[]' value=" + DRN + ">" + DRN + "</td>";
+            driverinfodata += "<td><input type='hidden' class ='vehicleinfo' name='tabLicenseNo[]' value=" + LIN + ">" + LIN + "</td>";
+            driverinfodata += "<td><img src=" + LIM + " class='avatar' width='50' height='50'/></td>";
+            driverinfodata += "<td><input type='hidden' class ='vehicleinfo' name='tabLicenseEpry[]' value=" + LDE + ">" + LDE + "</td>";
+            driverinfodata += "<td><a><i class='text-primary ti ti-pencil me-1' onclick = 'doEdit(" + RowIndex + ");'></i></a><a><i class='text-danger ti ti-trash me-1' onclick ='removeRow(" + RowIndex + ");'></i></a></td>";
+            driverinfodata += "</tr>";
+            RowIndex++;
+            $("#tbodyDriverInfo").append(driverinfodata);
+        }
+        else if (editRowIndex > 0) {
+            $("#trdriver" + editRowIndex + " td:eq(0)").text(DRN);
+            $("#trdriver" + editRowIndex + " td:eq(1)").text(LIN);
+            $("#trdriver" + editRowIndex + " td:eq(2)").text(LIM);
+            $("#trdriver" + editRowIndex + " td:eq(3)").text(LDE);
+            showAddImage();
+            $("#hdEditDriverInfoRowId").val(0);
+        }
+        formClear();
+    }else{
+        alert('Item Alredy exist');
+    }
+    }
+}
+
+function doEdit(SID) 
+{
+    $("#hdEditDriverInfoRowId").val(SID);
+    $("#txtdriverName").val($("#trdriver" + SID).attr("DRN"));
+    $("#txtlicenseNo").val($("#trdriver" + SID).attr("LIN"));
+    $("#licenseImg").val($("#trdriver" + SID).attr("VHB"));
+    $("#dtlicenseExpiry").val($("#trdriver" + SID + " td:eq(3)").text());
+    showEditImage();
+}
+
+function showAddImage() {
+    $("#btnUpdateDriver").css("display", "none");
+    $("#btnAddDriver").css("display", "block");
+}
+
+function showEditImage() {
+    $("#btnUpdateDriver").css("display", "block");
+    $("#btnAddDriver").css("display", "none");
+}
+
+function removeRow(SID) {
+    $("#trdriver" + SID).remove();
+}
+
+//for vehicle
+function formClear() {
+    $("#txtdriverName").val("");
+    $("#txtlicenseNo").val("");
+    $("#licenseImg").val("");
+    $("#dtlicenseExpiry").val("");
+}

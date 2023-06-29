@@ -1,0 +1,162 @@
+<?php
+
+namespace App\Http\Controllers\API;
+
+use App\Http\Controllers\Controller;
+use App\Models\CustomerAddress;
+use App\Models\Hub;
+use App\Models\OfferCode;
+use App\Models\OfferHubAllocation;
+use App\Models\RefferalSettings;
+use App\Models\User;
+use App\Models\UserReferralHistory;
+use Illuminate\Http\Request;
+use App\Traits\Common;
+use App\Traits\Maps;
+use App\Traits\ResponseAPI;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+
+class CouponController extends Controller
+{
+    //
+    use Common;
+    use ResponseAPI;
+    use Maps;
+
+    public function verifyCoupon(Request $request)
+    {
+        # code...
+        try {
+
+            $validatedData = $request->validate([
+                'code' => 'required',
+                'address_id' => 'required',
+            ]);
+            $coupon = $request->code;
+            $offer_codes = OfferCode::with('offer')->where('offer_code', $coupon)->get();
+            if ($offer_codes->isEmpty()) {
+                // $response = [
+                //     'status' => true,
+                //     'data' => [],
+                //     'message' => "Code not Available"
+                // ];
+                // return response($response, 200);
+                // UserReferralHistory::where('user_id')
+                // dd(Auth::user()->referralHistory);
+                if (Auth::user()->referralHistory) {
+                    $response = [
+                        'status' => false,
+                        'data' => [],
+                        'message' => "Code not Available"
+                    ];
+                    return response($response, 200);
+                }
+                $refferal = User::select('id')->where('referral_code', $coupon)->first();
+                if (!$refferal) {
+                    $response = [
+                        'status' => false,
+                        'data' => [],
+                        'message' => "Code not Available"
+                    ];
+                    return response($response, 200);
+                }
+                $ref = RefferalSettings::first();
+                // dd($ref);
+                $response = [
+                    'status' => true,
+                    'data' => ["points" => $ref->earnpoints_per_referral, "type" => "referral", "offer_id" => null],
+                    'message' => "Points Available!"
+                ];
+                return response($response, 200);
+            }
+            // Offer
+
+            foreach ($offer_codes as $offer_code) {
+                $offer = $offer_code->offer;
+                $start_date = Carbon::parse($offer->start_date);
+                $end_date = Carbon::parse($offer->end_date);
+                $current_date = Carbon::now(); // current date and time
+
+                if ($current_date->gte($start_date) && $current_date->lte($end_date) && $offer->is_active != 0) {
+                    if ($offer->allocation) {
+                        $delivery_address = CustomerAddress::find($request->address_id);
+                        if (!$delivery_address) {
+                            $response = [
+                                'status' => false,
+                                'data' => [],
+                                'message' => "Address Not Found!"
+                            ];
+                            return response($response, 200);
+                        }
+
+                        $hub_id = $this->getServiceAvailable($delivery_address->latitude, $delivery_address->longitude, $delivery_address->state_id, $delivery_address->city_id);
+                        if (!$hub_id) {
+                            $response = [
+                                'status' => false,
+                                'data' => [],
+                                'message' => "Hub Not Found!"
+                            ];
+                            return response($response, 200);
+                        }
+                        if ($offer->allocation->state_id != $delivery_address->state_id) {
+                            $response = [
+                                'status' => false,
+                                'data' => [],
+                                'message' => "Offer not applicable in your state!"
+                            ];
+                            return response($response, 200);
+                        }
+                    }
+                    $hub_allocation_point = OfferHubAllocation::where('offer_id', $offer->id)->where('hub_id', $hub_id)->first();
+                    if (!$hub_allocation_point) {
+                        $response = [
+                            'status' => false,
+                            'data' => [],
+                            'message' => "Hub Point Not  Found!"
+                        ];
+                        return response($response, 200);
+                    }
+                    $total_point = (int)$hub_allocation_point->points_used + (int)$offer->offer_claim_points;
+                    if ($hub_allocation_point->points_allocated >= $total_point) {
+                        $response = [
+                            'status' => true,
+                            'data' => [
+                                "points" => $offer->offer_claim_points,
+                                "type" => "coupon",
+                                "offer_id" => $offer->id
+                            ],
+                            'message' => "Points Available!"
+                        ];
+                        return response($response, 200);
+                    } else {
+                        $response = [
+                            'status' => false,
+                            'data' => [],
+                            'message' => "Points Not  Available!"
+                        ];
+                        return response($response, 200);
+                    }
+                } else {
+                    $response = [
+                        'status' => false,
+                        'data' => [],
+                        'message' => "Code Expired!"
+                    ];
+                    return response($response, 200);
+                }
+            }
+
+            $response = [
+                'status' => false,
+                'data' => [],
+                'message' => ""
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+}

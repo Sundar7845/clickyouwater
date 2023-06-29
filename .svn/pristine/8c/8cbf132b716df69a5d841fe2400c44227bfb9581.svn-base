@@ -1,0 +1,27 @@
+$(document).ready(function() {
+    //$('#tax').DataTable();
+});
+
+function cancel() {
+    $("#txtTaxName").val("").focus();
+    $("#txtIgst").val("");
+    $("#txtCgst").val("");
+    $("#txtSgst").val("");
+    $("#btnSave").text("save");
+}
+
+
+//jquery Validation
+$(function () {
+
+    $("form[name='tax']").validate({
+
+        rules: {
+            txtTaxName: "required",
+            txtIgst: "required",
+            txtCgst: "required",
+            txtSgst: "required",
+        },
+    });
+});
+

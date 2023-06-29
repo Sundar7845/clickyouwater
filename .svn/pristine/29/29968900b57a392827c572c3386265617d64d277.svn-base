@@ -1,0 +1,77 @@
+@extends('layouts.hub')
+@section('content')
+@section('title')
+    Dashboard | Orders
+@endsection
+
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold mb-4">
+        Orders List
+    </h4>
+    <!-- DataTable with Buttons -->
+    <div class="col-lg-12 mb-4 mb-lg-0 mt-3">
+        <div class="card h-100">
+            <div class="card-datatable table-responsive pt-0">
+                <table id="offers" class="table">
+                    <thead class="border-bottom">
+                        <tr>
+                            <th>S.No</th>
+                            <th>Order ID</th>
+                            <th>Order Date</th>
+                            <th>Customer Name</th>
+                            <th>Order Value</th>
+                            <th>Assign To</th>
+                            <th>Status</th>
+                            <th>View</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>HUB001</td>
+                            <td>10/02/2023 10:00 AM</td>
+                            <td>Raja</td>
+                            <td>80</td>
+                            <td>Delivery Person 25</td>
+                            <td>Taken</td>
+                            <td>
+                                <a href="#" class="btn btn-primary">View</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>HUB002</td>
+                            <td>11/02/2023 10:00 PM</td>
+                            <td>Ram</td>
+                            <td>120</td>
+                            <td>Delivery Person 2</td>
+                            <td>Pending</td>
+                            <td>
+                                <a href="#" class="btn btn-primary">View</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>HUB003</td>
+                            <td>12/02/2023 12:00 AM</td>
+                            <td>Raju</td>
+                            <td>180</td>
+                            <td>Delivery Person 21</td>
+                            <td>Taken</td>
+                            <td>
+                                <a href="#" class="btn btn-primary">View</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--/ DataTable with Buttons -->
+</div>
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/offers/offers.js') }}"></script>
+@endsection

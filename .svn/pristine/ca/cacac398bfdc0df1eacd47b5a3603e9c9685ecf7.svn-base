@@ -1,0 +1,113 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Offer Allocation | Click Your Water | Dashboard
+@endsection
+
+<!-- Content -->
+
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold mb-4">
+        Offer Allocation
+    </h4>
+    <div class="row mb-4">
+        <div class="card">
+            <!-- Browser Default -->
+            <div class="col-md-12 mb-4 mb-md-0">
+                <div class="card-body">
+                    <form name="offer_allocate" id="offerAllocateForm" onsubmit="return validateData();" action="{{ route('add.offerallocation') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="hdOfferallocateId" id="hdOfferallocateId" value="">
+                        <input type="hidden" name="hdSelHubIds" id="hdSelHubIds" value="1">
+                        <input type="hidden" name="hdSelHubPoints" id="hdSelHubPoints" value="1">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <h5><label class="form-label" for="ddlState">State Name<span
+                                        class="text-danger">*</span></label></h5>
+                                        <select name="ddlState" id="ddlState" class="select2 form-select" required>
+                                            <option value="">Select State</option>
+                                            @foreach ($states as $state)
+                                            <option value="{{ $state->id }}">
+                                                        {{ $state->state_name }}
+                                                    </option>
+                                                    @endforeach
+                                                </select>
+                                    @if ($errors->has('ddlState'))
+                                        <div class="text-danger">{{ $errors->first('ddlState') }}</div>
+                                        @endif
+                                    <span class="error"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <h5><label class="form-label" for="ddlCity">District Name<span
+                                        class="text-danger">*</span></label></h5>
+                                        <select name="ddlCity" id="ddlCity" class="select2 form-select" required>
+                                        <option value="">Select District</option>
+                                    </select>
+                                    @if ($errors->has('ddlCity'))
+                                        <div class="text-danger">{{ $errors->first('ddlCity') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <h5><label class="form-label" for="ddlOfferName">Offer Name<span
+                                                class="text-danger">*</span></label></h5>
+                                    <select name="ddlOfferName" id="ddlOfferName" class="select2 form-select" required>
+                                        <option value="">Select</option>
+                                        @foreach ($offernames as $offername)
+                                        <option value="{{ $offername->id }}">
+                                            {{ $offername->offer_name }}
+                                        </option>
+                                    @endforeach
+                                    </select>
+                                    <span class="text-danger" id="spanLedgerName"></span>
+                                        Total offer Points: <span id="totalPoints" class="text-danger"
+                                            style="font-size: 22px;">0.00</span>
+                                    @if ($errors->has('ddlOfferName'))
+                                        <div class="text-danger">{{ $errors->first('ddlOfferName') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                                
+                            </div>
+                            <div class="col-md-8 mb-4 mb-md-0">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="card-datatable table-responsive pt-0">
+                                            <table class="table table-responsive">
+                                                <thead>
+                                                    <th>#</th>
+                                                    <th>Hub Name</th>
+                                                    <th style="width: 146px;">Total Points</th>
+                                                    <th style="width: 175px;">Allocated Points</th>
+                                                    <th style="width: 140px;">Used Points</th>
+                                                </thead>
+                                                <tbody id="tbodyOfferallocate">
+                                                    <tr>
+                                                        <td colspan="5" class="text-center">
+                                                            No Records Found
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 mb-3">
+                            <button type="submit" class="btn btn-primary">Allocate</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+</div>
+
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/admin/offers/offerallocate.js') }}"></script>
+@endsection

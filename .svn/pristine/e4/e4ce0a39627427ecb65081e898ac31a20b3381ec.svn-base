@@ -1,0 +1,68 @@
+<?php
+
+namespace App\Http\Controllers\API;
+
+use App\Http\Controllers\Controller;
+use App\Http\Resources\UserProfileResource;
+use App\Models\CustomerType;
+use App\Models\User;
+use App\Traits\Common;
+use App\Traits\ResponseAPI;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class CustomerProfile extends Controller
+{
+    use Common;
+    use ResponseAPI;
+
+    public function getCustomerType()
+    {
+        try {
+            $cust_type=CustomerType::all();
+            $response = [
+                'status' => true,
+                'data' => $cust_type,
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+
+            $response = array(
+                'message' => "Failed",
+                'status' => false,
+
+            );
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            // return response($response, 200);
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+
+    public function getUserInfo()
+    {
+        try {
+            $users =User::with('customer')->where('id',Auth::user()->id)->get();
+            $res=UserProfileResource::collection($users);
+            // dd($res);
+            // $user=new UserResource(User::findOrFail($id));
+            $response = [
+                'status' => true,
+                'data' => $res,
+            ];
+            // dd($response);
+            return response($response, 200);
+        } catch (\Exception $e) {
+
+            $response = array(
+                'message' => "Failed",
+                'status' => false,
+
+            );
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            // return response($response, 200);
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+}

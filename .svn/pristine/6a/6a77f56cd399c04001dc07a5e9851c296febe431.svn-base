@@ -1,0 +1,73 @@
+$(document).ready(function () {
+    UserDepositHistory();
+});
+
+function UserDepositHistory() {
+    var customer_id = $('#hduserid').val();
+    $('#tblDepositHistory').DataTable({
+        processing: true,
+        serverSide: true,
+        responsive: true,
+        order: [[0, "ASC"]],
+        destroy: true, // Use "destroy" instead of "bDestroy"
+        ajax: "/depositHistoryData/" + customer_id,
+        fnRowCallback: serialNoCount,
+        columns: [
+            { data: "id", orderable: false },
+            {
+                data: "created_at",
+                render: function (data, type, row) {
+                    var date = new Date(data);
+                    return moment(date).format("DD-MM-YYYY");
+                },
+            },
+            { data: "product_name" },
+            { data: "qty" },
+            {
+                data: null,
+                render: function (data, type, row) {
+                    let html = `<span class="rupee-symbol">&#8377;${data.deposit_amount}</span>`;
+                    return html;
+                }
+            },
+            {
+                data: "id",
+                render: function (data, type, row) {
+                    return `<button type="button" class="btn btn-xs btn-primary" onclick="showRefundInfoPopup(${data});">View</button>`;
+                }
+            }
+        ],
+    });
+}
+
+//show Refund Info Popup
+function showRefundInfoPopup(id) {
+    $('#hdRefundId').val(id);
+    $.ajax({
+        url: '/getRefundDetails/' + id,
+        type: 'GET',
+        dataType: 'json',
+        success: function (response) {
+            console.log(response.getRefundDetails);
+            var modalContent = '';
+            var date = new Date(response.getRefundDetails.refund_date);
+            var formattedDate = moment(date).format("DD-MM-YYYY");
+            if (response.getRefundDetails.refund_amount !== null && response.getRefundDetails.refund_amount > 0) {
+                modalContent += '<tr>';
+                modalContent += '<td>' + formattedDate + '</td>';
+                modalContent += '<td>' + response.getRefundDetails.refund_to + '</td>';
+                modalContent += '<td><span class="rupee-symbol">&#8377;</span>' + response.getRefundDetails.refund_amount + '</td>';
+                modalContent += '</tr>';
+            } else {
+                modalContent += '<tr>';
+                modalContent += '<td colspan="3" class="text-center">No refund information available</td>';
+                modalContent += '</tr>';
+            }
+            $('#tblRefundInfo tbody').html(modalContent);
+            $('#showRefundInfoPopup').modal('show');
+        },
+        error: function (xhr, status, error) {
+            console.log(error);
+        }
+    });
+}

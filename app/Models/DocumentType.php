@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class DocumentType extends Model
+{
+    use HasFactory, SoftDeletes;
+
+    protected $fillable = [
+        'documenttype_name',
+        'created_by',
+        'updated_by'
+    ];
+
+    protected $dates = ['deleted_at'];
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::bootSoftDeletes();
+    }
+
+    public static function bootSoftDeletes()
+    {
+        static::deleting(function ($documentType) {
+            if ($documentType->documentconfig()->count() > 0) {
+                throw new \Exception('Cannot delete documentconfig type because there are associated documentconfigs.');
+            }
+        });
+    }
+
+    public function documentconfig()
+    {
+        return $this->hasMany(DocumentConfig::class, 'documenttype_id', 'id');
+    }
+}

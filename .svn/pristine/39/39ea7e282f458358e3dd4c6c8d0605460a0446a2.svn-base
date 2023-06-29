@@ -1,0 +1,315 @@
+var jlist;
+
+$(document).ready(function () {
+    brands();
+    dropdownParent = $("#ddlBrand").divParent;
+
+    // To get Product Type
+    $("#ddlCategory").bind("change", function () {
+        getProductType();
+    });
+
+    // To get Brands
+    $("#ddlProductType").bind("change", function () {
+        getBrands();
+    });
+});
+
+
+ //Allocated Brands
+ $("#ddlState,#ddlCity").change(function(){
+    brands();
+    allocatedBrands();
+ });
+
+ function brands(){
+    $('#brands').empty();
+    var state_id =
+    $("#ddlState option:selected").val() == undefined
+        ? 0
+        : $("#ddlState option:selected").val();
+
+var city_id =
+    $("#ddlCity option:selected").val() == undefined
+        ? 0
+        : $("#ddlCity option:selected").val();
+
+    ///brands
+    var rowindex = 1;
+    var brands = "";
+    $.ajax({
+      url: "allocationbrands/data",
+      data: {
+        state_id: state_id,
+        city_id: city_id
+    },
+      type: "GET",
+      dataType: "json",
+      success: function(result) {
+        $.each(result, function (key, value) {
+            jlist=arrValue;
+          $.each(value, function (arrIndex, arrValue) {
+            brands += "<tr id='trbrands" + arrValue.id + "' BID="+arrValue.id+" CNM='" + arrValue.category_name + "' PNM='" + arrValue.product_type_name + "' BNM='" + arrValue.brand_name + "' >";
+            brands += "<td>" + arrValue.category_name + "</td>";
+            brands += "<td>" + arrValue.product_type_name + "</td>";
+            brands += "<td>" + arrValue.brand_name + "</td>";
+            brands += "<td><a><i style='cursor:pointer'; class='text-primary fa-solid fa-arrow-right' onclick='domove(" + arrValue.id + ")'></i></a></td>";
+            brands += "</tr>";
+          });
+        });
+      },
+      error: function() {
+        console.log("Error occurred during AJAX request.");
+      }
+    });
+ }
+
+ function allocatedBrands(){
+    var state_id =
+    $("#ddlState option:selected").val() == undefined
+        ? 0
+        : $("#ddlState option:selected").val();
+
+var city_id =
+    $("#ddlCity option:selected").val() == undefined
+        ? 0
+        : $("#ddlCity option:selected").val();
+
+    var RowIndex = 1;
+    var allocatedbrand = "";
+    $.ajax({
+        url: "/allocate/brand",
+        data: {
+            state_id: state_id,
+            city_id: city_id
+        },
+        type: "GET",
+        dataType: "json",
+        success: function(result) {
+            if(result.brands == 0){
+                $('#brandallocation').empty();
+            }
+            $.each(result, function (key, value) {
+                $.each(value, function (arrIndex, arrValue) {
+                    $.each(arrValue, function (darrIndex, darrValue) {
+                        allocatedbrand += "<tr id='trbrandallocated"+darrValue.brand_id+"' BID="+darrValue.brand_id+" CNM='" + darrValue.category_name + "' PNM='" + darrValue.product_type_name + "' BNM='" + darrValue.brand_name + "'>";
+                        allocatedbrand += "<td><input type='hidden' class='brandallocated' id='taballocatedbrandname' name='taballocatedbrandname[]' value='"+darrValue.brand_id+"'>"+darrValue.brand_name+"</td>";
+                        allocatedbrand += "<td><a><i style='cursor:pointer'; class='text-danger ti ti-trash me-1' onclick='doRemove("+darrValue.brand_id+");'></i></a></td>";
+                        allocatedbrand += "</tr>";
+                        RowIndex++;
+                    });
+                });
+            });
+         $("#brandallocation").append(allocatedbrand);
+     },
+     error: function() {
+         console.log("Error occurred during AJAX request.");
+     }
+ });
+ }
+ 
+
+
+
+function doEdit(id) {
+    $("#hdBrandAllocateId").val(id);
+    $("#ddlState").focus();
+    $("#btnallocate").text("Update");
+    $("#brandTitle").text("Update State Brand Allocation");
+    $("input[type^='checkbox']").attr("checked", false);
+    getBrandAllocateById(id);
+}
+
+function getBrandAllocateById(id) {
+    $("#pageloader").fadeIn();
+    $.ajax({
+        type: "GET",
+        url: "getbrandallocate/" + id,
+        dataType: "json",
+        success: function (data) {
+            $("#ddlState").val(data.brandallocation.state_id).trigger("change");
+
+            setTimeout(function () {
+                $("#ddlCity").val(data.brandallocation.city_id).trigger("change");
+            }, 2000);
+
+            $("#ddlCategory").val(data.brandallocation.category_id).trigger("change");
+
+            setTimeout(function () {
+                $("#ddlProductType").val(data.brandallocation.product_type_id).trigger("change");
+            }, 3000);
+
+            setTimeout(function () {
+                var brand_ids = data.brandallocation.brand_id.split(",");
+                $("#ddlBrand").val(brand_ids).trigger("change");
+                $("#pageloader").fadeOut();
+            }, 4000);
+        },
+    });
+}
+
+function showDelete(id) {
+    confirmDelete(id, "delete/brandallocate/", "tblBrandAllocation");
+}
+
+function cancel() {
+    $("#btnallocate").text("Allocate");
+    $("#brandTitle").text("State Brand Allocation");
+    $("#hdBrandAllocateId").val("");
+    $("#ddlState").val("").trigger("change");
+    $("#ddlCity").val(0).trigger("change");
+    $("#ddlCategory").val(0).trigger("change");
+    $("#ddlProductType").val(0).trigger("change");
+    $("#ddlBrand").val(0).trigger("change");
+    $("#ddlState").focus();
+    $("#btnSave").text("save");
+}
+
+// jquery Validation
+$(function () {
+    $("form[name='brand_allocation']").validate({
+        rules: {
+            ddlState: "required",
+            ddlCity: "required",
+            chkBrandName: "required",
+        },
+        errorPlacement: function (error, element) {
+            if (element.is(":radio")) {
+                error.appendTo(element.parents(".form-group"));
+            } else if (element.is(":checkbox")) {
+                error.appendTo(
+                    element.siblings("label[for='" + element.attr("id") + "']")
+                );
+            } else {
+                if (element.siblings(".error").html() == undefined) {
+                    error.appendTo(element.parent().next(".error"));
+                } else {
+                    error.appendTo(element.siblings(".error"));
+                }
+            }
+        },
+    });
+});
+
+function getProductType() {
+    $("#pageloader").fadeIn();
+    var category_id = $("#ddlCategory").val();
+    $.ajax({
+        url: "/get/producttype",
+        type: "GET",
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        },
+        data: {
+            category_id: category_id,
+            _token: $('meta[name="csrf-token"]').attr("content"),
+        },
+        dataType: "json",
+        success: function (result) {
+            $("#ddlProductType").select2({
+                placeholder: "Select Product Type",
+            });
+            $("#ddlProductType").html(
+                '<option value="">Select Product Type</option>'
+            );
+            $.each(result.productType, function (key, value) {
+                $("#ddlProductType").append(
+                    '<option value="' +
+                    value.id +
+                    '">' +
+                    value.product_type_name +
+                    "</option>"
+                );
+            });
+            $("#pageloader").fadeOut();
+        },
+    });
+}
+
+function getBrands() {
+    $("#pageloader").fadeIn();
+    var product_type_id = $("#ddlProductType").val();
+    $.ajax({
+        url: "/get/producttypesbrands",
+        type: "GET",
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        },
+        data: {
+            product_type_id: product_type_id,
+            _token: $('meta[name="csrf-token"]').attr("content"),
+        },
+        dataType: "json",
+        success: function (result) {
+            $("#ddlBrand").select2({
+                placeholder: "Select Brands",
+            });
+            $("#ddlBrand").html('<option value="">Select Brand</option>');
+            $.each(result.brands, function (key, value) {
+                $("#ddlBrand").append(
+                    '<option value="' +
+                    value.id +
+                    '">' +
+                    value.brand_name +
+                    "</option>"
+                );
+            });
+            $("#pageloader").fadeOut();
+        },
+    });
+}
+
+function validation(){
+    Swal.fire({
+        title: "Select State and city!",
+        text: "Please select State and city.",
+        icon: "error",
+        customClass: {
+            confirmButton: "btn btn-primary",
+        },
+        buttonsStyling: false,
+    });
+}
+
+
+function domove(bid){
+    
+    if($("#ddlState option:selected").val() != 0 && $("#ddlCity option:selected").val() != 0 ){
+    var bnm = $("#trbrands"+bid).attr("BNM");
+    var cnm = $("#trbrands"+bid).attr("CNM");
+    var pnm = $("#trbrands"+bid).attr("PNM");    
+
+    var list =""; 
+    list += "<tr id='trbrandallocated"+bid+"' BID="+bid+" CNM='" + cnm + "' PNM='" + pnm + "' BNM='" + bnm + "' >";
+    list += "<td><input type='hidden' class='brandallocated' id='taballocatedbrandname' name='taballocatedbrandname[]' value='"+bid+"'>"+bnm+"</td>";
+    list += "<td><a><i style='cursor:pointer'; class='text-danger ti ti-trash me-1' onclick='doRemove("+bid+");'></i></a></td>";
+    list += "</tr>";
+    $("#brandallocation").append(list);
+
+    $("#trbrands"+bid).remove();
+    }else{
+        validation();
+    }
+}
+
+function doRemove(bid){
+    var bnm = $("#trbrandallocated"+bid).attr("BNM");
+    var cnm = $("#trbrandallocated"+bid).attr("CNM");
+    var pnm = $("#trbrandallocated"+bid).attr("PNM");
+
+    var list =""; 
+    list += "<tr id='trbrands"+bid+"' BID="+bid+" CNM='" + cnm + "' PNM='" + pnm + "' BNM='" + bnm + "' >";
+    list += "<td>" + cnm + "</td>";
+    list += "<td>" + pnm + "</td>";
+    list += "<td>"+bnm+"</td>";
+    list += "<td><a><i style='cursor:pointer'; class='text-primary fa-solid fa-arrow-right' onclick='domove("+bid+");'></i></a></td>";
+    list += "</tr>";
+    
+    $("#brands").append(list);
+
+    $("#trbrandallocated"+bid).remove();
+}
+
+function doSearch(){
+
+}

@@ -1,0 +1,96 @@
+//DataTable
+$(document).ready(function () {
+    $("#tblPaymentMethod").DataTable({
+        processing: true,
+        serverSide: true,
+        order: [[0, "ASC"]],
+        ajax: "paymentmethod/data",
+        fnRowCallback: function (nRow, aData, iDisplayIndex) {
+            $("td:first", nRow).html(iDisplayIndex + 1);
+            return nRow;
+        },
+        columns: [
+            { data: "id" },
+            { data: "customer_type" },
+            { data: "payment_method" },
+            { data: "action" }
+        ],
+    });
+});
+
+//Edit Data
+function doEdit(id) {
+    $("#hdPaymentMethodId").val(id);
+    $("#ddlCustomerType").focus();
+    $("#btnSave").text("Update");
+    getPaymentMethodById(id);
+}
+
+//Update Status
+function doStatus(id) {
+    var status = $("#chkPaymentMethod" + id).is(":checked");
+    confirmStatusChange(id, "paymentmethod/", "tblPaymentMethod", (status == true ? 1 : 0), "chkPaymentMethod");
+}
+
+//Delete Data
+function showDelete(id) {
+    confirmDelete(id, "delete/paymentmethod/", "tblPaymentMethod");
+}
+
+//Get Payment Method
+function getPaymentMethodById(id) {
+    $.ajax({
+        type: "GET",
+        url: "getpaymentmethod/" + id,
+        dataType: "json",
+        success: function (data) {
+            
+            var paymentMethodList = "";
+            var payementMethodId = data.PaymentMethod.payment_method_id;
+            var paymentMethodList = payementMethodId.split(",");
+
+            $("#ddlCustomerType").val(data.PaymentMethod.customer_type_id).trigger("change");
+
+            setTimeout(function () {
+                $.each(paymentMethodList, function (index, payment_method_id) {
+                    $("#ddlPaymentMethod").append("<option value='" + payment_method_id + "'>" + payment_method_id + "</option>");
+                    console.log(payment_method_id);
+                });
+            }, 2000);
+        },
+    });
+}
+
+
+
+//Cancel
+function cancel() {
+    $("#hdPaymentMethodId").val("");
+    $("#ddlCustomerType").val(0).trigger("change");
+    $("#ddlPaymentMethod").val(0).trigger("change");
+    $("#ddlCustomerType").focus();
+    $("#btnSave").text("Save");
+}
+
+// jquery Validation
+$(function () {
+
+    $("form[name='paymentmethod']").validate({
+
+        rules: {
+            ddlCustomerType: "required",
+            ddlPaymentMethod: "required",
+        },
+        errorPlacement: function (error, element) {
+            if (element.is(":radio")) {
+                error.appendTo(element.parents(".form-group"));
+            } else {
+                if (element.siblings(".error").html() == undefined) {
+                    error.appendTo(element.parent().next(".error"));
+                } else {
+                    error.appendTo(element.siblings(".error"));
+                }
+            }
+        },
+    });
+});

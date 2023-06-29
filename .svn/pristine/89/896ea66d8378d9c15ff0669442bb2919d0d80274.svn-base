@@ -1,0 +1,55 @@
+<?php
+
+namespace App\Http\Controllers\Admin\OrderManagement;
+
+use App\Http\Controllers\Controller;
+use App\Traits\Common;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class CustomerOrdersController extends Controller
+{
+  use Common;
+  public function customerOrders(Request $request)
+  {
+    $state = $this->getStates();
+    $order = $this->getAllOrders()->get();
+    //To load list based type(All,Today,ThisMonth)
+    $type = $request->input('type');
+    return view('admin.order_management.customer_orders.customer_orders', compact('type', 'order', 'state'));
+  }
+
+  public function customerOrderData(Request $request)
+  {
+    try {
+
+      $customerOrder = "";
+      $query = $this->getAllOrders()
+        ->whereRaw("DATE(orders.transaction_date) BETWEEN '{$request->startdate}' AND '{$request->enddate}'");
+
+      if ($request->state_id > 0) {
+        $query = $query->where('customer_addresses.state_id', $request->state_id);
+      }
+      if ($request->city_id > 0) {
+        $query = $query->where('customer_addresses.city_id', $request->city_id);
+      }
+
+      // Apply type filters based on the 'type' parameter
+      if ($request->type === 'today') {
+        $query->whereDate('orders.created_at', today());
+      } elseif ($request->type === 'thismonth') {
+        $query->whereMonth('orders.created_at', now()->month);
+      }
+
+      $customerOrder = $query->get();
+      return datatables()->of($customerOrder)
+        ->addColumn('action', function ($row) {
+          $html = '<a href="/orderdetail/' . $row->id . '" class="btn btn-primary">View</a>';
+          return $html;
+        })
+        ->toJson();
+    } catch (\Exception $e) {
+      $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+    }
+  }
+}

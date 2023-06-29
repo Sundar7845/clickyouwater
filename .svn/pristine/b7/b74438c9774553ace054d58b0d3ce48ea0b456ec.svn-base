@@ -1,0 +1,143 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Dashboard | Orders Detail
+@endsection
+
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-1 mb-4">
+        Orders Detail
+    </h4>
+    <div class="row">
+        <!-- Invoice -->
+        <div class="col-xl-12 col-md-12 col-12 mb-md-0 mb-4">
+            <div class="card invoice-preview-card">
+                <div class="card-body">
+                    <div
+                        class="d-flex justify-content-between flex-xl-row flex-md-column flex-sm-row flex-column m-sm-3 m-0">
+                        <div class="mb-xl-0 mb-4">
+                            <div class="d-flex svg-illustration mb-4 gap-2 align-items-center">
+                                <img src="{{ asset('assets/img/layouts/logos.jpeg') }}" width="200" height="200"
+                                    class="img-fluid img-responsive" alt="">
+                            </div>
+                           
+                            <p class="mb-2">24,C56,H41,7th main road,</p>
+                            <p class="mb-2">ram nagar,Coimbatore-641035</p>
+                            <p class="mb-0">+91 9944527208</p>
+                          
+                        </div>
+                        <div>
+                            <h4 class="fw-semibold mb-2">INVOICE #{{ $invoicedetails->invoice_no }}</h4>
+                            <div class="mb-2 pt-1">
+                                <span>Transaction ID:</span>
+                                <span class="fw-semibold">{{ $invoicedetails->transaction_id }}</span>
+                            </div>
+                            <div class="pt-1">
+                                <span>Order Date:</span>
+                                <span class="fw-semibold">{{ $invoicedetails->formatted_order_date }}</span>
+                            </div>
+                            <div class="pt-1">
+                                <span>Payment Status:</span>
+                                <span class="fw-semibold">{{ $invoicedetails->transaction_status }}</span>
+                            </div>
+                            <div class="pt-1">
+                                <span>Order Status:</span>
+                                <span class="fw-semibold">{{ $invoicedetails->status }}</span>
+                                <div class="text-muted p-1">
+                                    {{-- pending work extra kilometer --}}
+                                    {{-- <small class="bg-light p-1">extra km : 5</small> --}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr class="my-0" />
+                <div class="card-body">
+                    <div class="row p-sm-3 p-0">
+                        <div class="col-xl-8 col-md-8 col-sm-5 col-12 mb-xl-0 mb-md-4 mb-sm-0 mb-4">
+                            <h6 class="mb-3">Billing Address</h6>
+                            <p class="mb-1">{{ $billingaddress->contact_person_name }}</p>
+                            <p class="mb-1">{{ $billingaddress->floor }},{{ $billingaddress->building_no }},{{ $billingaddress->landmark }},{{ $billingaddress->area }}</p>
+                            <p class="mb-1">{{ $billingaddress->city_name }},{{ $billingaddress->state_name }}-{{ $billingaddress->pincode }}</p>
+                            <p class="mb-1">{{ $billingaddress->contact_person_mobile }}</p>
+                            <p class="mb-0">{{ $billingaddress->email }}</p>
+                        </div>
+                        <div class="col-xl-4 col-md-4 col-sm-7 col-12">
+                            <h6 class="mb-4">Shipping Address</h6>
+                            <p class="mb-1">Peter</p>
+                            @foreach($data['delivery_address'] as $item)
+                                <p class="mb-1">{{ $item['floor'] }},{{ $item['delivery_address'] }},</p>
+                                <p class="mb-1">{{ $item['city'] }}, {{ $item['stateName'] }}-{{ $item['pincode'] }}</p>
+                                <p class="mb-1">+91 {{ $item['contactPersonMobile'] }}</p>
+                                <p class="mb-0">xyz@gmail.com</p>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive border-top">
+                    <table class="table m-0">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Product Name</th>
+                                <th>Cost</th>
+                                <th>Qty</th>
+                                <th>Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="text-nowrap"><img src="{{ asset('assets/product images/1ltr.jpg') }}"
+                                        width="100" height="100"></td>
+                                <td class="text-nowrap">1 litre</td>
+                                <td>₹32</td>
+                                <td>1</td>
+                                <td>₹32</td>
+                            </tr>
+                            <tr>
+                                <td class="text-nowrap"><img src="{{ asset('assets/product images/20ltrs.jpg') }}"
+                                        width="100" height="100"></td>
+                                <td class="text-nowrap">20 litre</td>
+                                <td>₹62</td>
+                                <td>1</td>
+                                <td>₹62</td>
+                            </tr>
+                            <tr>
+                                <td class="text-nowrap"><img src="{{ asset('assets/product images/5ltrs.jpg') }}"
+                                        width="100" height="100"></td>
+                                <td class="text-nowrap">5 litre</td>
+                                <td>₹82</td>
+                                <td>1</td>
+                                <td>₹82</td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" class="align-top px-4 py-4">
+                                    <p class="mb-2 mt-3">
+                                        <span class="ms-3 fw-semibold">Delivered By:</span>
+                                        <span>Surya</span>
+                                    </p>
+                                </td>
+                                <td class="text-end pe-3 py-4">
+                                    <p class="mb-2 pt-3">Subtotal:</p>
+                                    <p class="mb-2">Discount:</p>
+                                    <p class="mb-2">Tax:</p>
+                                    <p class="mb-0 pb-3">Total:</p>
+                                </td>
+                                <td class="ps-2 py-4">
+                                    <p class="fw-semibold mb-2 pt-3">₹176</p>
+                                    <p class="fw-semibold mb-2">₹6</p>
+                                    <p class="fw-semibold mb-2">₹30</p>
+                                    <p class="fw-semibold mb-0 pb-3">₹200</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- /Invoice -->
+    </div>
+</div>
+<!-- / Content -->
+@endsection

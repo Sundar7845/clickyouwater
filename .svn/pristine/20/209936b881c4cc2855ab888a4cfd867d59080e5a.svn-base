@@ -1,0 +1,96 @@
+<?php
+
+namespace App\Http\Controllers\API;
+
+use App\Enums\WalletTransactionTypes;
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Models\UserReferralHistory;
+use App\Traits\Common;
+use App\Traits\ResponseAPI;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class ReferralController extends Controller
+{
+    use Common;
+    use ResponseAPI;
+
+    public function verifyReferral($code)
+    {
+
+        DB::beginTransaction();
+        try {
+
+            $isReferred = UserReferralHistory::where('user_id', Auth::user()->id)->count();
+
+            $referred_by = User::where('referral_code', $code)
+                ->where('id', '!=', Auth::user()->id)
+                ->first();
+
+            $message = ($isReferred > 0) ? 'Already Verified' : ($referred_by ? 'Updated Successfully' : 'Invalid Code');
+
+            $data = [];
+            $status = ($message === 'Updated Successfully');
+            if ($status) {
+                $this->addReferralHistory(Auth::user()->id, $referred_by);
+                $this->addReferralWallet(Auth::user()->id, $referred_by);
+            }
+
+            $response = [
+                'status' => $status,
+                'data' => $data,
+                'message' => $message
+            ];
+
+            // Commit the transaction
+            DB::commit();
+            return response($response, 200);
+        } catch (\Exception $e) {
+            // Roll back the transaction if an error occurs
+            DB::rollback();
+
+            // Log any exceptions that occur and return an error response with a 200 status code
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            // return $this->error($e->getMessage(), 200);
+            $response = array(
+                'message' => $this->errorMessage,
+                'status' => false,
+            );
+            return response($response, 500);
+        }
+    }
+
+    public function getReferralSettings()
+    {
+        try {
+
+            $referral_settings = $this->getReferralSetting();
+
+            $data = [
+                'referral_content' => str_replace(["{{referral}}", "{{referrer}}"], [$referral_settings->earnpoints_per_referral, $referral_settings->earnpoints_per_referrer], $referral_settings->referral_content),
+                'earnpoints_per_referral' => $referral_settings->earnpoints_per_referral,
+                'earnpoints_per_referrer' => $referral_settings->earnpoints_per_referrer,
+                'referral_banner_path' => $this->getBaseUrl() . '/' . $referral_settings->referral_banner_path
+            ];
+
+            $response = [
+                'status' => true,
+                'data' => $data,
+                'message' => "Success"
+            ];
+
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            // return $this->error($e->getMessage(), 200);
+            $response = array(
+                'message' => $this->errorMessage,
+                'status' => false,
+            );
+            return response($response, 500);
+        }
+    }
+}

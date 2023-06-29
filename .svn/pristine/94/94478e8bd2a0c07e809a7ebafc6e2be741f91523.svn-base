@@ -1,0 +1,85 @@
+<?php
+
+namespace App\Http\Controllers\Manufacturer\Document;
+
+use App\Enums\DocumentModulesType;
+use App\Enums\RoleTypes;
+use App\Http\Controllers\Controller;
+use App\Models\Manufacturer;
+use App\Models\ManufacturerDocuments;
+use App\Models\User;
+use App\Traits\Common;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class DocumentController extends Controller
+{
+    use Common;
+    public function document($id = NULL)
+    {
+        // $logistic_id = User::where('id', Auth::user()->id)->value('ref_id');
+        $logistic_id = $this->getRefId(Auth::user()->id, RoleTypes::LogisticPartner);
+        $id = ($id ? $id : $logistic_id);
+        $bindDocuments = $this->getDocumentConfigsByModule(DocumentModulesType::Manufacturer, $id);
+        return view('hub.document.document', compact('bindDocuments', 'id'));
+    }
+
+    public function createDocuments(Request $request)
+    {
+        try {
+            $manufacture = Manufacturer::where('id', $request->hdId)->first();
+            //Validate the documents for hub
+            $is_valid = $this->validateUpdateDocuments($request, DocumentModulesType::Manufacturer, $request->hdId);
+
+            if ($is_valid !== true) {
+                if ($is_valid->document_number == null || $is_valid->document_path == null) {
+                    $notification = array(
+                        'message' => $is_valid->documentType->documenttype_name . ' Required',
+                        'alert-type' => 'error'
+                    );
+                    return redirect()->route('logisticdocuments')->with($notification);
+                }
+            }
+
+            $hub_documents = $this->getDocumentConfigsByModule(DocumentModulesType::Manufacturer, $request->hdId);
+
+            foreach ($hub_documents as $doc) {
+                if ($request->hasFile('file_' . $doc->id)) {
+                    @unlink($doc->hubDocuments->document_path);
+                }
+            }
+
+            // Delete existing records
+            ManufacturerDocuments::where('manufacture_id', $request->hdId)->delete();
+
+
+            foreach ($hub_documents as $doc) {
+                if ($request->hasFile('file_' . $doc->id)) {
+                    $path = $request->file('file_' . $doc->id)->store('temp');
+                    $file = $request->file('file_' . $doc->id);
+                    $extension = $file->getClientOriginalExtension();
+                    $fileName = $this->generateRandom(16) . '.' . $extension;
+                }
+                $doc_no = 'doc_' . $doc->id;
+                $existingfile_path = 'hdDocumentImg_' . $doc->id;
+                ManufacturerDocuments::create([
+                    'manufacture_id' => $request->hdId,
+                    'documenttype_id' => $doc->documenttype_id,
+                    'documentmodule_id' => $doc->documentmodule_id,
+                    'document_path' => ($request->hasFile('file_' . $doc->id)) ?
+                        $this->fileUpload($file, 'upload/Manufacture/' . $manufacture->manufacturer_code, $fileName)
+                        : $request->$existingfile_path,
+                    'document_number' => $request->$doc_no
+                ]);
+            }
+            $notification = array(
+                'message' => 'Manufacture Documents Updated Successfully',
+                'alert-type' => 'success'
+            );
+            $authManufacturerRedirectUrl = Auth::user()->role_id == RoleTypes::Manufacturer ? 'mandocuments' : 'manufacturerdocuments';
+            return redirect()->route($authManufacturerRedirectUrl)->with($notification);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, $request->method(), $e->getMessage(), Auth::user()->id, $request->ip(), gethostname());
+        }
+    }
+}

@@ -1,0 +1,689 @@
+<?php
+
+namespace App\Http\Controllers\API\Hub;
+
+use App\Enums\RoleTypes;
+use App\Enums\StatusTypes;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\HubOrderResource;
+use App\Models\DeliveryPerson;
+use App\Models\DeliveryPersonStock;
+use App\Models\DeliveryPersonStockHistory;
+use App\Models\Hub;
+use App\Models\HubCollectReturnCans;
+use App\Models\HubReturnItems;
+use App\Models\HubReturnItemsDet;
+use App\Models\HubStock;
+use App\Models\HubStockHistory;
+use App\Models\LogisticBooking;
+use App\Models\LogisticBookingDet;
+use App\Models\LogisticDriverInfo;
+use App\Models\LogisticStock;
+use App\Models\LogisticStockHistory;
+use App\Models\LogisticTrip;
+use App\Models\Order;
+use App\Models\OrderDelivery;
+use App\Models\Products;
+use App\Models\Surrender;
+use App\Traits\Common;
+use App\Traits\ResponseAPI;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class HubController extends Controller
+{
+    //
+    use ResponseAPI;
+    use Common;
+
+    public function getHubUserInfo()
+    {
+        try {
+            //orders to assign count
+            $orders_to_assign = $this->getOrders(
+                implode(',', [
+                    StatusTypes::OrderPlaced,
+                    StatusTypes::OrderNotDelivered
+                ])
+            )->count();
+            //surrender orders count
+            $surrender_orders = Surrender::where('hub_id', Auth::user()->ref_id)->whereIn('status_id', [StatusTypes::SurrenderApproved, StatusTypes::AssignedForPickup])->count();
+            //Total hub orders
+            $statusIds = [
+                StatusTypes::OrderPlaced,
+                StatusTypes::OrderShipped,
+                StatusTypes::OrderDelivered,
+                StatusTypes::AssignedToDelivery
+            ];
+            $total_hub_orders = $this->getOrders(
+                implode(',', $statusIds)
+            )->count();
+            //orders assigned count
+            $orders_assigned = $this->getOrders(
+                implode(',', [
+                    StatusTypes::AssignedToDelivery,
+                    StatusTypes::OrderShipped
+                ])
+            )->count();
+            //pending confirmation from delivery agents 
+            $pending_orders_confirmation = $this->getOrders(StatusTypes::AssignedToDelivery)->count();
+
+            //orders not delivered count
+            $orders_not_delivered = $this->getOrders(StatusTypes::OrderNotDelivered)->count();
+            //orders delivered count
+            $orders_delivered = $this->getOrders(StatusTypes::OrderDelivered)->count();
+
+            //Get pending orders count based on product type
+            $pending_orders_list = $this->getOrders(
+                implode(
+                    ',',
+                    [
+                        StatusTypes::AssignedToDelivery,
+                        StatusTypes::OrderShipped
+                    ]
+                )
+            )->get();
+            $watercan_list = [];
+            $others_list = [];
+            $others_qty = 0;
+            if ($pending_orders_list) {
+                foreach ($pending_orders_list as $key => $order) {
+                    // dd($order->orderDets);
+                    foreach ($order->orderDets as $key => $orderdet) {
+                        $item = [
+                            'product_type_id' => $orderdet->products->productType->id,
+                            'product_type_name' => $orderdet->products->productType->product_type_name,
+                            'qty' => $orderdet->qty,
+                        ];
+
+                        if ($orderdet->products->category->is_watercan) {
+                            $watercan_list[] = $item;
+                        } else {
+                            $others_qty += $orderdet->qty;
+                        }
+                    }
+                }
+            }
+
+            $grouped_watercan_list = collect($watercan_list)->groupBy('product_type_id');
+
+            //Water cans list
+            $product_watercan_list = $grouped_watercan_list->map(function ($list) {
+                $total_qty = $list->sum('qty');
+                $firstItem = $list->first();
+
+                return [
+                    'product_type_id' => $firstItem['product_type_id'],
+                    'product_type_name' => $firstItem['product_type_name'],
+                    'qty' => $total_qty,
+                ];
+            })->values()->all();
+            if ($others_qty > 0) {
+                $others_list[] = array(
+                    'product_type_id' => 0,
+                    'product_type_name' => 'Others',
+                    'qty' => $others_qty,
+                );
+            }
+            $product_watercan_list = array_merge($product_watercan_list, $others_list);
+
+            //Logistics
+            //items delivery request 
+            $driver_name = LogisticDriverInfo::where('id', $this->getDriverId(Auth::user()->ref_id))->pluck('driver_name')->first();
+            $items_delivery = array(
+                'booking_id' => $this->getActiveHubBookingId(Auth::user()->ref_id),
+                'driver_id' => $this->getDriverId(Auth::user()->ref_id),
+                'driver_name' => $driver_name,
+            );
+            //return cans request 
+            $driver_id = $this->getDriverId(Auth::user()->ref_id);
+            // dd($driver_id);
+            $logisticVehicleInfoData = LogisticDriverInfo::select('logistic_driver_infos.*', 'logistic_partners.logistic_partner_name', 'logistic_vehicle_infos.reg_no', 'fuel_types.fuel_type', 'vehicle_types.vehicle_type', 'vehicle_brands.brand_name')
+                ->join('logistic_vehicle_infos', 'logistic_vehicle_infos.id', 'logistic_driver_infos.logistic_vehicle_id')
+                ->join('logistic_partners', 'logistic_partners.id', 'logistic_vehicle_infos.logistic_partner_id')
+                ->join('fuel_types', 'fuel_types.id', 'logistic_vehicle_infos.fuel_type_id')
+                ->join('vehicle_types', 'vehicle_types.id', 'logistic_vehicle_infos.vehicle_type_id')
+                ->join('vehicle_brands', 'vehicle_brands.id', 'logistic_vehicle_infos.vehicle_brand_id')
+                ->where('logistic_driver_infos.id', $driver_id)
+                ->whereNull('logistic_vehicle_infos.deleted_at')
+                ->whereNull('logistic_partners.deleted_at')
+                ->whereNull('vehicle_brands.deleted_at')
+                ->first();
+
+            $return_cans_request = $this->getHubReturnItems(Auth::user()->ref_id, $driver_id);
+
+            $hub_name = Hub::where('id', Auth::user()->ref_id)->pluck('hub_name')->first();
+
+            $hub_user_info = array(
+                'orders_to_assign' => $orders_to_assign,
+                'surrender_orders' => $surrender_orders,
+                'total_hub_orders' => $total_hub_orders,
+                'orders_assigned' => $orders_assigned,
+                'pending_orders_confirmation' => $pending_orders_confirmation,
+                'orders_not_delivered' => $orders_not_delivered,
+                'orders_delivered' => $orders_delivered,
+                'orders_by_product_types' => $product_watercan_list,
+                'items_delivery' => $items_delivery,
+                'return_cans_request' => $return_cans_request,
+                'delivery_person_list' => $this->getDPList(),
+                'qr_image' => $this->getHubQRImage(),
+                'hub_name' => $hub_name,
+                'driver_name' => $logisticVehicleInfoData->driver_name,
+                'logistic_partner_name' => $logisticVehicleInfoData->logistic_partner_name,
+                'vehicle_no' => strtoupper($logisticVehicleInfoData->reg_no),
+                'vehicle_brand_name' => $logisticVehicleInfoData->brand_name,
+            );
+
+            $response = array(
+                'message' => "Success",
+                'data' => $hub_user_info,
+                'status' => true,
+            );
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            // return $this->error($e->getMessage(), 200);
+            $response = array(
+                'message' => $this->errorMessage,
+                'status' => false,
+            );
+            return response($response, 500);
+        }
+    }
+
+    public function getHubReturnItems($hub_id, $driver_id)
+    {
+        $return_stocks = [];
+
+        $stocks = HubReturnItems::join('hub_return_items_dets', 'hub_return_items_dets.hub_return_items_id', 'hub_return_items.id')
+            ->where('driver_id', $driver_id)
+            ->where('status_id', StatusTypes::Approved)
+            ->where('hub_id', $hub_id)
+            ->get();
+        if ($stocks) {
+            foreach ($stocks as $key => $stock) {
+                $product = Products::where('id', $stock->product_id)->first();
+                $return_stocks[] = [
+                    'product_id' => $stock->product_id,
+                    'product_name' => $product->product_name,
+                    'product_type_id' => $product->product_type_id,
+                    'product_type_name' => $product->productType->product_type_name,
+                    'brand_id' => $product->brand_id,
+                    'brand_name' => $product->brand->brand_name,
+                    'category_id' => $product->category_id,
+                    'category_name' => $product->category->category_name,
+                    'qty' => (int)$stock->qty,
+                ];
+            }
+        }
+        return $return_stocks;
+    }
+    public function getDPListOrdersInfo()
+    {
+        try {
+            $dp_list = $this->getDPList();
+
+            $response = array(
+                'message' => "Success",
+                'data' => $dp_list,
+                'status' => true,
+            );
+
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            // return $this->error($e->getMessage(), 200);
+            $response = array(
+                'message' => $this->errorMessage,
+                'status' => false,
+            );
+            return response($response, 500);
+        }
+    }
+
+    public function getHubStocks()
+    {
+        try {
+            $stocks = HubStock::where('hub_id', Auth::user()->ref_id)->get();
+            $stock_list = [];
+            if ($stocks) {
+                foreach ($stocks as $key => $stock) {
+                    // if ($stock->products->is_emptycan_return == 1 && $stock->products->category->is_watercan == 1) {
+                    $stock_list[] = [
+                        'product_id' => $stock->product_id,
+                        'product_name' => $stock->products->product_name,
+                        'product_type_id' => $stock->products->product_type_id,
+                        'product_type_name' => $stock->products->productType->product_type_name,
+                        'brand_id' => $stock->products->brand_id,
+                        'brand_name' => $stock->products->brand->brand_name,
+                        'category_id' => $stock->products->category_id,
+                        'category_name' => $stock->products->category->category_name,
+                        'order_qty' => $stock->order_qty,
+                        'filled_qty' => $stock->filled_qty,
+                        'empty_qty' => $stock->empty_qty,
+                        'damaged_qty' => $stock->damaged_qty,
+                        'lost_qty' => $stock->lost_qty,
+                        'is_watercan' => $stock->products->category->is_watercan,
+                    ];
+                }
+            }
+
+            //TODO:: if stock results need to group then consider below statements
+            // $stockList = collect($stock_list);
+            // $groupedStocks = $stockList->groupBy('product_type_id');
+
+            $response = array(
+                'message' => "Success",
+                'data' => $stock_list,
+                'status' => true,
+            );
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            // return $this->error($e->getMessage(), 200);
+            $response = array(
+                'message' => $this->errorMessage,
+                'status' => false,
+            );
+            return response($response, 500);
+        }
+    }
+
+    public function updateLostDamagedHubStocks(Request $request)
+    {
+        // dd($request->all());
+        DB::beginTransaction();
+        try {
+
+            $hub_id = $this->getRefId(Auth::user()->id, RoleTypes::Hub);
+            foreach ($request->filled_stocks as $value) {
+
+                $hub_stock = HubStock::where('hub_id', $hub_id)
+                    ->where('product_id', $value['product_id'])->first();
+                if ($hub_stock) {
+                    $hub_stock->filled_qty -= $value['qty'];
+                    $hub_stock->damaged_qty += $value['qty'];
+                    $hub_stock->save();
+                }
+                $product = Products::find($value['product_id']);
+                HubStockHistory::Create([
+                    'hub_id' => $hub_id,
+                    'product_type_id' => $product->product_type_id,
+                    'brand_id' => $product->brand_id,
+                    'category_id' => $product->category_id,
+                    'product_id' => $product->id,
+                    'damage_lost_qty' => $value['qty']
+                ]);
+            }
+
+            foreach ($request->empty_stocks as $value) {
+
+                $hub_stock = HubStock::where('hub_id', $hub_id)
+                    ->where('product_id', $value['product_id'])->first();
+                if ($hub_stock) {
+                    $hub_stock->empty_qty -= $value['qty'];
+                    $hub_stock->damaged_qty += $value['qty'];
+                    $hub_stock->save();
+                }
+
+                $product = Products::find($value['product_id']);
+                HubStockHistory::Create([
+                    'hub_id' => $hub_id,
+                    'product_type_id' => $product->product_type_id,
+                    'brand_id' => $product->brand_id,
+                    'category_id' => $product->category_id,
+                    'product_id' => $product->id,
+                    'damage_lost_qty' => $value['qty']
+                ]);
+            }
+
+            $response = array(
+                'message' => "Success",
+                'data' => [],
+                'status' => true,
+            );
+            DB::commit();
+            return response($response, 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            // return $this->error($e->getMessage(), 200);
+            $response = array(
+                'message' => $this->errorMessage,
+                'status' => false,
+            );
+            return response($response, 500);
+        }
+    }
+
+    public function getLogisticsOrderItemsList(Request $request)
+    {
+        try {
+            $driver = LogisticDriverInfo::select('logistic_driver_infos.id', 'logistic_driver_infos.driver_name', 'logistic_driver_infos.mobile_no', 'logistic_partners.logistic_partner_name', 'logistic_vehicle_infos.reg_no', 'vehicle_brands.brand_name')
+                ->join('logistic_vehicle_infos', 'logistic_vehicle_infos.id', 'logistic_driver_infos.logistic_vehicle_id')
+                ->join('logistic_partners', 'logistic_partners.id', 'logistic_driver_infos.logistic_partner_id')
+                ->join('vehicle_brands', 'vehicle_brands.id', 'logistic_vehicle_infos.vehicle_brand_id')
+                ->where('logistic_driver_infos.id', $request->driver_id)
+                ->first();
+
+            // dd($driver);
+            $delivery_items = [];
+            $log_booking_dets = LogisticBookingDet::where('hub_id', Auth::user()->ref_id)
+                ->where('logistic_booking_id', $request->booking_id)
+                ->where('is_hub_confirmed', 0)
+                ->get();
+
+            foreach ($log_booking_dets as $key => $log_booking_det) {
+                // dd($log_return);
+                $delivery_items[] = array(
+                    'product_id' => $log_booking_det->product_id,
+                    'product_name' => $log_booking_det->products->product_name,
+                    'product_type_id' => $log_booking_det->products->product_type_id,
+                    'product_type_name' => $log_booking_det->products->productType->product_type_name,
+                    'brand_id' => $log_booking_det->products->brand_id,
+                    'brand_name' => $log_booking_det->products->brand->brand_name,
+                    'category_id' => $log_booking_det->products->category_id,
+                    'category_name' => $log_booking_det->products->category->category_name,
+                    'is_watercan' => $log_booking_det->products->category->is_watercan,
+                    'qty' => $log_booking_det->qty,
+                );
+            }
+
+            $hub_info = array(
+                'driver_id' => $driver->id,
+                'driver_name' => $driver->driver_name,
+                'logistic_partner_name' => $driver->logistic_partner_name,
+                'mobile_no' => $driver->mobile_no,
+                'vehicle_no' => strtoupper($driver->reg_no),
+                'vehicle_brand_name' => $driver->brand_name,
+                'delivery_items' => $delivery_items
+            );
+
+            $response = array(
+                'message' => "Success",
+                'data' => $hub_info,
+                'status' => true,
+            );
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            // return $this->error($e->getMessage(), 200);
+            $response = array(
+                'message' => $this->errorMessage,
+                'status' => false,
+            );
+            return response($response, 500);
+        }
+    }
+
+    public function collectLogiticsOrderItems(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $product_details = $request->product_details;
+            // dd($product_details);
+            foreach ($product_details as $value) {
+
+                $product = Products::where('id', $value['product_id'])->first();
+                $filled_qty = ($value['qty'] - $value['damaged_qty']);
+
+                LogisticStock::where('driver_id', $request->driver_id)
+                    ->where('product_id', $value['product_id'])
+                    ->update([
+                        'filled_qty' => DB::raw('filled_qty - ' . $value['qty']),
+                        'damaged_qty' => DB::raw('damaged_qty + ' . $value['damaged_qty']),
+                    ]);
+
+                LogisticStockHistory::create([
+                    'driver_id' => $request->driver_id,
+                    'product_type_id' => $product->productType->id,
+                    'brand_id' => $product->brand->id,
+                    'category_id' => $product->category->id,
+                    'product_id' => $value['product_id'],
+                    'outward_to_hub_qty' => $filled_qty,
+                    'outward_return_filled_qty' => $value['damaged_qty']
+                ]);
+
+                HubStock::where('hub_id', Auth::user()->ref_id)
+                    ->where('product_id', $value['product_id'])
+                    ->update([
+                        'order_qty' => DB::raw('order_qty - ' . $filled_qty),
+                        'filled_qty' => DB::raw('filled_qty + ' . $filled_qty),
+                    ]);
+
+                HubStockHistory::create([
+                    'hub_id' => Auth::user()->ref_id,
+                    'product_type_id' => $product->productType->id,
+                    'brand_id' => $product->brand->id,
+                    'category_id' => $product->category->id,
+                    'product_id' => $value['product_id'],
+                    'inward_from_logistics_qty' => $filled_qty,
+                    'inward_return_qty' => $value['damaged_qty']
+                ]);
+
+                LogisticBookingDet::where('logistic_booking_id', $request->booking_id)
+                    ->where('hub_id', Auth::user()->ref_id)
+                    ->where('product_id', $value['product_id'])
+                    ->update([
+                        'received_qty' => $filled_qty,
+                        'return_damaged_qty' => $value['damaged_qty'],
+                        'is_hub_confirmed' => 1,
+                        'delivered_on' => Carbon::now()
+                    ]);
+
+                LogisticBooking::where('id', $request->booking_id)->update([
+                    'status_id' => StatusTypes::HubCollected
+                ]);
+            }
+
+            $response = array(
+                'message' => "Success",
+                'data' => [],
+                'status' => true,
+            );
+            DB::commit();
+            return response($response, 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            // return $this->error($e->getMessage(), 200);
+            $response = array(
+                'message' => $this->errorMessage,
+                'status' => false,
+            );
+            return response($response, 500);
+        }
+    }
+
+    public function returnHubEmptyStocks(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+
+            $hub_returns = HubReturnItems::create([
+                'hub_id' => Auth::user()->ref_id,
+                'driver_id' => $request->driver_id,
+                'status_id' => StatusTypes::Approved
+            ]);
+
+            $product_details = $request->product_details;
+            // dd($product_details);
+            foreach ($product_details as $value) {
+                $product = Products::where('id', $value['product_id'])->first();
+
+                HubReturnItemsDet::create([
+                    'hub_return_items_id' => $hub_returns->id,
+                    'product_id' => $value['product_id'],
+                    'qty' => $value['qty'],
+                ]);
+
+                HubStock::where('hub_id', Auth::user()->ref_id)
+                    ->where('product_id', $value['product_id'])
+                    ->update([
+                        'empty_qty' => DB::raw('empty_qty - ' . $value['qty']),
+                    ]);
+
+                HubStockHistory::create([
+                    'hub_id' => Auth::user()->ref_id,
+                    'product_type_id' => $product->productType->id,
+                    'brand_id' => $product->brand->id,
+                    'category_id' => $product->category->id,
+                    'product_id' => $value['product_id'],
+                    'outward_to_logistics_qty' => $value['qty']
+                ]);
+
+                LogisticStock::where('driver_id', $request->driver_id)
+                    ->where('product_id', $value['product_id'])
+                    ->update([
+                        'empty_qty' => DB::raw('empty_qty + ' . $value['qty'])
+                    ]);
+
+                LogisticStockHistory::create([
+                    'driver_id' => $request->driver_id,
+                    'product_type_id' => $product->productType->id,
+                    'brand_id' => $product->brand->id,
+                    'category_id' => $product->category->id,
+                    'product_id' => $value['product_id'],
+                    'inward_from_hub_empty_qty' => $value['qty']
+                ]);
+            }
+
+            $response = array(
+                'message' => "Success",
+                'data' => [],
+                'status' => true,
+            );
+            DB::commit();
+            return response($response, 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            // return $this->error($e->getMessage(), 200);
+            $response = array(
+                'message' => $this->errorMessage,
+                'status' => false,
+            );
+            return response($response, 500);
+        }
+    }
+
+    public function updateDPExtraItems(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+
+            $hub_id = $this->getRefId(Auth::user()->id, RoleTypes::Hub);
+            foreach ($request->product_details as $value) {
+                HubStock::where('hub_id', $hub_id)
+                    ->where('product_id', $value['product_id'])->update([
+                        'filled_qty' => DB::raw('filled_qty - ' . $value['qty'])
+                    ]);
+                $product = Products::find($value['product_id']);
+                HubStockHistory::Create([
+                    'hub_id' => $hub_id,
+                    'product_type_id' => $product->product_type_id,
+                    'brand_id' => $product->brand_id,
+                    'category_id' => $product->category_id,
+                    'product_id' => $product->id,
+                    'outward_to_delivery_qty' => $value['qty']
+                ]);
+
+                DeliveryPersonStock::updateOrCreate([
+                    'hub_id' => $hub_id,
+                    'delivery_user_id' => $request->delivery_user_id,
+                    'product_id' => $value['product_id'],
+                ], [
+                    'hub_id' => $hub_id,
+                    'delivery_user_id' => $request->delivery_user_id,
+                    'product_id' => $value['product_id'],
+                    'extra_qty' => DB::raw('extra_qty + ' . $value['qty']),
+                ]);
+
+                DeliveryPersonStockHistory::create([
+                    'hub_id' => $hub_id,
+                    'delivery_user_id' => $request->delivery_user_id,
+                    'product_type_id' => $product->product_type_id,
+                    'brand_id' => $product->brand_id,
+                    'category_id' => $product->category_id,
+                    'product_id' => $product->id,
+                    'inward_from_hub_qty' => $value['qty']
+                ]);
+            }
+
+            $response = array(
+                'message' => "Success",
+                'data' => [],
+                'status' => true,
+            );
+            DB::commit();
+            return response($response, 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            // return $this->error($e->getMessage(), 200);
+            $response = array(
+                'message' => $this->errorMessage,
+                'status' => false,
+            );
+            return response($response, 500);
+        }
+    }
+    public function removeDPExtraItems(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+
+            $hub_id = $this->getRefId(Auth::user()->id, RoleTypes::Hub);
+            foreach ($request->product_details as $value) {
+                HubStock::where('hub_id', $hub_id)
+                    ->where('product_id', $value['product_id'])->update([
+                        'filled_qty' => DB::raw('filled_qty + ' . $value['qty'])
+                    ]);
+                $product = Products::find($value['product_id']);
+                HubStockHistory::Create([
+                    'hub_id' => $hub_id,
+                    'product_type_id' => $product->product_type_id,
+                    'brand_id' => $product->brand_id,
+                    'category_id' => $product->category_id,
+                    'product_id' => $product->id,
+                    'outward_filled_return_qty' => $value['qty']
+                ]);
+
+                DeliveryPersonStock::where('hub_id', $hub_id)
+                    ->where('delivery_user_id', $request->delivery_user_id)
+                    ->where('product_id', $value['product_id'])->update([
+                        'extra_qty' => DB::raw('extra_qty - ' . $value['qty']),
+                    ]);
+
+                DeliveryPersonStockHistory::create([
+                    'hub_id' => $hub_id,
+                    'delivery_user_id' => $request->delivery_user_id,
+                    'product_type_id' => $product->product_type_id,
+                    'brand_id' => $product->brand_id,
+                    'category_id' => $product->category_id,
+                    'product_id' => $product->id,
+                    'inward_return_qty' => $value['qty']
+                ]);
+            }
+
+            $response = array(
+                'message' => "Success",
+                'data' => [],
+                'status' => true,
+            );
+            DB::commit();
+            return response($response, 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            // return $this->error($e->getMessage(), 200);
+            $response = array(
+                'message' => $this->errorMessage,
+                'status' => false,
+            );
+            return response($response, 500);
+        }
+    }
+}

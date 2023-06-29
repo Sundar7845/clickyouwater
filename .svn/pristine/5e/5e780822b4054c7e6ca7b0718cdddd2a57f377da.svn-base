@@ -1,0 +1,108 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Dashboard | Category
+@endsection
+
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold mb-4">
+        Category
+    </h4>
+
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-12 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <form class="browser-default-validation">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Category Name</label>
+                                    <input type="tetx" id="basic-default-email" class="form-control"
+                                        placeholder="Category Name" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Category Description</label>
+                                    <input type="tetx" id="basic-default-email" class="form-control"
+                                        placeholder="Category Description" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Category Image</label>
+                                    <div class="mb-3">
+                                        <input id="txtfileattachment" type="file" class="form-control"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mt-4 mb-3">
+                                <button type="submit" class="btn btn-primary">Save</button>
+                                <button type="button" class="btn btn-danger">Cancel</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+    <!-- DataTable with Buttons -->
+    <div class="col-lg-12 mb-4 mb-lg-0">
+        <div class="card h-100">
+            <div class="card-datatable table-responsive pt-0">
+                <table id="category" class="table">
+                    <thead class="border-bottom">
+                        <tr>
+                            <th>S.No</th>
+                            <th>Category Name</th>
+                            <th>Category Description</th>
+                            <th>Category Image</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>20L Watercan</td>
+                            <td>Multi branded Packaged Drinking Water</td>
+                            <td><img src="{{ asset('assets/img/branding/smart_blue.jpg') }}" width="100"
+                                    height="60" class="img-fluid"></td>
+                            <td><a><i class="text-primary ti ti-pencil me-1"></i></a> <a><i
+                                        class="text-danger ti ti-trash me-1"></i></a></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Bottled Water / Beverages</td>
+                            <td>Bottled Water and Soft Drinks</td>
+                            <td><img src="{{ asset('assets/img/branding/smart_blue.jpg') }}" width="100"
+                                    height="60" class="img-fluid"></td>
+                            <td><a><i class="text-primary ti ti-pencil me-1"></i></a> <a><i
+                                        class="text-danger ti ti-trash me-1"></i></a></td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Bulk Water</td>
+                            <td>Tanker Water Supply - Salt Water, Drinking Water, Minerel Water</td>
+                            <td><img src="{{ asset('assets/img/branding/smart_blue.jpg') }}" width="100"
+                                    height="60" class="img-fluid"></td>
+                            <td><a><i class="text-primary ti ti-pencil me-1"></i></a> <a><i
+                                        class="text-danger ti ti-trash me-1"></i></a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--/ DataTable with Buttons -->
+</div>
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/products/category.js') }}"></script>
+@endsection

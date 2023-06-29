@@ -1,0 +1,22 @@
+$(document).ready(function() {
+    $('#category').DataTable({
+        processing: true,
+        serverSide: true,
+        order: [[0, "ASC"]],
+        ajax: "category/data",
+        fnRowCallback: function (nRow, aData, iDisplayIndex) {
+            $("td:first", nRow).html(iDisplayIndex + 1);
+            return nRow;
+        },
+        columns: [
+            { data: "id" },
+            { data: "category_name" },
+            { data: "category_desc" },
+            { data: "upload/category/",
+            render: function (data) {
+                return '<img src="' + data + '" class="avatar" width="50" height="50"/>';}
+             },
+            { data: "action" }
+        ],
+    });
+});

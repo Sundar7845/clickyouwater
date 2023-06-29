@@ -1,0 +1,32 @@
+<?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class UserProfileResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
+     */
+    public function toArray($request)
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->display_name,
+            'email' => $this->email,
+            'user_img_path' => ($this->user_img_path == null ? "" : url($this->user_img_path)),
+            'referral_code' => $this->referral_code,
+            'last_login' => $this->last_login,
+            'mobile' => $this->customer->mobile,
+            'referral_code' => $this->referral_code,
+            'customertype_id' => $this->customer->customertype_id,
+            'wallet_points' => $this->wallet_points,
+            'cans_with_you' => 0,
+            'is_approved' => $this->is_approved
+        ];
+    }
+}

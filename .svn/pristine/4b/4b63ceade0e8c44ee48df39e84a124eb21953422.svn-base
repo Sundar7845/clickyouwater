@@ -1,0 +1,40 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\Status;
+use Illuminate\Database\Seeder;
+
+class StatusSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        $data = [
+            ['status' => 'Success'],
+            ['status' => 'Failed'],
+            ['status' => 'Pending'],
+            ['status' => 'Approved'],
+            ['status' => 'Rejected'],
+            ['status' => 'Accepted'],
+            ['status' => 'Onprocess'],
+            ['status' => 'Cancelled'],
+            ['status' => 'Payment Initiated'],
+            ['status' => 'Signature Mismatch'],
+            ['status' => 'Invoice Generated'],
+            ['status' => 'Transaction Failed (due to logical error)'],
+            ['status' => 'Refund Initiated'],
+            ['status' => 'Refund Processed'],
+            ['status' => 'Order Placed'],
+            ['status' => 'Order Shipped'],
+            ['status' => 'Order Delivered'],
+            ['status' => 'Order Completed']
+        ];
+
+        Status::insert($data);
+    }
+}

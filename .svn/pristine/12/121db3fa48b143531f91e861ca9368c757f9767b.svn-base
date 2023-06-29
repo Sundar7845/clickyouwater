@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Masters;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class DocumentConfigController extends Controller
+{
+    public function documentConfig()
+    {
+        return view('admin.masters.document_configuration.document_config');
+    }
+}

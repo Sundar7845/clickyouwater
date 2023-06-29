@@ -1,0 +1,57 @@
+$(document).ready(function() {
+    $('#tblLedger').DataTable();
+});
+
+function cancel() {
+    $("#txtLedgerCode").val("");
+    $("#ddlLedgertype").val("").trigger("change");
+    $("#txtLedgername").val("");
+    $("#txtmobile").val("");
+    $("#ddlStateName").val("").trigger("change");
+    $("#ddlCityName").val("").trigger("change");
+    $("#ddlArea").val("").trigger("change");
+    $("#txtAddress").val("");
+    $("#txtPincode").val("");
+    $("#txtCreditPeriod").val("");
+    $("#txtSettlemnt").val("");
+    $("#btnSave").text("save");
+}
+
+
+
+//jquery Validation
+$(function () {
+
+    $("form[name='ledger']").validate({
+
+        rules: {
+            txtLedgerCode: "required",
+            ddlLedgertype: "required",
+            txtLedgername: "required",
+            txtmobile: "required",
+            ddlStateName: "required",
+            ddlCityName: "required",
+            ddlArea: "required",
+            txtAddress: "required",
+            txtPincode: "required",
+            txtCreditPeriod: "required",
+            txtSettlemnt: "required",
+        },
+
+        errorPlacement: function (error, element) {
+            if (element.is(":radio")) {
+                error.appendTo(element.parents(".form-group"));
+            } else {
+                // This is the default behavior
+                // error.insertAfter(element);
+                if (element.siblings(".error").html() == undefined) {
+                    error.appendTo(element.parent().next(".error"));
+                } else {
+                    error.appendTo(element.siblings(".error"));
+                }
+            }
+        },
+       
+    });
+    
+});

@@ -1,0 +1,218 @@
+<?php
+
+// app/Http/Controllers/API/OrdersController.php
+
+namespace App\Http\Controllers\API;
+
+use App\Http\Controllers\Controller;
+use App\Http\Resources\OrderDetailsResource;
+use App\Http\Resources\OrderResource;
+use App\Models\Order;
+use App\Models\OrderDet;
+use App\Models\OrderTracking;
+use App\Models\UserOrderHistory;
+use App\Traits\Common;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use App\Traits\ResponseAPI;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class OrdersController extends Controller
+{
+    use ResponseAPI;
+    use Common;
+
+    public function placeOrder(Request $request)
+    {
+        $validator = $request->validate([
+
+            'hub_id' => 'required',
+            'delivery_address_id' => 'required',
+            'delivery_address' => 'required',
+            'delivery_charge' => 'required',
+            'coupon_id' => 'nullable',
+            'coupon_code' => 'nullable',
+            'total_discount_amount' => 'required',
+            'total_igst_amount' => 'required',
+            'total_sgst_amount' => 'required',
+            'total_cgst_amount' => 'required',
+            'total_qty' => 'required',
+            'wallet_points_used' => 'required',
+            'deposit_amount' => 'required',
+            'total_tax_amount' => 'required',
+            'sub_total' => 'required',
+            'taxable_amount' => 'required',
+            'roundoff' => 'required',
+            'grand_total' => 'required',
+            'desc' => 'nullable',
+            'status_id' => 'required',
+            'payment_method' => 'required',
+            'payment_through' => 'required',
+            'product_details' => 'required|array',
+            'product_details.*.product_id' => 'required',
+            'product_details.*.qty' => 'required',
+            'product_details.*.price' => 'required',
+        ]);
+        DB::beginTransaction();
+
+        try {
+            $currentDate = now();
+
+            $transaction_date = $currentDate;
+            $exp_delivery_date = $currentDate;
+            $order_no = rand(111111, 999999);
+
+            $orders = Order::create([
+                'order_no' => $order_no,
+                'user_id' => Auth::user()->id,
+                'hub_id' => $request->hub_id,
+                'delivery_address_id' => $request->delivery_address_id,
+                'delivery_address' => $request->delivery_address,
+                'delivery_charge' => $request->delivery_charge,
+                'exp_delivery_date' => $exp_delivery_date,
+                'coupon_id' => $request->coupon_id,
+                'coupon_code' => $request->coupon_code,
+                'total_discount_amount' => $request->total_discount_amount,
+                'total_igst_amount' => $request->total_igst_amount,
+                'total_sgst_amount' => $request->total_sgst_amount,
+                'total_cgst_amount' => $request->total_cgst_amount,
+                'total_qty' => $request->total_qty,
+                'wallet_points_used' => $request->wallet_points_used,
+                'deposit_amount' => $request->deposit_amount,
+                'total_tax_amount' => $request->total_tax_amount,
+                'sub_total' => $request->sub_total,
+                'taxable_amount' => $request->taxable_amount,
+                'roundoff' => $request->roundoff,
+                'grand_total' => $request->grand_total,
+                'desc' => $request->desc,
+                'status_id' => $request->status_id,
+                'transaction_amount' => $request->transaction_amount,
+                'transaction_date' => $transaction_date,
+                'payment_method' => $request->payment_method,
+                'payment_through' => $request->payment_through,
+            ]);
+            $product_details = $request->product_details;
+            foreach ($product_details as $value) {
+                # code...
+                OrderDet::create([
+                    'order_id' => $orders->id,
+                    'product_id' => $value['product_id'],
+                    'qty' => $value['qty'],
+                    'price' => $value['price'],
+                ]);
+            }
+            UserOrderHistory::create([
+                'order_id' => $orders->id,
+                'status_id' => $request->status_id,
+            ]);
+            OrderTracking::create([
+                'order_id' => $orders->id,
+                'status_id' => $request->status_id,
+            ]);
+            DB::commit(); // Commit the transaction
+
+            $response = [
+                'status' => true,
+                'data' => ['order_id' => $orders->id],
+                'message' => 'Payment Initiated'
+            ];
+            // dd($response);
+            return response($response, 200);
+        } catch (\Exception $e) {
+            DB::rollback(); // Roll back the transaction if an error occurs
+
+            $response = array(
+                'message' => "Failed",
+                'status' => false,
+
+            );
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            // return response($response, 200);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+    public function updatePaymentStatus(Request $request)
+    {
+        $validator = $request->validate([
+            'order_id' => 'required',
+            'status_id' => 'required',
+            'transaction_response' => 'required',
+            'transaction_status' => 'required',
+            'transaction_id' => 'required',
+        ]);
+        DB::beginTransaction();
+
+        try {
+            $order = Order::find($request->order_id);
+            $order->status_id = $request->status_id;
+            $order->transaction_response = $request->transaction_response;
+            $order->transaction_id = $request->transaction_id;
+            $order->transaction_status = $request->transaction_status;
+            $order->save();
+
+            UserOrderHistory::create([
+                'order_id' => $request->order_id,
+                'status_id' => $request->status_id,
+            ]);
+            OrderTracking::create([
+                'order_id' => $request->order_id,
+                'status_id' => $request->status_id,
+            ]);
+            DB::commit();
+            $response = array(
+                'message' => "Updated Successfully",
+                'data' => [],
+                'status' => false,
+            );
+            return response($response, 200);
+
+        } catch (\Exception $e) {
+
+            DB::rollback(); // Roll back the transaction if an error occurs
+
+            $response = array(
+                'message' => "Failed",
+                'status' => false,
+            );
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            // return response($response, 200);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+    public function getOrderHistory()
+    {
+        // $userOrders = $orders = Order::with(['products' => function ($query) {
+        //     $query->with('orderDets');
+        // }])
+        // ->where('user_id', Auth::user()->id)
+        // ->get();
+        $userOrders = Order::where('user_id', Auth::user()->id)
+        ->with('products.orderDets')
+        ->get();
+
+        $response = array(
+            'message' => "Updated Successfully",
+            'data' =>     OrderResource::collection($userOrders),
+            'status' => false,
+        );
+        return response($response, 200);
+
+    }
+    public function getOrderDetails($id)
+    {
+        // $userOrders = $orders = Order::with(['products' => function ($query) {
+        //     $query->with('orderDets');
+        // }])
+        // ->where('user_id', Auth::user()->id)
+        // ->get();
+        $userOrders = Order::where('id',$id)->with('products.orderDets')->get();
+        $response = array(
+            'message' => "Updated Successfully",
+            'data' =>      OrderDetailsResource::collection($userOrders),
+            'status' => false,
+        );
+        return response($response, 200);
+
+    }
+}

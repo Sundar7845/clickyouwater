@@ -1,0 +1,20 @@
+$(document).ready(function() {
+    $('#tblrefferalhistory').DataTable({
+        processing: true,
+        serverSide: true,
+        responsive: true,
+        order: [[0, "ASC"]],
+        ajax: "refferalcustomer/data",
+        fnRowCallback: function (nRow, aData, iDisplayIndex) {
+            $("td:first", nRow).html(iDisplayIndex + 1);
+            return nRow;
+        },
+        columns: [
+            { data: "user_name" },
+            { data: "user_name" },
+            { data: "referral_code"},
+            { data: "user_id_count"},
+            { data: "action" }
+        ],
+    });
+});

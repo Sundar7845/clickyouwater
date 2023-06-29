@@ -1,0 +1,57 @@
+<?php
+
+namespace App\Http\Controllers\API\Hub;
+
+use App\Enums\StatusTypes;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\HubOrderResource;
+use App\Models\DeliveryPerson;
+use App\Models\Order;
+use App\Models\OrderDelivery;
+use App\Traits\Common;
+use App\Traits\ResponseAPI;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class HubController extends Controller
+{
+    //
+    use ResponseAPI;
+    use Common;
+
+    public function getDPListOrdersInfo()
+    {
+        try {
+            $deliveryPerson = DeliveryPerson::where('hub_id', Auth::user()->ref_id)->get();
+            if ($deliveryPerson->count() != 0) {
+                $deliveryMan = [];
+                foreach ($deliveryPerson as $key => $value) {
+                    $deliveryMan[] = array(
+                        'name' => $value->delivery_person_name,
+                        'delivery_person_id' => $value->user->id,
+                        'ref_id' => $value->id,
+                    );
+                }
+
+                $response = array(
+                    'message' => "Success",
+                    'data' => $deliveryMan,
+                    'status' => true,
+                );
+            } else {
+
+                $response = array(
+                    'message' => "Success",
+                    'data' => [],
+                    'status' => true,
+                );
+            }
+
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+}

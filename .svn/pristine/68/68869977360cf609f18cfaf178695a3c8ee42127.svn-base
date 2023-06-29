@@ -1,0 +1,101 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+
+class User extends Authenticatable
+{
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'id',
+        'ref_code',
+        'user_name',
+        'ref_id',
+        'email',
+        'user_img_path',
+        'password',
+        'role_id',
+        'display_name',
+        'mobile',
+        'mobile_verified_at',
+        'is_active',
+        'otp',
+        'otp_expiry',
+        'referral_code',
+        'device_id',
+        'closing_balance',
+        'fcm_token',
+        'wallet_points',
+        'last_login',
+        'created_by',
+        'updated_by',
+        'deleted_by'
+    ];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
+
+    public function customer()
+    {
+        return $this->hasOne(Customer::class, 'id', 'ref_id');
+    }
+
+    protected $dates = ['deleted_at'];
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::bootSoftDeletes();
+    }
+
+    public static function bootSoftDeletes()
+    {
+        static::deleting(function ($users) {
+            if ($users->employees()->count() > 0) {
+                throw new \Exception('Cannot delete employee type because there are associated employees.');
+            }
+        });
+
+        static::restoring(function ($roles) {
+            // add any restoring logic here if necessary
+        });
+    }
+
+    public function employees()
+    {
+        return $this->hasMany(Employee::class);
+    }
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+}

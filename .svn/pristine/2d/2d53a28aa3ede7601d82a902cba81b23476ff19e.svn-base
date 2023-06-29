@@ -1,0 +1,137 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Payments List | Click Your Order | Dashboard
+@endsection
+
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-1 mb-4">
+        Payments List
+    </h4>
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-12 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="nav-align-top mb-4">
+                                <ul class="nav nav-tabs border-0" role="tablist">
+                                    <li class="nav-item">
+                                        <button type="button" class="nav-link active" role="tab"
+                                            data-bs-toggle="tab" data-bs-target="#navs-pills-justified-home"
+                                            aria-controls="navs-top-home" aria-selected="true">
+                                            General
+                                        </button>
+                                    </li>
+                                    <li class="nav-item">
+                                        <button type="button" class="nav-link" role="tab" data-bs-toggle="tab"
+                                            data-bs-target="#navs-pills-justified-profile"
+                                            aria-controls="navs-top-profile" aria-selected="false">
+                                            Employee
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <div class="d-flex justify-content-lg-end">
+                                {{-- <a href="{{ route('expenses.export') }}" class="btn btn-outline-primary me-3">Export</a> --}}
+                                <button type="button" class="btn btn-flat btn-primary" id="btnDate"
+                                    style="height: 36px;">
+                                    <i class="fa fa-calendar"></i>
+                                    <span id="spnDate" style="padding-left: 5px;">Today</span>
+                                    <i class="fa fa-caret-down" style="padding-left: 5px;"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mt-3">
+                            <div class="card-datatable table-responsive pt-0">
+                                <div class="tab-content p-0">
+                                    <div class="tab-pane active" id="navs-pills-justified-home" role="tabpanel">
+                                        <div class="col-4">
+                                            <select class="form-select select2" id="ddlExpLedger" name="ddlExpLedger">
+                                                <option value='0'>Select Expense Ledger</option>
+                                                @foreach ($generalExpenseData as $item)
+                                                    <option value={{ $item->id }}>{{ $item->ledger_name }}</option>
+                                                @endforeach
+                                            </select>
+                                            <input type="hidden" name="mode" value="creditnotefilter">
+                                        </div>
+                                        <table id="tblGeneralPayment" class="table">
+                                            <thead>
+                                                <tr class='header'>
+                                                    <th>S.No</th>
+                                                    <th>Pay No</th>
+                                                    <th>Pay Date</th>
+                                                    <th>Payment For</th>
+                                                    <th>Ledger Name</th>
+                                                    <th>Payment Type</th>
+                                                    <th id="total_paid">Paid</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tbodyList">
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <th colspan="6" style="font-weight: bolder;">TOTAL</th>
+                                                    <th id="total_paid"></th>
+                                                    <th></th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                    <div class="tab-pane" id="navs-pills-justified-profile" role="tabpanel">
+                                        <div class="col-4">
+                                            <select class="form-select select2" id="ddlExpemployee"
+                                                name="ddlExpemployee">
+                                                <option value='0'>Select Expense Employee</option>
+                                                @foreach ($employeeExpenseData as $item)
+                                                    <option value={{ $item->id }}>{{ $item->display_name }}</option>
+                                                @endforeach
+                                            </select>
+                                            <input type="hidden" name="mode" value="creditnotefilter">
+                                        </div>
+                                        <table id="tblEmployeePayment" class="table">
+                                            <thead>
+                                                <tr class='header'>
+                                                    <th>S.No</th>
+                                                    <th>Pay.No</th>
+                                                    <th>Pay.Date</th>
+                                                    <th>Payment For</th>
+                                                    <th>Employee Name</th>
+                                                    <th>Payment Type</th>
+                                                    <th id="emp_total_paid">Paid</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tbodyList">
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <th colspan="6" style="font-weight: bolder;">TOTAL</th>
+                                                    <th id="emp_total_paid"></th>
+                                                    <th></th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+</div>
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/admin/accounts/payments/paymentlist.js') }}"></script>
+@endsection

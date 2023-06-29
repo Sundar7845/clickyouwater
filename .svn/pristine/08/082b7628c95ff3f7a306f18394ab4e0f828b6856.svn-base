@@ -1,0 +1,187 @@
+//DataTable
+var treeData = [];
+var selKeys;
+var MenuList = "";
+$(document).ready(function () {
+	$("#tblRole").DataTable({
+		processing: true,
+		serverSide: true,
+		order: [[0, "ASC"]],
+		ajax: "permission/data",
+		fnRowCallback: function (nRow, aData, iDisplayIndex) {
+			$("td:first", nRow).html(iDisplayIndex + 1);
+			return nRow;
+		},
+		columns: [
+			{ data: "id" },
+			{ data: "role_id" },
+			{ data: "action" },
+		],
+	});
+
+	//Load MenuList
+	Loadmenu();
+	$("#divMenuList").dynatree({
+		autoCollapse: true,
+		checkbox: true,
+		selectMode: 3,
+		children: treeData,
+		debugLevel: 0,
+		onSelect: function (select, node) {
+			selKeys = $.map(node.tree.getSelectedNodes(), function (node) {
+				return node.data.key;
+			});
+			var partsel = new Array();
+			$(".dynatree-partsel:not(.dynatree-selected)").each(function () {
+				var node = $.ui.dynatree.getNode(this);
+				partsel.push(node.data.key);
+			});
+			selKeys = selKeys.concat(partsel);
+		}
+	});
+});
+
+//JS Validation
+$(function () {
+	$("form[name='rolePermission']").validate({
+		rules: {
+			ddlRole: "required",
+		},
+		messages: {
+			ddlRole: "This field is required"
+		},
+		submitHandler: function (form) {
+			getDetail();
+			form.submit();
+		}
+
+	});
+});
+
+//Load Permission ID To Database
+function getDetail() {
+	var LST = [];
+
+	var tree = $("#divMenuList").dynatree("getTree");
+
+	$.each(selKeys, function (idx, val) {
+		LST.push(val);
+	});
+	$("#permission_id").val(LST);
+}
+
+//Load Menus
+function Loadmenu() {
+	jQuery.ajax({
+		type: "GET",
+		url: "/get-menus",
+		async: false,
+		data: {
+			"type": 'menus'
+		},
+		dataType: 'json',
+		success: function (data) {
+			MenuList = data.menus;
+			bindMenu();
+		}
+	});
+}
+
+//Binding Menus
+function bindMenu() {
+	$.each(MenuList, function (idx, val) {
+
+		if (this.is_mainmenu == "1") {
+			if (this.id == "1") {
+				treeData.push({ "title": this.menu_name, "key": $.trim(this.id), select: true, unselectable: true });
+			}
+			else {
+				treeData.push({ "title": this.menu_name, "key": $.trim(this.id), "children": [] });
+			}
+		}
+		else {
+			$.each(treeData, function () {
+				if (this.key == $.trim(val.parent_id)) {
+					this.children.push({ "title": val.menu_name, "key": $.trim(val.id) });
+				}
+			});
+		}
+
+	});
+
+}
+
+//Edit Permission Data
+function doEdit(id, UGID) {
+	$("#hdPermission_id").val(id);
+	$("#ddlRole").focus();
+	$("#btnSave").text("Update");
+	$("#roleTitle").text("Update Roles & Permission");
+	getPermissionById(id);
+	GetRollmenu(id);
+}
+
+function GetRollmenu(id) {
+	var RID = id;
+
+	jQuery.ajax({
+		type: "GET",
+		url: "getpermission/" + id,
+		async: false,
+		data: {
+			"id": RID
+		},
+		dataType: 'json',
+		success: function (data) {
+			console.log(data.menus);
+			var MList = "";
+
+			$.each(data.menus, function (idx, val) {
+				MList = val.replace(/[\[\]']+/g, '');
+			});
+			MList = MList.split(",");
+
+			const oldArray = MList
+			const removeItems = ['2', '21', '27']
+
+			const newArray = oldArray.filter((value) => {
+				return !removeItems.includes(value)
+			})
+
+			$("#divMenuList").dynatree("getRoot").visit(function (node) {
+				node.select(false);
+			});
+			$.each(newArray, function (idx, val) {
+				$("#divMenuList").dynatree("getRoot").visit(function (node) {
+					if (node.data.key == $.trim(val)) {
+						node.select(true);
+					}
+				});
+			});
+		}
+	});
+}
+
+//Delete Permission Data
+function showDelete(id) {
+	confirmDelete(id, "delete/permission/", "tblRole");
+}
+
+//Get Permission By ID
+function getPermissionById(id) {
+	$.ajax({
+		type: "GET",
+		url: "getpermission/" + id,
+		dataType: "json",
+		success: function (data) {
+			$("#ddlRole").val(data.permission.role_id).trigger("change");
+		},
+	});
+}
+
+//Cancel
+function cancel() {
+	$("#ddlRole").val(0).trigger("change");
+	$("#roleTitle").text("Roles & Permission");
+	$("#btnSave").text("Save");
+}

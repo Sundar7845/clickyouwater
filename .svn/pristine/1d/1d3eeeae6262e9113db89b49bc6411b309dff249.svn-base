@@ -1,0 +1,53 @@
+<?php
+
+namespace App\Http\Controllers\API\Manufacture;
+
+use App\Http\Controllers\Controller;
+use App\Models\Manufacturer;
+use App\Traits\Common;
+use App\Traits\ResponseAPI;
+use Illuminate\Support\Facades\Auth;
+
+class ManufactureController extends Controller
+{
+    //
+    use ResponseAPI;
+    use Common;
+
+    public function getMFUserInfo()
+    {
+        try {
+            //orders can count
+            $orders_can_count = 0;
+            //orders other items count
+            $orders_others_count = 0;
+            //cans in production count
+            $cans_production_count = 0;
+
+            //Logistics 
+            //TODO::items booked request 
+            $items_booked = [];
+
+            $manufacturer_name = Manufacturer::where('id', Auth::user()->ref_id)->pluck('manufacturer_name')->first();
+
+            $mf_user_info = array(
+                'orders_can_count' => $orders_can_count,
+                'orders_others_count' => $orders_others_count,
+                'cans_production_count' => $cans_production_count,
+                'items_booked' => $items_booked,
+                'qr_image' => $this->getManufactureQRImage(),
+                'manufacturer_name' => $manufacturer_name
+            );
+
+            $response = array(
+                'message' => "Success",
+                'data' => $mf_user_info,
+                'status' => true,
+            );
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+}

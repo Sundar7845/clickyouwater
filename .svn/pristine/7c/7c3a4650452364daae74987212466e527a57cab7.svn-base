@@ -1,0 +1,183 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Dashboard | Brand Allocation
+@endsection
+
+<!-- Content -->
+
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold mb-4">
+        <span class="fw-light">Masters /</span> Brand Allocation
+    </h4>
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-6 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <form class="browser-default-validation">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <h5><label class="form-label" for="basic-default-name">State Name<span
+                                        class="text-danger">*</span></label></h5>
+                                    <select name="" id="" class="select2 form-select form-select-lg">
+                                        <option value="TN">Tamilnadu</option>
+                                        <option value="KL">Kerala</option>
+                                        <option value="AP">Andra Pradesh</option>
+                                        <option value="KA">Karnataka</option>
+                                        <option value="OR">Oregon</option>
+                                        <option value="WA">Washington</option>
+                                        <option value="AZ">Arizona</option>
+                                        <option value="CO">Colorado</option>
+                                    </select>
+                                </div>
+                                <div class="mt-4 mb-3">
+                                    <button type="submit" class="btn btn-primary">Allocate</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <form class="browser-default-validation">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <h5><label class="form-label" for="basic-default-name">Brands<span
+                                                class="text-danger">*</span></label></h5>
+                                    <div class="scroll-bar">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="chkAll">
+                                            <label class="custom-control-label" for="chkAll">B1</label>
+                                        </div>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="chkAll">
+                                            <label class="custom-control-label" for="chkAll">B2</label>
+                                        </div>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="chkAll">
+                                            <label class="custom-control-label" for="chkAll">B3</label>
+                                        </div>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="chkAll">
+                                            <label class="custom-control-label" for="chkAll">B4</label>
+                                        </div>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="chkAll">
+                                            <label class="custom-control-label" for="chkAll">B5</label>
+                                        </div>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="chkAll">
+                                            <label class="custom-control-label" for="chkAll">B6</label>
+                                        </div>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="chkAll">
+                                            <label class="custom-control-label" for="chkAll">B7</label>
+                                        </div>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="chkAll">
+                                            <label class="custom-control-label" for="chkAll">B8</label>
+                                        </div>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="chkAll">
+                                            <label class="custom-control-label" for="chkAll">B9</label>
+                                        </div>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="chkAll">
+                                            <label class="custom-control-label" for="chkAll">B10</label>
+                                        </div>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="chkAll">
+                                            <label class="custom-control-label" for="chkAll">B11</label>
+                                        </div>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="chkAll">
+                                            <label class="custom-control-label" for="chkAll">B12</label>
+                                        </div>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="chkAll">
+                                            <label class="custom-control-label" for="chkAll">B13</label>
+                                        </div>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="chkAll">
+                                            <label class="custom-control-label" for="chkAll">B14</label>
+                                        </div>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="chkAll">
+                                            <label class="custom-control-label" for="chkAll">B15</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 mt-5">
+            <div class="card">
+              <div class="card-body">
+                <h5>Brand Allocation List</h5>
+                <form class="browser-default-validation">
+                  <div class="row">
+                    <div class="col-lg-12 mb-4 mb-lg-0">
+                      <div class="card h-100">
+                        <div class="table-responsive">
+                          <table class="table table-borderless">
+                            <thead class="border-bottom">
+                              <tr>
+                                <th>S.No</th>
+                                <th>State Name</th>
+                                <th>ACTION</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Tamilnadu</td>
+                                    <td><a><i class="text-primary ti ti-pencil me-1"></i></a> <a><i class="text-danger ti ti-trash me-1"></i></a></td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Kerala</td>
+                                    <td><a><i class="text-primary ti ti-pencil me-1"></i></a> <a><i class="text-danger ti ti-trash me-1"></i></a></td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Banglore</td>
+                                    <td><a><i class="text-primary ti ti-pencil me-1"></i></a> <a><i class="text-danger ti ti-trash me-1"></i></a></td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>Pondicherry</td>
+                                    <td><a><i class="text-primary ti ti-pencil me-1"></i></a> <a><i class="text-danger ti ti-trash me-1"></i></a></td>
+                                </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        <!-- /Browser Default -->
+    </div>
+</div>
+
+<!-- / Content -->
+@endsection
+<style>
+div.scroll-bar {
+    background-color: #fff;
+    width: 100%;
+    height: 100px;
+    overflow: scroll;
+}
+</style>

@@ -1,0 +1,78 @@
+<?php
+
+namespace App\Traits;
+
+use App\Models\Cordinates;
+use App\Models\Hub;
+use App\Models\User;
+use GuzzleHttp\Client;
+use GeometryLibrary\PolyUtil;
+use GoogleMaps\Facade\GoogleMapsFacade;
+use Grimzy\LaravelMysqlSpatial\Types\Point;
+use Grimzy\LaravelMysqlSpatial\Types\Polygon;
+use Grimzy\LaravelMysqlSpatial\Types\LineString;
+
+trait Maps
+{
+    // private $api_key = 'AIzaSyCxSrT3mnTnRnbUSW1DGhTKAu2kGpdgm5Y';
+    public function getDistance($fromLatLng, $toLatLng)
+    {
+        $response = GoogleMapsFacade::load('directions')
+            ->setParam(['destination' => $toLatLng, 'origin' => $fromLatLng])
+            ->get();
+
+            // dd($response);
+        // $url = 'https://maps.googleapis.com/maps/api/directions/json?destination=' . $toLatLng . '&origin=' . $fromLatLng . '&key=' . $this->api_key;
+
+        // $client = new Client();
+        // $response = $client->request('GET', $url);
+        // $data = json_decode($response->getBody(), true);
+
+        $data = json_decode($response, true);
+
+        $distance = $data['routes'][0]['legs'][0]['distance'];
+        $duration = $data['routes'][0]['legs'][0]['duration'];
+
+        $result = [
+            'distance' => $distance,
+            'duration' => $duration,
+        ];
+
+        return response()->json($result)->content();
+    }
+
+    public function getServiceAvailable($lat, $lng, $state_id, $city_id)
+    {
+        $point = new Point($lat, $lng);
+
+        $hub = Hub::where('is_active', 1)
+            ->where('state_id', $state_id)
+            ->where('city_id', $city_id)
+            ->contains('geo_coordinates', $point)->latest()->first();
+
+        if (!$hub) {
+            $response = [
+                'hub_id' => $hub,
+                'status' => false,
+                'message' => "Service not available in this area",
+            ];
+            return response($response, 200);
+        } else {
+            $response = [
+                'hub_id' => $hub->id,
+                'status' => true,
+                'message' => "Service available in this area",
+            ];
+            return response($response, 200);
+        }
+    }
+
+    public static function format_coordiantes($coordinates)
+    {
+        $data = [];
+        foreach ($coordinates as $coord) {
+            $data[] = (object)['lat' => $coord->getlat(), 'lng' => $coord->getlng()];
+        }
+        return $data;
+    }
+}

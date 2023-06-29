@@ -1,0 +1,64 @@
+$(document).ready(function () {
+    Orderlist();
+});
+
+function Orderlist(){
+
+    var user_id = $('#hduserid').val();
+    $('#tblRecentOrders').DataTable({
+        processing: true,
+        serverSide: true,
+        responsive: true,
+        order: [[0, "ASC"]],
+        bDestroy: true,
+        ajax: "ordersData?user_id=" + user_id, 
+        
+        // fnRowCallback: function (nRow, aData, iDisplayIndex) {
+        //     $("td:first", nRow).html(iDisplayIndex + 1);
+        //     return nRow;
+        // },
+        // columns: [
+        //     { data: "id", orderable: false },
+        //     { data: null,
+        //         render: function (data, type, row) {
+        //             if (data) {
+        //                 let html = `<h>${data.customer_name}</h>`;
+        //                 if (data.email) {
+        //                     html += `<div class="text-muted p-1">
+        //                                 <small class="bg-light p-1">${data.email}</small>
+        //                             </div>`;
+        //                 }
+        //                 return html;
+        //             } else {
+        //                 return "";
+        //             }
+        //         }
+        //     },
+        //     { data: "customer_type" },
+        //     { data: "mobile" },
+        //     { data: "formatted_reg_date" },
+        //     {
+        //         data: "is_active",
+        //         render: function (data, type, row) {
+        //             return `<label class="switch">
+        //                 <input onclick="doStatus(${row.id
+        //                 });" id="chkCustomer${row.id
+        //                 }" type="checkbox" class="switch-input"
+        //                 name="chkCustomer" '  ${data == 1 ? "checked" : ""
+        //                 } ' />
+        //                 <span class="switch-toggle-slider">
+        //                     <span class="switch-on"></span>
+        //                     <span class="switch-off"></span>
+        //                 </span>
+        //             </label>`;
+        //         },
+        //     },
+        //     {
+        //         data: "company",
+        //         render: function (data, type, row) {
+        //             return `<a href="/customerssummary/${row.id}" class="btn btn-primary">View</a>`;
+        //         }
+        //     },
+        // ],
+    });
+}

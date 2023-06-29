@@ -1,0 +1,47 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateOffersTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('offers', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('offer_type_id')->nullable();
+            $table->foreign('offer_type_id')->references('id')->on('offer_types');
+            $table->string('offer_name')->nullable();
+            $table->integer('validity')->nullable();
+            $table->dateTime('start_date')->nullable();
+            $table->dateTime('end_date')->nullable();
+            $table->string('offer_image_path')->nullable();
+            $table->integer('offer_total_points')->nullable();
+            $table->integer('offer_claim_points')->nullable();
+            $table->integer('is_active')->default(0);
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->foreign('created_by')->references('id')->on('users');
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->foreign('updated_by')->references('id')->on('users');
+            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->foreign('deleted_by')->references('id')->on('users');
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('offers');
+    }
+}

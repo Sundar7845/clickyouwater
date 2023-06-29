@@ -1,0 +1,273 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Ledger
+@endsection
+
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold mb-4">
+        <span id="heading">Add Ledger</span> 
+    </h4>
+
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-12 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <form action="{{ route('addledger') }}" id="ledger" name="ledger" method="POST">
+                        @csrf
+                        <input type="hidden" name="hdLedgerId" id="hdLedgerId" value="">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Ledger Code<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" name="txtLedgerCode" id="txtLedgerCode" class="form-control"
+                                        placeholder="" value="{{ $ledExample }}" readonly />
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Ledger Type<span
+                                            class="text-danger">*</span></label>
+                                    <select name="ddlLedgertype" id="ddlLedgertype"
+                                        class="select2 form-select form-select-lg" title="Select Ledger Type" required>
+                                        <option value="">Select</option>
+                                        @foreach ($ledgertypes as $item)
+                                            <option value="{{ $item->id }}"
+                                                {{ old('ddlLedgertype') == $item->id ? 'selected' : '' }}>
+                                                {{ $item->ledger_type }}</option>
+                                        @endforeach
+                                    </select>
+                                    @if ($errors->has('ddlLedgertype'))
+                                        <div class="text text-danger">{{ $errors->first('ddlLedgertype') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Ledger Name<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" name="txtLedgername" id="txtLedgername" class="form-control"
+                                        placeholder="Ledger Name" title="Enter Ledger Name"
+                                        value="{{ old('txtLedgername') }}" maxlength="50" required />
+
+                                    @if ($errors->has('txtLedgername'))
+                                        <div class="text text-danger">{{ $errors->first('txtLedgername') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Mobile<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" name="txtmobile" id="txtmobile"
+                                        class="form-control mobilenumber" placeholder="Mobile" title="Enter Mobile"
+                                        value="{{ old('txtmobile') }}" required />
+
+                                    @if ($errors->has('txtmobile'))
+                                        <div class="text text-danger">{{ $errors->first('txtmobile') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">State Name<span
+                                            class="text-danger">*</span></label>
+                                    <select name="ddlState" id="ddlState" class="select2 form-select form-select-lg"
+                                        title="Select State Name" required>
+                                        <option value="">Select</option>
+                                        @foreach ($states as $item)
+                                            <option value="{{ $item->id }}"
+                                                {{ old('ddlState') == $item->id ? 'selected' : '' }}>
+                                                {{ $item->state_name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @if ($errors->has('ddlStateName'))
+                                        <div class="text text-danger">{{ $errors->first('ddlStateName') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">District Name<span
+                                            class="text-danger">*</span></label>
+                                    <select name="ddlCity" id="ddlCity" class="select2 form-select form-select-lg"
+                                        title="Select District Name" required>
+                                        <option value="">Select District</option>
+                                    </select>
+                                    @if ($errors->has('ddlCity'))
+                                        <div class="text text-danger">{{ $errors->first('ddlCity') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Area Name<span
+                                            class="text-danger">*</span></label>
+                                    <select name="ddlArea" id="ddlArea" class="select2 form-select form-select-lg"
+                                        data-tags="true" title="Select Area Name" required>
+                                        <option value="">Select Area</option>
+                                    </select>
+                                    @if ($errors->has('ddlArea'))
+                                        <div class="text text-danger">{{ $errors->first('ddlArea') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Address<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" name="txtAddress" id="txtAddress" class="form-control"
+                                        placeholder="Address" title="Enter Address" value="{{ old('txtAddress') }}"
+                                        required />
+
+                                    @if ($errors->has('txtAddress'))
+                                        <div class="text text-danger">{{ $errors->first('txtAddress') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Pin Code<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" name="txtPincode" id="txtPincode"
+                                        class="form-control numvalidate" placeholder="Enter Pin Code"
+                                        title="Enter Pincode" value="{{ old('txtPincode') }}" required />
+
+                                    @if ($errors->has('txtPincode'))
+                                        <div class="text text-danger">{{ $errors->first('txtPincode') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Credit Period <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="">
+                                        <input type="text" name="txtCreditPeriod" id="txtCreditPeriod"
+                                            placeholder="Credit Period" class="form-control"
+                                            title="Enter Credit Period" value="{{ old('txtCreditPeriod') }}"
+                                            required />
+
+                                        @if ($errors->has('txtCreditPeriod'))
+                                            <div class="text text-danger">{{ $errors->first('txtCreditPeriod') }}
+                                            </div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Balance <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" name="txtopeningBalance"
+                                            id="txtopeningBalance" placeholder="Enter Balance" title="Enter Balance"
+                                            value="{{ old('txtopeningBalance') }}" required>
+
+                                        <div class="input-group-append">
+                                            <select name="ddlCreditDebit" id="ddlCreditDebit"
+                                                class="select2 form-select" title="Select Balance Type" required>
+                                                <option value="">Select Balance Type</option>
+                                                <option value="Credit"
+                                                    {{ old('ddlCreditDebit') == 'Credit' ? 'selected' : '' }}>Credit
+                                                </option>
+                                                <option value="Debit"
+                                                    {{ old('ddlCreditDebit') == 'Debit' ? 'selected' : '' }}>Debit
+                                                </option>
+                                            </select>
+                                            @if ($errors->has('ddlCreditDebit'))
+                                                <div class="text text-danger">{{ $errors->first('ddlCreditDebit') }}
+                                                </div>
+                                            @endif
+                                            <span class="error"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Settlement Period <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="">
+                                        <input type="text" name="txtSettlemnt" id="txtSettlemnt"
+                                            placeholder="Settlement Period" class="form-control"
+                                            title="Enter Settlement Period" value="{{ old('txtSettlemnt') }}"
+                                            required />
+
+                                        @if ($errors->has('txtSettlemnt'))
+                                            <div class="text text-danger">{{ $errors->first('txtSettlemnt') }}</div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="mt-4 mb-3">
+                                    <button type="submit" id="btnSave" class="btn btn-success">Save</button>
+                                    <button type="button" class="btn btn-danger" onclick="cancel();">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+    <!-- DataTable with Buttons -->
+    <div class="col-lg-12 mb-4 mb-lg-0">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between">
+                <h5 class="card-title m-0 me-2">Ledger List</h5>
+            </div>
+            <div class="card-datatable table-responsive pt-0">
+                <table id="tblLedger" class="table">
+                    <thead class="border-bottom">
+                        <tr>
+                            <th>S.No</th>
+                            <th>LEDGER CODE</th>
+                            <th>LEDGER TYPE</th>
+                            <th>LEDGER NAME</th>
+                            <th>STATUS</th>
+                            <th>ADDRESS</th>
+                            <th>ACTION</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--/ DataTable with Buttons -->
+</div>
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+<script src="{{ asset('assets/js/admin/masters/ledger.js') }}"></script>
+@endsection

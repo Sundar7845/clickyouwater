@@ -1,0 +1,138 @@
+<?php
+
+namespace App\Http\Controllers\Admin\ProductsManagement;
+
+use App\Http\Controllers\Controller;
+use App\Models\ProductType;
+use Illuminate\Database\QueryException;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class ProductTypeController extends Controller
+{
+    public function prodctType()
+    {
+        $productType = ProductType::get();
+        return view('admin.product_management.product_type.product_type', compact('productType'));
+    }
+
+    public function addProductType(Request $request)
+    {
+        $request->validate([
+            'txtProductType' => 'required',
+            'txtDeliveryCharge' => 'required',
+            'txtDeliveryDuration' => 'required',
+            'timeOrderBefore' => 'required',
+            'txtNewCanDeposit' => 'required',
+            'txtMinQty' => 'required',
+            'txtMaxQty' => 'required'
+        ]);
+
+        DB::beginTransaction();
+        try{
+
+        if ($request->txtProductTypeId == null) {
+            ProductType::create([
+                'product_type_name' => $request->txtProductType,
+                'delivery_charge' => $request->txtDeliveryCharge,
+                'delivery_duration' => $request->txtDeliveryDuration,
+                'order_before_time' => $request->timeOrderBefore,
+                'newcan_deposit_amt' => $request->txtNewCanDeposit,
+                'min_order_qty' => $request->txtMinQty,
+                'max_order_qty' => $request->txtMaxQty,
+                'is_active' => 1,
+                'created_by' => Auth::user()->id
+            ]);
+            $notification = array(
+                'message' => 'Product Type Created Successfully',
+                'alert-type' => 'success'
+            );
+        } else {
+            ProductType::findorfail($request->txtProductTypeId)->update([
+                'product_type_name' => $request->txtProductType,
+                'delivery_charge' => $request->txtDeliveryCharge,
+                'delivery_duration' => $request->txtDeliveryDuration,
+                'order_before_time' => $request->timeOrderBefore,
+                'newcan_deposit_amt' => $request->txtNewCanDeposit,
+                'min_order_qty' => $request->txtMinQty,
+                'max_order_qty' => $request->txtMaxQty,
+                'is_active' => 1,
+                'updated_by' => Auth::user()->id
+            ]);
+            $notification = array(
+                'message' => 'Product Type Updated Successfully',
+                'alert-type' => 'success'
+            );
+        }
+
+        DB::commit();
+        }catch (\Exception $e) {
+        DB::rollback();
+        $notification = array(
+           'message' => 'Area Not Created!',
+           'alert-type' => 'error'
+        );
+        }
+        return redirect()->route('product-type')->with($notification);
+    }
+
+    public function deleteProductType($id)
+    {
+
+        try {
+            $productType = ProductType::findorfail($id);
+            $productType->delete();
+            $productType->update([
+                'deleted_by' => Auth::user()->id
+            ]);
+
+            $notification = array(
+                'message' => 'Product Type Deleted Successfully',
+                'alert' => 'success'
+            );
+            return response()->json([
+                'responseData' => $notification
+            ]);
+        } catch (QueryException $e) {
+
+            $notification = array(
+                'message' => 'Product Type could not be deleted',
+                'alert' => 'error'
+            );
+            return response()->json([
+                'responseData' => $notification
+            ]);
+        }
+    }
+
+    public function getProductTypeById($id)
+    {
+        $productType = ProductType::where('id', $id)->first();
+        return response()->json([
+            'ProductType' => $productType
+        ]);
+    }
+
+    public function getProductTypeData()
+    {
+        $productType = ProductType::get();
+
+        return datatables()->of($productType)
+            ->addColumn('action', function ($row) {
+                $html = '<i class="text-primary ti ti-pencil me-1"
+                onclick="doEdit(' . $row->id . ');"></i> ';
+                $html .= '<i class="text-danger ti ti-trash me-1" id="confrim-color(' . $row->id . ')" 
+                onclick="showDelete(' . $row->id . ');"></i>';
+                return $html;
+            })->toJson();
+    }
+
+    public function activeStatus($id, $status)
+    {
+        ProductType::findorfail($id)->update([
+            'is_active' => $status,
+            'updated_by' => Auth::user()->id
+        ]);
+    }
+}

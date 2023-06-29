@@ -1,0 +1,66 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Masters;
+
+use App\Http\Controllers\Controller;
+use App\Models\Role;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
+class RoleController extends Controller
+{
+    public function role()
+    {
+        $roles = Role::get();
+        return view('admin.masters.userrole.role', compact('roles'));
+    }
+
+    public function updateRole(Request $request)
+    {
+        $request->validate([
+            'txtRoleName' => 'required'
+        ]);
+        DB::beginTransaction();
+        try{
+            
+        Role::findorfail($request->hdRoleId)->update([
+            'role_name' => $request->txtRoleName
+        ]);
+
+        $notification = array(
+            'message' => 'Role Updated Successfully',
+            'alert-type' => 'success'
+        );
+
+        DB::commit();
+        }catch (\Exception $e) {
+        DB::rollback();
+        $notification = array(
+           'message' => 'Area Not Created!',
+           'alert-type' => 'error'
+        );
+        }
+
+        return redirect()->route('role')->with($notification);
+    }
+
+    public function getRoleById($id)
+    {
+        $role = Role::where('id', $id)->first();
+        return response()->json([
+            'role' => $role
+        ]);
+    }
+
+    public function getRoleData()
+    {
+        $roles = Role::get();
+        return datatables()->of($roles)
+            ->addColumn('action', function ($row) {
+                $html = '<button type="button" data-bs-toggle="modal" 
+                data-bs-target="#addNewCCModal" onclick="doEdit(' . $row->id . ');" class="btn btn-primary">
+                view</button> ';
+                return $html;
+            })->toJson();
+    }
+}

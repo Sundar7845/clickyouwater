@@ -1,0 +1,565 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="keywords" content="drinking water, packaged drinking water, water, purity water, fruits, pet bottles, pet, cool drinks, soft drinks, agro products, business opportunity, groups, business,organic farming, organic products, organic, bulk water, juice, adiyogi, smart blue, agriya, pogos juice, global creators, global cadres, global pet, global agro, global creators unit 2" />
+  <meta name="description" content="We are providing best quality packaged drinking water, bulk water, soft drinks, pet bottles, organic farming in Coimbatore, Tamilnadu. if any queries please contact: +91 97879 33322">
+
+  <title>Click Your Order</title>
+
+  <!-- icofont-css-link -->
+  <link rel="stylesheet" href="css/icofont.min.css">
+  <!-- Owl-Carosal-Style-link -->
+  <link rel="stylesheet" href="css/owl.carousel.min.css">
+  <!-- Bootstrap-Style-link -->
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <!-- Aos-Style-link -->
+  <link rel="stylesheet" href="css/aos.css">
+  <!-- Coustome-Style-link -->									
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Responsive-Style-link -->
+  <link rel="stylesheet" href="css/responsive.css">		
+  <!-- Favicon -->						
+  <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon">
+
+</head>
+
+<body>
+
+  <!-- Page-wrapper-Start -->
+  <div class="page_wrapper">
+
+    <!-- Preloader -->
+    <div id="preloader">
+      <div id="loader"></div>
+    </div>
+
+    <!-- Header Start -->
+    <header>
+      <!-- container start -->
+      <div class="container">
+      	<!-- navigation bar -->
+        <nav class="navbar navbar-expand-lg">
+          <a class="navbar-brand" href="index.html">
+            <img src="images/logo.png" alt="image" >
+          </a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon">
+              <!-- <i class="icofont-navigation-menu ico_menu"></i> -->
+              <div class="toggle-wrap">
+                <span class="toggle-bar"></span>
+              </div>
+            </span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+              <li class="nav-item">
+                <a class="nav-link" href="index.html">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="index.html#about_us">About Us</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="index.html#how_it_work">How it works</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="index.html#contact">Contact</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link dark_btn" href="index.html#getstarted">DOWNLOAD APP</a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+        <!-- navigation end -->
+      </div>
+      <!-- container end -->
+    </header>
+
+    <!-- Banner-Section-Start -->
+    <section class="banner_section">
+      <!-- hero bg -->
+      <div class="hero_bg"> <img src="images/hero-bg.png" alt="image" > </div>
+      <!-- container start -->
+      <div class="container">
+        <!-- row start -->
+        <div class="row">
+          <div class="col-lg-6 col-md-12"  data-aos="fade-right" data-aos-duration="1500">
+          	<!-- banner text -->
+            <div class="banner_text">
+              <!-- h1 -->
+              <h1>Best way to <span>book water can.</span></h1>
+              <!-- p -->
+              <p>Drink more Water, Stay hydrated!
+              </p>
+            </div>
+          </div>
+
+          <!-- banner images start -->
+          <div class="col-lg-3 col-md-6"  data-aos="fade-in" data-aos-duration="1500">
+            <div class="banner_images image_box1">
+                <span class="banner_image1"> <img class="moving_position_animatin" src="images/bannerimage1.png" alt="image" > </span>
+                <span class="banner_image2"> <img class="moving_animation" src="images/bannerimage2.png" alt="image" > </span>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6"  data-aos="fade-in" data-aos-duration="1500">
+            <div class="banner_images image_box2">
+                <span class="banner_image3"> <img class="moving_animation" src="images/bannerimage3.png" alt="image" > </span>
+                <span class="banner_image4"> <img class="moving_position_animatin" src="images/bannerimage4.png" alt="image" > </span>
+            </div>
+          </div>
+          <!-- banner slides end -->
+
+        </div>
+        <!-- row end -->
+      </div>
+      <!-- container end -->
+    </section>
+    <!-- Banner-Section-end -->
+
+    <!-- About-App-Section-Start -->
+    <section class="row_am about_app_section" id="about_us">
+      <!-- container start -->
+      <div class="container">
+      	<!-- row start -->
+        <div class="row">
+          <div class="col-lg-6">
+
+          	<!-- about images -->
+            <div class="about_img" data-aos="fade-in" data-aos-duration="1500">
+              <div class="frame_img">
+                <img class="moving_position_animatin" src="images/about-frame.png" alt="image" >
+              </div>
+              <div class="screen_img">
+                <img class="moving_animation" src="images/about-screen.png" alt="image" >
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+
+          	<!-- about text -->
+            <div class="about_text">
+              <div class="section_title" data-aos="fade-up" data-aos-duration="1500" data-aos-delay="100">
+
+              	<!-- h2 -->
+                <h2>ABOUT US</h2>
+
+                <!-- p -->
+				<p>We,  <span>GLOBAL CREATORS</span> company doing various business from 2007.</p>
+                <p>
+                  Our two factory for packaged drinking water manufacturing in the brand name of AGRIYA/ SMART BLUE/ ADIYOGI with all various clearance, licenses & certifications.., like Central ground water authority (New Delhi), / PWD NOC from Tamilnadu government. Bureau of Indian standards (ISI), Tamilnadu Pollution control Board, SSI, Trade mark registration (Mumbai), food safety (fssai) Local body, VAT etc… 
+                </p>
+				<p>We are the first packaged drinking water company having all the clearance, licenses & certifications in Coimbatore.</p>
+				<p>Our one company located at the foot hills of  Western Ghats, so that we are getting the raw water without any contamination and taste as well.</p>
+				<p>Our second company is located center of city that too back side of fun republic mall.</p>
+				<p>Further to our existing business, we are introducing online water purchase application named as “Click Your Water” for the ease of customers to get the most essential thing water in their door steps in digital platform.</p>
+              </div>
+              <a href="https://play.google.com/store/apps/developer?id=GLOBAL+CREATORS" target="_blank" class="btn puprple_btn" data-aos="fade-in" data-aos-duration="1500">START DOWNLOAD</a>
+            </div>
+          </div>
+        </div>
+        <!-- row end -->
+      </div>
+      <!-- container end -->
+    </section>
+    <!-- About-App-Section-end -->
+
+    <!-- ModernUI-Section-Start -->
+    <section class="row_am modern_ui_section">
+      <!-- section bg -->
+      <div class="modernui_section_bg"> <img src="images/section-bg.png" alt="image" > </div>
+      <!-- container start -->
+      <div class="container">
+      	<!-- row start -->
+        <div class="row">
+          <div class="col-lg-6">
+          	<!-- UI content -->
+            <div class="ui_text">
+              <div class="section_title" data-aos="fade-up" data-aos-duration="1500" data-aos-delay="100">
+                <h2>About our CEO Founder and Chairman – <span>Mr.Sureshkumar Dhanagopal</span></h2>
+              </div>
+              <ul class="design_block">
+                <li data-aos="fade-up" data-aos-duration="1500">
+                  <p>A Post graduated</p>
+                </li>
+                <li data-aos="fade-up" data-aos-duration="1500">
+                  <p>Completed natural farming course in Agriculture university</p>
+                </li>
+                <li data-aos="fade-up" data-aos-duration="1500">
+                  <p>10+ years of working experience in Business development manager in MNC</p>
+                </li>
+                <li data-aos="fade-up" data-aos-duration="1500">
+                  <p>Last 14+ years in to organic farming & research</p>
+                </li>
+                <li data-aos="fade-up" data-aos-duration="1500">
+                  <p>Last 12+ years as an entrepreneur in packaged drinking water manufacturing industries</p>
+                </li>
+                <li data-aos="fade-up" data-aos-duration="1500">
+                  <p>Last 6+ Years in beverage manufacturing industry</p>
+                </li>
+                <li data-aos="fade-up" data-aos-duration="1500">
+                  <p>Last 3+ years in pet bottle manufacturing industry</p>
+                </li>
+                <li data-aos="fade-up" data-aos-duration="1500">
+                  <p>Founder of Packaged drinking water manufacturers Association</p>
+                </li>
+                <li data-aos="fade-up" data-aos-duration="1500">
+                  <p>A Sports person, Environmentalist</p>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-lg-6">
+          	<!-- UI Image -->
+            <div class="ui_images" data-aos="fade-in" data-aos-duration="1500">
+                <img class="moving_position_animatin" src="images/modern01.png" alt="image" style="height:400px;">
+            </div>
+          </div>
+        </div>
+        <!-- row end -->
+      </div>
+      <!-- container end -->
+    </section>
+    <!-- ModernUI-Section-end -->
+
+    <!-- How-It-Workes-Section-Start -->
+    <section class="row_am how_it_works" id="how_it_work">
+      <!-- section bg -->
+      <div class="how_section_bg"> <img src="images/section-bg.png" alt="image" > </div>
+      <!-- container start -->
+      <div class="container">
+        <div class="how_it_inner">
+          <div class="section_title" data-aos="fade-up" data-aos-duration="1500" data-aos-delay="300">
+          	<!-- h2 -->
+            <h2><span>How it works</span> - 3 easy steps</h2>
+            <!-- p -->
+            <p>Lorem Ipsum is simply dummy text of the printing and typese tting <br> indus orem Ipsum has beenthe
+              standard dummy.</p>
+          </div>
+          <div class="step_block">
+          	<!-- UL -->
+            <ul>
+              <!-- step -->
+              <li>
+                <div class="step_text" data-aos="fade-right" data-aos-duration="1500">
+                  <h4>Download app</h4>
+                  <div class="app_icon">
+                    <a href="https://play.google.com/store/apps/developer?id=GLOBAL+CREATORS" target="_blank"><i class="icofont-brand-android-robot"></i></a>
+                    <a href="#" target="_blank"><i class="icofont-brand-apple"></i></a>
+                  </div>
+                  <p>Download App either for Android or Mac</p>
+                </div>
+                <div class="step_number number1">
+                  <h3>01</h3>
+                </div>
+                <div class="step_img" data-aos="fade-left" data-aos-duration="1500">
+                  <img src="images/download_app.jpg" alt="image" >
+                </div>
+              </li>
+
+              <!-- step -->
+              <li>
+                <div class="step_text" data-aos="fade-left" data-aos-duration="1500">
+                  <h4>It’s done, place order</h4>
+                  <p>Sign up free for App account. One account for all devices.</p>
+                </div>
+                <div class="step_number number2"> 
+                  <h3>02</h3>
+                </div>
+                <div class="step_img" data-aos="fade-right" data-aos-duration="1500">
+                  <img src="images/step-2.png" alt="image" >
+                </div>
+              </li>
+
+              <!-- step -->
+              <li>
+                <div class="step_text" data-aos="fade-right" data-aos-duration="1500">
+                  <h4>Delivery at your door step</h4>
+                  <p>Get most amazing app experience,Explore and share the app</p>
+                </div>
+                <div class="step_number number3">
+                  <h3>03</h3>
+                </div>
+                <div class="step_img" data-aos="fade-left" data-aos-duration="1500">
+                  <img src="images/step-3.png" alt="image" >
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- container end -->
+
+    </section>
+    <!-- How-It-Workes-Section-end -->
+
+    <!-- Beautifull-interface-Section start -->
+    <section class="row_am interface_section">
+	  <!-- container start -->
+      <div class="container-fluid">
+        <div class="section_title" data-aos="fade-up" data-aos-duration="1500" data-aos-delay="300">
+            <!-- h2 -->
+            <h2>App <span>Screenshots</span></h2>
+            <!-- p -->
+            <p>
+              Lorem Ipsum is simply dummy text of the printing and typese tting <br> indus orem Ipsum has beenthe standard dummy.
+            </p>
+        </div>
+
+          <!-- screen slider start -->
+          <div class="screen_slider" >
+            <div id="screen_slider" class="owl-carousel owl-theme">
+              <div class="item">
+                <div class="screen_frame_img">
+                    <img src="images/screen-1.png" alt="image" >
+                </div>
+              </div>
+              <div class="item">
+                <div class="screen_frame_img">
+                    <img src="images/screen-2.png" alt="image" >
+                </div>
+              </div>
+              <div class="item">
+                <div class="screen_frame_img">
+                    <img src="images/screen-3.png" alt="image" >
+                </div>
+              </div>
+              <div class="item">
+                <div class="screen_frame_img">
+                    <img src="images/screen-4.png" alt="image" >
+                </div>
+              </div>
+              <div class="item">
+                <div class="screen_frame_img">
+                    <img src="images/screen-5.png" alt="image" >
+                </div>
+              </div>
+              <div class="item">
+                <div class="screen_frame_img">
+                    <img src="images/screen-6.png" alt="image" >
+                </div>
+              </div>
+			</div>
+          </div>
+          <!-- screen slider end -->
+      </div>
+      <!-- container end -->
+    </section>
+    <!-- Beautifull-interface-Section end -->
+
+    <!-- Download-Free-App-section-Start  -->
+    <section class="row_am free_app_section" id="getstarted">
+    	<!-- container start -->
+        <div class="container">
+            <div class="free_app_inner" data-aos="fade-in" data-aos-duration="1500" data-aos-delay="100"> 
+              	<!-- row start -->
+                <div class="row">
+                	<!-- content -->
+                    <div class="col-md-6">
+                        <div class="free_text">
+                            <div class="section_title">
+                                <h2>Let’s download free from apple and play store</h2>
+                                <p>Instant free download from apple and play store orem Ipsum is simply dummy text of the printing.
+                                  and typese tting indus orem Ipsum has beenthe standard</p>
+                            </div>
+                            <ul class="app_btn">
+                              <li>
+                                <a href="https://apps.apple.com/us/developer/global-creators/id1632570345" target="_blank">
+                                  <img src="images/appstore_blue.png" alt="image" >
+                                </a>
+                              </li>
+                              <li>
+                                <a href="https://play.google.com/store/apps/developer?id=GLOBAL+CREATORS"  target="_blank">
+                                  <img src="images/googleplay_blue.png" alt="image" >
+                                </a>
+                              </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- images -->
+                    <div class="col-md-6">
+                        <div class="free_img">
+                            <img src="images/download-screen01.png" alt="image" >
+                            <img class="mobile_mockup" src="images/download-screen02.png" alt="image" >
+                        </div>
+                    </div>
+                </div>
+                <!-- row end -->
+            </div>
+        </div>
+        <!-- container end -->
+    </section>
+    <!-- Download-Free-App-section-end  -->
+
+    <!-- Trusted Section start -->
+    <section class="row_am trusted_section">
+      <!-- container start -->
+      <div class="container">
+        <div class="section_title" data-aos="fade-up" data-aos-duration="1500" data-aos-delay="100">
+          <!-- h2 -->
+          <h2>Trusted <span>Brands</span></h2>
+          <!-- p -->
+          <p>Lorem Ipsum is simply dummy text of the printing and typese tting <br> indus orem Ipsum has beenthe
+            standard dummy.</p>
+        </div>
+
+        <!-- logos slider start -->
+        <div class="company_logos" >
+          <div id="company_slider" class="owl-carousel owl-theme">
+            <div class="item">
+              <div class="logo">
+                <img src="images/brand/adiyogi.jpg" alt="image" >
+              </div>
+            </div>
+            <div class="item">
+              <div class="logo">
+                <img src="images/brand/agriya.jpg" alt="image" >
+              </div>
+            </div>
+            <div class="item">
+              <div class="logo">
+                <img src="images/brand/smart-blue.jpg" alt="image" >
+              </div>
+            </div>
+            <div class="item">
+              <div class="logo">
+                <img src="images/brand/pogos.jpg" alt="image" >
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- logos slider end -->
+      </div>
+      <!-- container end -->
+    </section>
+    <!-- Trusted Section ends -->
+	
+    <!-- Footer-Section start -->
+    <footer>
+        <!-- section bg -->
+        <div class="footer_bg"> <img src="images/section-bg.png" alt="image" > </div>
+        <div class="top_footer" id="contact">
+          	<!-- container start -->
+            <div class="container">
+              <!-- row start -->
+              <div class="row">
+              	  <!-- footer link 1 -->
+                  <div class="col-lg-4 col-md-6 col-12">
+                      <div class="abt_side">
+                        <div class="logo"> <img src="images/footer_logo.png" alt="image" ></div>
+                        <ul>
+                          <li><a href="#">info@globalcreators.in</a></li>
+                          <li><a href="#">+91 97879 33322</a></li>
+                          <li><a href="#">No.157/1C1, 1C2, Vellarugampalayam, Thondamuthur, Coimbatore-641 109</a></li>
+                        </ul>
+                        <ul class="social_media">
+                            <li><a href="#"><i class="icofont-facebook"></i></a></li>
+                            <li><a href="#"><i class="icofont-twitter"></i></a></li>
+                            <li><a href="#"><i class="icofont-instagram"></i></a></li>
+                        </ul>
+                      </div>
+                  </div>
+
+                  <!-- footer link 2 -->
+                  <div class="col-lg-3 col-md-6 col-12">
+                      <div class="links">
+                        <h3>Useful Links</h3>
+                          <ul>
+                            <li><a href="index.html">Home</a></li>
+                            <li><a href="index.html#about_us">About Us</a></li>
+                            <li><a href="index.html#how_it_work">How It Works</a></li>
+                            <li><a href="index.html#contact">Contact Us</a></li>
+                          </ul>
+                      </div>
+                  </div>
+
+                  <!-- footer link 3 -->
+                  <div class="col-lg-3 col-md-6 col-12">
+                    <div class="links">
+                      <h3>Help & Support</h3>
+                        <ul>
+                          <li><a href="terms-conditions.html">Terms & Conditions</a></li>
+                          <li><a href="privacy-policy.html">Privacy Policy</a></li>
+                          <li><a href="cancellation-refund-policy.html">Cancellation & Refund Policy</a></li>
+                          <li><a href="shipping-delivery-policy.html">Shipping & Delivery Policy</a></li>
+                        </ul>
+                    </div>
+                  </div>
+
+                  <!-- footer link 4 -->
+                  <div class="col-lg-2 col-md-6 col-12">
+                    <div class="try_out">
+                        <h3>Let’s Try Out</h3>
+                        <ul class="app_btn">
+                          <li>
+                            <a href="https://apps.apple.com/us/developer/global-creators/id1632570345" target="_blank">
+                              <img src="images/appstore_blue.png" alt="image" >
+                            </a>
+                          </li>
+                          <li>
+                            <a href="https://play.google.com/store/apps/developer?id=GLOBAL+CREATORS" target="_blank">
+                              <img src="images/googleplay_blue.png" alt="image" >
+                            </a>
+                          </li>
+                        </ul>
+                    </div>
+                  </div>
+              </div>
+              <!-- row end -->
+          </div>
+          <!-- container end -->
+        </div>
+
+        <!-- last footer -->
+        <div class="bottom_footer">
+        	<!-- container start -->
+            <div class="container">
+              <!-- row start -->
+              <div class="row">
+                <div class="col-md-6">
+                    <p>© Copyrights 2023. All rights reserved.</p>
+                </div>
+                <div class="col-md-6">
+                    <p class="developer_text">Design & developed by <a href="https://adhocsoftwares.com" target="blank">Adhoc Softwares</a></p>
+                </div>
+            </div>
+            <!-- row end -->
+            </div>
+            <!-- container end -->
+        </div>
+
+        <!-- go top button -->
+        <div class="go_top">
+            <span><img src="images/go_top.png" alt="image" ></span>
+        </div>
+    </footer>
+    <!-- Footer-Section end -->
+
+  <div class="purple_backdrop"></div>
+
+  </div>
+  <!-- Page-wrapper-End -->
+
+  <!-- Jquery-js-Link -->
+  <script src="js/jquery.js"></script>
+  <!-- owl-js-Link -->
+  <script src="js/owl.carousel.min.js"></script>
+  <!-- bootstrap-js-Link -->
+  <script src="js/bootstrap.min.js"></script>
+  <!-- aos-js-Link -->
+  <script src="js/aos.js"></script>
+  <!-- main-js-Link -->
+  <script src="js/main.js"></script>
+
+</body>
+
+</html>

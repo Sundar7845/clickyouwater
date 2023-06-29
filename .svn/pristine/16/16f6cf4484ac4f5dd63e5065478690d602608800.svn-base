@@ -1,0 +1,95 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateBillNoSettingsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('bill_no_settings', function (Blueprint $table) {
+            $table->id();
+            $table->string('ledger_prefix')->nullable();
+            $table->integer('ledger_length')->default(0);
+            $table->integer('ledger_live')->default(0);
+            $table->string('manufacture_prefix')->nullable();
+            $table->integer('manufacture_length')->default(0);
+            $table->integer('manufacture_live')->default(0);
+            $table->string('hub_prefix')->nullable();
+            $table->integer('hub_length')->default(0);
+            $table->integer('hub_live')->default(0);
+            $table->string('logistics_prefix')->nullable();
+            $table->integer('logistics_length')->default(0);
+            $table->integer('logistics_live')->default(0);
+            $table->string('customer_prefix')->nullable();
+            $table->integer('customer_length')->default(0);
+            $table->integer('customer_live')->default(0);
+            $table->string('employee_prefix')->nullable();
+            $table->integer('employee_length')->default(0);
+            $table->integer('employee_live')->default(0);
+            $table->string('deliveryperson_prefix')->nullable();
+            $table->integer('deliveryperson_length')->default(0);
+            $table->integer('deliveryperson_live')->default(0);
+            $table->string('SR_prefix')->nullable();
+            $table->integer('SR_length')->default(0);
+            $table->integer('SR_live')->default(0);
+            $table->string('SI_prefix')->nullable();
+            $table->integer('SI_length')->default(0);
+            $table->integer('SI_live')->default(0);
+            $table->string('Del_prefix')->nullable();
+            $table->integer('Del_length')->default(0);
+            $table->integer('Del_live')->default(0);
+            $table->string('DR_prefix')->nullable();
+            $table->integer('DR_length')->default(0);
+            $table->integer('DR_live')->default(0);
+            $table->string('PO_prefix')->nullable();
+            $table->integer('PO_length')->default(0);
+            $table->integer('PO_live')->default(0);
+            $table->string('PR_prefix')->nullable();
+            $table->integer('PR_length')->default(0);
+            $table->integer('PR_live')->default(0);
+            $table->string('PI_prefix')->nullable();
+            $table->integer('PI_length')->default(0);
+            $table->integer('PI_live')->default(0);
+            $table->string('GRN_prefix')->nullable();
+            $table->integer('GRN_length')->default(0);
+            $table->integer('GRN_live')->default(0);
+            $table->string('CN_prefix')->nullable();
+            $table->integer('CN_length')->default(0);
+            $table->integer('CN_live')->default(0);
+            $table->string('DN_prefix')->nullable();
+            $table->integer('DN_length')->default(0);
+            $table->integer('DN_live')->default(0);
+            $table->string('Rec_prefix')->nullable();
+            $table->integer('Rec_length')->default(0);
+            $table->integer('Rec_live')->default(0);
+            $table->string('Pay_prefix')->nullable();
+            $table->integer('Pay_length')->default(0);
+            $table->integer('Pay_live')->default(0);
+            $table->string('ORD_prefix')->nullable();
+            $table->integer('ORD_length')->default(0);
+            $table->integer('ORD_live')->default(0);
+            $table->string('INV_prefix')->nullable();
+            $table->integer('INV_length')->default(0);
+            $table->integer('INV_live')->default(0);
+            $table->timestamps();
+            $table->softDeletes();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('bill_no_settings');
+    }
+}

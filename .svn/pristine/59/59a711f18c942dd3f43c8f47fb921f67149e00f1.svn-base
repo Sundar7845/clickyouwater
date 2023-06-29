@@ -1,0 +1,121 @@
+$(document).ready(function() {
+    BindCity();
+    $('#offerallocate').DataTable();
+});
+
+$("#ddlCity").on("change", function () {
+
+var city_id = $("#ddlCity").val();
+   
+    console.log(city_id);
+    
+    $.ajax({
+        url: "/get/offerallocation/hubs",
+        type: "POST",
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        },
+        data: {
+            city_id: city_id,
+            _token: $('meta[name="csrf-token"]').attr("content"),
+        },
+        dataType: "json",
+        success: function (data) {
+            var html = '';
+            var hubNameArray = []; // create an empty array to store checked hub names
+            var txtPointsAllocatedArray = []; // create an empty array to store txtPointsAllocated values
+            $.each(data, function(key, value) {
+                var checkboxId = 'defaultCheck' + key;
+                var inputId = 'txtPointsAllocated' + key;
+                html += '<tr>';
+                html += '<td><div class="form-check"><input class="form-check-input" name="'+ checkboxId +'" type="checkbox" value="' + value.hub_name + '" id="'+ checkboxId +'"></div></td>';
+                html += '<td>' + value.hub_name + '</td>';
+                html += '<td><input type="text" name="'+ inputId +'" id="'+ inputId +'" class="form-control txtPointsAllocated" placeholder="Enter Points" style="display: none;"></td>';
+                html += '<td>50</td>';
+                html += '</tr>';
+               // Add a hidden input field for each checkbox that is checked
+                    html += '<input type="hidden" name="hubName[]" value="' + value.hub_name + '" class="hub-name-input">';
+            });
+            html += '</form>';
+            $('#tbodyOfferallocate').html(html);
+        
+            // Show/hide txtPointsAllocated input field based on checkbox state
+            $('input[name^="defaultCheck"]').on('change', function() {
+                var inputId = '#txtPointsAllocated' + $(this).attr('name').substr(12);
+                if ($(this).is(':checked')) {
+                    $(inputId).show();
+                } else {
+                    $(inputId).hide();
+                }
+            });
+        
+            // Handle form submission
+            $('#offerAllocateForm').on('submit', function(e) {
+                e.preventDefault();
+                var formData = $(this).serialize();
+                var checkedData = '';
+                $('.txtPointsAllocated').each(function() {
+                    if ($(this).closest('tr').find('input[type="checkbox"]').is(':checked')) {
+                        txtPointsAllocatedArray.push($(this).val());
+                    }
+                });
+                
+                $('input[name^="defaultCheck"]').each(function(index) {
+                    if ($(this).is(':checked')) {
+                        var checkboxId = $(this).attr('name');
+                        var inputId = '#txtPointsAllocated' + checkboxId.substr(12);
+                        var rowData = $(this).closest('tr').find('td').eq(1).text() + ',' + $(inputId).val() + ',' + $(this).val();
+                        checkedData += rowData + ';';
+                        hubNameArray.push($(this).val()); // add checked hub name to array
+                    }
+                });
+               
+                if (checkedData !== '') {
+                    formData += '&checkedData=' + checkedData;
+                    formData += '&hubNameArray=' + JSON.stringify(hubNameArray); // add hubNameArray to formData
+                    $.ajax({
+                        type: 'POST',
+                        url: '/add/offerallocation',
+                        data: formData,
+                        success: function(response) {
+                            console.log(response);
+                            console.log(hubNameArray); // log checked hub names to console
+                        }
+                    });
+                }
+            });
+        
+            // Use existing submit button
+            $('#existingSubmitButton').on('click', function() {
+                $('#offerAllocateForm').submit();
+            });
+        }
+                });
+});
+
+// jquery Validation
+$(function () {
+    $("form[name='offer_allocate']").validate({ 
+        rules: {
+            ddlOfferName: "required",
+            ddlState: "required",
+            ddlCity: "required",
+        },
+        messages: {
+          required: "This field is required",
+      },
+        errorPlacement: function (error, element) {
+            if (element.is(":radio")) {
+                error.appendTo(element.parents(".form-group"));
+            } else {
+                // This is the default behavior
+                // error.insertAfter(element);
+                if (element.siblings(".error").html() == undefined) {
+                    error.appendTo(element.parent().next(".error"));
+                } else {
+                    error.appendTo(element.siblings(".error"));
+                }
+            }
+        },
+    });
+});

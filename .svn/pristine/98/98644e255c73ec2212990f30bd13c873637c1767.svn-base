@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Http\Controllers\Accounts;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class PaymentsController extends Controller
+{
+  public function Payments()
+  {
+    return view('accounts.payments.payments');
+  }
+
+  public function PaymentsList()
+  {
+    return view('accounts.payments.payments_list');
+  }
+}

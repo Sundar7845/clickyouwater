@@ -1,0 +1,259 @@
+var now = new Date();
+var day = ("0" + now.getDate()).slice(-2);
+var month = ("0" + (now.getMonth() + 1)).slice(-2);
+var today = now.getFullYear() + "-" + month + "-" + day;
+$(document).ready(function () {
+    //company balance info
+    loadCompanyBalanceInfo();
+
+    //employee balance info
+    loadEmployeeBalanceInfo();
+
+    //vendor balance info
+    loadVendorBalanceInfo();
+
+    //today's date
+    $("#ddlDate").val(today);
+
+    // $(".js-select-search-ddl").select2();
+    //  define checkbox value
+    if ($("#txtCheckBox").is(":checked")) {
+        $(this).val(1);
+        $("#isPaid").val(1);
+    }
+
+    //  define radio value
+    if ($("#radioGenral").is(":checked")) {
+        $(this).val(1);
+        $("#txtExpenseType").val(1);
+    }
+
+    // checkbox
+    $("#txtCheckBox").bind("click", function () {
+        onChecked();
+    });
+
+    $("#txtNotPay").bind("click", function () {
+        onCheckedNotpay();
+    });
+    //
+
+    // radio
+    $("#radioGenral").bind("change", function () {
+        radioGenral();
+    });
+
+    $("#radioEmployee").bind("change", function () {
+        radioEmployee();
+    });
+
+    //  onclick clear
+    $("#btnClear").bind("click", function () {
+        clearData();
+    });
+
+    //  onclick validate and submit
+    $("#btnSave").bind("click", function () {
+        ValidateForm();
+    });
+
+    $("#txtExpenseDetail").bind("click", () => {
+        $("#emptydetail").text("");
+    });
+
+    $("#txtAmount").bind("click", () => {
+        $("#emptyamount").text("");
+    });
+
+    $("#ddlExpenseGroup").bind("change", () => {
+        $("#emptygrp").text("");
+    });
+
+    $("#ddlExpenselVendor").bind("change", () => {
+        $("#emptyvenledger").text("");
+    });
+
+    $("#ddlExpenselCompany").bind("change", () => {
+        $("#emptycompany").text("");
+    });
+
+    $("#ddlExpenselEmployee").bind("change", () => {
+        $("#emptyemployeeId").text("");
+    });
+});
+$("#emptyvenledger").text("");
+$("#emptyemployeeId").text("");
+
+// checbox Check
+function onChecked() {
+    if ($("#txtCheckBox").prop("checked", true)) {
+        $(this).val(0);
+        $("#isPaid").val(0);
+        $("#ddlExpenselCompany").val("0").trigger("change");
+        $("#PayNowdiv").css({ display: "none" });
+        $("#NotPaydiv").css({ display: "block" });
+    }
+}
+
+function onCheckedNotpay() {
+    if ($("#txtNotPay").prop("checked", false)) {
+        $(this).val(1);
+        $("#isPaid").val(1);
+
+        $("#PayNowdiv").css({ display: "block" });
+        $("#NotPaydiv").css({ display: "none" });
+    }
+}
+// clear form
+function clearData() {
+    $("#ddlExpenselCompany").val("0").trigger("change");
+    $("#closinglcompany").text("0.00");
+    $("#ddlExpenselVendor").val("0").trigger("change");
+    $("#ddlExpenselEmployee").val("0").trigger("change");
+    $("#closinglvendor").text("0.00");
+    $("#ddlExpenseGroup").val("0").trigger("change");
+    $("#txtExpenseDetail ").val("");
+    $("#txtAmount ").val("");
+    $("#txtfileattachment ").val("");
+    $("#ddlDate").val(moment(today).format("DD/MM/YYYY"));
+}
+
+//  Validate form
+function ValidateForm() {
+    var cLedger = $("#ddlExpenselCompany option:selected").val();
+    var vLedger = $("#ddlExpenselVendor option:selected").val();
+    var emp = $("#ddlExpenselEmployee option:selected").val();
+    var expGrp = $("#ddlExpenseGroup option:selected").val();
+    var expDetail = $("#txtExpenseDetail ").val();
+    var amt = $("#txtAmount").val();
+    var isPaid = $("#isPaid").val();
+
+    if (expDetail == "") {
+        $("#emptydetail").text("Please fill out this field!");
+        $("#txtExpenseDetail").focus();
+        return false;
+    }
+    if (vLedger == 0 && emp == 0) {
+        $("#emptyvenledger").text("Please fill out this field!");
+        $("#emptyemployeeId").text("Please fill out this field!");
+
+        // $("#ddlExpenselVendor").focus();
+        return false;
+    }
+    if (amt == "") {
+        $("#emptyamount").text("Please fill out this field!");
+        $("#txtAmount").focus();
+        return false;
+    }
+    if (expGrp == 0) {
+        $("#emptygrp").text("Please fill out this field!");
+        $("#ddlExpenseGroup").focus();
+        return false;
+    }
+    if (isPaid == 1 && cLedger == 0) {
+        $("#emptycompany").text("Please fill out this field!");
+        $("#ddlExpenselCompany").focus();
+        return false;
+    } else {
+        $("#expensesubmit").submit();
+    }
+}
+
+function radioGenral() {
+    $("#empDiv").css({ display: "none" });
+    $("#ledDiv").css({ display: "block" });
+    $("#empFile").css({ display: "none" });
+    $("#txtExpenseType").val(1);
+    $("#ddlExpenselEmployee").val("0").trigger("change");
+    $("#emptyvenledger").text("");
+    $("#emptyemployeeId").text("");
+}
+
+function radioEmployee() {
+    $("#ledDiv").css({ display: "none" });
+    $("#empDiv").css({ display: "block" });
+    $("#empFile").css({ display: "block" });
+
+    $("#ddlExpenselVendor").val("0").trigger("change");
+    $("#txtExpenseType").val(2);
+    $("#emptyvenledger").text("");
+    $("#emptyemployeeId").text("");
+}
+
+function loadCompanyBalanceInfo() {
+    $("#ddlExpenselCompany").on("change", function () {
+        var ledger_id = this.value;
+        $.ajax({
+            url: "/get/ledgerbalanceinfo",
+            type: "GET",
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+            data: {
+                ledger_id: ledger_id,
+                _token: $('meta[name="csrf-token"]').attr("content"),
+            },
+            dataType: "json",
+            success: function (result) {
+                $("#closinglCompany").text(
+                    result.companyLedgerBalanceInfo.closing_balance
+                );
+                $("#hdClosinglCompany").val(
+                    result.companyLedgerBalanceInfo.closing_balance
+                );
+            },
+        });
+    });
+}
+
+function loadEmployeeBalanceInfo() {
+    $("#ddlExpenselEmployee").on("change", function () {
+        var employee_id = this.value;
+        $.ajax({
+            url: "/get/ledgerbalanceinfo",
+            type: "GET",
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+            data: {
+                employee_id: employee_id,
+                _token: $('meta[name="csrf-token"]').attr("content"),
+            },
+            dataType: "json",
+            success: function (result) {
+                $("#pendingemployee").text(
+                    result.employeeLeger.closing_balance
+                );
+                $("#hdPendingEmployee").val(
+                    result.employeeLeger.closing_balance
+                );
+            },
+        });
+    });
+}
+
+function loadVendorBalanceInfo() {
+    $("#ddlExpenselVendor").on("change", function () {
+        var vendor_id = this.value;
+        $.ajax({
+            url: "/get/ledgerbalanceinfo",
+            type: "GET",
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+            data: {
+                vendor_id: vendor_id,
+                _token: $('meta[name="csrf-token"]').attr("content"),
+            },
+            dataType: "json",
+            success: function (result) {
+                $("#closinglVendor").text(
+                    result.vendorLedgerBalanceInfo.closing_balance
+                );
+                $("#hdclosinglVendor").val(
+                    result.vendorLedgerBalanceInfo.closing_balance
+                );
+            },
+        });
+    });
+}

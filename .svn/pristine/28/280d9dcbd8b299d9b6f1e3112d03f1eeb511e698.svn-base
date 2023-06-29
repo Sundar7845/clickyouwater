@@ -1,0 +1,758 @@
+@extends('layouts.main_master') @section('content')
+@section('title')
+    Dashboard | Add Hub
+@endsection
+@section('header')
+    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/dropzone/dropzone.css') }}" />
+@endsection
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-1 mb-4">
+        Add Hub
+    </h4>
+    @isset($hub)
+        <form method="post" action="{{ url('hub-update', $hub->id) }}" name="manufacture" id="hubCreate"
+            enctype="multipart/form-data">
+        @else
+            <form method="post" action="{{ url('hub-create') }}" name="hub" id="hubCreate"
+                enctype="multipart/form-data">
+            @endisset
+            @csrf
+            <input type="hidden" id="hub_id" value="{{ isset($hub->id) }}">
+            <div class="row mb-4">
+                <!-- Browser Default -->
+                <div class="col-md-12 mb-4 mb-md-0">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Basic Company Info</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="">Hub ID <span
+                                                class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" name="txthubId" class="form-control" id="txthubId"
+                                            placeholder="HUBGLB001" value="{{ $hub_auto_code }}" required readonly />
+                                        @if ($errors->has('txthubId'))
+                                            <div class="text-danger">{{ $errors->first('txthubId') }}</div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="">Hub Name <span
+                                                class="text-danger">*</span>
+                                        </label>
+                                        {{-- <input type="text" name="txthubName" class="form-control" id=""
+                                            value="@isset($hub){{ $hub ? $hub->hub_name : '' }}@endisset"
+                                            placeholder="Hub Name" required /> --}}
+                                        <input type="text" name="txthubName" class="form-control" id="txthubName"
+                                            value="{{ old('txthubName', isset($hub) ? $hub->hub_name : '') }}"
+                                            placeholder="Hub Name" required />
+                                        @if ($errors->has('txthubName'))
+                                            <div class="text-danger">{{ $errors->first('txthubName') }}</div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                                {{-- <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="">Manufacuturer Name <span
+                                                class="text-danger">*</span>
+                                        </label>
+                                        <select name="ddlManufacturerName[]" id="ddlManufacturerName"
+                                            class="select2 form-select" multiple>
+                                            <option value="">Select</option>
+                                            @foreach ($manufacture as $item)
+                                                <option value="{{ $item->id }}"
+                                                    @if (in_array($item->id, $hubmanfconfiq)) selected @endif>
+                                                    {{ $item->manufacturer_name }}</option>
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @if ($errors->has('ddlManufacturerName'))
+                                            <div class="text-danger">{{ $errors->first('ddlManufacturerName') }}</div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </div>
+                                </div> --}}
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label">Years of Experience <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="input-group input-group-merge">
+                                            <input type="number" name="txtYrsofExp" id="txtYrsofExp"
+                                                value="@isset($hub){{ $hub ? $hub->years_of_experience : '' }}@endisset"
+                                                placeholder="Years of Eperience" class="form-control" required />
+                                        </div>
+                                        @if ($errors->has('txtYrsofExp'))
+                                            <div class="text-danger">{{ $errors->first('txtYrsofExp') }}</div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="basic-default-email">Mobile / Landline Number
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" name="txtMobile" id="txtMobile"
+                                            class="form-control mobilenumber" placeholder="Mobile / Landline Number"
+                                            value="@isset($hub){{ $hub ? $hub->mobile : '' }}@endisset"
+                                            required />
+                                        @if ($errors->has('txtMobile'))
+                                            <div class="text-danger">{{ $errors->first('txtMobile') }}</div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="basic-default-email">Official Email <span
+                                                class="text-danger">*</span>
+                                        </label>
+                                        <input type="email" name="txtofficialEmail" id="txtofficialEmail"
+                                            value="@isset($hub){{ $hub ? $hub->official_email : '' }}@endisset"
+                                            class="form-control" placeholder="Email" required />
+                                        @if ($errors->has('txtofficialEmail'))
+                                            <div class="text-danger">{{ $errors->first('txtofficialEmail') }}</div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                                {{-- <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="">Radius <span
+                                                class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" name="txtRadius" id="txtRadius" class="form-control"
+                                            value="@isset($hub){{ $hub ? $hub->radius : '' }}@endisset"
+                                            placeholder="Enter kms" required />
+
+                                        @if ($errors->has('txtRadius'))
+                                            <div class="text-danger">{{ $errors->first('txtRadius') }}</div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </div>
+                                </div> --}}
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label">Credit Period (Days) <span
+                                                class="text-danger">*</span>
+                                        </label>
+                                        <div class="input-group input-group-merge">
+                                            <input type="text" name="txtcreditPeriod" id="txtcreditPeriod"
+                                                value="@isset($hub){{ $hub ? $hub->credit_period : '' }}@endisset"
+                                                placeholder="Credit Period" class="form-control" required />
+                                        </div>
+                                        @if ($errors->has('txtcreditPeriod'))
+                                            <div class="text-danger">{{ $errors->first('txtcreditPeriod') }}</div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label">Settlement Period (Days) <span
+                                                class="text-danger">*</span>
+                                        </label>
+                                        <div class="input-group input-group-merge">
+                                            <input type="text" name="txtsettlementPeriod" id="txtsettlementPeriod"
+                                                value="@isset($hub){{ $hub ? $hub->settlement_period : '' }}@endisset"
+                                                placeholder="Settlement Period" class="form-control" required />
+                                        </div>
+                                        @if ($errors->has('txtsettlementPeriod'))
+                                            <div class="text-danger">{{ $errors->first('txtsettlementPeriod') }}
+                                            </div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="basic-default-email">Security Deposit (₹) <span
+                                                class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" name="txtsecurityDeposit" id="txtsecurityDeposit"
+                                            value="@isset($hub){{ $hub ? $hub->security_deposit : '' }}@endisset"
+                                            class="form-control" placeholder="Security Deposit" required />
+                                        @if ($errors->has('txtsecurityDeposit'))
+                                            <div class="text-danger">{{ $errors->first('txtsecurityDeposit') }}</div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3 form-password-toggle">
+                                        <label class="form-label" for="password">Password <span
+                                                class="text-danger">*</span>
+                                        </label>
+                                        <div class="input-group input-group-merge">
+                                            <input type="password" class="form-control" name="password"
+                                                id="password" placeholder="******" required />
+                                            <span class="input-group-text cursor-pointer">
+                                                <i class="ti ti-eye-off"></i>
+                                            </span>
+                                        </div>
+                                        @error('password')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3 form-password-toggle">
+                                        <label class="form-label" for="password_confirmation">Confirm Password <span
+                                                class="text-danger">*</span>
+                                        </label>
+                                        <div class="input-group input-group-merge">
+                                            <input type="password" class="form-control" name="password_confirmation"
+                                                id="password_confirmation" placeholder="******" required />
+                                            <span class="input-group-text cursor-pointer">
+                                                <i class="ti ti-eye-off"></i>
+                                            </span>
+                                        </div>
+                                        @error('password_confirmation')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card mt-3">
+                        <div class="card-body">
+                            <div class="card-header p-0">
+                                <h4>Geofence Map</h4>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="basic-default-email">Latitude <span
+                                                class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" name="txtlatitude" id="txtlatitude"
+                                            class="form-control"
+                                            value="@isset($hub){{ $hub ? $hub->latitude : '' }}@endisset"
+                                            placeholder="Latitude" required readonly />
+
+                                        @if ($errors->has('txtlatitude'))
+                                            <div class="text-danger">{{ $errors->first('txtlatitude') }}</div>
+                                        @endif
+                                        <span class="error"></span>
+
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="basic-default-email">Longtitude <span
+                                                class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" name="txtlangtitute" id="txtlangtitute"
+                                            value="@isset($hub){{ $hub ? $hub->longtitude : '' }}@endisset"
+                                            class="form-control" placeholder="Longtitude" required readonly />
+                                        @if ($errors->has('txtlangtitute'))
+                                            <div class="text-danger">{{ $errors->first('txtlangtitute') }}</div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="basic-default-email">Geo Location <span
+                                                class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" name="txtgeolocation" id="txtgeolocation"
+                                            value="@isset($hub){{ $hub ? $hub->geo_location : '' }}@endisset"
+                                            class="form-control" placeholder="Geo Location" required readonly />
+                                        @if ($errors->has('txtgeolocation'))
+                                            <div class="text-danger">{{ $errors->first('txtgeolocation') }}</div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="basic-default-email">Geo Coordinates <span
+                                                class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" name="txtcoordinates" id="txtcoordinates"
+                                            value="@isset($hub){{ $hub ? $hub->geo_coordinates : '' }}@endisset"
+                                            class="form-control" placeholder="Geo Coordinates" required readonly />
+                                        @if ($errors->has('txtcoordinates'))
+                                            <div class="text-danger">{{ $errors->first('txtcoordinates') }}</div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="mb-3">
+                                        <div id="map"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card mt-3">
+                        <div class="card-body">
+                            <div class="card-header p-0">
+                                <h4>Address info</h4>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="">State Name<span
+                                                class="text-danger">*</span>
+                                        </label>
+                                        <select name="ddlState" id="ddlState" class="select2 form-select">
+                                            <option value="">Select</option>
+
+                                            @if (!empty($states))
+                                                @foreach ($states as $state)
+                                                    <option value="{{ $state->id }}"
+                                                        @isset($hub)@if ($hub->state_id == $state->id) {{ 'selected' }}@endif @endisset>
+                                                        {{ $state->state_name }}
+                                                    </option>
+                                                @endforeach
+                                            @endif
+                                        </select>
+                                        @if ($errors->has('ddlState'))
+                                            <div class="text-danger">{{ $errors->first('ddlState') }}</div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="">District Name<span
+                                                class="text-danger">*</span>
+                                        </label>
+                                        <select name="ddlCity" id="ddlCity" class="select2 form-select">
+                                            @isset($hub)
+                                                @if (!empty($cities))
+                                                    @foreach ($cities as $city)
+                                                        <option value="{{ $city->id }}"
+                                                            @isset($hub)@if ($hub->city_id == $city->id) {{ 'selected' }}@endif @endisset>
+                                                            {{ $city->city_name }}
+                                                        </option>
+                                                    @endforeach
+                                                @endif
+                                            @endisset
+                                        </select>
+                                        @if ($errors->has('ddlCity'))
+                                            <div class="text-danger">{{ $errors->first('ddlCity') }}</div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3" id="areaId">
+                                        <label class="form-label">Area Name<span class="text-danger">*</span></label>
+                                        <select name="ddlArea" id="ddlArea"
+                                            class="select2 form-select form-select-lg" required>
+                                            @isset($hub)
+                                                @if (!empty($areas))
+                                                    @foreach ($areas as $area)
+                                                        {{-- {{dd($area)}} --}}
+                                                        <option value="{{ $area->id }}"
+                                                            @isset($hub)@if ($hub->area_id == $area->id) {{ 'selected' }}@endif @endisset>
+                                                            {{ $area->area_name }}
+                                                        </option>
+                                                    @endforeach
+                                                @endif
+                                            @endisset
+                                        </select>
+                                        @if ($errors->has('ddlArea'))
+                                            <div class="text-danger">{{ $errors->first('ddlArea') }}</div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="">Door No / Street / Landmark
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" name="txtLandmark" id="txtLandmark"
+                                            class="form-control"
+                                            value="@isset($hub){{ $hub ? $hub->address : '' }}@endisset"
+                                            placeholder="Enter Door No / Street / Landmark">
+                                        @if ($errors->has('txtLandmark'))
+                                            <div class="text-danger">{{ $errors->first('txtLandmark') }}</div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="">Pin Code <span
+                                                class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" name="txtpinCode" id="txtpinCode"
+                                            class="form-control numvalidate"
+                                            value="@isset($hub){{ $hub ? $hub->pincode : '' }}@endisset"
+                                            placeholder="Enter Pin Code">
+                                        @if ($errors->has('txtpinCode'))
+                                            <div class="text-danger">{{ $errors->first('txtpinCode') }}</div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card mt-3">
+                        <div class="card-body">
+                            <div class="card-header p-0">
+                                <h4>Choose Manufacuturer</h4>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="dropzone">
+                                        <div class="dz-info">
+                                            Please complete Geofencing and Address info sections
+                                            <span class="note">(After the completion of above sections, you can able
+                                                to choose manufacturer)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row loadManufacturer">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card mt-3">
+                        <div class="card-body">
+                            <div class="card-header p-0">
+                                <h4>Contact Info</h4>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="basic-default-email">Proprietor Name <span
+                                                class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" name="txtProprietorName" id="txtProprietorName"
+                                            value="@isset($hub){{ $hub ? $hub->proprietor_name : '' }}@endisset"
+                                            class="form-control" placeholder="Enter Proprietor Name" required />
+                                        @if ($errors->has('txtProprietorName'))
+                                            <div class="text-danger">{{ $errors->first('txtProprietorName') }}</div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="basic-default-email">Proprietor Mobile <span
+                                                class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" name="txtProprietorMobile" id="txtProprietorMobile"
+                                            value="@isset($hub){{ $hub ? $hub->proprietor_mobile : '' }}@endisset"
+                                            class="form-control mobilenumber" placeholder="Enter Proprietor Mobile"
+                                            required />
+                                        @if ($errors->has('txtProprietorMobile'))
+                                            <div class="text-danger">{{ $errors->first('txtProprietorMobile') }}</div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="basic-default-email">Proprietor Email <span
+                                                class="text-danger">*</span>
+                                        </label>
+                                        <input type="email" name="txtProprietorEmail" id="basic-txtProprietorEmail"
+                                            value="@isset($hub){{ $hub ? $hub->proprietor_email : '' }}@endisset"
+                                            class="form-control" placeholder="Enter Proprietor Email" required />
+                                        @if ($errors->has('txtProprietorEmail'))
+                                            <div class="text-danger">{{ $errors->first('txtProprietorEmail') }}</div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="basic-default-email">Contact Person Name <span
+                                                class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" name="txtContactPersonName" id="txtContactPersonName"
+                                            value="@isset($hub){{ $hub ? $hub->contact_person_name : '' }}@endisset"
+                                            class="form-control" placeholder="Enter Contact Person Name" required />
+                                        @if ($errors->has('txtContactPersonName'))
+                                            <div class="text-danger">{{ $errors->first('txtContactPersonName') }}
+                                            </div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="basic-default-email">Contact Person Mobile
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" name="txtContactPersonMobile"
+                                            id="txtContactPersonMobile"
+                                            value="@isset($hub){{ $hub ? $hub->contact_person_mobile : '' }}@endisset"
+                                            class="form-control mobilenumber"
+                                            placeholder="Enter Contact Person Number" required />
+                                        @if ($errors->has('txtContactPersonMobile'))
+                                            <div class="text-danger">{{ $errors->first('txtContactPersonMobile') }}
+                                            </div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="basic-default-email">Contact Person Email <span
+                                                class="text-danger">*</span>
+                                        </label>
+                                        <input type="email" id="txtContactPersonEmail" name="txtContactPersonEmail"
+                                            value="@isset($hub){{ $hub ? $hub->contact_person_email : '' }}@endisset"
+                                            class="form-control" placeholder="Enter Contact Person Email" required />
+                                        @if ($errors->has('txtContactPersonEmail'))
+                                            <div class="text-danger">{{ $errors->first('txtContactPersonEmail') }}
+                                            </div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @if (isset($bindDocuments) && $bindDocuments->count() > 0)
+                        <div class="card mt-3">
+                            <div class="card-body">
+                                <div class="card-header p-0">
+                                    <h4>Documents</h4>
+                                </div>
+                                <div class="row">
+                                    @foreach ($bindDocuments as $item)
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label class="form-label"
+                                                    for="doc_{{ $item->id }}">{{ $item->documentType->documenttype_name }}
+                                                    Number
+                                                    @if ($item->is_mandatory == 1)
+                                                        <span class="text-danger">*</span>
+                                                    @endif
+                                                </label>
+                                                <input type="text" id="doc_{{ $item->id }}"
+                                                    name="doc_{{ $item->id }}" class="form-control"
+                                                    placeholder="Document Number"
+                                                    value="{{ isset($item->hubDocuments) ? $item->hubDocuments->document_number : '' }}">
+                                            </div>
+                                        </div>
+                                        <div class=" col-md-4">
+                                            <div class="mb-3">
+                                                <label class="form-label">Upload File <sup>(PDF only)</sup>
+                                                    @if ($item->is_mandatory == 1)
+                                                        <span class="text-danger">*</span>
+                                                    @endif
+                                                </label>
+                                                <input type="hidden" name="hdDocumentTypeName"
+                                                    value="{{ isset($item->hubDocuments) ? $item->hubDocuments->documenttype_name : '' }}">
+                                                <input type="hidden" id="hddocumentNum_{{ $item->id }}"
+                                                    name="hddocumentNum_{{ $item->id }}"
+                                                    value="{{ isset($item->hubDocuments) ? $item->hubDocuments->document_number : '' }}">
+                                                <input id="file_{{ $item->id }}" name="file_{{ $item->id }}"
+                                                    type="file" class="form-control"
+                                                    @if ($hub == null ? '' : !$hub->id) @if ($item->is_mandatory == 1) required @endif
+                                                    @endif
+                                                accept="application/pdf" id="previewImage1" />
+                                                <input type="hidden" name="hdDocumentImg_{{ $item->id }}"
+                                                    id="hdDocumentImg_{{ $item->id }}"
+                                                    value="{{ isset($item->hubDocuments) ? $item->hubDocuments->document_path : '' }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            @if (isset($item->hubDocuments) && $item->hubDocuments->document_path)
+                                                <div class="mb-3">
+                                                    <label class="form-label">View Uploaded Document</label>
+                                                    <div>
+                                                        <a href="{{ asset($item->hubDocuments->document_path) }}"
+                                                            class="btn btn-primary" target="_blank"><i
+                                                                class="ti ti-eye"></i>View</a>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                    <div class="card mt-3">
+                        <div class="card-body">
+                            <div class="card-header p-0">
+                                <h4>Vehicle info</h4>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="">Fuel/Electric<span
+                                                class="text-danger">*</span>
+                                        </label>
+                                        <select name="ddlfueltype" id="ddlfueltype" class="form-select form-select">
+                                            <option value="">Select</option>
+                                            @if (!empty($fueltypes))
+                                                @foreach ($fueltypes as $fueltype)
+                                                    <option value="{{ $fueltype->id }}">
+                                                        {{ $fueltype->fuel_type }}
+                                                    </option>
+                                                @endforeach
+                                            @endif
+                                        </select>
+                                        @if ($errors->has('ddlfueltype'))
+                                            <div class="text-danger">{{ $errors->first('ddlfueltype') }}</div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="">Vehicle Type<span
+                                                class="text-danger">*</span>
+                                        </label>
+                                        <select name="ddlvehicletype" id="ddlvehicletype"
+                                            class="form-select form-select">
+                                            <option value="">Select</option>
+                                            @if (!empty($vehicletypes))
+                                                @foreach ($vehicletypes as $vehicletype)
+                                                    <option value="{{ $vehicletype->id }}">
+                                                        {{ $vehicletype->vehicle_type }}
+                                                    </option>
+                                                @endforeach
+                                            @endif
+                                        </select>
+                                        @if ($errors->has('ddlvehicletype'))
+                                            <div class="text-danger">{{ $errors->first('ddlvehicletype') }}</div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="">Brand<span
+                                                class="text-danger">*</span>
+                                        </label>
+                                        <select name="ddlvehiclebrand" id="ddlvehiclebrand"
+                                            class="select2 form-select">
+                                            <option value="">Select</option>
+                                            {{-- @if (!empty($vehiclebrands))
+                                                @foreach ($vehiclebrands as $vehiclebrand)
+                                                    <option value="{{ $vehiclebrand->id }}">
+                                                        {{ $vehiclebrand->vehicle_brand }}
+                                                    </option>
+                                                @endforeach
+                                            @endif --}}
+                                        </select>
+                                        @if ($errors->has('ddlvehiclebrand'))
+                                            <div class="text-danger">{{ $errors->first('ddlvehiclebrand') }}</div>
+                                        @endif
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="">Reg No<span
+                                                class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" name="txtregno" id="txtregno" class="form-control"
+                                            placeholder="Enter Reg No">
+                                    </div>
+                                    @if ($errors->has('txtregno'))
+                                        <div class="text-danger">{{ $errors->first('txtregno') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                                <div class="col-md-1">
+                                    <div class="mb-3">
+                                        <img src="{{ asset('upload/common/add.png') }}" class="img-fluid"
+                                            onclick="return addVehicleInfo();" id="btnAdd" width="50px"
+                                            height="50px" style="margin-top:18px; cursor:pointer;">
+                                        <img src="{{ asset('upload/common/addgreen.png') }}" class="img-fluid"
+                                            onclick="return addVehicleInfo();" id="btnUpdate" width="40"
+                                            style="margin-top:21px; cursor:pointer; display: none">
+                                        <input type="hidden" id="hdEditVehicleInfoRowId" value="0">
+
+                                    </div>
+                                </div>
+                                <div class="card-datatable table-responsive pt-0">
+                                    <table class="table table-responsive">
+                                        <thead>
+                                            <th>Fuel/Electric</th>
+                                            <th>Vehicle Type</th>
+                                            <th>Brand</th>
+                                            <th>Reg No</th>
+                                            <th>Action</th>
+                                        </thead>
+                                        <tbody id="tbodyVehicleType">
+                                            @if ($hubvehicleinfo != null)
+                                                @foreach ($hubvehicleinfo as $key => $vehicleinfos)
+                                                    <tr id="trvehicle{{ $key + 1 }}"
+                                                        FUL="{{ $vehicleinfos->fuel_type_id }}"
+                                                        FUT="{{ $vehicleinfos->fuel_type }}"
+                                                        VHL="{{ $vehicleinfos->vehicle_type_id }}"
+                                                        VHT="{{ $vehicleinfos->vehicle_type }}"
+                                                        VHB="{{ $vehicleinfos->vehicle_brand_id }}"
+                                                        VBT="{{ $vehicleinfos->vehicle_brand }}"
+                                                        RNO="{{ $vehicleinfos->reg_no }}">
+                                                        <td><input type='hidden' class='vehicleinfo'
+                                                                id="tabfueltype_{{ $key + 1 }}" name='tabFuel[]'
+                                                                value="{{ $vehicleinfos->fuel_type_id }}"><span
+                                                                id='spnFuelType'>{{ $vehicleinfos->fuel_type }}</span>
+                                                        </td>
+                                                        <td><input type='hidden' class='vehicleinfo'
+                                                                id="tabvehicletype_{{ $key + 1 }}"
+                                                                name='tabVehicleType[]'
+                                                                value="{{ $vehicleinfos->vehicle_type_id }}"><span
+                                                                id='spnVehicleType'>{{ $vehicleinfos->vehicle_type }}</span>
+                                                        </td>
+                                                        <td><input type='hidden' class='vehicleinfo'
+                                                                id="tabvehiclebrand_{{ $key + 1 }}"
+                                                                name='tabVehicleBrand[]'
+                                                                value="{{ $vehicleinfos->vehicle_brand_id }}"><span
+                                                                id='spnVehicleBrand'>{{ $vehicleinfos->brand_name }}</span>
+                                                        </td>
+                                                        <td><input type='hidden' class='vehicleinfo'
+                                                                id="tabregno_{{ $key + 1 }}" name='tabRegNo[]'
+                                                                value="{{ $vehicleinfos->reg_no }}"><span
+                                                                id='spnRegNo'>{{ $vehicleinfos->reg_no }}</span>
+                                                        </td>
+                                                        <td>
+                                                            <a><i class='text-primary ti ti-pencil me-1'
+                                                                    onclick="return doEdit({{ $key + 1 }});"></i></a>
+                                                            <a><i class='text-danger ti ti-trash me-1'
+                                                                    onclick="return removeRow({{ $key + 1 }});"></i></a>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            @endif
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mt-4 mb-3">
+                                    <button type="submit" class="btn btn-success">Save</button>
+                                    <button type="button" class="btn btn-danger">Cancel</button>
+                                    <a href="{{ route('hub-list') }}" class="btn btn-primary">Go To List</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+</div>
+<!-- /Browser Default -->
+<!-- / Content -->
+@endsection
+@section('footer')
+<script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCxSrT3mnTnRnbUSW1DGhTKAu2kGpdgm5Y&libraries=drawing,geometry,places">
+</script>
+<script src="{{ asset('assets/js/admin/hubmanagement/hub.js') }}"></script>
+<script src="{{ asset('assets/js/admin/hubmanagement/geofencing.js') }}"></script>
+@endsection

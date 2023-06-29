@@ -1,0 +1,143 @@
+$(document).ready(function () {
+    $("#tblUsers").DataTable({
+        processing: true,
+        serverSide: true,
+        order: [[0, "ASC"]],
+        ajax: "userpermission/data",
+        fnRowCallback: function (nRow, aData, iDisplayIndex) {
+            $("td:first", nRow).html(iDisplayIndex + 1);
+            return nRow;
+        },
+        columns: [
+            { data: "id" },
+            { data: "role_name" },
+            { data: "user_name" },
+            { data: "display_name" },
+            { data: "email" },
+            {
+                data: "is_active",
+                render: function (data, type, row) {
+                    return `<label class="switch">
+                        <input onclick="doStatus(${row.id});" id="chkUserPermission${row.id}" type="checkbox" class="switch-input"
+                        name="chkUserPermission" '  ${(data == 1 ? "checked" : "")} ' />
+                        <span class="switch-toggle-slider">
+                            <span class="switch-on"></span>
+                            <span class="switch-off"></span>
+                        </span>
+                    </label>`;
+                }
+            },
+            { data: "action" },
+        ],
+    });
+});
+
+
+$("#ddlRoleName").on("change", function () {
+    $('#tbodyMenuList').empty();
+    var id = $('#ddlRoleName').val();
+    LoadMenus(id);
+});
+
+//Append Menus
+function LoadMenus(id) {
+    jQuery.ajax({
+        type: "GET",
+        url: "listmenus/" + id,
+        async: false,
+        dataType: 'json',
+    }).done(function (menuData) {
+        $('#tbodyMenuList tr').empty();
+        var List = "";
+        $.each(menuData.menu, function (idx, val) {
+            List += "<tr id='trstu' >";
+            List += "<td>" + (idx + 1) + "</td>";
+            List += "<td>" + val.menu_name + "<input type='hidden' name='menuId[]' value=" + val.id + " ></td>";
+
+            List += "<td><label class='switch switch-primary'><input type='checkbox' name='checkEdit[" + val.id + "][]' id='checkEdit" + val.id + "' value='1' class='switch-input'><span class='switch-toggle-slider'><span class='switch-on'><i class='ti ti-check'></i></span><span class='switch-off'><i class='ti ti-x'></i></span></span></td>";
+
+            List += "<td><label class='switch switch-primary'><input type='checkbox' name='checkDelete[" + val.id + "][]' id='checkDelete" + val.id + "' value='1' class='switch-input'><span class='switch-toggle-slider'><span class='switch-on'><i class='ti ti-check'></i></span><span class='switch-off'><i class='ti ti-x'></i></span></span></td>";
+
+            List += "<td><label class='switch switch-primary'><input type='checkbox' name='checkPrint[" + val.id + "][]' id='checkPrint" + val.id + "' value='1' class='switch-input'><span class='switch-toggle-slider'><span class='switch-on'><i class='ti ti-check'></i></span><span class='switch-off'><i class='ti ti-x'></i></span></span></td>";
+
+            List += "<td><label class='switch switch-primary'><input type='checkbox' name='checkView[" + val.id + "][]' id='checkView" + val.id + "' value='1' class='switch-input'><span class='switch-toggle-slider'><span class='switch-on'><i class='ti ti-check'></i></span><span class='switch-off'><i class='ti ti-x'></i></span></span></td>";
+
+            List += "<td><label class='switch switch-primary'><input type='checkbox' name='checkApproval[" + val.id + "][]' id='checkApproval" + val.id + "' value='1' class='switch-input'><span class='switch-toggle-slider'><span class='switch-on'><i class='ti ti-check'></i></span><span class='switch-off'><i class='ti ti-x'></i></span></span></td>";
+
+            List += "</td>";
+            List += "</tr>";
+        });
+        $("#tbodyMenuList").html(List);
+    })
+}
+
+//Edit Permission Data
+function doEdit(id) {
+    $("#hdRolePermissionId").val(id);
+    $("#ddlEmployee").focus();
+    $("#btnSave").text("Update");
+    $("#rolePermissionTitle").text("Update Users");
+    getUserPermissionById(id);
+}
+
+//Delete Permission Data
+function showDelete(id) {
+    confirmDelete(id, "delete/userpermission/", "tblUsers");
+}
+
+//Get Permission By ID
+function getUserPermissionById(id) {
+    $.ajax({
+        type: "GET",
+        url: "getuserpermission/" + id,
+        dataType: "json",
+        success: function (data) {
+
+            $("#ddlEmployee").val(data.userPermission.user_id).trigger("change");
+            setTimeout(function () {
+                $("#ddlRoleName").val(data.userPermission.role_id).trigger("change");
+            }, 1000);
+            $("#txtDisplayName").val(data.userPermission.display_name);
+            $("#txtUserMobile").val(data.userPermission.mobile);
+            $("#txtUserEmail").val(data.userPermission.email);
+
+            $.each(data, function (idx, val) {
+                console.log(val);
+                setTimeout(function () {
+                    $("#checkEdit" + val.is_edit).attr("checked", true);
+                    $("#checkDelete" + val.is_delete).attr("checked", true);
+                    $("#checkPrint" + val.is_view).attr("checked", true);
+                    $("#checkView" + val.is_print).attr("checked", true);
+                    $("#checkApproval" + val.is_approval).attr("checked", true);
+                }, 2000);
+
+            });
+        },
+    });
+}
+
+//Update Status
+function doStatus(id) {
+    var status = $("#chkUserPermission" + id).is(":checked");
+    if (status == true) {
+        $("#chkUserPermission").val(1);
+        status = 1;
+    } else {
+        $("#chkUserPermission").val(0);
+        status = 0;
+    }
+    confirmStatusChange(id, "userpermission/", "tblUsers", status);
+}
+
+//Cancel
+function Cancel() {
+    $("#rolePermissionTitle").text("Users");
+    $("#ddlEmployee").focus();
+    $("#ddlEmployee").val(0).trigger("change");
+    $("#ddlRoleName").val(0).trigger("change");
+    $("#hdRolePermissionId").val("");
+    $("#txtDisplayName").val("");
+    $("#txtUserMobile").val("");
+    $("#txtUserEmail").val("");
+    $("#btnSave").text("Save");
+}

@@ -1,0 +1,124 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Area | Click Your Water | Dashboard
+@endsection
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold mb-4" id="areaTitle">
+        Area
+    </h4>
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-12 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <form action="{{ route('add.area') }}" name="areaValidate" method="POST">
+                        @csrf
+                        <input type="hidden" name="hdAreaId" id="hdAreaId" value="">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label class="form-label" for="ddlState">State Name<span
+                                            class="text-danger">*</span></label>
+                                    <select name="ddlState" id="ddlState" class="select2 form-select" required
+                                        title="Select State Name">
+                                        <option value="">Select State</option>
+                                        @foreach ($states as $item)
+                                            <option value="{{ $item->id }}"
+                                                {{ old('ddlState') == $item->id ? 'selected' : '' }}>
+                                                {{ $item->state_name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @if ($errors->has('ddlState'))
+                                        <div class="text-danger">{{ $errors->first('ddlState') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label class="form-label" for="ddlCity">District Name<span
+                                            class="text-danger">*</span></label>
+                                    <select name="ddlCity" id="ddlCity" value="" class="select2 form-select"
+                                        required title="Select District Name">
+                                    </select>
+                                    @if ($errors->has('ddlCity'))
+                                        <div class="text-danger">{{ $errors->first('ddlCity') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label class="form-label" for="txtAreaName">Area Name<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" name="txtAreaName" id="txtAreaName" class="form-control"
+                                        placeholder="Area Name" required title="Enter Area Name"
+                                        value="{{ old('txtAreaName') }}">
+                                    @if ($errors->has('txtAreaName'))
+                                        <div class="text-danger">{{ $errors->first('txtAreaName') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                            {{-- <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label class="form-label">Radius</label>
+                                    <input type="text" name="txtRadius" id="txtRadius" class="form-control"
+                                        placeholder="Enter Radius">
+                                    @if ($errors->has('txtRadius'))
+                                        <div class="text-danger">{{ $errors->first('txtRadius') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div> --}}
+                            <div class="col-md-4">
+                                <div class="mt-4 mb-3">
+                                    <button type="submit" id="btnSave" class="btn btn-success">Save</button>
+                                    <button type="button" class="btn btn-danger" id="btnCancel"
+                                        onclick="cancel();">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+    <!-- DataTable with Buttons -->
+    <div class="col-lg-12 mb-4 mb-lg-0">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between">
+                <h5 class="card-title m-0 me-2">Area List</h5>
+            </div>
+            <div class="card-datatable table-responsive pt-0">
+                <table id="tblArea" class="table">
+                    <thead class="border-bottom">
+                        <tr>
+                            <th>S.No</th>
+                            <th>State Name</th>
+                            <th>District Name</th>
+                            <th>Area Name</th>
+                            {{-- <th>Radius</th> --}}
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--/ DataTable with Buttons -->
+</div>
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/admin/masters/area.js') }}"></script>
+@endsection

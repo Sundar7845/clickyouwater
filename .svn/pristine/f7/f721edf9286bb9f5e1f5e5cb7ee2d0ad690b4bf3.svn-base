@@ -1,0 +1,90 @@
+@extends('layouts.main_master') @section('content') @section('title')
+Dashboard | Feedback
+@endsection
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+<h4 class="fw-bold py-1 mb-4">
+   Feedback
+</h4>
+<!-- DataTable with Buttons -->
+<div class="col-lg-12 mb-4 mb-lg-0">
+    <div class="card h-100">
+        <div class="card-datatable table-responsive pt-0">
+            <table id="feedback" class="table">
+                <thead class="border-bottom">
+                    <tr>
+                        <th>S.No</th>
+                        <th>Customer Name</th>
+                        <th>Date</th>
+                        <th>Mobile</th>
+                        <th>Service</th>
+                        <th>Products</th>
+                        <th>Message</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Jagan</td>
+                        <td>12/12/2023</td>
+                        <td>9876543210</td>
+                        <td>5.0</td>
+                        <td>5.0</td>
+                        <td>Good Work</td>
+                        <td>
+                            <button type="button" class="btn btn-success">Approve</button>
+                            <button type="button" class="btn btn-danger">Delete</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Rajan</td>
+                        <td>12/12/2023</td>
+                        <td>9876543210</td>
+                        <td>5.0</td>
+                        <td>5.0</td>
+                        <td>Good Work</td>
+                        <td>
+                            <button type="button" class="btn btn-success">Approve</button>
+                            <button type="button" class="btn btn-danger">Delete</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>James</td>
+                        <td>12/12/2023</td>
+                        <td>9876543210</td>
+                        <td>5.0</td>
+                        <td>5.0</td>
+                        <td>Good Work</td>
+                        <td>
+                            <button type="button" class="btn btn-success">Approve</button>
+                            <button type="button" class="btn btn-danger">Delete</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>John</td>
+                        <td>12/12/2023</td>
+                        <td>9876543210</td>
+                        <td>5.0</td>
+                        <td>5.0</td>
+                        <td>Good Work</td>
+                        <td>
+                            <button type="button" class="btn btn-success">Approve</button>
+                            <button type="button" class="btn btn-danger">Delete</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!--/ DataTable with Buttons -->
+</div>
+<!-- / Content --> 
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/feedback/feedback.js') }}"></script>
+@endsection

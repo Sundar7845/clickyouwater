@@ -1,0 +1,24 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Approval;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class ApprovalController extends Controller
+{
+    public function manufacturerApproval()
+    {
+        return view('admin.approval.manufacturer_approval');
+    }
+
+    public function logisticApproval()
+    {
+        return view('admin.approval.logistic_approval');
+    }
+
+    public function hubApproval()
+    {
+        return view('admin.approval.hub_approval');
+    }
+}

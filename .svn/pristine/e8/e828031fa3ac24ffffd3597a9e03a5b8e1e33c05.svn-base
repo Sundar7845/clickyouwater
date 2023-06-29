@@ -1,0 +1,30 @@
+$(document).ready(function () {
+    $("#tblRole").DataTable({
+        processing: true,
+        serverSide: true,
+        order: [[0, "ASC"]],
+        ajax: "role/data",
+        fnRowCallback: function (nRow, aData, iDisplayIndex) {
+            $("td:first", nRow).html(iDisplayIndex + 1);
+            return nRow;
+        },
+        columns: [{ data: "id" }, { data: "role_name" }, { data: "action" }],
+    });
+});
+
+function doEdit(id) {
+    $("#txtRoleName").focus();
+    getRoleById(id);
+}
+
+function getRoleById(id) {
+    $.ajax({
+        type: "GET",
+        url: "role/" + id,
+        dataType: "json",
+        success: function (data) {
+            console.log(data);
+            $("#txtRoleName").val(data.role.role_name);
+        },
+    });
+}

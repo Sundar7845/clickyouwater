@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Http\Controllers\Admin\UserRightsManagement;
+
+use App\Http\Controllers\Controller;
+use App\Models\Menu;
+use App\Models\Role;
+use Illuminate\Http\Request;
+
+class UserRightsController extends Controller
+{
+    public function rights()
+    {
+        $roles = Role::get();
+        return view('admin.users_rights_management.users_rights', compact('roles'));
+    }
+
+    public function getMenus()
+    {
+        $menus = Menu::where('id',1)->get();
+        return response()->json([
+            'menus' => $menus
+        ]);
+    }
+}

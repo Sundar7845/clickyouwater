@@ -1,0 +1,144 @@
+@extends('layouts.main_master') @section('content')
+@section('title')
+    Surrender Requests | Click Your Order | Dashboard
+@endsection
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-1 mb-4">
+        Surrender Requests
+    </h4>
+    <!-- Filters -->
+    <div class="card mt-3">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="form-label">State Name</label>
+                        <select name="ddlState" id="ddlState" class="select2 form-select ">
+                            <option value="">Select State</option>
+                            @foreach ($state as $item)
+                                <option value="{{ $item->id }}">{{ $item->state_name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="form-label">District Name</label>
+                        <select name="ddlCity" id="ddlCity" class="select2 form-select ">
+                            <option value="">Select District</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="form-label">Hub Name</label>
+                        <select name="ddlHub" id="ddlHub" class="select2 form-select ">
+                            <option value="">Select Hub</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- DataTable with Buttons -->
+    <div class="col-lg-12 mt-3 mb-4 mb-lg-0">
+        <div class="card h-100">
+            <div class="card-datatable table-responsive pt-0">
+                <table id="tblSurrenderRequests" class="table">
+                    <thead class="border-bottom">
+                        <tr>
+                            <th>S.No</th>
+                            <th>DATE</th>
+                            <th>CUSTOMER NAME</th>
+                            <th>HUB NAME</th>
+                            <th>QTY</th>
+                            <th>REFUND AMOUNT</th>
+                            <th>REFUND TO</th>
+                            <th>STATUS</th>
+                            <th>ACTION</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--/ DataTable with Buttons -->
+</div>
+
+{{-- Enter Reson Popup --}}
+<div class="modal fade" id="surrender_request_popup" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-simple modal-enable-otp modal-dialog-centered">
+        <div class="modal-content p-3 p-md-5">
+            <div class="modal-body">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <form action="{{ route('Surrenderrequestreject') }}" method="POST" class="row g-3"
+                    name="assignDeliveryPerson">
+                    @csrf
+                    <div class="col-12">
+                        <label class="form-label">Enter Reason<span class="text-danger">*</span></label>
+                        <textarea type="text" class="form-control" name="txtreason" id="txtreason" placeholder="Enter Your Reason"></textarea>
+                        @if ($errors->has('txtreason'))
+                            <div class="text-danger">{{ $errors->first('txtreason') }}</div>
+                        @endif
+                        <span class="error"></span>
+                    </div>
+                    <div class="col-12">
+                        <input type="hidden" name="hdrejectId" id="hdrejectId" value="0">
+                        <button type="submit" class="btn btn-primary me-sm-3 me-1">Submit</button>
+                        <button type="reset" class="btn btn-label-danger" data-bs-dismiss="modal" aria-label="Close">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- / Content -->
+
+<!-- Enable Bank Info Popup Modal -->
+<div class="modal fade" id="showBankInfoPopup" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel3">Bank Info</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-12 mb-2 mb-lg-0">
+                        <div class="card-datatable table-responsive pt-0">
+                            <table id="tblBankInfo" class="table">
+                                <thead class="border-bottom">
+                                    <tr>
+                                        <th>Bank Name</th>
+                                        <th>Branch Name</th>
+                                        <th>Account Holder</th>
+                                        <th>Account No</th>
+                                        <th>IFSC Code</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <input type="hidden" name="hdUserId" id="hdUserId" value="">
+                <button type="button" class="btn btn-label-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--/ Enable Bank InfoPopup Modal -->
+
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/admin/customermanagement/surrender_requests.js') }}"></script>
+@endsection

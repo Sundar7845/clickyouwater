@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Masters;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class TaxController extends Controller
+{
+   public function tax()
+   {
+      return view('admin.masters.tax.tax');
+   }
+}

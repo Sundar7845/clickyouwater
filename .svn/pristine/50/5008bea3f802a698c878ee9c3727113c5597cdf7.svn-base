@@ -1,0 +1,277 @@
+var FromDate;
+var ToDate;
+var date = new Date();
+var startdate =
+    date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+var enddate =
+    date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+
+$(document).ready(function () {
+    //generalpayment datatable
+    generalPaymentList();
+
+    //employeepayment datatable
+    employeePaymentList();
+    FromDate = moment();
+    ToDate = moment();
+
+    $("#btnDate").daterangepicker(
+        {
+            ranges: {
+                Today: [moment(), moment()],
+                Yesterday: [
+                    moment().subtract("days", 1),
+                    moment().subtract("days", 1),
+                ],
+                "Last 7 Days": [moment().subtract("days", 6), moment()],
+                "Last 30 Days": [moment().subtract("days", 29), moment()],
+                "This Month": [
+                    moment().startOf("month"),
+                    moment().endOf("month"),
+                ],
+                "Last Month": [
+                    moment().subtract("month", 1).startOf("month"),
+                    moment().subtract("month", 1).endOf("month"),
+                ],
+            },
+            FromDate: moment(),
+            ToDate: moment(),
+        },
+        getDate
+    );
+
+    getDate(FromDate, ToDate);
+});
+
+function getDate(start, end) {
+    startdate = start.format("YYYY-MM-DD");
+    enddate = end.format("YYYY-MM-DD");
+    dtGeneralPayment.draw();
+    dtEmployeePayment.draw();
+
+    $("#btnDate span").html(
+        start.format("MMMM D, YYYY") + " - " + end.format("MMMM D, YYYY")
+    );
+}
+
+//filter
+$("#ddlExpLedger,#ddlExpemployee").change(function () {
+    generalPaymentList();
+    employeePaymentList();
+});
+
+function generalPaymentList() {
+    var ledger_id =
+        $("#ddlExpLedger option:selected").val() == undefined
+            ? 0
+            : $("#ddlExpLedger option:selected").val();
+
+    dtGeneralPayment = $("#tblGeneralPayment").DataTable({
+        processing: true,
+        serverSide: true,
+        order: [[0, "ASC"]],
+        bDestroy: true,
+        ajax: {
+            url: "/generalpayment/data",
+            data: function (data) {
+                data.ledger_id = ledger_id;
+                data.startdate = startdate;
+                data.enddate = enddate;
+            },
+        },
+        fnRowCallback: function (nRow, aData, iDisplayIndex) {
+            $("td:first", nRow).html(iDisplayIndex + 1);
+            return nRow;
+        },
+        columns: [
+            { data: "id" },
+            { data: "payment_code" },
+            {
+                data: "payment_date",
+                render: function (data, type, row) {
+                    // Parse the date string into a Date object
+                    var date = new Date(data);
+
+                    // Format the date using the moment.js library
+                    return moment(date).format("DD-MM-YYYY");
+                },
+            },
+            { data: "payment_type" },
+            { data: "ledger_name" },
+            {
+                data: "payment_mode",
+                render: function (data, type, row) {
+                    if (row.payment_mode_id == "1") {
+                        var arraylist = ``;
+                        arraylist += `<div class='text-white badge bg-success'>${row.payment_mode}<br></div>`;
+                        return arraylist;
+                    } else if (row.payment_mode_id == "2") {
+                        var arraylist = ``;
+                        arraylist += `<div class='col-12'>
+                                    <p class='text-white badge bg-success'>${row.payment_mode}</p><br>
+                                    <p class='text-white badge bg-danger'>CC NO:${row.transaction_number}</p><br>
+                                    <p class='text-white badge bg-primary'>CC Date:${row.transaction_date}</p><br>
+                                    </div>`;
+
+                        return arraylist;
+                    } else if (row.payment_mode_id == "3") {
+                        var arraylist = ``;
+                        arraylist += `<div class='col-12'>
+                        <p class='text-white badge bg-success'>${row.payment_mode}</p><br>
+                        <p class='text-white badge bg-danger'>DD NO:${row.transaction_number}</p><br>
+                        <p class='text-white badge bg-primary'>DD Date:${row.transaction_date}</p><br>
+                        </div>`;
+                        return arraylist;
+                    } else if (row.payment_mode_id == "4") {
+                        var arraylist = ``;
+                        arraylist += `<div class='col-12'>
+                        <p class='text-white badge bg-success'>${row.payment_mode}</p><br>
+                        <p class='text-white badge bg-danger'> Trans NO:${row.transaction_number}</p><br>
+                        <p class='text-white badge bg-primary'>Trans Date:${row.transaction_date}</p><br>
+                        </div>`;
+                        return arraylist;
+                    } else if (row.payment_mode_id == "5") {
+                        var arraylist = ``;
+                        arraylist += `<div class='col-12'>
+                        <p class='text-white badge bg-success'>${row.payment_mode}</p><br>
+                        <p class='text-white badge bg-danger'>Trans NO:${row.transaction_number}</p><br>
+                        <p class='text-white badge bg-primary'>Trans Date:${row.transaction_date}</p><br>
+                        </div>`;
+                        return arraylist;
+                    } else {
+                        return "-";
+                    }
+                },
+            },
+            { data: "amount_paid" },
+            { data: "action" },
+        ],
+        footerCallback: function (tfoot, data, start, end, display) {
+            var api = this.api();
+
+            // Calculate the total amount paid
+            var totalAmountPaid = api
+                .column(6, { page: "current" })
+                .data()
+                .reduce(function (a, b) {
+                    return parseFloat(a) + parseFloat(b);
+                }, 0);
+
+            // Update the table footer
+            $(tfoot).find("#total_paid").html(totalAmountPaid.toFixed(2));
+        },
+    });
+}
+
+function employeePaymentList() {
+    var employee_id =
+        $("#ddlExpemployee option:selected").val() == undefined
+            ? 0
+            : $("#ddlExpemployee option:selected").val();
+
+    dtEmployeePayment = $("#tblEmployeePayment").DataTable({
+        processing: true,
+        serverSide: true,
+        order: [[0, "ASC"]],
+        bDestroy: true,
+        ajax: {
+            url: "/employeepayment/data",
+            data: function (data) {
+                data.employee_id = employee_id;
+                data.startdate = startdate;
+                data.enddate = enddate;
+            },
+        },
+        fnRowCallback: function (nRow, aData, iDisplayIndex) {
+            $("td:first", nRow).html(iDisplayIndex + 1);
+            return nRow;
+        },
+        columns: [
+            { data: "id" },
+            { data: "payment_code" },
+            {
+                data: "payment_date",
+                render: function (data, type, row) {
+                    // Parse the date string into a Date object
+                    var date = new Date(data);
+
+                    // Format the date using the moment.js library
+                    return moment(date).format("DD-MM-YYYY");
+                },
+            },
+            { data: "payment_type" },
+            { data: "display_name" },
+            {
+                data: "payment_mode",
+                render: function (data, type, row) {
+                    if (row.payment_mode_id == "1") {
+                        var arraylist = ``;
+                        arraylist += `<div class='text-white badge bg-success'>${row.payment_mode}<br></div>`;
+                        return arraylist;
+                    } else if (row.payment_mode_id == "2") {
+                        var arraylist = ``;
+                        arraylist += `<div class='col-12'>
+                                <p class='text-white badge bg-success'>${row.payment_mode}</p><br>
+                                <p class='text-white badge bg-danger'>CC NO:${row.transaction_number}</p><br>
+                                <p class='text-white badge bg-primary'>CC Date:${row.transaction_date}</p><br>
+                                </div>`;
+
+                        return arraylist;
+                    } else if (row.payment_mode_id == "3") {
+                        var arraylist = ``;
+                        arraylist += `<div class='col-12'>
+                    <p class='text-white badge bg-success'>${row.payment_mode}</p><br>
+                    <p class='text-white badge bg-danger'>DD NO:${row.transaction_number}</p><br>
+                    <p class='text-white badge bg-primary'>DD Date:${row.transaction_date}</p><br>
+                    </div>`;
+                        return arraylist;
+                    } else if (row.payment_mode_id == "4") {
+                        var arraylist = ``;
+                        arraylist += `<div class='col-12'>
+                    <p class='text-white badge bg-success'>${row.payment_mode}</p><br>
+                    <p class='text-white badge bg-danger'> Trans NO:${row.transaction_number}</p><br>
+                    <p class='text-white badge bg-primary'>Trans Date:${row.transaction_date}</p><br>
+                    </div>`;
+                        return arraylist;
+                    } else if (row.payment_mode_id == "5") {
+                        var arraylist = ``;
+                        arraylist += `<div class='col-12'>
+                    <p class='text-white badge bg-success'>${row.payment_mode}</p><br>
+                    <p class='text-white badge bg-danger'>Trans NO:${row.transaction_number}</p><br>
+                    <p class='text-white badge bg-primary'>Trans Date:${row.transaction_date}</p><br>
+                    </div>`;
+                        return arraylist;
+                    } else {
+                        return "-";
+                    }
+                },
+            },
+            { data: "amount_paid" },
+            { data: "action" },
+        ],
+        footerCallback: function (tfoot, data, start, end, display) {
+            var api = this.api();
+
+            // Calculate the total amount paid
+            var totalAmountPaid = api
+                .column(6, { page: "current" })
+                .data()
+                .reduce(function (a, b) {
+                    return parseFloat(a) + parseFloat(b);
+                }, 0);
+
+            // Update the table footer
+            $(tfoot).find("#emp_total_paid").html(totalAmountPaid.toFixed(2));
+        },
+    });
+}
+
+//Cancel Data
+function showCancel(id) {
+    confirmCancel(id, "update/paymnetcancel/", "tblGeneralPayment");
+}
+
+//EMP Cancel Data
+function showEmpCancel(id) {
+    confirmCancel(id, "update/paymnetcancel/", "tblEmployeePayment");
+}

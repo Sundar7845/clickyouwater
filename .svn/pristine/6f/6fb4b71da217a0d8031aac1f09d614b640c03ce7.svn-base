@@ -1,0 +1,64 @@
+<?php
+
+namespace App\Http\Controllers\API;
+
+use App\Http\Controllers\Controller;
+use App\Models\Reasons;
+use App\Traits\Common;
+use App\Traits\ResponseAPI;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class SettingsController extends Controller
+{
+
+    use Common;
+    use ResponseAPI;
+    public function getAdminSettings()
+    {
+        try {
+
+            $response = [
+                'status' => true,
+                'data' => $this->getAdminSetting(),
+                // 'message'=>"Updated Successfully"
+            ];
+            // dd($response);
+            return response($response, 200);
+        } catch (\Exception $e) {
+
+            $response = array(
+                'message' => "Failed",
+                'status' => false,
+
+            );
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            // return response($response, 200);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+    public function getReasons()
+    {
+        try {
+            $reasons=Reasons::all();
+            $response = [
+                'status' => true,
+                'data' => $reasons,
+                // 'message'=>"Updated Successfully"
+            ];
+            // dd($response);
+            return response($response, 200);
+        } catch (\Exception $e) {
+
+            $response = array(
+                'message' => "Failed",
+                'status' => false,
+
+            );
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            // return response($response, 200);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+}

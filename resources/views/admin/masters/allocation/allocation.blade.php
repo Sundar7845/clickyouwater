@@ -1,0 +1,113 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Brand Allocation | Click your Water | Dashboard
+@endsection
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold mb-4" id="brandTitle">
+        Brand Allocation
+    </h4>
+    <div class="row mb-4">
+        <form name="brand_allocation" action="{{ route('addBrandallocate') }}" method="post">
+            @csrf
+            <!-- Browser Default -->
+            <div class="col-md-12 mb-4 mb-md-0">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="ddlState">State Name<span class="text-danger">*</span></label>
+                                    <select name="ddlState" id="ddlState" class="select2 form-select"
+                                        title="Select State Name" required>
+                                        <option value="">Select State Name</option>
+                                        @foreach ($states as $state)
+                                            <option value="{{ $state->id }}">{{ $state->state_name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @if ($errors->has('ddlState'))
+                                        <div class="text-danger">{{ $errors->first('ddlState') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="ddlCity">District Name<span class="text-danger">*</span></label>
+                                    <select name="ddlCity" id="ddlCity" class="select2 form-select"
+                                        title="Select District Name" required>
+                                        <option value="">Select District Name</option>
+                                    </select>
+                                    @if ($errors->has('ddlCity'))
+                                        <div class="text-danger">{{ $errors->first('ddlCity') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h5>Choose Brands</h5>
+                                    </div> 
+                                    {{-- <div class="col-md-6">
+                                        <input type="text" class="form-control" placeholder="Search..." id="txtSearch" onkeyup="doSearch();" />
+                                    </div>   --}}
+                                </div>
+                                 
+                                <div class="card-datatable table-responsive pt-0">
+                                    <table id="tblBrandAllocation" class="table">
+                                        <thead class="border-bottom">
+                                            <tr>
+                                                <th>Category</th>
+                                                <th>Product Type</th>
+                                                <th>Brand Name</th>
+                                                <th>Move</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="brands">
+                                           
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>Allocated Brands</h5>
+                                <div class="card-datatable table-responsive pt-0 bg-light">
+                                    <table id="tblBrandAllocated" class="table">
+                                        <thead class="border-bottom">
+                                            <tr>
+                                                <th>Brand Name</th>
+                                                <th>Remove</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="brandallocation">
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-12">
+                                <div class="text-center">
+                                    <button type="submit" id="btnallocate" class="btn btn-success">Allocate</button>
+                                    <button type="button" id="btncancel" onclick="cancel();"
+                                        class="btn btn-danger">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <!-- /Browser Default -->
+    </div>
+</div>
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/admin/masters/brandallocation.js') }}"></script>
+@endsection

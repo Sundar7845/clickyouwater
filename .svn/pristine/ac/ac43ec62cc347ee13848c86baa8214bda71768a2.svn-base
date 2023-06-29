@@ -1,0 +1,53 @@
+$(document).ready(function () {
+    $("#tblBankList").DataTable({
+        processing: true,
+        serverSide: true,
+        responsive: true,
+        order: [[0, "ASC"]],
+        ajax: "bank/data",
+        fnRowCallback: function (nRow, aData, iDisplayIndex) {
+            $("td:first", nRow).html(iDisplayIndex + 1);
+            return nRow;
+        },
+
+        columns: [{ data: "id" }, { data: "bank_name" }, { data: "action" }],
+    });
+});
+
+function doEdit(id) {
+    $("#hdBankId").val(id);
+    $("#txtBankName").focus();
+    $("#btnSave").text("Update");
+    getBankById(id);
+}
+
+function getBankById(id) {
+    $.ajax({
+        type: "GET",
+        url: "getbank/" + id,
+        dataType: "json",
+        success: function (data) {
+            $("#txtBankName").val(data.bank.bank_name);
+        },
+    });
+}
+
+function cancel() {
+    $("#hdBankId").val("");
+    $("#txtBankName").val("");
+    $("#btnSave").text("Save");
+    $("#txtBankName").focus();
+}
+
+function showDelete(id) {
+    confirmDelete(id, "delete/bank/", "tblBankList");
+}
+
+// jquery Validation
+$(function () {
+    $("form[name='bank']").validate({
+        rules: {
+            txtBankName: "required",
+        },
+    });
+});

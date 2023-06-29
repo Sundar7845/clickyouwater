@@ -1,0 +1,188 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Settings;
+
+use App\Enums\MenuPermissionType;
+use App\Http\Controllers\Controller;
+use App\Models\Banners;
+use App\Traits\Common;
+use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
+
+class BannerController extends Controller
+{
+    use Common;
+    public function banners()
+    {
+        try {
+            $banners = Banners::get();
+            return view('admin.settings.banners', compact('banners'));
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function addBanner(Request $request)
+    {
+        $request->validate([
+            'txtBannerName' => [
+                'required',
+                Rule::unique('banners', 'banner_name')->ignore($request->hdBannerId),
+            ],
+            'txtStartDate' => 'required',
+            'txtEndDate' => 'required',
+        ], [
+            'txtBannerName.unique' => 'Designation name already exists.'
+        ]);
+
+        DB::beginTransaction();
+        try {
+
+
+            if ($request->hasFile('bannerImage')) {
+                $file = $request->file('bannerImage');
+                if ($file != null) {
+                    $extension = $file->getClientOriginalExtension();
+                    $fileName = $this->generateRandom(16) . '.' . $extension;
+                } else {
+                    throw new Exception('Banner Image Is Null');
+                }
+            }
+
+            if ($request->hdBannerId == null) {
+                Banners::create([
+                    'banner_name' => $request->txtBannerName,
+                    'banner_img' => $this->fileUpload($file, 'upload/settings/banners', $fileName),
+                    'start_date' => $request->txtStartDate,
+                    'end_date' => $request->txtEndDate,
+                    'created_by' => Auth::user()->id
+                ]);
+
+                $notification = array(
+                    'message' => 'Banner Created Successfully',
+                    'alert-type' => 'success'
+                );
+            } else {
+
+                $oldImage = $request->hdBannerImg;
+                if ($request->hasFile('bannerImage')) {
+                    $file = $request->file('bannerImage');
+                    if ($file != null) {
+                        @unlink($oldImage);
+                        $extension = $file->getClientOriginalExtension();
+                        $fileName = $this->generateRandom(16) . '.' . $extension;
+                        $folderPath = dirname($oldImage); // Use the same folder path as the old image
+                    } else {
+                        throw new Exception('Banner Image Is Null');
+                    }
+                }
+
+                Banners::findorfail($request->hdBannerId)->update([
+                    'Banner_name' => $request->txtBannerName,
+                    'banner_img' => $request->hasFile('bannerImage') ? $this->fileUpload($file, $folderPath, $fileName) : $oldImage,
+                    'start_date' => $request->txtStartDate,
+                    'end_date' => $request->txtEndDate,
+                    'updated_by' => Auth::user()->id
+                ]);
+
+                $notification = array(
+                    'message' => 'Banner Updated Successfully',
+                    'alert-type' => 'success'
+                );
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            $notification = array(
+                'message' => 'Banner Not Created!',
+                'alert-type' => 'error'
+            );
+            $this->Log(__FUNCTION__, $request->method(), $e->getMessage(), Auth::user()->id, $request->ip(), gethostname());
+        }
+        return redirect()->route('banners')->with($notification);
+    }
+
+    public function deleteBanner($id)
+    {
+        try {
+            $banner = Banners::findorfail($id);
+            $banner->delete();
+            $banner->update([
+                'deleted_by' => Auth::user()->id
+            ]);
+            $notification = array(
+                'message' => 'Banner Deleted Successfully',
+                'alert' => 'success'
+            );
+            return response()->json([
+                'responseData' => $notification
+            ]);
+        } catch (\Exception $e) {
+
+            $notification = array(
+                'message' => 'Banner could not be deleted',
+                'alert' => 'error'
+            );
+            return response()->json([
+                'responseData' => $notification
+            ]);
+        }
+    }
+
+
+    public function getBannerById($id)
+    {
+        try {
+            $banner = banners::select('banners.*')->where('banners.id', $id)->whereNull('deleted_at')->first();
+            return response()->json([
+                'banner' => $banner
+            ]);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function getBannerData(Request $request)
+    {
+        try {
+            $bannerData = Banners::select(
+                'banners.*',
+                DB::raw("DATE_FORMAT(banners.start_date, '%d-%m-%Y') as formatted_start_date"),
+                DB::raw("DATE_FORMAT(banners.end_date, '%d-%m-%Y') as formatted_end_date")
+            )->whereNull('deleted_at')->get();
+
+            return datatables()->of($bannerData)
+                ->addColumn('action', function ($row) {
+                    $html = "";
+                    if ($this->isUserHavePermission(MenuPermissionType::Edit)) {
+                        $html .= '<i class="text-primary ti ti-pencil me-1" onclick="doEdit(' . $row->id . ');"></i> ';
+                    }
+                    if ($this->isUserHavePermission(MenuPermissionType::Delete)) {
+                        $html .= '<i class="text-danger ti ti-trash me-1" id="confirm-color(' . $row->id . ')" onclick="showDelete(' . $row->id . ');"></i>';
+                    }
+                    return $html;
+                })->toJson();
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function activeBannerStatus($id, $status)
+    {
+        DB::beginTransaction();
+        try {
+            Banners::findorfail($id)->update([
+                'is_active' => $status,
+                'updated_by' => Auth::user()->id
+            ]);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            $this->Log(__FUNCTION__, 'POST', $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+}

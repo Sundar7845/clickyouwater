@@ -1,0 +1,95 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Notification Config | Click Your Water | Dashboard
+@endsection
+
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold mb-4">
+        Notification Config
+    </h4>
+
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-12 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <form action="{{ route('addNotificationConfig') }}" method="POST" id="notificationConfig">
+                        @csrf
+                        <input type="hidden" name="hdNotificationConfigId" id="hdNotificationConfigId" value="">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="ddlNotificationType">Notification Type</label>
+                                    <select name="ddlNotificationType" id="ddlNotificationType"
+                                        class="select2 form-select" title="Select Notification Type" required>
+                                        <option value="">Select Notification Type</option>
+                                        @foreach ($notificationType as $item)
+                                            <option value="{{ $item->id }}"
+                                                {{ old('ddlNotificationType') ? 'selected' : '' }}>
+                                                {{ $item->notification_type }}</option>
+                                        @endforeach
+                                    </select>
+                                    @if ($errors->has('ddlNotificationType'))
+                                        <div class="text-danger">{{ $errors->first('ddlNotificationType') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <label class="form-label" for="txtMessageFormat">Message Format</label>
+                                    <input type="text" name="txtMessageFormat" class="form-control" id="txtMessageFormat" value="" placeholder="Enter Message Format">
+                                    <div id="paramList" class="mt-1">
+                                    </div>
+                                    @if ($errors->has('txtMessageFormat'))
+                                        <div class="text-danger">{{ $errors->first('txtMessageFormat') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mt-4 mb-3">
+                                <button type="submit" id="btnSave" class="btn btn-success">Save</button>
+                                <button type="button" class="btn btn-danger" onclick="cancel();">Cancel</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+    <!-- DataTable with Buttons -->
+    <div class="col-lg-12 mb-4 mb-lg-0">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between">
+                <h5 class="card-title m-0 me-2">Notification Config List</h5>
+            </div>
+            <div class="card-datatable table-responsive pt-0">
+                <table id="tblNotificationConfig" class="table">
+                    <thead class="border-bottom">
+                        <tr>
+                            <th>S.No</th>
+                            <th>Notification Type</th>
+                            <th>Message Format</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--/ DataTable with Buttons -->
+</div>
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/admin/settings/notification_config.js') }}"></script>
+@endsection

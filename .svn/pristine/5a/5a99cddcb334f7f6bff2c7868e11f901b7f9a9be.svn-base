@@ -1,0 +1,121 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Dashboard | Damage Can
+@endsection
+
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold mb-4">
+        Damage Can Entry
+    </h4>
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-12 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <form class="browser-default-validation">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Product Name<span
+                                            class="text-danger">*</span></label>
+                                            <select name="" id="ddloffer" class="select2 form-select form-select-lg">
+                                                <option value="">SELECT</option>
+                                                <option value="1">Product 1</option>
+                                                <option value="2">Product 2</option>
+                                                <option value="3">Product 3</option>
+                                            </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Damage Can Count<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" id="basic-default-email" class="form-control"
+                                        placeholder="Enter Damage Can Count" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Reason<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" id="basic-default-email" class="form-control"
+                                        placeholder="Enter Reason" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Date<span
+                                            class="text-danger">*</span></label>
+                                    <input type="datetime-local" id="purexpecdate" class="form-control"
+                                        placeholder="Enter End Date" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mt-4 mb-3">
+                                    <button type="submit" class="btn btn-success">Save</button>
+                                    <button type="button" class="btn btn-danger">Cancel</button>
+                                </div>
+                            </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+    <!-- DataTable with Buttons -->
+    <div class="col-lg-12 mb-4 mb-lg-0 mt-3">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between">
+                <h5 class="card-title m-0 me-2">Damage Can List</h5>
+            </div>
+            <div class="card-datatable table-responsive pt-0">
+                <table id="damagecan" class="table">
+                    <thead class="border-bottom">
+                        <tr>
+                            <th>S.No</th>
+                            <th>Product Name</th>
+                            <th>Date</th>
+                            <th>Can Count</th>
+                            <th>Reason</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Product 1</td>
+                            <td>01/02/23 10:00 AM</td>
+                            <td>2</td>
+                            <td>Leakage</td>
+                            <td><span class="badge bg-label-success">Retruned</span></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Product 2</td>
+                            <td>02/02/23 11:00 AM</td>
+                            <td>5</td>
+                            <td>Broken</td>
+                            <td><span class="badge bg-label-danger">Pending</span></td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Product 3</td>
+                            <td>03/02/23 12:00 AM</td>
+                            <td>8</td>
+                            <td>Dust</td>
+                            <td><span class="badge bg-label-success">Retruned</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--/ DataTable with Buttons -->
+</div>
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/manufacturer/damagecan/damagecan.js') }}"></script>
+@endsection

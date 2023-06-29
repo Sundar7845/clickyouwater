@@ -1,0 +1,303 @@
+@extends('layouts.main_master') @section('content')
+@section('title')
+    Dashboard | Add Products
+@endsection
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-1 mb-4">
+         Add Products
+    </h4>
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-12 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <form action="{{ route('add.products')}}" method="POST" name="products" enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" name="hdProductId" id="hdProductId" value="">
+                        <input type="hidden" name="hdProductImg" id="hdProductImg" value="">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Category <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <select name="ddlCategory" id="ddlCategory" class="select2 form-select " required>
+                                        <option value="">Select</option>
+                                        @foreach ($categories as $item )
+                                        <option value="{{ $item->id }}">
+                                            {{ $item->category_name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @if ($errors->has('ddlCategory'))
+                                    <div  class="text-danger">{{ $errors->first('ddlCategory') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Product Type <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <select name="ddlProducttype" id="ddlProducttype" class="select2 form-select form-select-lg" required>
+                                        <option value="">Select</option>
+                                        @foreach ($product_types as $item )
+                                        <option value="{{ $item->id }}">
+                                            {{ $item->product_type_name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @if ($errors->has('ddlProducttype'))
+                                    <div  class="text-danger">{{ $errors->first('ddlProducttype') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Brand <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <select name="ddlBrand" id="ddlBrand" class="select2 form-select form-select-lg">
+                                        <option value="">Select</option>
+                                        @foreach ($brands as $item )
+                                        <option value="{{ $item->id }}">
+                                            {{ $item->brand_name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @if ($errors->has('ddlBrand'))
+                                    <div  class="text-danger">{{ $errors->first('ddlBrand') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Product Name</label>
+                                    <input type="tetx" name="txtProductName" id="txtProductName" class="form-control"
+                                        placeholder="Product Name" required />
+
+                                        @if ($errors->has('txtProductName'))
+                                    <div  class="text-danger">{{ $errors->first('txtProductName') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Customer Price</label>
+                                    <input type="tetx" name="txtCustomerPrice" id="txtCustomerPrice" class="form-control"
+                                        placeholder="Customer Price" required />
+
+                                        @if ($errors->has('txtCustomerPrice'))
+                                    <div  class="text-danger">{{ $errors->first('txtCustomerPrice') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Wholesale Price</label>
+                                    <input type="tetx" name="txtWholesalePrice" id="txtWholesalePrice" class="form-control"
+                                        placeholder="Wholesale Price" required />
+
+                                        @if ($errors->has('txtWholesalePrice'))
+                                    <div  class="text-danger">{{ $errors->first('txtWholesalePrice') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Capacity</label>
+                                    <input type="tetx" name="txtCapacity" id="txtCapacity" class="form-control"
+                                        placeholder="Capacity" required />
+
+                                        @if ($errors->has('txtCapacity'))
+                                    <div  class="text-danger">{{ $errors->first('txtCapacity') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Description</label>
+                                    <input type="tetx" name="txtDescription" id="txtDescription" class="form-control"
+                                        placeholder="Description" required />
+
+                                        @if ($errors->has('txtDescription'))
+                                    <div  class="text-danger">{{ $errors->first('txtDescription') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Empty Can Return <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <div class="col-sm-6">
+                                        <label class="switch">
+                                            <input type="checkbox" name="canreturn" id="canreturn" value="1" class="switch-input" />
+                                            <span class="switch-toggle-slider">
+                                                <span class="switch-on"></span>
+                                                <span class="switch-off"></span>
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">CGST%</label>
+                                    <input type="tetx" name="txtCgst" id="txtCgst" class="form-control"
+                                        placeholder="CGST%" required />
+
+                                        @if ($errors->has('txtCgst'))
+                                    <div  class="text-danger">{{ $errors->first('txtCgst') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">SGST%</label>
+                                    <input type="tetx" name="txtSgst" id="txtSgst" class="form-control"
+                                        placeholder="SGST%" required />
+
+                                        @if ($errors->has('txtSgst'))
+                                    <div  class="text-danger">{{ $errors->first('txtSgst') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Product Image</label>
+                                    <div class="upload__box">
+                                        <div class="upload__btn-box">
+                                            <label class="upload__btn">
+                                                Upload image
+                                                <input type="file" name="productImage"  multiple=""  data-max_length="20"
+                                                    class="upload__inputfile">
+                                            </label>
+                                            @if ($errors->has('productImage'))
+                                                <span class="text-danger">{{ $errors->first('productImage') }}</span>
+                                            @endif
+                                        </div>
+                                        <div class="upload__img-wrap" ></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mt-4 mb-3">
+                                    <button type="submit" id="btnSave" class="btn btn-success">Save</button>
+                                    <button type="button" onclick="cancel();" class="btn btn-danger">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+    <!-- DataTable with Buttons -->
+    <h5 class="fw-bold py-1 mb-4">Products List</h5>
+    <div class="col-lg-12 mb-4 mb-lg-0">
+        <div class="card h-100">
+            <div class="card-datatable table-responsive pt-0">
+                <table id="product" class="table">
+                    <thead class="border-bottom">
+                        <tr>
+                            <th>S.No</th>
+                            <th>Category</th>
+                            <th>Type</th>
+                            <th>Brand</th>
+                            <th>Name</th>
+                            <th>Status</th>
+                            <th>Image</th>
+                            <th>Customer Price</th>
+                            <th>Wholesale Price</th>
+                            <th>Ltr</th>
+                            <th>Description</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{-- <tr>
+                            <td>1</td>
+                            <td>20L Watercan</td>
+                            <td>Elite</td>
+                            <td>Smart Blue</td>
+                            <td>Smart Blue</td>
+                            <td><img src="{{ asset('assets/img/branding/smart_blue.jpg') }}" width="100"
+                                    height="60" class="img-fluid"></td>
+                            <td>₹200</td>
+                            <td>₹190</td>
+                            <td>20 Ltr</td>
+                            <td>Packaged Drinking Water</td>
+                            <td>
+                                <a>
+                                    <i class="text-primary ti ti-pencil me-1"></i>
+                                </a>
+                                <a>
+                                    <i class="text-danger ti ti-trash me-1"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Bottled Water / Beverages</td>
+                            <td>Premium</td>
+                            <td>Adiyogi</td>
+                            <td>Adiyogi</td>
+                            <td><img src="{{ asset('assets/img/branding/smart_blue.jpg') }}" width="100"
+                                    height="60" class="img-fluid"></td>
+                            <td>₹200</td>
+                            <td>₹190</td>
+                            <td>20 Ltr</td>
+                            <td>Packaged Drinking Water</td>
+                            <td>
+                                <a>
+                                    <i class="text-primary ti ti-pencil me-1"></i>
+                                </a>
+                                <a>
+                                    <i class="text-danger ti ti-trash me-1"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Bulk Water</td>
+                            <td>Classic</td>
+                            <td>Agriya</td>
+                            <td>Agriya</td>
+                            <td><img src="{{ asset('assets/img/branding/smart_blue.jpg') }}" width="100"
+                                    height="60" class="img-fluid"></td>
+                            <td>₹200</td>
+                            <td>₹190</td>
+                            <td>20 Ltr</td>
+                            <td>Packaged Drinking Water</td>
+                            <td>
+                                <a>
+                                    <i class="text-primary ti ti-pencil me-1"></i>
+                                </a>
+                                <a>
+                                    <i class="text-danger ti ti-trash me-1"></i>
+                                </a>
+                            </td>
+                        </tr> --}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--/ DataTable with Buttons -->
+</div>
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/admin/products/product.js') }}"></script>
+@endsection

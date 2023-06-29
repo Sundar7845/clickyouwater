@@ -1,0 +1,78 @@
+<?php
+
+namespace App\Http\Controllers\Admin\ProductsManagement;
+
+use App\Http\Controllers\Controller;
+use App\Models\Category;
+use Intervention\Image\Facades\Image;
+
+use Illuminate\Http\Request;
+
+class CategoryController extends Controller
+{
+    public function category()
+    {
+        return view('admin.product_management.category.category');
+    }
+
+    public function addCategory(Request $request)
+    {
+        $request->validate([
+            'txtCategoryName' => 'required',
+            'txtCategoryDescription' => 'required',
+            'CategoryImage' => 'required'
+        ]);
+
+
+        if ($request->hdCategoryId == null) {
+
+            $image = $request->file('CategoryImage');
+            $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
+            image::make($image)->save('upload/category/' . $name_gen);
+            $save_url = 'upload/category/' . $name_gen;
+
+            Category::create([
+                'category_name' => $request->txtCategoryName,
+                'category_desc' => $request->txtCategoryDescription,
+                'category_image' => $save_url
+            ]);
+        } else {
+            Category::findorfail($request->hdAreaId)->update([
+                'category_name' => $request->txtCategoryName,
+                'category_desc' => $request->txtCategoryDescription,
+                'category_image' => $request->txtAreaName
+            ]);
+        }
+
+        $notification = array(
+            'message' => 'Category Created Successfully',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->route('category')->with($notification);
+    }
+
+    public function getCategoryById($id)
+    {
+        $category = Category::select('categories.*')->where('categories.id', $id)->first();
+        return response()->json([
+            'category' => $category
+        ]);
+    }
+
+    public function getCategoryData(Request $request)
+    {
+
+        $departmentData = Category::select('categories.*')->get();
+
+        return datatables()->of($departmentData)
+            ->addColumn('action', function ($row) {
+                $html = '<i class="text-primary ti ti-pencil me-1"
+                onclick="doEdit(' . $row->id . ');"></i> ';
+                $html .= '<a href="delete/department/' . $row->id . '">
+                <i class="text-danger ti ti-trash me-1" id="confrim-text"></i>
+            </a>';
+                return $html;
+            })->toJson();
+    }
+}

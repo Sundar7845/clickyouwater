@@ -1,0 +1,91 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Dashboard | Brand Allocation
+@endsection
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold mb-4">
+        Brand Allocation
+    </h4>
+    <div class="row mb-4">
+        <form action="{{ route('addBrandallocate') }}" method="post">
+            @csrf
+            <input type="hidden" name="hdBrandAllocateId" value="">
+            <!-- Browser Default -->
+            <div class="col-md-12 mb-4 mb-md-0">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <h5><label for="basic-default-name">State Name<span
+                                                class="text-danger">*</span></label></h5>
+                                    <select name="ddlState" id="ddlState" class="select2 form-select">
+                                        <option value="0">Select</option>
+                                        @foreach ($states as $state)
+                                            <option value="{{ $state->id }}">{{ $state->state_name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="mt-4 mb-3">
+                                    <button type="submit" class="btn btn-primary">Allocate</button>
+                                </div>
+                            </div>
+                            <div class="col-md-8 mb-4 mb-md-0">
+                                <div class="mb-3">
+                                    <h5><label class="form-label" for="basic-default-name">Brands</label></h5>
+                                    <div class="scroll-bar">
+                                        @foreach ($brands as $brand)
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="chkBrandName"
+                                                    name="chkBrandName[]" value="{{ $brand->id }}">
+                                                {{ $brand->brand_name }}
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div class="col-md-12 mt-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Brand Allocation List</h5>
+                    <form class="browser-default-validation">
+                        <div class="row">
+                            <div class="col-lg-12 mb-4 mb-lg-0">
+                                <div class="card h-100">
+                                    <div class="card-datatable table-responsive pt-0">
+                                        <table id="tblBrandAllocation" class="table">
+                                            <thead class="border-bottom">
+                                                <tr>
+                                                    <th>S.No</th>
+                                                    <th>State Name</th>
+                                                    <th>ACTION</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+</div>
+
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/admin/masters/brandallocation.js') }}"></script>
+@endsection

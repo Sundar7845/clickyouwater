@@ -1,0 +1,94 @@
+$(document).ready(function () {
+    BindCity();
+
+    //datatable
+    manufactureOrderList();
+
+    $("#ddlCity").bind("change", function () {
+        getHubs();
+    });
+});
+
+//filter
+$("#ddlState,#ddlCity,#ddlHub").change(function () {
+    manufactureOrderList();
+});
+
+function getHubs() {
+    var city_id = $("#ddlCity").val();
+    $.ajax({
+        url: "/get/hubs",
+        type: "GET",
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        },
+        data: {
+            city_id: city_id,
+            _token: $('meta[name="csrf-token"]').attr("content"),
+        },
+        dataType: "json",
+        success: function (result) {
+            $("#ddlHub").select2({
+                placeholder: "Select Hub",
+            });
+            $("#ddlHub").html('<option value="0">Select Hub</option>');
+            $.each(result.hubs, function (key, value) {
+                $("#ddlHub").append(
+                    '<option value="' +
+                        value.id +
+                        '">' +
+                        value.hub_name +
+                        "</option>"
+                );
+            });
+        },
+    });
+}
+
+function manufactureOrderList() {
+    var state_id =
+        $("#ddlState option:selected").val() == undefined
+            ? 0
+            : $("#ddlState option:selected").val();
+    var city_id =
+        $("#ddlCity option:selected").val() == undefined
+            ? 0
+            : $("#ddlCity option:selected").val();
+
+    var hub_id =
+        $("#ddlHub option:selected").val() == undefined
+            ? 0
+            : $("#ddlHub option:selected").val();
+
+    dtHubs = $("#tblManufactureOrders").DataTable({
+        processing: true,
+        serverSide: true,
+        order: [[0, "ASC"]],
+        bDestroy: true,
+        ajax: {
+            url: "/manufacturer/data",
+            data: function (data) {
+                data.state_id = state_id;
+                data.city_id = city_id;
+                data.hub_id = hub_id;
+            },
+        },
+        fnRowCallback: serialNoCount,
+        columns: [
+            { data: "id", orderable: false },
+            { data: "manufacturer_code" },
+            {
+                data: "manufacturer_name",
+                render: function (data, type, row) {
+                    var html =
+                        "<div class='text-muted p-1'><small class='bg-light p-1'>" +
+                        row.mobile +
+                        "</small></div>";
+                    return `${row.manufacturer_name}` + " " + html;
+                },
+            },
+            { data: "hub_name" },
+            { data: "action", orderable: false },
+        ],
+    });
+}

@@ -1,0 +1,241 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Dashboard | Purchase Order
+@endsection
+
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-1 mb-4">
+        Purchase Order
+    </h4>
+
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-12 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <form class="browser-default-validation">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Manufacturer Name</label>
+                                    <select name="" id="" class="select2 form-select form-select-lg">
+                                        <option value="AK">Alaska</option>
+                                        <option value="HI">Hawaii</option>
+                                        <option value="CA">California</option>
+                                        <option value="NV">Nevada</option>
+                                        <option value="OR">Oregon</option>
+                                        <option value="WA">Washington</option>
+                                        <option value="AZ">Arizona</option>
+                                        <option value="CO">Colorado</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label" for="basic-default-name">&nbsp;</label>
+                                <div class="input-group">
+                                    <span class="input-group-text" id="basic-addon11">Expected Date</span>
+                                    <input type="date" class="form-control" id="purexpecdate" placeholder="PO.Date"
+                                        aria-label="Username" aria-describedby="basic-addon11" />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label" for="basic-default-name">&nbsp;</label>
+                                <div class="input-group">
+                                    <span class="input-group-text" id="basic-addon11">PO.No.</span>
+                                    <input type="text" class="form-control" placeholder="PO0025" disabled
+                                        aria-label="Username" aria-describedby="basic-addon11" />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label" for="basic-default-name">&nbsp;</label>
+                                <div class="input-group">
+                                    <span class="input-group-text" id="basic-addon11">PO.Date</span>
+                                    <input type="date" class="form-control" id="purorddate" disabled
+                                        placeholder="PO.Date" aria-label="Username" aria-describedby="basic-addon11" />
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Item Code</label>
+                                    <input type="text" id="basic-default-email" class="form-control"
+                                        placeholder="Item Code" required />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Item Name</label>
+                                    <select name="" id="" class="select2 form-select form-select-lg">
+                                        <option value="Sales">Sales</option>
+                                        <option value="Service">Service</option>
+                                        <option value="Opening">Opening</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">QTY</label>
+                                    <input type="text" id="basic-default-email" class="form-control"
+                                        placeholder="QTY" required />
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Rate</label>
+                                    <input type="text" id="basic-default-email" class="form-control"
+                                        placeholder="Rate" required />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label" for="basic-default-name">Discount</label>
+                                <div class="input-group">
+                                    <span class="input-group-text" id="basic-addon11">₹</span>
+                                    <input type="text" class="form-control" placeholder="" aria-label="Username"
+                                        aria-describedby="basic-addon11" />
+                                    <span class="input-group-text" id="basic-addon11">%</span>
+                                    <input type="text" class="form-control" placeholder="" aria-label="Username"
+                                        aria-describedby="basic-addon11" />
+                                </div>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Description</label>
+                                    <input type="text" id="basic-default-email" class="form-control"
+                                        placeholder="Description" required />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label" for="basic-default-name">Amount</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="" disabled
+                                        aria-label="Username" aria-describedby="basic-addon11" />
+                                    <span class="" id="basic-addon11"></span>
+                                    <button type="submit" class="btn btn-primary">Add</button>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mt-3">
+                                <h5>Purchase Order Details</h5>
+                                <!-- DataTable with Buttons -->
+                                <div class="col-lg-12 mb-4 mb-lg-0">
+                                    <div class="card h-100">
+                                        <div class="card-datatable table-responsive pt-0">
+                                            <table class="table">
+                                                <thead class="border-top border-bottom">
+                                                    <tr>
+                                                        <th>S.No</th>
+                                                        <th>Item Code</th>
+                                                        <th>Item Name</th>
+                                                        <th>Qty</th>
+                                                        <th>Rate</th>
+                                                        <th>Discount</th>
+                                                        <th>Tax</th>
+                                                        <th>Amount</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <td colspan="9" style="text-align: center">No Records added
+                                                    </td>
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <th colspan="3">TOTAL</th>
+                                                        <th>0.00 </th>
+                                                        <th>0.00</th>
+                                                        <th>0.00</th>
+                                                        <th>0.00</th>
+                                                        <th>0.00</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--/ DataTable with Buttons -->
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mt-3">
+                                    <div class="mb-3">
+                                        <label>Remarks</label>
+                                        <textarea id="txtRemark" class="form-control" maxlength="250" cols="1" rows="5" style="resize: none;"></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>Terms Type</label>
+                                        <select name="ctl00$body$ddlTermsType" id="body_ddlTermsType"
+                                            class="select2 form-select form-select-lg" control="ddl">
+                                            <option value="0">Select</option>
+                                            <option value="2">Quotation Payment</option>
+                                            <option value="3">Offer Days</option>
+                                            <option value="4">Order Acceptance</option>
+                                            <option value="5">Proforma Invoice</option>
+                                            <option value="6">Sales Invoice</option>
+                                            <option value="7">Quotation</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>Terms & Conditions</label>
+                                        <textarea id="txtTerms" maxlength="500" cols="1" rows="5" class="form-control" style="resize: none;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <div class="form-group">
+                                        <label> File Attachment</label>
+                                        <div class="input-group">
+                                            <input id="txtfileattachment" type="file" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mt-4">
+                                    <div class="form-group input-group mb-3">
+                                        <span class="input-group-text">Taxable Amount</span>
+                                        <input type="text" disabled="disabled" tabindex="-1"
+                                            class="form-control" id="txtTaxableAmount" value="0.00"
+                                            style="text-align: right;" />
+                                    </div>
+                                    <div class="form-group input-group mb-3">
+                                        <span class="input-group-text">Tax Amount</span>
+                                        <input type="text" disabled="disabled" tabindex="-1"
+                                            class="form-control" id="txtTaxAmount" value="0.00"
+                                            style="text-align: right;" />
+                                    </div>
+                                    <div class="form-group input-group mb-3">
+                                        <span class="input-group-text">Sub Total</span>
+                                        <input type="text" disabled="disabled" tabindex="-1" id="txtSubTotal"
+                                            class="form-control" value="0.00" style="text-align: right;" />
+                                    </div>
+                                    <div class="form-group input-group mb-3">
+                                        <span class="input-group-text">Round Off</span>
+                                        <input type="text" disabled="disabled" tabindex="-1"
+                                            class="form-control" id="txtRound" style="text-align: right;"
+                                            value="0.00" />
+                                    </div>
+                                    <div class="form-group input-group mb-3">
+                                        <span class="input-group-text">Net Amount</span>
+                                        <input type="text" disabled="disabled" tabindex="-1"
+                                            class="form-control" id="txtNetAmount" style="text-align: right;"
+                                            value="0.00" />
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="mt-4 mb-3">
+                                            <button type="submit" class="btn btn-primary">Save</button>
+                                            <button type="button" class="btn btn-danger">Cancel</button>
+                                            <a href="{{ route('purchaseorderlist') }}"><button type="button"
+                                                    class="btn btn-success">Go to List</button></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- /Browser Default -->
+</div>
+</div>
+<!-- / Content -->
+@endsection

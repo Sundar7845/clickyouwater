@@ -1,0 +1,278 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Settings;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\BillNoSetting;
+use App\Traits\Common;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class BillSettingsController extends Controller
+{
+    use Common;
+    public function BillSettings()
+    {
+        try {
+            $data = BillNoSetting::first();
+            $manPrefix = $data->manufacture_prefix ?? 0;
+            $ManLength = $data->manufacture_length ?? 0;
+            $manLive = (int)($data->manufacture_live ?? 0) + 1;
+
+            $hubPrefix = $data->hub_prefix ?? 0;
+            $hubLength = $data->hub_length ?? 0;
+            $hubLive = (int)($data->hub_live ?? 0) + 1;
+
+            $logPrefix = $data->logistics_prefix ?? 0;
+            $logLength = $data->logistics_length ?? 0;
+            $logLive = (int)($data->logistics_live ?? 0) + 1;
+
+            $cusPrefix = $data->customer_prefix ?? 0;
+            $cusLength = $data->customer_length ?? 0;
+            $cusLive = (int)($data->customer_live ?? 0) + 1;
+
+            $delPrefix = $data->deliveryperson_prefix ?? 0;
+            $delLength = $data->deliveryperson_length ?? 0;
+            $delLive = (int)($data->deliveryperson_live ?? 0) + 1;
+
+            $empPrefix = $data->employee_prefix ?? 0;
+            $empLength = $data->employee_length ?? 0;
+            $empLive = (int)($data->employee_live ?? 0) + 1;
+
+            $ledPrefix = $data->ledger_prefix ?? 0;
+            $ledLength = $data->ledger_length ?? 0;
+            $ledLive = (int)($data->ledger_live ?? 0) + 1;
+
+            $ordPrefix = $data->ORD_prefix ?? 0;
+            $ordLength = $data->ORD_length ?? 0;
+            $ordLive = (int)($data->ORD_live ?? 0) + 1;
+
+            $invPrefix = $data->INV_prefix ?? 0;
+            $invLength = $data->INV_length ?? 0;
+            $invLive = (int)($data->INV_live ?? 0) + 1;
+
+            $payPrefix = $data->Pay_prefix ?? 0;
+            $payLength = $data->Pay_length ?? 0;
+            $payLive = (int)($data->Pay_live ?? 0) + 1;
+
+            $surPrefix = $data->SUR_prefix ?? 0;
+            $surLength = $data->SUR_length ?? 0;
+            $surLive = (int)($data->SUR_live ?? 0) + 1;
+
+
+            // Increment the number based on the $live variable
+            if ($manLive) {
+                $manNumber = $manLive;
+            }
+
+            if ($hubLive) {
+                $hubNumber = $hubLive;
+            }
+
+            if ($logLive) {
+                $logNumber = $logLive;
+            }
+
+            if ($cusLive) {
+                $cusNumber = $cusLive;
+            }
+
+            if ($delLive) {
+                $delNumber = $delLive;
+            }
+
+            if ($empLive) {
+                $empNumber = $empLive;
+            }
+
+            if ($ledLive) {
+                $ledNumber = $ledLive;
+            }
+
+            if ($ordLive) {
+                $ordNumber = $ordLive;
+            }
+
+            if ($invLive) {
+                $invNumber = $invLive;
+            }
+
+            if ($payLive) {
+                $payNumber = $payLive;
+            }
+
+            if ($surLive) {
+                $surNumber = $surLive;
+            }
+
+            // Format the number with leading zeros
+            $man = sprintf("%0{$ManLength}d", $manNumber);
+            $hub = sprintf("%0{$hubLength}d", $hubNumber);
+            $log = sprintf("%0{$logLength}d", $logNumber);
+            $cus = sprintf("%0{$cusLength}d", $cusNumber);
+            $del = sprintf("%0{$delLength}d", $delNumber);
+            $emp = sprintf("%0{$empLength}d", $empNumber);
+            $led = sprintf("%0{$ledLength}d", $ledNumber);
+            $ord = sprintf("%0{$ordLength}d", $ordNumber);
+            $inv = sprintf("%0{$invLength}d", $invNumber);
+            $pay = sprintf("%0{$payLength}d", $payNumber);
+            $sur = sprintf("%0{$surLength}d", $surNumber);
+
+            // Concatenate the prefix and formatted number
+            $manExample = $manPrefix . $man;
+            $hubExample = $hubPrefix . $hub;
+            $logExample = $logPrefix . $log;
+            $cusExample = $cusPrefix . $cus;
+            $delExample = $delPrefix . $del;
+            $empExample = $empPrefix . $emp;
+            $ledExample = $ledPrefix . $led;
+            $ordExample = $ordPrefix . $ord;
+            $invExample = $invPrefix . $inv;
+            $payExample = $payPrefix . $pay;
+            $surExample = $surPrefix . $pay;
+            return view('admin.settings.bill_settings', compact('data', 'manExample', 'hubExample', 'logExample', 'cusExample', 'delExample', 'empExample', 'ledExample', 'ordExample', 'invExample', 'payExample','surExample'));
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function addMasterBillSettings(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $request->validate([
+                'txtManuPrefix' => 'required',
+                'txtManuLength' => 'required',
+                'txtHubPrefix' => 'required',
+                'txtHubLength' => 'required',
+                'txtLogisticPrefix' => 'required',
+                'txtLogisticLength' => 'required',
+                'txtCusPrefix' => 'required',
+                'txtCusLength' => 'required',
+                'txtDlPrefix' => 'required',
+                'txtDlLength' => 'required',
+                'txtEmpPrefix' => 'required',
+                'txtEmpLength' => 'required',
+                'txtLedPrefix' => 'required',
+                'txtLedLength' => 'required',
+                'txtOrderPrefix' => 'required',
+                'txtOrderLength' => 'required',
+                'txtInvoicePrefix' => 'required',
+                'txtInvoiceLength' => 'required',
+                'txtPaymentPrefix' => 'required',
+                'txtPaymentLength' => 'required',
+                'txtSurrenderPrefix' => 'required',
+                'txtSurrenderLength' => 'required',
+            ]);
+
+            $data = BillNoSetting::first();
+            $manLive = str_pad($data->manufacture_live ?? 0, $request->txtManuLength, "0", STR_PAD_LEFT);
+            $hubLive = str_pad($data->hub_live ?? 0, $request->txtHubLength, "0", STR_PAD_LEFT);
+            $logisticLive = str_pad($data->logistics_live ?? 0, $request->txtLogisticLength, "0", STR_PAD_LEFT);
+            $customerLive = str_pad($data->customer_live ?? 0, $request->txtCusLength, "0", STR_PAD_LEFT);
+            $deliveryPersonLive = str_pad($data->deliveryperson_live ?? 0, $request->txtDlLength, "0", STR_PAD_LEFT);
+            $employeeLive = str_pad($data->employee_live ?? 0, $request->txtEmpLength, "0", STR_PAD_LEFT);
+            $ledgerLive = str_pad($data->ledger_live ?? 0, $request->txtLedLength, "0", STR_PAD_LEFT);
+            $orderLive = str_pad($data->ORD_live ?? 0, $request->txtOrderLength, "0", STR_PAD_LEFT);
+            $invoiceLive = str_pad($data->INV_live ?? 0, $request->txtInvoiceLength, "0", STR_PAD_LEFT);
+            $paymentLive = str_pad($data->Pay_live ?? 0, $request->txtPaymentLength, "0", STR_PAD_LEFT);
+            $surrenderLive = str_pad($data->SUR_live ?? 0, $request->txtSurrenderLength, "0", STR_PAD_LEFT);
+
+            if ($request->hdMasterId == null) {
+                BillNoSetting::create([
+                    'manufacture_prefix' => $request->txtManuPrefix,
+                    'manufacture_length' => $request->txtManuLength,
+                    'manufacture_live' => $manLive,
+                    'hub_prefix' => $request->txtHubPrefix,
+                    'hub_length' => $request->txtHubLength,
+                    'hub_live' => $hubLive,
+                    'logistics_prefix' => $request->txtLogisticPrefix,
+                    'logistics_length' => $request->txtLogisticLength,
+                    'logistics_live' => $logisticLive,
+                    'customer_prefix' => $request->txtCusPrefix,
+                    'customer_length' => $request->txtCusLength,
+                    'customer_live' => $customerLive,
+                    'deliveryperson_prefix' => $request->txtDlPrefix,
+                    'deliveryperson_length' => $request->txtDlLength,
+                    'deliveryperson_live' => $deliveryPersonLive,
+                    'employee_prefix' => $request->txtEmpPrefix,
+                    'employee_length' => $request->txtEmpLength,
+                    'employee_live' => $employeeLive,
+                    'ledger_prefix' => $request->txtLedPrefix,
+                    'ledger_length' => $request->txtLedLength,
+                    'ledger_live' => $ledgerLive,
+                    'ORD_prefix' => $request->txtOrderPrefix,
+                    'ORD_length' => $request->txtOrderLength,
+                    'ORD_live' => $orderLive,
+                    'INV_prefix' => $request->txtInvoicePrefix,
+                    'INV_length' => $request->txtInvoiceLength,
+                    'INV_live' => $invoiceLive,
+                    'Pay_prefix' => $request->txtPaymentPrefix,
+                    'Pay_length' => $request->txtPaymentLength,
+                    'Pay_live' => $paymentLive,
+                    'SUR_prefix' => $request->txtSurrenderPrefix,
+                    'SUR_length' => $request->txtSurrenderLength,
+                    'SUR_live' => $surrenderLive,
+                    'created_by' => Auth::user()->id
+                ]);
+
+                $notification = array(
+                    'message' => 'Manufacturer Created Successfully',
+                    'alert-type' => 'success'
+                );
+            } else {
+                BillNoSetting::findorfail($request->hdMasterId)->update([
+                    'manufacture_prefix' => $request->txtManuPrefix,
+                    'manufacture_length' => $request->txtManuLength,
+                    'manufacture_live' => $manLive,
+                    'hub_prefix' => $request->txtHubPrefix,
+                    'hub_length' => $request->txtHubLength,
+                    'hub_live' => $hubLive,
+                    'logistics_prefix' => $request->txtLogisticPrefix,
+                    'logistics_length' => $request->txtLogisticLength,
+                    'logistics_live' => $logisticLive,
+                    'customer_prefix' => $request->txtCusPrefix,
+                    'customer_length' => $request->txtCusLength,
+                    'customer_live' => $customerLive,
+                    'employee_prefix' => $request->txtDlPrefix,
+                    'employee_length' => $request->txtDlLength,
+                    'employee_live' => $deliveryPersonLive,
+                    'deliveryperson_prefix' => $request->txtEmpPrefix,
+                    'deliveryperson_length' => $request->txtEmpLength,
+                    'deliveryperson_live' => $employeeLive,
+                    'ledger_prefix' => $request->txtLedPrefix,
+                    'ledger_length' => $request->txtLedLength,
+                    'ledger_live' => $ledgerLive,
+                    'ORD_prefix' => $request->txtOrderPrefix,
+                    'ORD_length' => $request->txtOrderLength,
+                    'ORD_live' => $orderLive,
+                    'INV_prefix' => $request->txtInvoicePrefix,
+                    'INV_length' => $request->txtInvoiceLength,
+                    'INV_live' => $invoiceLive,
+                    'Pay_prefix' => $request->txtPaymentPrefix,
+                    'Pay_length' => $request->txtPaymentLength,
+                    'Pay_live' => $paymentLive,
+                    'SUR_prefix' => $request->txtSurrenderPrefix,
+                    'SUR_length' => $request->txtSurrenderLength,
+                    'SUR_live' => $surrenderLive,
+                    'updated_by' => Auth::user()->id
+                ]);
+
+                $notification = array(
+                    'message' => 'Manufacturer Updated Successfully',
+                    'alert-type' => 'success'
+                );
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            $notification = array(
+                'message' => 'Manufacturer Not Updated!',
+                'alert-type' => 'error'
+            );
+            $this->Log(__FUNCTION__, $request->method(), $e->getMessage(), Auth::user()->id, $request->ip(), gethostname());
+        }
+        return redirect()->route('bill-settings')->with($notification);
+    }
+}

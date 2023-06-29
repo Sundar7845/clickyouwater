@@ -1,0 +1,190 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Dashboard | Expense List
+@endsection
+
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-1 mb-4">
+        Expense List
+    </h4>
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-12 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-4 me-0">
+                            <div class="nav-align-top mb-4">
+                                <ul class="nav nav-tabs border-0" role="tablist">
+                                    <li class="nav-item">
+                                        <button type="button" class="nav-link active" role="tab"
+                                            data-bs-toggle="tab" data-bs-target="#navs-pills-justified-home"
+                                            aria-controls="navs-top-home" aria-selected="true">
+                                            General
+                                        </button>
+                                    </li>
+                                    <li class="nav-item">
+                                        <button type="button" class="nav-link" role="tab" data-bs-toggle="tab"
+                                            data-bs-target="#navs-pills-justified-profile"
+                                            aria-controls="navs-top-profile" aria-selected="false">
+                                            Employee
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3 mb-3">
+                            <select class="form-select select2" id="ddlExpensegroup" name="ddlExpensegroup">
+                                <option value='0' selected>Select Expense Group</option>
+
+                                <option value="1">Food
+                                </option>
+
+                                <option value="2">Travel
+                                </option>
+
+                            </select>
+                        </div>
+
+
+                        <div class="col-sm-5 mb-3">
+                            <div class="d-flex justify-content-lg-end">
+                                <button type="button" class="btn btn-outline-primary me-3"
+                                    onclick="ExporttabletoExcell('tblExpenseList','ExpenseEntryList',7)">Export</button>
+                                <button type="button" class="btn btn-flat btn-primary" id="btnDate"
+                                    style="height: 36px;">
+                                    <i class="fa fa-calendar"></i>
+                                    <span id="spnDate" style="padding-left: 5px;">Today</span>
+                                    <i class="fa fa-caret-down"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h5>Expense List</h5>
+                            <div class="card-datatable table-responsive pt-0">
+                                <div class="tab-content p-0">
+                                    <div class="tab-pane active" id="navs-pills-justified-home" role="tabpanel">
+                                        <div class="col-4">
+                                            <select class="form-select select2" id="ddlExpenseVendor"
+                                                name="ddlExpenseVendor">
+                                                <option value="0">Select Ledger</option>
+
+                                                <option value="1">smitha
+                                                </option>
+
+                                                <option value="2">subash
+                                                </option>
+
+                                            </select>
+                                        </div>
+                                        <table id="tblExpense" class="table">
+                                            <thead>
+                                                <tr class='header'>
+                                                    <th>S.No</th>
+                                                    <th>Expense Date</th>
+                                                    <th>Expense Ledger</th>
+                                                    <th>Expense Group</th>
+                                                    <th>Expense Detail</th>
+                                                    <th id="balance_amount">Amount</th>
+                                                    <th id="paid_amount">Paid Amount</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tbodyList">
+
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td colspan="5" style="font-weight: bolder;">TOTAL</td>
+                                                    <td id="total_amount"></td>
+                                                    <td id="total_paid"></td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                    <div class="tab-pane" id="navs-pills-justified-profile" role="tabpanel">
+                                        <div class="col-4">
+                                            <select class="form-select select2" id="ddlExpenseEmployee"
+                                                name="ddlExpenseEmployee">
+                                                <option value="0">Select Employee</option>
+
+                                                <option value="3">raja
+                                                </option>
+
+                                                <option value="4">hari
+                                                </option>
+
+                                            </select>
+                                        </div>
+                                        <table id="tblEmployeeExpense" class="table">
+                                            <thead>
+                                                <tr class='header'>
+                                                    <th>S.No</th>
+                                                    <th>Expense Date</th>
+                                                    <th>Expense Employee</th>
+                                                    <th>Expense Group</th>
+                                                    <th>Expense Detail</th>
+                                                    <th>Expense File</th>
+                                                    <th id="emp_balance_amount">Amount</th>
+                                                    <th id="emp_paid_amount">Paid Amount</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tbodyList">
+
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td colspan="6" style="font-weight: bolder;">TOTAL</td>
+                                                    <td id="emp_total_amount"></td>
+                                                    <td id="emp_total_paid"></td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+</div>
+<!-- / Content -->
+
+<!-- Modal For closing Pending -->
+<div class="modal fade bd-example-modal-sm" id="modalClose" tabindex="-1" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-body ">
+
+                <div class="swal2-icon swal2-warning swal2-icon-show" style="display: flex;">
+                    <div class="swal2-icon-content">!</div>
+                </div>
+                <div class="text-center mb-2">
+                    <h3 class="modal-title" id="exampleModalLabel">Are you sure?</h3>
+
+                </div>
+                <!-- Table Row Edit Icon -->
+                <div class="d-flex justify-content-center">
+                    <a href="#" id="aModalClose" class="btn btn-success me-1">Yes,Close it</a>
+                    <button class="btn btn-danger ms-2" data-bs-dismiss="modal">No,Cancel</button>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/admin/accounts/expense.js') }}"></script>
+@endsection

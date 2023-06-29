@@ -1,0 +1,40 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\Role;
+use Illuminate\Database\Seeder;
+
+class RoleSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        $data = [
+            ['role_name' => 'Super Admin'],
+            ['role_name' => 'Admin'],
+            ['role_name' => 'Manufacturer'],
+            ['role_name' => 'Hub'],
+            ['role_name' => 'Logistic Partner'],
+            ['role_name' => 'Delivery Person'],
+            ['role_name' => 'Regional Manager'],
+            ['role_name' => 'Area Manager'],
+            ['role_name' => 'Sales Head'],
+            ['role_name' => 'Finance Head'],
+            ['role_name' => 'Accounts Head'],
+            ['role_name' => 'Accounts'],
+            ['role_name' => 'Manufacture Incharge'],
+            ['role_name' => 'Hub Incharge'],
+            ['role_name' => 'Logistics Incharge'],
+            ['role_name' => 'Back Office Support'],
+            ['role_name' => 'Customer'],
+            ['role_name' => 'Driver']
+        ];
+
+        Role::insert($data);
+    }
+}

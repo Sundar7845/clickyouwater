@@ -1,0 +1,36 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class Customer extends Model
+{
+    use HasFactory,SoftDeletes;
+
+    protected $fillable = [
+        'customer_name',
+        'mobile',
+        'email',
+        'pincode',
+        'password',
+        'referrer_promotion_code',
+        'referral_code',
+        'IsMobile',
+        'street',
+        'area_id',
+        'city_id',
+        'state_id',
+        'country_id',
+        'latitude',
+        'longitude',
+        'geolocation',
+        'is_service_available',
+        'created_by',
+        'updated_by',
+        'deleted_by'
+
+    ];
+}

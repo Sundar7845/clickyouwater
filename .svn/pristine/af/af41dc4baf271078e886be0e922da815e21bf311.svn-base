@@ -1,0 +1,108 @@
+$(document).ready(function () {
+    $("#tblHub").DataTable({
+        processing: true,
+        serverSide: true,
+        order: [[0, "ASC"]],
+        ajax: "hubData",
+        fnRowCallback: function (nRow, aData, iDisplayIndex) {
+            $("td:first", nRow).html(iDisplayIndex + 1);
+            return nRow;
+        },
+        columns: [
+            { data: "id" },
+            { data: "hub_id" },
+            { data: "hub_name" },
+            { data: "manufacturer_name" },
+            { data: "radius" },
+            { data: "pincode" },
+            {
+                data: "document_view",
+                render: function (data, type, row) {
+                    return `<a href="manufacturerdocument"
+                    class="badge bg-label-warning">View</a>`;
+                },
+            },
+            {
+                data: "is_active",
+                render: function (data, type, row) {
+                    return `<label class="switch">
+                            <input onclick="doStatus(${row.id});" id="chkhub${
+                        row.id
+                    }" type="checkbox" class="switch-input"
+                            name="chkhub" '  ${data == 1 ? "checked" : ""} ' />
+                            <span class="switch-toggle-slider">
+                                <span class="switch-on"></span>
+                                <span class="switch-off"></span>
+                            </span>
+                        </label>`;
+                },
+            },
+            { data: "action" },
+        ],
+    });
+    BindCity();
+    BindArea();
+});
+
+//Update Status
+function doStatus(id) {
+    var status = $("#chkHub" + id).is(":checked");
+    confirmStatusChange(id, "hub/", "tblHub", status == true ? 1 : 0, "chkHub");
+}
+
+//Delete Data
+function showDelete(id) {
+    confirmDelete(id, "delete/hub/", "tblHub");
+}
+
+$(function () {
+    $("form[name='hub']").validate({
+        rules: {
+            txthubId: "required",
+            txthubName: "required",
+            'ddlManufacturerName[]': {
+                required: true
+            },
+            txtYrsofExp: "required",
+            txtMobile: "required",
+            txtofficialEmail: "required",
+            txtlatitude: "required",
+            txtlangtitute: "required",
+            txtgeolocation: "required",
+            txtRadius: "required",
+            txtcreditPeriod: "required",
+            txtsettlementPeriod: "required",
+            txtsecurityDeposit: "required",
+            ddlState: "required",
+            ddlCity: "required",
+            ddlArea: "required",
+            txtLandmark: "required",
+            txtpinCode: "required",
+            txtProprietorName: "required",
+            txtProprietorMobile: "required",
+            txtProprietorEmail: "required",
+            txtContactPersonName: "required",
+            txtContactPersonMobile: "required",
+            txtContactPersonEmail: "required",
+        },
+        messages: {
+            required: "This field is required",
+        },
+        errorPlacement: function (error, element) {
+            if (element.is(":radio")) {
+                error.appendTo(element.parents(".form-group"));
+            } else {
+                // This is the default behavior
+                // error.insertAfter(element);
+                if (element.siblings(".error").html() == undefined) {
+                    error.appendTo(element.parent().next(".error"));
+                } else {
+                    error.appendTo(element.siblings(".error"));
+                }
+            }
+        },
+        submitHandler: function (form) {
+            form.submit();
+        },
+    });
+});

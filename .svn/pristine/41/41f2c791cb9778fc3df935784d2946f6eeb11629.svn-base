@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Http\Controllers\Admin\OrderManagement;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class PendingOrdersController extends Controller
+{
+  public function pendingOrders()
+  {
+    return view('Admin.order_management.pending_orders.pending_orders');
+  }
+}

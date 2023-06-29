@@ -1,0 +1,562 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\Menu;
+use Illuminate\Database\Seeder;
+
+class MenuSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        $data = [
+            [
+                'menu_name' => 'Dashboard',
+                'parent_id' => '0',
+                'is_mainmenu' => '1'
+            ],
+            [
+                'menu_name' =>  'Order Management',
+                'parent_id' => '0',
+                'is_mainmenu' => '1'
+            ],
+            [
+                'menu_name' =>  'Customer Orders',
+                'parent_id' => '2',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Wholesale Orders',
+                'parent_id' => '2',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Manufacturer Orders',
+                'parent_id' => '2',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Hub Orders',
+                'parent_id' => '2',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Cancelled Orders',
+                'parent_id' => '2',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Pending Orders',
+                'parent_id' => '2',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Bulk Orders',
+                'parent_id' => '2',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Accounts',
+                'parent_id' => '0',
+                'is_mainmenu' => '1'
+            ],
+            [
+                'menu_name' =>  'Credit Note',
+                'parent_id' => '10',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Credit Note List',
+                'parent_id' => '10',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Debit Note',
+                'parent_id' => '10',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Debit Note List',
+                'parent_id' => '10',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Payments',
+                'parent_id' => '10',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Payments List',
+                'parent_id' => '10',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Expenses',
+                'parent_id' => '10',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Expenses List',
+                'parent_id' => '10',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Referral Payments',
+                'parent_id' => '10',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Discount',
+                'parent_id' => '0',
+                'is_mainmenu' => '1'
+            ],
+            [
+                'menu_name' =>  'Generate Coupons',
+                'parent_id' => '20',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Refferal History',
+                'parent_id' => '20',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Offers',
+                'parent_id' => '0',
+                'is_mainmenu' => '1'
+            ],
+            [
+                'menu_name' =>  'Offers',
+                'parent_id' => '23',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Offers Allocate',
+                'parent_id' => '23',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Purchase',
+                'parent_id' => '0',
+                'is_mainmenu' => '1'
+            ],
+            [
+                'menu_name' =>  'Purchase Order',
+                'parent_id' => '26',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Purchase Order List',
+                'parent_id' => '26',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Purchase Invoice',
+                'parent_id' => '26',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Purchase Invoice List',
+                'parent_id' => '26',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Purchase Return',
+                'parent_id' => '26',
+                'is_mainmenu' => '0'
+            ],  
+            [
+                'menu_name' =>  'Purchase Return List',
+                'parent_id' => '26',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Sales',
+                'parent_id' => '0',
+                'is_mainmenu' => '1'
+            ],
+            [
+                'menu_name' =>  'Sales Order',
+                'parent_id' => '33',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Sales Order List',
+                'parent_id' => '33',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Sales Invoice',
+                'parent_id' => '33',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Sales Order List',
+                'parent_id' => '33',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Sales Return',
+                'parent_id' => '33',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Sales Return List',
+                'parent_id' => '33',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Stock Mangement',
+                'parent_id' => '0',
+                'is_mainmenu' => '1'
+            ],
+            [
+                'menu_name' =>  'Stock Entry',
+                'parent_id' => '40',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Hub Stock',
+                'parent_id' => '40',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Manufacturer Stock',
+                'parent_id' => '40',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Customers',
+                'parent_id' => '0',
+                'is_mainmenu' => '1'
+            ],
+            [
+                'menu_name' =>  'Customers List',
+                'parent_id' => '44',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Customer Performance',
+                'parent_id' => '44',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Surrender Can',
+                'parent_id' => '44',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Performance',
+                'parent_id' => '0',
+                'is_mainmenu' => '1'
+            ],
+            [
+                'menu_name' =>  'Manufacturer',
+                'parent_id' => '48',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Hub',
+                'parent_id' => '48',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Logistic Partner',
+                'parent_id' => '48',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Delivery Person',
+                'parent_id' => '48',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Feedback',
+                'parent_id' => '0',
+                'is_mainmenu' => '1'
+            ],
+            [
+                'menu_name' =>  'Reports',
+                'parent_id' => '0',
+                'is_mainmenu' => '1'
+            ],
+            [
+                'menu_name' =>  'Manufacturer Report',
+                'parent_id' => '54',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Hub Report',
+                'parent_id' => '54',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Delivery Report',
+                'parent_id' => '54',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Products Report',
+                'parent_id' => '54',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Orders Report',
+                'parent_id' => '54',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Payments Report',
+                'parent_id' => '54',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Unavailable Report',
+                'parent_id' => '54',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Approval',
+                'parent_id' => '0',
+                'is_mainmenu' => '1'
+            ],
+            [
+                'menu_name' =>  'Manufacturer Approval',
+                'parent_id' => '62',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Logistic Approval',
+                'parent_id' => '62',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Hub Approval',
+                'parent_id' => '62',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Settings',
+                'parent_id' => '0',
+                'is_mainmenu' => '1'
+            ],
+            [
+                'menu_name' =>  'Settings',
+                'parent_id' => '66',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Bill No Settings',
+                'parent_id' => '66',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Refferal Settings',
+                'parent_id' => '66',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Roles & Permission',
+                'parent_id' => '0',
+                'is_mainmenu' => '1'
+            ],
+            [
+                'menu_name' =>  'Roles',
+                'parent_id' => '70',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Users',
+                'parent_id' => '70',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Manufacturer',
+                'parent_id' => '0',
+                'is_mainmenu' => '1'
+            ],
+            [
+                'menu_name' =>  'Add Manufacturer',
+                'parent_id' => '73',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Manufacturer List',
+                'parent_id' => '73',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Hub',
+                'parent_id' => '0',
+                'is_mainmenu' => '1'
+            ],
+            [
+                'menu_name' =>  'Add Hub',
+                'parent_id' => '76',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Hub List',
+                'parent_id' => '76',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Logistic Partner',
+                'parent_id' => '0',
+                'is_mainmenu' => '1'
+            ],
+            [
+                'menu_name' =>  'Add Logistic',
+                'parent_id' => '79',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Logistic List',
+                'parent_id' => '79',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Delivery Person',
+                'parent_id' => '0',
+                'is_mainmenu' => '1'
+            ],
+            [
+                'menu_name' =>  'Add Delivery Person',
+                'parent_id' => '82',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Delivery Person List',
+                'parent_id' => '82',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'wholesale Partner',
+                'parent_id' => '0',
+                'is_mainmenu' => '1'
+            ],
+            [
+                'menu_name' =>  'Add wholesale Partner',
+                'parent_id' => '85',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'wholesale Partner List',
+                'parent_id' => '85',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Products',
+                'parent_id' => '0',
+                'is_mainmenu' => '1'
+            ],
+            [
+                'menu_name' =>  'Category',
+                'parent_id' => '88',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Product Type',
+                'parent_id' => '88',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Brands',
+                'parent_id' => '88',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Products',
+                'parent_id' => '88',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Masters',
+                'parent_id' => '0',
+                'is_mainmenu' => '1'
+            ],
+            [
+                'menu_name' =>  'State',
+                'parent_id' => '93',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'City',
+                'parent_id' => '93',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Area',
+                'parent_id' => '93',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Document Type',
+                'parent_id' => '93',
+                'is_mainmenu' => '0'
+            ],  
+            [
+                'menu_name' =>  'Tax',
+                'parent_id' => '93',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Expense Group',
+                'parent_id' => '93',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Ledger',
+                'parent_id' => '93',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Asset',
+                'parent_id' => '93',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Asset Type',
+                'parent_id' => '93',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Employee',
+                'parent_id' => '93',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Employee List',
+                'parent_id' => '93',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Brand Allocation',
+                'parent_id' => '93',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Department',
+                'parent_id' => '93',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Designation',
+                'parent_id' => '93',
+                'is_mainmenu' => '0'
+            ],
+            [
+                'menu_name' =>  'Roles',
+                'parent_id' => '93',
+                'is_mainmenu' => '0'
+            ]
+        ];
+
+        Menu::insert($data);
+    }
+}

@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Http\Controllers\UserRightsManagement;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class UserRightsController extends Controller
+{
+    public function Rights()
+    {
+        return view('users_rights_management.users_rights');
+    }
+}

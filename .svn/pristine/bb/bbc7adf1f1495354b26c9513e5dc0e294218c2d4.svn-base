@@ -1,0 +1,18 @@
+$(document).ready(function() {
+    $('#expensegroup').DataTable();
+});
+
+
+
+//jquery Validation
+$(function () {
+   
+    $("form[name='expense']").validate({
+
+        rules: {
+            txtExpense: "required",
+           
+        },
+    });
+    
+});

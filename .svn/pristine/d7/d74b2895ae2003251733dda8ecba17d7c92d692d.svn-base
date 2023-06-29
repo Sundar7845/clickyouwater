@@ -1,0 +1,124 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Offer;
+
+use App\Http\Controllers\Controller;
+use App\Models\Hub;
+use App\Models\HubManufactureConfig;
+use App\Models\Offer;
+use App\Models\OfferHubAllocation;
+use App\Models\State;
+use Illuminate\Http\Request;
+use App\Traits\Common;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class OffersAllocateController extends Controller
+{
+    use common;
+    public function offersAllocate()
+    {
+        try {
+            $offernames = Offer::get();
+            $states = $this->getStates();
+            return view('admin.offer.offers_allocate', compact('offernames', 'states'));
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function getHubs(Request $request)
+    {
+        try {
+            $data = Hub::select('hubs.*', 'offer_hub_allocations.points_allocated','offer_hub_allocations.points_used')
+            ->join('offer_hub_allocations','offer_hub_allocations.hub_id','hubs.id')
+            ->where('hubs.state_id',$request->city_id)->get();
+            return response()->json($data);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function addOfferAllocation(Request $request)
+    {
+        try {
+            $request->validate([
+                'ddlOfferName' => 'required'
+            ]);
+
+            if ($request->hdOfferallocateId == null) {
+
+                //hub id 
+                $hubid = $request->hdSelHubIds;
+                $array_hubid = json_decode($hubid, true);
+
+                //points allocate
+                $point_allocation = $request->hdSelHubPoints;
+                $array_pointallocation = json_decode($point_allocation, true);
+
+                foreach ($array_hubid as $key => $hubid_value) {
+                    $point_allocation_value = $array_pointallocation[$key];
+
+                    OfferHubAllocation::create([
+                        'offer_id' => $request->ddlOfferName,
+                        'hub_id' => $hubid_value,
+                        'points_allocated' => $point_allocation_value,
+                        'created_by' => Auth::user()->id
+                    ]);
+                }
+                $notification = array(
+                    'message' => 'Offer Allocation Created Successfully',
+                    'alert-type' => 'success'
+                );
+            } else {
+
+                //hub id 
+                $hubid = $request->hdSelHubIds;
+                $array_hubid = json_decode($hubid, true);
+
+                //points allocate
+                $point_allocation = $request->hdSelHubPoints;
+                $array_pointallocation = json_decode($point_allocation, true);
+
+                foreach ($array_hubid as $key => $hubid_value) {
+                    $point_allocation_value = $array_pointallocation[$key];
+
+                    OfferHubAllocation::findorfail($request->hdOfferallocateId)->update([
+                        'offer_id' => $request->ddlOfferName,
+                        'hub_id' => $hubid_value,
+                        'points_allocated' => $point_allocation_value,
+                        'updated_by' => Auth::user()->id
+                    ]);
+                }
+                $notification = array(
+                    'message' => 'Offer Allocation Updated Successfully',
+                    'alert-type' => 'success'
+                );
+            }
+            return redirect()->route('offers-allocate')->with($notification);
+        } catch (\Exception $e) {
+            dd($e);
+            $notification = array(
+                'message' => 'Offer Allocation Not Created!',
+                'alert-type' => 'error'
+            );
+            $this->Log(__FUNCTION__, $request->method(), $e->getMessage(), Auth::user()->id, $request->ip(), gethostname());
+        }
+    }
+
+    public function getOfferAllocationById($id)
+    {
+        try {
+            $offerallocation = OfferHubAllocation::select('offer_hub_allocations.*', 'hubs.state_id', 'hubs.city_id')
+                ->join('hubs', 'hubs.id', 'offer_hub_allocations.hub_id')
+                ->where('offer_hub_allocations.offer_id', $id)->get();
+
+            return response()->json([
+                'offerallocation' => $offerallocation
+            ]);
+        } catch (\Exception $e) {
+            dd($e);
+            $this->Log(__FUNCTION__, 'GET', $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+}

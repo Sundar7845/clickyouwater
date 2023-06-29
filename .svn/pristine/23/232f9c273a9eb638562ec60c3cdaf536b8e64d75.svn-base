@@ -1,0 +1,164 @@
+@extends('layouts.main_master') @section('content') @section('title')
+Dashboard | Manufacturer
+@endsection
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+<h4 class="fw-bold py-1 mb-4">
+    <span class="text-muted fw-light">Reports /</span> Hub
+</h4>
+<div class="row mb-4">
+    <!-- Browser Default -->
+    <div class="col-md-12 mb-4 mb-md-0">
+        <div class="card">
+            <div class="card-body">
+                <form class="browser-default-validation">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-default-name">State Name <span
+                                        class="text-danger">*</span>
+                                </label>
+                                <select name="" id="" class="select2 form-select form-select-lg">
+                                    <option value="TN">Tamilnadu</option>
+                                    <option value="KL">Kerala</option>
+                                    <option value="AP">Andra Pradesh</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-default-name">City Name <span
+                                        class="text-danger">*</span>
+                                </label>
+                                <select name="" id="" class="select2 form-select form-select-lg">
+                                    <option value="TN">Coimbatore</option>
+                                    <option value="KL">Erode</option>
+                                    <option value="AP">Tiruppur</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-default-name">Manufacuturer Name <span
+                                        class="text-danger">*</span>
+                                </label>
+                                <select name="" id="" class="select2 form-select form-select-lg">
+                                    <option value="TN">Gandhipuram</option>
+                                    <option value="KL">Ganapathy</option>
+                                    <option value="AP">Peelamedu</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-default-name">Hub Name <span
+                                        class="text-danger">*</span>
+                                </label>
+                                <select name="" id="" class="select2 form-select form-select-lg">
+                                    <option value="TN">HUB1</option>
+                                    <option value="KL">HUB2</option>
+                                    <option value="AP">HUb3</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label>&nbsp;</label>
+                            <div class="input-group">
+                                <span class="input-group-text" id="basic-addon11">Date</span>
+                                <button type="button" class="btn btn-flat btn-primary" id="btnDate"
+                                    style="height: 36px;">
+                                    <i class="fa fa-calendar"></i><span id="spnDate"
+                                        style="padding-left: 5px;">Today</span>
+                                    <i class="fa fa-caret-down"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- /Browser Default -->
+</div>
+<h5 class="fw-bold py-1 mb-4">
+    <span class="text-muted fw-light"></span> Hub List
+</h5>
+<!-- DataTable with Buttons -->
+<div class="col-lg-12 mb-4 mb-lg-0">
+    <div class="card h-100">
+        <div class="card-datatable table-responsive pt-0">
+            <table id="hubreport" class="table">
+                <thead class="border-bottom">
+                    <tr>
+                        <th>S.No</th>
+                        <th>Hub ID</th>
+                        <th>Hub Name</th>
+                        <th>Pincode</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>MFGL001</td>
+                        <td>Jagan
+                            <div class="text-muted p-1">
+                                <small class="bg-light p-1">9875641230</small>
+                            </div>
+                        </td>
+                        <td>643015</td>
+                        <td>
+                            <label for="" class="badge bg-label-success">Active</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>MFGL002</td>
+                        <td>Aravind
+                            <div class="text-muted p-1">
+                                <small class="bg-light p-1">9635410354</small>
+                            </div>
+                        </td>
+                        <td>643015</td>
+                        <td>
+                            <label for="" class="badge bg-label-success">Active</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>MFGL003</td>
+                        <td>John
+                            <div class="text-muted p-1">
+                                <small class="bg-light p-1">9966302554</small>
+                            </div>
+                        </td>
+                        <td>643015</td>
+                        <td>
+                            <label for="" class="badge bg-label-success">Active</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>MFGL0041</td>
+                        <td>Raj
+                            <div class="text-muted p-1">
+                                <small class="bg-light p-1">9938740354</small>
+                            </div>
+                        </td>
+                        <td>643015</td>
+                        <td>
+                            <label for="" class="badge bg-label-success">Active</label>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!--/ DataTable with Buttons -->
+</div>
+<!-- / Content --> 
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/reports/hubreport.js') }}"></script>
+@endsection

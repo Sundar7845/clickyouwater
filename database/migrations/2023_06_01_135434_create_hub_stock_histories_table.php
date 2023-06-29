@@ -1,0 +1,48 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateHubStockHistoriesTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('hub_stock_histories', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('hub_id');
+            $table->foreign('hub_id')->references('id')->on('hubs');
+            $table->unsignedBigInteger('category_id');
+            $table->foreign('category_id')->references('id')->on('categories');
+            $table->unsignedBigInteger('product_type_id');
+            $table->foreign('product_type_id')->references('id')->on('product_types');
+            $table->unsignedBigInteger('brand_id');
+            $table->foreign('brand_id')->references('id')->on('brands');
+            $table->unsignedBigInteger('product_id');
+            $table->foreign('product_id')->references('id')->on('products');
+            $table->integer('inward_from_delivery_qty')->default(0);
+            $table->integer('damage_lost_qty')->default(0);
+            $table->integer('outward_to_logistics_qty')->default(0);
+            $table->integer('inward_from_logistics_qty')->default(0);
+            $table->integer('inward_return_qty')->default(0);
+            $table->integer('outward_to_delivery_qty')->default(0);
+            $table->integer('outward_filled_return_qty')->default(0);
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('hub_stock_histories');
+    }
+}

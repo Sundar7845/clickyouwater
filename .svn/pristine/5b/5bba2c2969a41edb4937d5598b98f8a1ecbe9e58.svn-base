@@ -1,0 +1,82 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Offer;
+
+use App\Http\Controllers\Controller;
+use App\Models\Hub;
+use App\Models\HubManufactureConfig;
+use App\Models\Offer;
+use App\Models\OfferHubAllocation;
+use App\Models\State;
+use Illuminate\Http\Request;
+use App\Traits\Common;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class OffersAllocateController extends Controller
+{
+    use common;
+    public function offersAllocate()
+    {
+        try {
+            $offernames = Offer::get();
+            $states = State::orderBy('state_name', 'ASC')->get();
+            return view('admin.offer.offers_allocate',compact('offernames','states'));
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function getHubs(Request $request)
+   {
+         $data = Hub::select('hubs.*')
+            ->where('city_id',$request->city_id)
+            ->orderBy('hub_name', 'asc')
+            ->get(["hub_name", "id"]);
+      return response()->json($data);
+   }
+
+   public function addOfferAllocation(Request $request){dd($request->all());
+
+    try {
+        $request->validate([
+            'ddlOfferName' => 'required'
+        ]);
+
+        if ($request->hdOfferallocateId == null) {
+            OfferHubAllocation::create([
+                'offer_id' => $request->ddlOfferName,
+                'offer_id' => $request->ddlOfferName,
+                'offer_id' => $request->ddlOfferName,
+                'offer_id' => $request->ddlOfferName,
+                'created_by' => Auth::user()->id
+            ]);
+
+            $notification = array(
+                'message' => 'Department Created Successfully',
+                'alert-type' => 'success'
+            );
+        } else {
+            OfferHubAllocation::findorfail($request->hdDepartmentId)->update([
+                'department_name' => $request->txtDepartmentName,
+                'updated_by' => Auth::user()->id
+            ]);
+
+            $notification = array(
+                'message' => 'Department Updated Successfully',
+                'alert-type' => 'success'
+            );
+        }
+        DB::commit();
+        return redirect()->route('department')->with($notification);
+    } catch (\Exception $e) {
+        $notification = array(
+            'message' => 'Department Not Created!',
+            'alert-type' => 'error'
+        );
+        $this->Log(__FUNCTION__, $request->method(), $e->getMessage(), Auth::user()->id, $request->ip(), gethostname());
+    }
+    
+   }
+
+}

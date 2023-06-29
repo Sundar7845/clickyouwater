@@ -1,0 +1,167 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\Status;
+use Illuminate\Database\Seeder;
+
+class StatusSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        $data = [
+            [
+                'status' => 'Success',
+                'status_msg' => 'Success',
+                'status_color_css' => 'success'
+            ],
+            [
+                'status' => 'Failed',
+                'status_msg' => 'Failed',
+                'status_color_css' => 'success'
+            ],
+            [
+                'status' => 'Pending',
+                'status_msg' => 'Pending',
+                'status_color_css' => 'info'
+            ],
+            [
+                'status' => 'Approved',
+                'status_msg' => 'Approved',
+                'status_color_css' => 'success'
+            ],
+            [
+                'status' => 'Rejected',
+                'status_msg' => 'Rejected',
+                'status_color_css' => 'danger'
+            ],
+            [
+                'status' => 'Accepted',
+                'status_msg' => 'Accepted',
+                'status_color_css' => 'success'
+            ],
+            [
+                'status' => 'Onprocess',
+                'status_msg' => 'Onprocess',
+                'status_color_css' => 'warning'
+            ],
+            [
+                'status' => 'Cancelled',
+                'status_msg' => 'Cancelled',
+                'status_color_css' => 'danger'
+            ],
+            [
+                'status' => 'Payment Initiated',
+                'status_msg' => 'Payment Initiated Successfully',
+                'status_color_css' => 'info'
+            ],
+            [
+                'status' => 'Signature Mismatch',
+                'status_msg' => 'Signature Mismatched',
+                'status_color_css' => 'danger'
+            ],
+            [
+                'status' => 'Invoice Generated',
+                'status_msg' => 'Invoice Generated Successfully',
+                'status_color_css' => 'success'
+            ],
+            [
+                'status' => 'Transaction Failed',
+                'status_msg' => 'Transaction Failed',
+                'status_color_css' => 'danger'
+            ],
+            [
+                'status' => 'Refund Initiated',
+                'status_msg' => 'Refund Initiated Successfully',
+                'status_color_css' => 'info'
+            ],
+            [
+                'status' => 'Refund Processed',
+                'status_msg' => 'Refund Processed Successfully',
+                'status_color_css' => 'warning'
+            ],
+            [
+                'status' => 'Order Placed',
+                'status_msg' => 'Order Placed Successfully',
+                'status_color_css' => 'success'
+            ],
+            [
+                'status' => 'Order Shipped',
+                'status_msg' => 'Waiting for your order to be dispatched from the hub',
+                'status_color_css' => 'info'
+            ],
+            [
+                'status' => 'Order Delivered',
+                'status_msg' => 'Order Delivered Successfully',
+                'status_color_css' => 'success'
+            ],
+            [
+                'status' => 'Order Completed',
+                'status_msg' => 'Order Completed Successfully',
+                'status_color_css' => 'success'
+            ],
+            [
+                'status' => 'Assigned to Delivery',
+                'status_msg' => 'Assigned to Delivery',
+                'status_color_css' => 'warning'
+            ],
+            [
+                'status' => 'Order Not Delivered',
+                'status_msg' => 'Order Not Delivered',
+                'status_color_css' => 'danger'
+            ],
+            [
+                'status' => 'Order Moved to Admin',
+                'status_msg' => 'Order Moved to Admin',
+                'status_color_css' => 'info'
+            ],
+            [
+                'status' => 'Order Cancelled by Admin',
+                'status_msg' => 'Order Cancelled by Admin',
+                'status_color_css' => 'danger'
+            ],
+            [
+                'status' => 'Assigned to Hub',
+                'status_msg' => 'Assigned to Hub Successfully',
+                'status_color_css' => 'info'
+            ],
+            [
+                'status' => 'Refund Requested',
+                'status_msg' => 'Refund Requested Successfully',
+                'status_color_css' => 'warning'
+            ],
+            [
+                'status' => 'Surrender Requested',
+                'status_msg' => 'Surrender Requested Successfully',
+                'status_color_css' => 'warning'
+            ],
+            [
+                'status' => 'Surrender Approved',
+                'status_msg' => 'Surrender Approved Successfully',
+                'status_color_css' => 'success'
+            ],
+            [
+                'status' => 'Surrender Rejected',
+                'status_msg' => 'Surrender Rejected Successfully',
+                'status_color_css' => 'danger'
+            ],
+            [
+                'status' => 'Surrender Can Collected',
+                'status_msg' => 'Surrender Can Collected Successfully',
+                'status_color_css' => 'success'
+            ],
+            [
+                'status' => 'Surrender Request Cancelled',
+                'status_msg' => 'Surrender Request Cancelled Successfully',
+                'status_color_css' => 'danger'
+            ]
+        ];
+
+        Status::insert($data);
+    }
+}

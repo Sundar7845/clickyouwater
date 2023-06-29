@@ -1,0 +1,57 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Settings;
+
+use App\Http\Controllers\Controller;
+use App\Models\RefferalSettings;
+use App\Traits\Common;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class RefferalSettingsController extends Controller
+{
+    use Common;
+    public function referralPoints()
+    {
+        try {
+        $refferalsettings = RefferalSettings::first();
+        return view('admin.settings.refferal_points',compact('refferalsettings'));
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function addReferralPoints(Request $request){
+       
+        DB::beginTransaction();
+        try {
+            $fillable = $request->all();
+            unset($fillable['_token']);
+            if ($request->id == "new") {
+                RefferalSettings::create($fillable);
+                $notification = array(
+                    'message' => 'RefferalSettings Created Successfully!',
+                    'alert-type' => 'success'
+                );
+            } else {
+                unset($fillable['_token']);
+                unset($fillable['id']);
+                RefferalSettings::where('id', $request->id)->update($fillable);
+                $notification = array(
+                    'message' => 'RefferalSettings Updated Successfully!',
+                    'alert-type' => 'success'
+                );
+            }
+            DB::commit();
+            } catch (\Exception $e) {
+                DB::rollback();
+                $notification = array(
+                    'message' => 'AdminSettings Not Updated!',
+                    'alert-type' => 'error'
+                );
+                $this->Log(__FUNCTION__, $request->method(), $e->getMessage(), Auth::user()->id, $request->ip(), gethostname());
+            }
+        return redirect()->route('referral-points')->with($notification);
+    }
+}

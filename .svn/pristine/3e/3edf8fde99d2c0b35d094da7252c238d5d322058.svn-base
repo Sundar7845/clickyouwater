@@ -1,0 +1,75 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Accounts;
+
+use App\Http\Controllers\Controller;
+use App\Models\Expense;
+use App\Models\ExpenseGroup;
+use App\Models\Ledger;
+use App\Traits\Common;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class ExpenseController extends Controller
+{
+  use Common;
+  public function expenses()
+  {
+    $expenseLedger = Ledger::get();
+    $expenseGroup = ExpenseGroup::get();
+    $companyLedger = Ledger::where('ledger_type_id', 1)->get();
+    $employeeLeger = Ledger::where('ledger_type_id', 2)->get();
+
+    return view('admin.accounts.expenses.expenses', compact('expenseLedger', 'employeeLeger', 'expenseGroup', 'companyLedger'));
+  }
+
+  public function expenseCreate(Request $request)
+  {
+    DB::beginTransaction();
+    // try {
+
+    // $request->validate([
+    //   'ddldate' => 'required',
+    //   'txtExpenseDetail' => 'required',
+    //   'ddlExpenselVendor' => 'required'
+    // ]);
+
+    Expense::create([
+      'expense_date' => $request->ddlDate,
+      'expensegroup_id' => $request->ddlExpenseGroup,
+      'expense_type_id' => $request->txtExpenseType,
+      'ledger_id' => $request->ddlExpenselVendor,
+      'company_ledger_id' => $request->ddlExpenselCompany,
+      'employee_user_id' => $request->ddlExpenselEmployee,
+      'amount' => $request->txtAmount,
+      'is_paid' => $request->isPaid,
+      'amount_paid' => $request->txtAmount,
+      'expense_proof_path' => $request->txtfileattachment,
+      'notes' => $request->txtExpenseDetail,
+      'created_by' => Auth::user()->id
+
+    ]);
+    DB::commit();
+    $notification = array(
+      'message' => 'Expense Created Successfully',
+      'alert-type' => 'error'
+    );
+    return redirect()->route('expenselist')->with($notification);
+    // } catch (\Exception $e) {
+    //   DB::rollback();
+    //   $notification = array(
+    //     'message' => 'Something went wrong!',
+    //     'alert-type' => 'error'
+    //   );
+    //   return redirect()->route('expenses')->with($notification);
+    //   $this->Log(__FUNCTION__, $request->method(), $e->getMessage(), Auth::user()->id, $request->ip(), gethostname());
+    // }
+
+  }
+
+  public function expenseList()
+  {
+    return view('admin.accounts.expenses.expense_list');
+  }
+}

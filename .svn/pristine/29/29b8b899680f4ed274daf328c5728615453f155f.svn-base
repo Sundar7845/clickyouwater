@@ -1,0 +1,282 @@
+@extends('layouts.main_master') @section('content')
+@section('title')
+    Dashboard | Manufacturer
+@endsection
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-1 mb-4">
+        <span class="text-muted fw-light">Manufacturer /</span> Manufacturers
+    </h4>
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-12 mb-4 mb-md-0">
+            <form class="browser-default-validation">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="card-header p-0">
+                            <h4>Basic Company Info</h4>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Manufacturer ID <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" id="basic-default-name"
+                                        placeholder="Manufacturer ID" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-name">Manufacturer Name <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" id="basic-default-name"
+                                        placeholder="Manufacturer Name" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Mobile Number <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" id="basic-default-email" class="form-control"
+                                        placeholder="Mobile Number" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Latitude <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" id="basic-default-email" class="form-control"
+                                        placeholder="Latitude" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Longtitude <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" id="basic-default-email" class="form-control"
+                                        placeholder="Longtitude" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Geo Location <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" id="basic-default-email" class="form-control"
+                                        placeholder="Geo Location" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Credit Period <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group input-group-merge">
+                                        <input type="text" id="" placeholder="Credit Period"
+                                            class="form-control" required />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Settlement Period <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group input-group-merge">
+                                        <input type="text" id="" placeholder="Settlement Period"
+                                            class="form-control" required />
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Email <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <input type="email" id="basic-default-email" class="form-control"
+                                        placeholder="Email" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3 form-password-toggle">
+                                    <label class="form-label" for="basic-default-password">Password <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group input-group-merge">
+                                        <input type="password" id="basic-default-password" class="form-control"
+                                            placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+                                            aria-describedby="basic-default-password3" required />
+                                        <span class="input-group-text cursor-pointer" id="basic-default-password3">
+                                            <i class="ti ti-eye-off"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <div class="card-header p-0">
+                            <h4>Contact Details</h4>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Proprietor Name<span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" id="basic-default-email" class="form-control"
+                                        placeholder="Enter Prepartor Name" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Contact Person Name<span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" id="basic-default-email" class="form-control"
+                                        placeholder="Enter Contact Person Name" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Contact Person Mobile<span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" id="basic-default-email" class="form-control"
+                                        placeholder="Enter Contact Person Number" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-default-email">Contact Person Email<span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <input type="email" id="basic-default-email" class="form-control"
+                                        placeholder="Enter Contact Person Email" required />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <div class="card-header p-0">
+                            <h4>Document Details</h4>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">GST Reg<span class="text-danger">*</span></label>
+                                    <input id="txtfileattachment" type="file" class="form-control" tabindex="-1"
+                                        multiple="multiple" />
+                                    <span id="spnfileattachment" class=" form-group input-group-text"
+                                        style="cursor: pointer; display: none;"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">FSSAI Cert<span class="text-danger">*</span></label>
+                                    <input id="txtfileattachment" type="file" class="form-control" tabindex="-1"
+                                        multiple="multiple" />
+                                    <span id="spnfileattachment" class=" form-group input-group-text"
+                                        style="cursor: pointer; display: none;"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">BIS (Buareu of Ind stand)<span
+                                            class="text-danger">*</span></label>
+                                    <input id="txtfileattachment" type="file" class="form-control" tabindex="-1"
+                                        multiple="multiple" />
+                                    <span id="spnfileattachment" class=" form-group input-group-text"
+                                        style="cursor: pointer; display: none;"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">MOU<span class="text-danger">*</span></label>
+                                    <input id="txtfileattachment" type="file" class="form-control" tabindex="-1"
+                                        multiple="multiple" />
+                                    <span id="spnfileattachment" class=" form-group input-group-text"
+                                        style="cursor: pointer; display: none;"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Agreement<span class="text-danger">*</span></label>
+                                    <input id="txtfileattachment" type="file" class="form-control" tabindex="-1"
+                                        multiple="multiple" />
+                                    <span id="spnfileattachment" class=" form-group input-group-text"
+                                        style="cursor: pointer; display: none;"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Brand Tie-up<span class="text-danger">*</span></label>
+                                    <input id="txtfileattachment" type="file" class="form-control" tabindex="-1"
+                                        multiple="multiple" />
+                                    <span id="spnfileattachment" class=" form-group input-group-text"
+                                        style="cursor: pointer; display: none;"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Proprietor / Director PAN<span
+                                            class="text-danger">*</span></label>
+                                    <input id="txtfileattachment" type="file" class="form-control" tabindex="-1"
+                                        multiple="multiple" />
+                                    <span id="spnfileattachment" class=" form-group input-group-text"
+                                        style="cursor: pointer; display: none;"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Proprietor / Director Aadhar<span
+                                            class="text-danger">*</span></label>
+                                    <input id="txtfileattachment" type="file" class="form-control" tabindex="-1"
+                                        multiple="multiple" />
+                                    <span id="spnfileattachment" class=" form-group input-group-text"
+                                        style="cursor: pointer; display: none;"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">PWD</label>
+                                    <input id="txtfileattachment" type="file" class="form-control" tabindex="-1"
+                                        multiple="multiple" />
+                                    <span id="spnfileattachment" class=" form-group input-group-text"
+                                        style="cursor: pointer; display: none;"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Pollution</label>
+                                    <input id="txtfileattachment" type="file" class="form-control" tabindex="-1"
+                                        multiple="multiple" />
+                                    <span id="spnfileattachment" class=" form-group input-group-text"
+                                        style="cursor: pointer; display: none;"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mt-4 mb-3">
+                                    <button type="submit" class="btn btn-success">Save</button>
+                                    <button type="button" class="btn btn-danger">Cancel</button>
+                                    <a href="{{ route('manufacturer-list') }}" class="btn btn-primary">Go To List</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+</div>
+<!-- / Content -->
+@endsection

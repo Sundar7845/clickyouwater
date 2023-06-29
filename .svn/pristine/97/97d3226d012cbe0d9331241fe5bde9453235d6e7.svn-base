@@ -1,0 +1,29 @@
+<?php
+
+namespace App\Http\Controllers\Admin\CustomerManagement;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class CustomerController extends Controller
+{
+    public function customers()
+    {
+        return view('Admin.customer_management.customers');
+    }
+
+    public function customersPerformance()
+    {
+        return view('Admin.customer_management.customer_performance');
+    }
+
+    public function customersSummary()
+    {
+        return view('Admin.customer_management.summary');
+    }
+
+    public function surrenderCan()
+    {
+        return view('Admin.customer_management.surrendercan');
+    }
+}

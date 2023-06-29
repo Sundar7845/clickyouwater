@@ -1,0 +1,99 @@
+<?php
+
+namespace App\Models;
+
+use Grimzy\LaravelMysqlSpatial\Eloquent\SpatialTrait;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class Hub extends Model
+{
+    use HasFactory, SoftDeletes;
+    use SpatialTrait;
+
+    protected $spatialFields = [
+        'geo_coordinates'
+    ];
+
+    protected $fillable = [
+        'hub_id',
+        'hub_name',
+        'years_of_experience',
+        'mobile',
+        'official_email',
+        'latitude',
+        'longtitude',
+        'geo_location',
+        'radius',
+        'geo_coordinates',
+        'credit_period',
+        'settlement_period',
+        'security_deposit',
+        'password',
+        'state_id',
+        'city_id',
+        'area_id',
+        'address',
+        'pincode',
+        'proprietor_name',
+        'proprietor_mobile',
+        'proprietor_email',
+        'contact_person_name',
+        'contact_person_mobile',
+        'contact_person_email',
+        'is_active',
+        'created_by',
+        'updated_by',
+        'deleted_by',
+    ];
+
+    protected $preventSoftDelete = true; // add this line
+
+    public function area()
+    {
+        return $this->belongsTo(Area::class, 'area_id', 'id');
+    }
+
+    public function state()
+    {
+        return $this->belongsTo(State::class);
+    }
+
+    public function city()
+    {
+        return $this->belongsTo(City::class);
+    }
+
+    public function manufacturer()
+    {
+        return $this->belongsTo(Manufacturer::class);
+    }
+
+    protected $dates = ['deleted_at'];
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::bootSoftDeletes();
+    }
+
+    public static function bootSoftDeletes()
+    {
+        static::deleting(function ($hub) {
+            if ($hub->logisticpartner()->count() > 0) {
+                throw new \Exception('Cannot delete logistic type because there are associated logistics.');
+            }
+        });
+
+        static::restoring(function ($hub) {
+            // add any restoring logic here if necessary
+        });
+    }
+
+    public function logisticpartner()
+    {
+        return $this->hasMany(LogisticPartner::class);
+    }
+}

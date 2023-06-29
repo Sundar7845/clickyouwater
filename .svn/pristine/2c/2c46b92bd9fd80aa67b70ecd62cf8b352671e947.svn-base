@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Http\Controllers\Admin\HubManagement;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class HubController extends Controller
+{
+    public function hub()
+    {
+        return view('admin.hub_management.hub');
+    }
+
+    public function hubList()
+    {
+        return view('admin.hub_management.hublist');
+    }
+}

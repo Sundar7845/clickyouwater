@@ -1,0 +1,218 @@
+$(document).ready(function () {
+  ImgUpload();
+  $('#tblProduct').DataTable({
+    processing: true,
+    serverSide: true,
+    order: [[0, "ASC"]],
+    ajax: "products/data",
+    fnRowCallback: function (nRow, aData, iDisplayIndex) {
+      $("td:first", nRow).html(iDisplayIndex + 1);
+      return nRow;
+    },
+    columns: [
+      { data: "id" },
+      {
+        data: "product_image",
+        render: function (data) {
+          return '<img src="' + data + '" class="avatar" width="50" height="50"/>';
+        }
+      },
+      { data: "category_name" },
+      { data: "product_type_name" },
+      { data: "brand_name" },
+      { data: "product_name" },
+      { data: "customer_price" },
+      { data: "wholesale_price" },
+      {
+        data: "is_active",
+        render: function (data, type, row) {
+          return `<label class="switch">
+                <input onclick="doStatus(${row.id});" id="chkProduct${row.id}" type="checkbox" class="switch-input"
+                name="chkProduct" '  ${(data == 1 ? "checked" : "")} ' />
+                <span class="switch-toggle-slider">
+                    <span class="switch-on"></span>
+                    <span class="switch-off"></span>
+                </span>
+                </label>`;
+        }
+      },
+      { data: "action", orderable: false },
+    ],
+  });
+
+});
+
+
+function doStatus(id) {
+  var status = $("#chkProduct" + id).is(":checked");
+  confirmStatusChange(id, "products/", "tblProduct", (status == true ? 1 : 0), "chkProduct");
+}
+
+function doEdit(id) {
+  $("#hdProductId").val(id);
+  $("#txtProductName").focus();
+  $("#btnSave").text("Update");
+  getProductsById(id);
+}
+
+function getProductsById(id) {
+  $.ajax({
+    type: "GET",
+    url: "getproducts/" + id,
+    dataType: "json",
+    success: function (data) {
+      console.log(data);
+      $("#ddlCategory").val(data.products.category_id).trigger("change");
+      $("#ddlProducttype").val(data.products.main_product_type_id).trigger("change");
+      $("#ddlBrand").val(data.products.brand_id).trigger("change");
+      $("#txtProductName").val(data.products.product_name);
+      $("#txtCustomerPrice").val(data.products.customer_price);
+      $("#txtWholesalePrice").val(data.products.wholesale_price);
+      $("#txtCapacity").val(data.products.capacity);
+      $("#txtDescription").val(data.products.desc);
+      $('#canreturn').val(data.products.is_emptycan_return).trigger("change");
+      if ($('#canreturn').val() == 1) {
+        $("#canreturn").attr("checked", "checked");
+      }
+      else {
+        $("#canreturn").attr("checked", false);
+
+      }
+      $("#txtCgst").val(data.products.CGST);
+      $("#txtSgst").val(data.products.SGST);
+      var img = "<div class='upload__img-box'><div style='background-image: url(" + data.products.product_image + ")' data-number='" + $(".upload__img-close").length + "' data-file='" + data.products.product_name + "' class='img-bg'><div class='upload__img-close'></div></div></div>";
+      $(".upload__img-wrap").html(img);
+      $("#hdProductImg").val(data.products.product_image);
+      ImgUpload();
+    },
+  });
+}
+
+function ImgUpload() {
+  var imgWrap = "";
+  var imgArray = [];
+
+  $("#productImage").each(function () {
+    $(this).on('change', function (e) {
+      imgWrap = $(this).closest('.upload__box').find('.upload__img-wrap');
+      var maxLength = $(this).attr('data-max_length');
+
+      var files = e.target.files;
+      var filesArr = Array.prototype.slice.call(files);
+      var iterator = 0;
+      filesArr.forEach(function (f, index) {
+
+        if (!f.type.match('image.*')) {
+          return;
+        }
+
+        if (imgArray.length > maxLength) {
+          return false
+        } else {
+          var len = 0;
+          for (var i = 0; i < imgArray.length; i++) {
+            if (imgArray[i] !== undefined) {
+              len++;
+            }
+          }
+          if (len > maxLength) {
+            return false;
+          } else {
+            imgArray.push(f);
+
+            var reader = new FileReader();
+            reader.onload = function (e) {
+              var html = "<div class='upload__img-box'><div style='background-image: url(" + e.target.result + ")' data-number='" + $(".upload__img-close").length + "' data-file='" + f.name + "' class='img-bg'><div class='upload__img-close'></div></div></div>";
+              imgWrap.html(html);
+              iterator++;
+            }
+            reader.readAsDataURL(f);
+          }
+        }
+      });
+    });
+  });
+
+  $('body').on('click', ".upload__img-close", function (e) {
+    var file = $(this).parent().data("file");
+    for (var i = 0; i < imgArray.length; i++) {
+      if (imgArray[i].name === file) {
+        imgArray.splice(i, 1);
+        break;
+      }
+    }
+    $(this).parent().parent().remove();
+  });
+}
+
+function deleteimg(id) {
+  $.ajax({
+    url: "/product/multiimg/delete/" + id,
+    type: "GET",
+    dataType: "json",
+    success: function (response) {
+      console.log(response);
+    }
+  });
+}
+
+function cancel() {
+  $("#hdProductId").val("");
+  $("#ddlCategory").val("").trigger('change');
+  $("#ddlProducttype").val("").trigger('change');
+  $("#ddlBrand").val("").trigger('change');
+  $("#txtProductName").val("");
+  $("#txtCustomerPrice").val("");
+  $("#txtWholesalePrice").val("");
+  $('input[name="canreturn"]').prop('checked', false);
+  $("#txtCapacity").val("");
+  $("#txtDescription").val("");
+  $("#txtCgst").val("");
+  $("#txtSgst").val("");
+  $("#productImage").val("");
+  $(".upload__img-wrap").html("");
+  $("#btnSave").text("Save");
+  $("#ddlCategory").focus();
+}
+
+function showDelete(id) {
+  confirmDelete(id, "delete/products/", "tblProduct");
+}
+
+
+// jquery Validation
+$(function () {
+
+  $("form[name='products']").validate({
+
+    rules: {
+      ddlCategory: "required",
+      ddlProducttype: "required",
+      ddlBrand: "required",
+      txtProductName: "required",
+      txtCustomerPrice: "required",
+      txtWholesalePrice: "required",
+      txtCapacity: "required",
+      txtDescription: "required",
+      txtCgst: "required",
+      txtSgst: "required",
+      // productImage: "required",
+    },
+
+    errorPlacement: function (error, element) {
+      if (element.is(":radio")) {
+        error.appendTo(element.parents(".form-group"));
+      } else {
+        // This is the default behavior
+        // error.insertAfter(element);
+        if (element.siblings(".error").html() == undefined) {
+          error.appendTo(element.parent().next(".error"));
+        } else {
+          error.appendTo(element.siblings(".error"));
+        }
+      }
+    },
+  });
+});
+
+

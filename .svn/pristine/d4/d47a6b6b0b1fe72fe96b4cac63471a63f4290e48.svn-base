@@ -1,0 +1,677 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    Dashboard | Employee
+@endsection
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold mb-4">
+        Add Employee
+    </h4>
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-12 mb-4 mb-md-0">
+            <form method="post" action="{{ url('employee-create') }}" name="employee" id="register-form"
+                enctype="multipart/form-data">
+                @csrf
+                <div class="card">
+                    <div class="card-body">
+                        <div class="card-header p-0">
+                            <h4>Identity Details</h4>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Name of the Employee<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control"name="txtEmployeeName"
+                                        id="txtEmployeeName" placeholder="Enter Employee Name">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Father’s / Spouse Name<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" name="txtFatherName" id="txtFatherName"
+                                        placeholder="Enter Father’s / Spouse Name">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Gender<span class="text-danger">*</span></label>
+                                    <div class="form-group">
+                                        <input type="radio" class="form-check-input" name="rdGender" id="rdGender"
+                                            value="1" />
+                                        Male
+                                        <input type="radio" class="form-check-input" name="rdGender" id="rdGender"
+                                            value="2" />
+                                        Female
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Date of birth<span class="text-danger">*</span></label>
+                                    <div class="form-group">
+                                        <input type="date" name="dtDob" id="dtDob" class="form-control"
+                                            placeholder="DD/MM/YYYY">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Nationality<span class="text-danger">*</span></label>
+                                    <div class="form-group">
+                                        <input type="text" name="txtNationality" id="txtNationality"
+                                            class="form-control" placeholder="Enter Nationality">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Status
+                                        <sup>(Resident/Non-Resident/Foreign National)</sup> </label>
+                                    <div class="form-group">
+                                        <input type="text" name="txtNationalityStatus" id="txtNationalityStatus"
+                                            class="form-control" placeholder="Enter Status">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>PAN<span class="text-danger">*</span></label>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" name="txtPan" id="txtPan"
+                                            placeholder="Enter PAN No">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Aadhaar Number (if any)</label>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" name="txtAadhaar" id="txtAadhaar"
+                                            placeholder="Enter Aadhaar No">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Passport Number<sup>(In case of
+                                            overseas)</sup></label>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" name="txtPassport" id="txtPassport"
+                                            placeholder="Enter Passport No">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Personal Mobile<span class="text-danger">*</span></label>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" name="txtPersonalMobile"
+                                            id="txtPersonalMobile" placeholder="Enter Personal Mobile">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Official Mobile<span class="text-danger">*</span></label>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" id="txtOfficialMobile"
+                                            name="txtOfficialMobile" placeholder="Enter Official Mobile">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Personal Email<span class="text-danger">*</span></label>
+                                    <div class="form-group">
+                                        <input type="email" class="form-control" name="txtPersonalEmail"
+                                            id="txtPersonalEmail" placeholder="Enter Personal Email">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Official Email<span class="text-danger">*</span></label>
+                                    <div class="form-group">
+                                        <input type="email" class="form-control" name="txtOfficialEmail"
+                                            id="txtOfficialEmail" placeholder="Enter Official Email">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Employee Image<span class="text-danger">*</span></label>
+                                    <input type="file" name="fileEmployeeImage" id="fileEmployeeImage"
+                                        class="form-control">
+                                    <div class="img mt-2">
+                                        <img src="{{ asset('assets\img\avatars\14.png') }}" width="100"
+                                            height="100">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <div class="card-header p-0">
+                            <h4>Address Details</h4>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <strong>Communication Address</strong>
+                                </div>
+                                <div class="mb-3">
+                                    <label>Country<span class="text-danger">*</span></label>
+                                    <select name="ddlCommCountry" id="ddlCommCountry"
+                                        class="select2 form-select form-select-md county_chnage">
+                                        <option>Select</option>
+                                        @if (!empty($country))
+                                            @foreach ($country as $countrys)
+                                                <option value="{{ $countrys->id }}">{{ $countrys->country_name }}
+                                                </option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label>State<span class="text-danger">*</span></label>
+                                    <select name="ddlState" id="ddlCommState"
+                                        class="select2 form-select state_chnage">
+                                        <option value="0">Select</option>
+
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label>City/town/village<span class="text-danger">*</span></label>
+                                    <select name="ddlCity" id="ddlCommCity" class="select2 form-select city_chnage">
+                                        <option value="0">Select</option>
+
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label>Area Name<span class="text-danger">*</span></label>
+                                    <select name="ddlArea" id="ddlCommArea" class="select2 form-select">
+                                        <option value="0">SELECT Area</option>
+
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label>Door No/Street/Landmark<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" name="txtCmmDoorNo" id="txtCmmDoorNo"
+                                        placeholder="Enter Door No/Street/Landmark">
+                                </div>
+                                <div class="mb-3">
+                                    <label>Pin Code<span class="text-danger">*</span></label>
+                                    <input type="text" name="txtCommPincode" id="txtPincode" class="form-control"
+                                        placeholder="Enter Pin Code">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <strong>Permanent Address</strong>
+                                        </div>
+                                        <div class="col-md-6 text-end">
+                                            <input type="checkbox" name="chkSameAddress" id="chkSameAddress"> Same as
+                                            Communication
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 mt-3">
+                                        <label>Country<span class="text-danger">*</span></label>
+                                        <select name="ddlPermCountry" id="ddlPermCountry"
+                                            class="select2 form-select form-select-md county_chnage">
+                                            <option>Select</option>
+                                            @if (!empty($country))
+                                                @foreach ($country as $countrys)
+                                                    <option value="{{ $countrys->id }}">{{ $countrys->country_name }}
+                                                    </option>
+                                                @endforeach
+                                            @endif
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>State<span class="text-danger">*</span></label>
+                                        <select name="ddlPermState" id="ddlPermState"
+                                            class="select2 form-select state_chnage">
+                                            <option value="0">Select</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>City/town/village<span class="text-danger">*</span></label>
+                                        <select name="ddlPermCity" id="ddlPermCity"
+                                            class="select2 form-select city_chnage">
+                                            <option value="0">Select</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>Area Name<span class="text-danger">*</span></label>
+                                        <select name="ddlPermArea" id="ddlPermArea" class="select2 form-select">
+                                            <option value="0">SELECT Area</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>Door No/Street/Landmark<span class="text-danger">*</span></label>
+                                        <input type="text" name="txtPermDoorNo" id="txtPermDoorNo"
+                                            class="form-control" placeholder="Enter Door No/Street/Landmark">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>Pin Code<span class="text-danger">*</span></label>
+                                        <input type="text" name="txtPermPincode" id="txtPermPincode"
+                                            class="form-control" placeholder="Enter Pin Code">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <div class="card-header p-0">
+                            <h4>Emergency Contact Details</h4>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label>Mobile 1<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" name="txtMobile1" id="txtMobile1"
+                                        placeholder="Enter Mobile 1">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label>Relationship 1</label>
+                                    <input type="text" class="form-control" name="txtRelationship1"
+                                        id="txtRelationship1" placeholder="Enter Relationship 1">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label>Mobile 2<span class="text-danger">*</span></label>
+                                    <input type="text" name="txtMobile2" id="txtMobile2" class="form-control"
+                                        placeholder="Enter Mobile">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label>Relationship 2</label>
+                                    <input type="text" name="txtRelationship2" id="txtRelationship2"
+                                        class="form-control" placeholder="Enter Relationship 2">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <div class="card-header p-0">
+                            <h4>Previous Company Details</h4>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Previous company experience
+                                        years</label>
+                                    <input type="number" name="numCompanyyrs" id="numCompanyyrs"
+                                        class="form-control" placeholder="Enter Previous company experience years">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Previous company Name</label>
+                                    <input type="text" class="form-control" name="txtCompanyName"
+                                        id="txtCompanyName" placeholder="Enter Previous company Name">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Ref By</label>
+                                    <input type="text" class="form-control" name="txtRebBy" id="txtRebBy"
+                                        placeholder="Enter Ref By">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <div class="card-header p-0">
+                            <h4>Bank Details</h4>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Name (As printed in
+                                        passbook)<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" name="txtAccountName"
+                                        id="txtAccountName" placeholder="Enter Name">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Account Number<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" name="txtAccountNumber"
+                                        id="txtAccountNumber" placeholder="Enter Account Number">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Bank Name<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" name="txtBankName" id="txtBankName"
+                                        placeholder="Enter Bank Name">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Branch Name<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" name="txtBranchName"
+                                        id="txtBranchName" placeholder="Enter Branch Name">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>IFSC Code<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" name="txtIfscCode" id="txtIfscCode"
+                                        placeholder="Enter IFSC Code">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <div class="card-header p-0">
+                            <h4>Upload Documents</h4>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Aadhar Card<span class="text-danger">*</span></label>
+                                    <input type="file" name="fileAadhar" id="fileAadhar" class="form-control">
+                                    <div class="img mt-2">
+                                        <img src="{{ asset('assets\img\avatars\14.png') }}" width="100"
+                                            height="100">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Pan Card<span class="text-danger">*</span></label>
+                                    <input type="file" name="filePan" id="filePan" class="form-control">
+                                    <div class="img mt-2">
+                                        <img src="{{ asset('assets\img\avatars\14.png') }}" width="100"
+                                            height="100">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Passport<span class="text-danger">*</span></label>
+                                    <input type="file" name="filePassport" id="filePassport"
+                                        class="form-control">
+                                    <div class="img mt-2">
+                                        <img src="{{ asset('assets\img\avatars\14.png') }}" width="100"
+                                            height="100">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <div class="card-header p-0">
+                            <h4>For Office Use Only</h4>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="basic-default-name">&nbsp;</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text" id="basic-addon11">Employee ID</span>
+                                        <input type="text" class="form-control" name="txtEmpId" id="txtEmpId"
+                                            readonly value="EMP001" placeholder="EMP001" aria-label=""
+                                            aria-describedby="basic-addon11" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Department<span class="text-danger">*</span></label>
+                                    <select name="ddlDepartment" id="ddlDepartment" class="select2 form-select">
+                                        <option value="0">Select</option>
+                                        @if (!empty($departments))
+                                            @foreach ($departments as $department)
+                                                <option value="{{ $department->id }}">
+                                                    {{ $department->department_name }}
+                                                </option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Desingation<span class="text-danger">*</span></label>
+                                    <select name="ddlDesignation" id="ddlDesignation" class="select2 form-select">
+                                        <option value="0">Select</option>
+                                        @if (!empty($designation))
+                                            @foreach ($designation as $designations)
+                                                <option value="{{ $designations->id }}">
+                                                    {{ $designations->designation_name }}
+                                                </option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Reporting To<span class="text-danger">*</span></label>
+                                    <select name="ddlReportingTo" id="ddlReportingTo" class="select2 form-select">
+                                        <option value="0">Select</option>
+                                        @if (!empty($user))
+                                            @foreach ($user as $users)
+                                                <option value="{{ $users->id }}">{{ $users->user_name }}
+                                                </option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Package<span class="text-danger">*</span></label>
+                                    <input type="text" name="txtPackage" id="txtPackage" class="form-control"
+                                        placeholder="Enter Package">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Date of joining<span class="text-danger">*</span></label>
+                                    <input type="date" name="dtDoj" id="dtDoj" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Company Mail ID<span class="text-danger">*</span></label>
+                                    <input type="email" name="mailCompanyMail" class="form-control"
+                                        placeholder="Company Mail ID">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Company Phone Number<span class="text-danger">*</span></label>
+                                    <input type="text" name="txtCompanyMobile" id="txtCompanyMobile"
+                                        class="form-control" placeholder="Enter Phone Number">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Originals given by<span class="text-danger">*</span></label>
+                                    <select id="ddlOriginalsGiven" name="ddlOriginalsGiven"
+                                        class="select2 form-select">
+                                        <option value="0">Select</option>
+                                        @if (!empty($user))
+                                            @foreach ($user as $users)
+                                                <option value="{{ $users->id }}">{{ $users->user_name }}
+                                                </option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Originals received by<span class="text-danger">*</span></label>
+                                    <select name="ddlOriginalReceived" id="ddlOriginalReceived"
+                                        class="select2 form-select">
+                                        <option value="0">Select</option>
+                                        @if (!empty($user))
+                                            @foreach ($user as $users)
+                                                <option value="{{ $users->id }}">{{ $users->user_name }}
+                                                </option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Originals verified by<span class="text-danger">*</span></label>
+                                    <select name="ddlOriginalVerified" id="ddlOriginalVerified"
+                                        class="select2 form-select">
+                                        <option value="0">Select</option>
+                                        @if (!empty($user))
+                                            @foreach ($user as $users)
+                                                <option value="{{ $users->id }}">{{ $users->user_name }}
+                                                </option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <div class="card-header p-0">
+                            <h4>Office Assets</h4>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="basic-default-name">Asset Name<span class="text-danger">*</span>
+                                    </label>
+                                    <select name="ddlAssetName" id="ddlAssetName" class="select2 form-select">
+                                        <option value="0">Select</option>
+                                        <option value="1">Two wheeler - Yamaha</option>
+                                        <option value="2">Lenovo Laptop i3</option>
+                                        <option value="3">EB LMB</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="basic-default-name">Issued by<span class="text-danger">*</span>
+                                    </label>
+                                    <select name="ddlIssuerBy" id="ddlIssuerBy" class="select2 form-select">
+                                        <option value="0">Select</option>
+                                        <option value="1">Issued by 1</option>
+                                        <option value="2">Issued by 2</option>
+                                        <option value="3">Issued by 3</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="basic-default-name">Authorised by<span class="text-danger">*</span>
+                                    </label>
+                                    <select name="ddlAuthorisedBY" id="ddlAuthorisedBY" class="select2 form-select">
+                                        <option value="0">Select</option>
+                                        <option value="1">Authorised by 1</option>
+                                        <option value="2">Authorised by 2</option>
+                                        <option value="3">Authorised by 3</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <div class="mb-3">
+                                    <img src="{{ asset('add.png') }}" class="img-fluid" width="50px"
+                                        height="50px" style="margin-top:18px">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-datatable table-responsive pt-0">
+                            <table class="table table-responsive">
+                                <tr>
+                                    <th>Asset Name</th>
+                                    <th>Issued by</th>
+                                    <th>Authorised by</th>
+                                    <th>Action</th>
+                                </tr>
+                                <tr>
+                                    <td>Two wheeler - Yamaha</td>
+                                    <td>Issued by 1</td>
+                                    <td>Authorised by 1</td>
+                                    <td>
+                                        <a>
+                                            <i class="text-primary ti ti-pencil me-1"></i>
+                                        </a>
+                                        <a>
+                                            <i class="text-danger ti ti-trash me-1"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Lenovo Laptop i3</td>
+                                    <td>Issued by 2</td>
+                                    <td>Authorised by 2</td>
+                                    <td>
+                                        <a>
+                                            <i class="text-primary ti ti-pencil me-1"></i>
+                                        </a>
+                                        <a>
+                                            <i class="text-danger ti ti-trash me-1"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>EB LMB</td>
+                                    <td>Issued by 3</td>
+                                    <td>Authorised by 3</td>
+                                    <td>
+                                        <a>
+                                            <i class="text-primary ti ti-pencil me-1"></i>
+                                        </a>
+                                        <a>
+                                            <i class="text-danger ti ti-trash me-1"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mt-4 mb-3">
+                                <button type="submit" class="btn btn-success">Save</button>
+                                <button type="button" class="btn btn-danger">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+</div>
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/admin/masters/employee.js') }}"></script>
+@endsection

@@ -1,0 +1,309 @@
+@extends('layouts.main_master') @section('content')
+@section('title')
+    Dashboard | Customer Summary
+@endsection
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-1 mb-4">
+        Customer Summary
+    </h4>
+    <div class="row">
+        <!-- Sales last year -->
+        <div class="col-xl-6 col-md-6 col-6 mb-4">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <h4 class="card-title mb-0">Customer Details</h4>
+                </div>
+                <div class="card-body mt-3">
+                    <address>
+                        <b>Siva K</b><br>
+                        Email : ksakthi61085@gmail.com<br>
+                        Mobile : 7010597694<br>
+                        Customer Type : customer <br>
+                    </address>
+                </div>
+            </div>
+        </div>
+        <!-- Sales Last month -->
+        <div class="col-xl-6 col-md-6 col-6 mb-4">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <h4 class="card-title mb-0">Address</h4>
+                </div>
+                <div class="card-body mt-3">
+                    <address>
+                        Siva K<br>
+                        Saravanampatti,SF No 163/2,<br>
+                        Near Ragam Bakes,Saravanampatti,<br>
+                        Pincode : 641035<br>
+                    </address>
+                </div>
+            </div>
+        </div>
+        <!-- Cards with few info -->
+        <div class="col-lg-3 col-sm-6 mb-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div class="card-title mb-0">
+                        <h5 class="mb-0 me-2 text-white">100</h5>
+                        <small>Eligible Refund Points</small>
+                    </div>
+                    <div class="card-icon">
+                        <span class="badge bg-label-primary rounded-pill p-2">
+                            <i class="ti ti-brand-coinbase"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-sm-6 mb-4">
+            <div class="card">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div class="card-title mb-0">
+                        <h5 class="mb-0 me-2">100</h5>
+                        <small>Recharge Points</small>
+                    </div>
+                    <div class="card-icon">
+                        <span class="badge bg-label-warning rounded-pill p-2">
+                            <i class="ti ti-currency-rupee ti-sm"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-sm-6 mb-4">
+            <div class="card">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div class="card-title mb-0">
+                        <h5 class="mb-0 me-2">50</h5>
+                        <small>Earned Points</small>
+                    </div>
+                    <div class="card-icon">
+                        <span class="badge bg-label-success rounded-pill p-2">
+                            <i class="ti ti-trophy ti-sm"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-sm-6 mb-4">
+            <div class="card">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div class="card-title mb-0">
+                        <h5 class="mb-0 me-2">20</h5>
+                        <small>Used Points</small>
+                    </div>
+                    <div class="card-icon">
+                        <span class="badge bg-label-secondary rounded-pill p-2">
+                            <i class="ti ti-medal ti-sm"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-sm-6 mb-4">
+            <div class="card">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div class="card-title mb-0">
+                        <h5 class="mb-0 me-2">130</h5>
+                        <small>Balance Points</small>
+                    </div>
+                    <div class="card-icon">
+                        <span class="badge bg-label-info rounded-pill p-2">
+                            <i class="ti ti-wallet ti-sm"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-sm-6 mb-4">
+            <div class="card">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div class="card-title mb-0">
+                        <h5 class="mb-0 me-2">20</h5>
+                        <small>Total Orders</small>
+                    </div>
+                    <div class="card-icon">
+                        <span class="badge bg-label-dark rounded-pill p-2">
+                            <i class="ti ti-shopping-cart ti-sm"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-sm-6 mb-4">
+            <div class="card">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div class="card-title mb-0">
+                        <h5 class="mb-0 me-2">7</h5>
+                        <small>Cancel Orders</small>
+                    </div>
+                    <div class="card-icon">
+                        <span class="badge bg-label-danger rounded-pill p-2">
+                            <i class="ti ti-alert-triangle"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-sm-6 mb-4">
+            <div class="card">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div class="card-title mb-0">
+                        <h5 class="mb-0 me-2">5</h5>
+                        <small>Empty cans</small>
+                    </div>
+                    <div class="card-icon">
+                        <span class="badge bg-label-primary rounded-pill p-2">
+                            <i class="ti ti-bottle"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DataTable with Buttons -->
+    <div class="col-lg-12 mt-3 mb-4 mb-lg-0">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between">
+                <h5 class="card-title m-0 me-2">Recent Orders</h5>
+            </div>
+            <div class="card-datatable table-responsive pt-0">
+                <table class="table">
+                    <thead class="border-bottom">
+                        <tr>
+                            <th>S.No</th>
+                            <th>DATE</th>
+                            <th>ORDER ID</th>
+                            <th>CUSTOMER NAME</th>
+                            <th>HUB NAME</th>
+                            <th>QTY</th>
+                            <th>AMOUNT</th>
+                            <th>PAYMENT STATUS</th>
+                            <th>ORDER STATUS</th>
+                            <th>ACTION</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>17/03/2022
+                                <div class="text-muted p-1">
+                                    <small class="bg-light p-1">01:00 AM</small>
+                                </div>
+                            </td>
+                            <td>370</td>
+                            <td>Siva
+                                <div class="text-muted p-1">
+                                    <small class="bg-light p-1">9966210354</small>
+                                </div>
+                            </td>
+                            <td>Roshan Water Hub</td>
+                            <td>10</td>
+                            <td>
+                                <p class="mb-0 fw-semibold">₹ 1,678</p>
+                            </td>
+                            <td>
+                                <span class="badge bg-label-success">Completed</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-label-success">Completed</span>
+                            </td>
+                            <td>
+                                <a href="{{ route('order-detail') }}" class="btn btn-primary">View</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>18/03/2022
+                                <div class="text-muted p-1">
+                                    <small class="bg-light p-1">12:00 AM</small>
+                                </div>
+                            </td>
+                            <td>371</td>
+                            <td>Siva
+                                <div class="text-muted p-1">
+                                    <small class="bg-light p-1">9966280354</small>
+                                </div>
+                            </td>
+                            <td>Roshan Water Hub</td>
+                            <td>20</td>
+                            <td>
+                                <p class="mb-0 fw-semibold">₹ 1,500</p>
+                            </td>
+                            <td>
+                                <span class="badge bg-label-secondary">Pending</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-label-secondary">Assigned</span>
+                            </td>
+                            <td>
+                                <a href="{{ route('order-detail') }}" class="btn btn-primary">View</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>22/03/2022
+                                <div class="text-muted p-1">
+                                    <small class="bg-light p-1">11:00 PM</small>
+                                </div>
+                            </td>
+                            <td>372</td>
+                            <td>Siva
+                                <div class="text-muted p-1">
+                                    <small class="bg-light p-1">9966219354</small>
+                                </div>
+                            </td>
+                            <td>Roshan Water Hub</td>
+                            <td>30</td>
+                            <td>
+                                <p class="mb-0 fw-semibold">₹ 5,670</p>
+                            </td>
+                            <td>
+                                <span class="badge bg-label-danger">Cancelled</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-label-danger">Cancelled</span>
+                            </td>
+                            <td>
+                                <a href="{{ route('order-detail') }}" class="btn btn-primary">View</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>02/04/2022
+                                <div class="text-muted p-1">
+                                    <small class="bg-light p-1">11:00 AM</small>
+                                </div>
+                            </td>
+                            <td>373</td>
+                            <td>Siva
+                                <div class="text-muted p-1">
+                                    <small class="bg-light p-1">9966212354</small>
+                                </div>
+                            </td>
+                            <td>Roshan Water Hub</td>
+                            <td>10</td>
+                            <td>
+                                <p class="mb-0 fw-semibold">₹ 1,678</p>
+                            </td>
+                            <td>
+                                <span class="badge bg-label-success">Completed</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-label-warning">Placed</span>
+                            </td>
+                            <td>
+                                <a href="{{ route('order-detail') }}" class="btn btn-primary">View</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--/ DataTable with Buttons -->
+</div>
+<!-- / Content -->
+@endsection

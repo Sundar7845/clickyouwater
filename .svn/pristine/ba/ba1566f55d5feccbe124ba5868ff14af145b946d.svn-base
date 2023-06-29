@@ -1,0 +1,92 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class DocumentConfig extends Model
+{
+    use HasFactory, SoftDeletes;
+
+    protected $fillable = [
+        'documenttype_id',
+        'documentmodule_id',
+        'is_mandatory',
+        'is_active'
+    ];
+
+    protected $preventSoftDelete = true; // add this line
+
+    public function documentType()
+    {
+        return $this->belongsTo(DocumentType::class, 'documenttype_id', 'id');
+    }
+
+    public function documentModule()
+    {
+        return $this->belongsTo(DocumentModules::class, 'documenttype_id', 'id');
+    }
+
+    protected $dates = ['deleted_at'];
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::bootSoftDeletes();
+    }
+
+    public static function bootSoftDeletes()
+    {
+        static::deleting(function ($documentconfig) {
+           
+            if ($documentconfig->deliveryperson()->count() > 0) {
+                throw new \Exception('Cannot delete ledger type because there are associated ledgers.');
+            }
+
+            if ($documentconfig->manufacturer()->count() > 0) {
+                throw new \Exception('Cannot delete ledger type because there are associated ledgers.');
+            }
+            if ($documentconfig->hub()->count() > 0) {
+                throw new \Exception('Cannot delete ledger type because there are associated ledgers.');
+            }
+            if ($documentconfig->logisticpartner()->count() > 0) {
+                throw new \Exception('Cannot delete ledger type because there are associated ledgers.');
+            }
+            if ($documentconfig->employee()->count() > 0) {
+                throw new \Exception('Cannot delete ledger type because there are associated ledgers.');
+            }
+           
+        });
+        static::restoring(function ($area) {
+            // add any restoring logic here if necessary
+        });
+    }
+
+    public function deliveryperson()
+    {
+        return $this->hasMany(DeliveryPeopleDocuments::class);
+    }
+
+    public function manufacturer()
+    {
+        return $this->hasMany(ManufacturerDocuments::class);
+    }
+
+    public function hub()
+    {
+        return $this->hasMany(HubDocuments::class);
+    }
+
+    public function logisticpartner()
+    {
+        return $this->hasMany(HubDocuments::class);
+    }
+
+    public function employee()
+    {
+        return $this->hasMany(HubDocuments::class);
+    }
+}

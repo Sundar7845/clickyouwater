@@ -1,0 +1,85 @@
+<?php
+
+namespace App\Http\Controllers\Logistic\Document;
+
+use App\Enums\DocumentModulesType;
+use App\Enums\RoleTypes;
+use App\Http\Controllers\Controller;
+use App\Models\LogisticPartner;
+use App\Models\LogisticPartnerDocuments;
+use App\Models\User;
+use Illuminate\Http\Request;
+use App\Traits\Common;
+use Illuminate\Support\Facades\Auth;
+
+class DocumentController extends Controller
+{
+    use Common;
+    public function document($id = NULL)
+    {
+        // $logistic_id = User::where('id', Auth::user()->id)->value('ref_id');
+        $logistic_id = $this->getRefId(Auth::user()->id, RoleTypes::LogisticPartner);
+        $id = ($id ? $id : $logistic_id);
+        $bindDocuments = $this->getDocumentConfigsByModule(DocumentModulesType::Logistic, $id);
+        return view('hub.document.document', compact('bindDocuments', 'id'));
+    }
+
+    public function createDocuments(Request $request)
+    {
+        try {
+            $logistic = LogisticPartner::where('id', $request->hdId)->first();
+            //Validate the documents for hub
+            $is_valid = $this->validateUpdateDocuments($request, DocumentModulesType::Logistic, $request->hdId);
+
+            if ($is_valid !== true) {
+                if ($is_valid->document_number == null || $is_valid->document_path == null) {
+                    $notification = array(
+                        'message' => $is_valid->documentType->documenttype_name . ' Required',
+                        'alert-type' => 'error'
+                    );
+                    return redirect()->route('logisticdocuments')->with($notification);
+                }
+            }
+
+            $hub_documents = $this->getDocumentConfigsByModule(DocumentModulesType::Logistic, $request->hdId);
+
+            foreach ($hub_documents as $doc) {
+                if ($request->hasFile('file_' . $doc->id)) {
+                    @unlink($doc->hubDocuments->document_path);
+                }
+            }
+
+            // Delete existing records
+            LogisticPartnerDocuments::where('logistic_partner_id', $request->hdId)->delete();
+
+
+            foreach ($hub_documents as $doc) {
+                if ($request->hasFile('file_' . $doc->id)) {
+                    $path = $request->file('file_' . $doc->id)->store('temp');
+                    $file = $request->file('file_' . $doc->id);
+                    $extension = $file->getClientOriginalExtension();
+                    $fileName = $this->generateRandom(16) . '.' . $extension;
+                }
+                $doc_no = 'doc_' . $doc->id;
+                $existingfile_path = 'hdDocumentImg_' . $doc->id;
+                LogisticPartnerDocuments::create([
+                    'logistic_partner_id' => $request->hdId,
+                    'documenttype_id' => $doc->documenttype_id,
+                    'documentmodule_id' => $doc->documentmodule_id,
+                    'document_path' => ($request->hasFile('file_' . $doc->id)) ?
+                        $this->fileUpload($file, 'upload/logistics/' . $logistic->logistic_partner_code, $fileName)
+                        : $request->$existingfile_path,
+                    'document_number' => $request->$doc_no
+                ]);
+            }
+            $notification = array(
+                'message' => 'Logistic Documents Updated Successfully',
+                'alert-type' => 'success'
+            );
+            $authLogisticPartnerRedirectUrl = Auth::user()->role_id == RoleTypes::LogisticPartner ? 'documents' : 'logisticdocuments';
+            return redirect()->route($authLogisticPartnerRedirectUrl)->with($notification);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, $request->method(), $e->getMessage(), Auth::user()->id, $request->ip(), gethostname());
+        }
+    }
+}

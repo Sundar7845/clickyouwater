@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Settings;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class RefferalSettingsController extends Controller
+{
+    public function referralPoints()
+    {
+        return view('admin.settings.referral_points');
+    }
+}

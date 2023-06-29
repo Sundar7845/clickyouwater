@@ -1,0 +1,13 @@
+<?php
+
+namespace App\Http\Controllers\DiscountManagement;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class RewardPointsController extends Controller
+{
+    public function RewardPoints(){
+        return view('discount_management.reward_points');
+    }
+}

@@ -1,0 +1,164 @@
+@extends('layouts.main_master') @section('content')
+@section('title')
+    Dashboard | Product Type
+@endsection
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-1 mb-4">
+        Product Type
+    </h4>
+    <div class="row mb-4">
+        <!-- Browser Default -->
+        <div class="col-md-12 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <form action="{{ route('add.prodctType') }}" name="producttype" method="POST">
+                        @csrf
+                        <input type="hidden" name="txtProductTypeId" id="txtProductTypeId" value="">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Product Type <span class="text-danger">*</span></label>
+                                    <input type="text" id="txtProductType" name="txtProductType" class="form-control"
+                                        placeholder="Product Type" required />
+
+                                    @if ($errors->has('txtProductType'))
+                                        <div class="text-danger">{{ $errors->first('txtProductType') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Delivery Charge <span class="text-muted">(₹)</span><span
+                                            class="text-danger">*</span></label>
+                                    <input type="number" id="txtDeliveryCharge" name="txtDeliveryCharge"
+                                        class="form-control" placeholder="Delivery Charge" min="0"
+                                        oninput="validity.valid||(value='');" required />
+
+                                    @if ($errors->has('txtDeliveryCharge'))
+                                        <div class="text-danger">{{ $errors->first('txtDeliveryCharge') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Delivery Duration <span class="text-muted">(hrs)</span><span
+                                            class="text-danger">*</span></label>
+                                    <input type="number" id="txtDeliveryDuration" name="txtDeliveryDuration"
+                                        class="form-control" placeholder="Delivery Duration" min="0"
+                                        oninput="validity.valid||(value='');" required />
+
+                                    @if ($errors->has('txtDeliveryDuration'))
+                                        <div class="text-danger">{{ $errors->first('txtDeliveryDuration') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="flatpickr-basic">Order Before <span class="text-danger">*</span></label>
+                                    <input type="time" id="timeOrderBefore" name="timeOrderBefore"
+                                        class="form-control" required />
+
+                                    @if ($errors->has('timeOrderBefore'))
+                                        <div class="text-danger">{{ $errors->first('timeOrderBefore') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>New Can Deposit <span class="text-muted">(₹)</span> <span
+                                            class="text-danger">*</span></label>
+                                    <input type="number" id="txtNewCanDeposit" name="txtNewCanDeposit"
+                                        class="form-control" placeholder="New Can Deposit" min="0"
+                                        oninput="validity.valid||(value='');" required />
+
+                                    @if ($errors->has('txtNewCanDeposit'))
+                                        <div class="text-danger">{{ $errors->first('txtNewCanDeposit') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label>Order Qty <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text" id="basic-addon11">Min</span>
+                                    <input type="number" class="form-control" id="txtMinQty" name="txtMinQty"
+                                        min="0" oninput="validity.valid||(value='');" required />
+
+                                    <span class="input-group-text" id="basic-addon11">Max</span>
+                                    <input type="number" class="form-control" id="txtMaxQty" name="txtMaxQty"
+                                        min="0" oninput="validity.valid||(value='');" required />
+
+
+                                </div>
+                                <div>
+                                    @if ($errors->has('txtMaxQty'))
+                                        <div class="text-danger">{{ $errors->first('txtMaxQty') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label>Description <span class="text-danger">*</span></label>
+                                    <textarea type="text" id="txtdescription" name="txtdescription" class="form-control" placeholder="Description" required> </textarea>
+
+                                    @if ($errors->has('txtdescription'))
+                                        <div class="text-danger">{{ $errors->first('txtdescription') }}</div>
+                                    @endif
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mt-4 mb-3">
+                                    <button type="submit" id="btnSave" class="btn btn-success">Save</button>
+                                    <button type="button" class="btn btn-danger" onclick="cancel();">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /Browser Default -->
+    </div>
+
+    <h5 class="fw-bold py-1 mb-4">Product Type List</h5>
+    <!-- DataTable with Buttons -->
+    <div class="col-lg-12 mb-4 mb-lg-0">
+        <div class="card h-100">
+            <div class="card-datatable table-responsive pt-0">
+                <table id="tblProducttype" class="table">
+                    <thead class="border-bottom">
+                        <tr>
+                            <th>S.No</th>
+                            <th>Product Type</th>
+                            <th>Delivery Charge (₹)</th>
+                            <th>Delivery Duration (Hrs)</th>
+                            <th>Order Before</th>
+                            <th>New Can Deposit (₹)</th>
+                            <th>Min Order Qty</th>
+                            <th>Max Order Qty</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--/ DataTable with Buttons -->
+
+</div>
+<!-- / Content -->
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/admin/products/producttype.js') }}"></script>
+@endsection

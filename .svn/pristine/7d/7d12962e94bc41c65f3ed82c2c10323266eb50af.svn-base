@@ -1,0 +1,38 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class LogisticPartner extends Model
+{
+    use HasFactory, SoftDeletes;
+
+    protected $fillable = [
+        'logistic_partner_id',
+        'logistic_partner_name',
+        'manufacturer_id',
+        'hub_id',
+        'years_of_experience',
+        'mobile',
+        'email',
+        'credit_period',
+        'settlement_period',
+        'state_id',
+        'city_id',
+        'area_id',
+        'address',
+        'pincode',
+        'proprietor_name',
+        'proprietor_mobile',
+        'proprietor_email',
+        'contact_person_name',
+        'contact_person_mobile',
+        'contact_person_email',
+        'created_by',
+        'updated_by',
+        'deleted_by',
+    ];
+}

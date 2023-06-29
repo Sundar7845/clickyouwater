@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Http\Controllers\Admin\SalesManagement;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class SalesOrderController extends Controller
+{
+    public function salesOrder()
+    {
+        return view('admin.sales_management.sales_order.sales_order');
+    }
+
+    public function salesOrderList()
+    {
+        return view('admin.sales_management.sales_order.sales_order_list');
+    }
+}

@@ -1,0 +1,70 @@
+<?php
+
+use App\Http\Controllers\API\AddressController;
+use App\Http\Controllers\API\Auth\AuthController;
+use App\Http\Controllers\API\BrandsController;
+use App\Http\Controllers\API\CartController;
+use App\Http\Controllers\API\CategoryController;
+use App\Http\Controllers\API\CustomerProfile;
+use App\Http\Controllers\API\OrdersController;
+use App\Http\Controllers\API\ProductsController;
+use App\Http\Controllers\API\ReferralController;
+use App\Http\Controllers\API\SettingsController;
+use App\Http\Controllers\Login\LoginController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register API routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| is assigned the "api" middleware group. Enjoy building your API!
+|
+*/
+Route::post('/signup', [AuthController::class, 'signup']);
+Route::get('/sendOTP/{mobile}', [AuthController::class, 'sendOTP']);
+Route::get('/verifyMobile/{mobile}', [AuthController::class, 'verifyMobile']);
+Route::get('/getStates/{id?}', [AddressController::class, 'getState']);
+Route::get('/getCities/{id?}', [AddressController::class, 'getCitie']);
+Route::get('/getAreas/{id?}', [AddressController::class, 'getArea']);
+Route::post('/login', [AuthController::class, 'login']);
+
+// Protected routes
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/verifyOTP', [AuthController::class, 'verifyOTP']);
+    Route::get('/getUserInfo', [CustomerProfile::class, 'getUserInfo']);
+    Route::get('/getCustomerAddress/{id?}', [AddressController::class, 'getCustomerAddress']);
+    Route::get('/setDefaultAddress/{id?}', [AddressController::class, 'setDefaultAddress']);
+    Route::get('/deleteAddress/{id?}', [AddressController::class, 'deleteAddress']);
+    Route::post('/addEditAddress/{id?}', [AddressController::class, 'addEditAddress']);
+    Route::get('/getProductTypes', [ProductsController::class, 'getProductTypes']);
+    Route::get('/getProducts/{cat_id?}', [ProductsController::class, 'getProducts']);
+    Route::get('/getProductDetails/{id?}', [ProductsController::class, 'getProductDetails']);
+    Route::get('/verifyReferral/{id?}', [ReferralController::class, 'verifyReferral']);
+    Route::get('/getAdminSettings', [SettingsController::class, 'getAdminSettings']);
+
+    Route::get('/getReasons/{id}', [SettingsController::class, 'getReasons']);
+    Route::get('/getReasonsTypes', [SettingsController::class, 'getReasonsTypes']);
+    Route::get('/getCartDetails', [CartController::class, 'getCartDetails']);
+    Route::post('/addCart', [CartController::class, 'addCart']);
+    Route::post('/updateCart/{id}', [CartController::class, 'updateCart']);
+    Route::get('/deleteCart/{id}', [CartController::class, 'deleteCart']);
+    Route::get('/clearCart', [CartController::class, 'clearCart']);
+    Route::post('/placeOrder', [OrdersController::class, 'placeOrder']);
+    Route::post('/updatePaymentStatus', [OrdersController::class, 'updatePaymentStatus']);
+    Route::get('/getOrderHistory', [OrdersController::class, 'getOrderHistory']);
+    Route::get('/getOrderDetails/{id}', [OrdersController::class, 'getOrderDetails']);
+});
+Route::get('/getBrands/{id?}', [BrandsController::class, 'getBrands']);
+
+Route::get('/getCategories', [CategoryController::class, 'getCategories']);
+Route::get('/getCustomerType', [CustomerProfile::class, 'getCustomerType']);
+Route::get('/getAddressType', [AddressController::class, 'getAddressType']);
+
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
+});

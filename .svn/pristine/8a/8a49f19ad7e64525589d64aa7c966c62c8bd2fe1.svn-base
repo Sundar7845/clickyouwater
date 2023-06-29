@@ -1,0 +1,355 @@
+@extends('layouts.main_master') @section('content') @section('title')
+Dashboard | Add Hub
+@endsection
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+<h4 class="fw-bold py-1 mb-4">
+    Add Hub
+</h4>
+<div class="row mb-4">
+    <!-- Browser Default -->
+    <div class="col-md-12 mb-4 mb-md-0">
+        <form class="browser-default-validation">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Basic Company Info</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-default-name">Manufacuturer Name <span
+                                        class="text-danger">*</span>
+                                </label>
+                                <select name="" id="" class="select2 form-select form-select-lg">
+                                    <option value="TN">Select</option>
+                                    <option value="KL">Manufacturer 1</option>
+                                    <option value="AP">Manufacturer 2</option>
+                                    <option value="KA">Manufacturer 3</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-default-name">Hub ID <span
+                                        class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="basic-default-name"
+                                    placeholder="HUBGLB001" required disabled />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-default-name">Hub Name <span
+                                        class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="basic-default-name"
+                                    placeholder="Hub Name" required />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Years of Experience <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group input-group-merge">
+                                    <input type="text" id="" placeholder="Years of Eperience"
+                                        class="form-control" required />
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-default-email">Mobile / Landline Number <span
+                                        class="text-danger">*</span>
+                                </label>
+                                <input type="email" id="basic-default-email" class="form-control"
+                                    placeholder="Mobile / Landline Number" required />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-default-email">Official Email <span
+                                        class="text-danger">*</span>
+                                </label>
+                                <input type="email" id="basic-default-email" class="form-control"
+                                    placeholder="Email" required />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-default-email">Latitude <span
+                                        class="text-danger">*</span>
+                                </label>
+                                <input type="email" id="basic-default-email" class="form-control"
+                                    placeholder="Latitude" required />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-default-email">Longtitude <span
+                                        class="text-danger">*</span>
+                                </label>
+                                <input type="email" id="basic-default-email" class="form-control"
+                                    placeholder="Longtitude" required />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-default-email">Geo Location <span
+                                        class="text-danger">*</span>
+                                </label>
+                                <input type="email" id="basic-default-email" class="form-control"
+                                    placeholder="Geo Location" required />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Radius <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" id="basic-default-" class="form-control"
+                                    placeholder="Enter kms" required />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Credit Period <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group input-group-merge">
+                                    <input type="text" id="" placeholder="Credit Period"
+                                        class="form-control" required />
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Settlement Period <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group input-group-merge">
+                                    <input type="text" id="" placeholder="Settlement Period"
+                                        class="form-control" required />
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-default-email">Security Deposit <span
+                                        class="text-danger">*</span>
+                                </label>
+                                <input type="text" id="basic-default-email" class="form-control"
+                                    placeholder="Security Deposit" required />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mt-3">
+                <div class="card-body">
+                    <div class="card-header p-0">
+                        <h4>Address info</h4>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-default-name">State Name<span
+                                        class="text-danger">*</span>
+                                </label>
+                                <select name="" id="" class="select2 form-select form-select-lg">
+                                    <option value="">Select</option>
+                                    <option value="TN">Tamilnadu</option>
+                                    <option value="KL">Kerala</option>
+                                    <option value="AP">Andra Pradesh</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-default-name">City Name<span
+                                        class="text-danger">*</span>
+                                </label>
+                                <select name="" id="" class="select2 form-select form-select-lg">
+                                    <option value="">Select</option>
+                                    <option value="TN">Coimbatore</option>
+                                    <option value="KL">Kannur</option>
+                                    <option value="AP">Nellor</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Area Name<span
+                                    class="text-danger">*</span></label>
+                                <select name="" id="" class="select2 form-select form-select-lg">
+                                    <option value="">SELECT Area</option>
+                                    <option value="1">saravanampatti</option>
+                                    <option value="2">hopes</option>
+                                    <option value="3">perur</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-default-name">Door No / Street / Landmark <span
+                                        class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" placeholder="Enter Door No / Street / Landmark">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="basic-default-name">Pin Code <span
+                                        class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" placeholder="Enter Pin Code">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+</div>
+<div class="card mt-3">
+    <div class="card-body">
+        <div class="card-header p-0">
+            <h4>Contact Info</h4>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label class="form-label" for="basic-default-email">Proprietor Name <span
+                            class="text-danger">*</span>
+                    </label>
+                    <input type="text" id="basic-default-email" class="form-control"
+                        placeholder="Enter Proprietor Name" required />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label class="form-label" for="basic-default-email">Proprietor Mobile <span
+                            class="text-danger">*</span>
+                    </label>
+                    <input type="text" id="basic-default-email" class="form-control"
+                        placeholder="Enter Proprietor Mobile" required />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label class="form-label" for="basic-default-email">Proprietor Email <span
+                            class="text-danger">*</span>
+                    </label>
+                    <input type="email" id="basic-default-email" class="form-control"
+                        placeholder="Enter Proprietor Email" required />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label class="form-label" for="basic-default-email">Contact Person Name <span
+                            class="text-danger">*</span>
+                    </label>
+                    <input type="text" id="basic-default-email" class="form-control"
+                        placeholder="Enter Contact Person Name" required />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label class="form-label" for="basic-default-email">Contact Person Mobile <span
+                            class="text-danger">*</span>
+                    </label>
+                    <input type="text" id="basic-default-email" class="form-control"
+                        placeholder="Enter Contact Person Number" required />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label class="form-label" for="basic-default-email">Contact Person Email <span
+                            class="text-danger">*</span>
+                    </label>
+                    <input type="email" id="basic-default-email" class="form-control"
+                        placeholder="Enter Contact Person Email" required />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card mt-3">
+    <div class="card-body">
+        <div class="card-header p-0">
+            <h4>Documents</h4>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label class="form-label">GST Reg <span class="text-danger">*</span>
+                    </label>
+                    <input id="txtfileattachment" type="file" class="form-control" tabindex="-1"
+                        multiple="multiple" />
+                    <span id="spnfileattachment" class=" form-group input-group-text"
+                        style="cursor: pointer; display: none;"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label class="form-label">FSSAI Cert <span class="text-danger">*</span>
+                    </label>
+                    <input id="txtfileattachment" type="file" class="form-control" tabindex="-1"
+                        multiple="multiple" />
+                    <span id="spnfileattachment" class=" form-group input-group-text"
+                        style="cursor: pointer; display: none;"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label class="form-label">MOU <span class="text-danger">*</span>
+                    </label>
+                    <input id="txtfileattachment" type="file" class="form-control" tabindex="-1"
+                        multiple="multiple" />
+                    <span id="spnfileattachment" class=" form-group input-group-text"
+                        style="cursor: pointer; display: none;"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label class="form-label">Agreement <span class="text-danger">*</span>
+                    </label>
+                    <input id="txtfileattachment" type="file" class="form-control" tabindex="-1"
+                        multiple="multiple" />
+                    <span id="spnfileattachment" class=" form-group input-group-text"
+                        style="cursor: pointer; display: none;"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label class="form-label">Proprietor / Director PAN <span class="text-danger">*</span>
+                    </label>
+                    <input id="txtfileattachment" type="file" class="form-control" tabindex="-1"
+                        multiple="multiple" />
+                    <span id="spnfileattachment" class=" form-group input-group-text"
+                        style="cursor: pointer; display: none;"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label class="form-label">Proprietor / Director Aadhar <span class="text-danger">*</span>
+                    </label>
+                    <input id="txtfileattachment" type="file" class="form-control" tabindex="-1"
+                        multiple="multiple" />
+                    <span id="spnfileattachment" class=" form-group input-group-text"
+                        style="cursor: pointer; display: none;"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="mt-4 mb-3">
+                    <button type="submit" class="btn btn-success">Save</button>
+                    <button type="button" class="btn btn-danger">Cancel</button>
+                    <a href="{{ route('hub-list') }}" class="btn btn-primary">Go To List</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</form>
+</div>
+<!-- /Browser Default -->
+<!-- / Content --> @endsection

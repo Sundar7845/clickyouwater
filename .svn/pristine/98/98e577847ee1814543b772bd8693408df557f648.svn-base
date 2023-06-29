@@ -1,0 +1,164 @@
+<?php
+
+namespace App\Http\Controllers\API\Hub;
+
+use App\Enums\RoleTypes;
+use App\Enums\StatusTypes;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\HubOrderResource;
+use App\Models\DeliveryPerson;
+use App\Models\Hub;
+use App\Models\Order;
+use App\Models\OrderDelivery;
+use App\Models\Surrender;
+use App\Traits\Common;
+use App\Traits\ResponseAPI;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class HubController extends Controller
+{
+    //
+    use ResponseAPI;
+    use Common;
+
+    public function getHubUserInfo()
+    {
+        try {
+            //orders to assign count
+            $orders_to_assign = $this->getOrders(
+                implode(',', [
+                    StatusTypes::OrderPlaced,
+                    StatusTypes::OrderNotDelivered
+                ])
+            )->count();
+            //surrender orders count
+            $surrender_orders = Surrender::where('status_id', StatusTypes::SurrenderApproved)->count();
+            //Total hub orders
+            $statusIds = [
+                StatusTypes::OrderPlaced,
+                StatusTypes::OrderShipped,
+                StatusTypes::OrderDelivered,
+                StatusTypes::AssignedToDelivery
+            ];
+            $total_hub_orders = $this->getOrders(
+                implode(',', $statusIds)
+            )->count();
+            //orders assigned count
+            $orders_assigned = $this->getOrders(
+                implode(',', [
+                    StatusTypes::AssignedToDelivery,
+                    StatusTypes::OrderShipped
+                ])
+            )->count();
+            //pending confirmation from delivery agents 
+            $pending_orders_confirmation = $this->getOrders(StatusTypes::AssignedToDelivery)->count();
+
+            //orders not delivered count
+            $orders_not_delivered = $this->getOrders(StatusTypes::OrderNotDelivered)->count();
+            //orders delivered count
+            $orders_delivered = $this->getOrders(StatusTypes::OrderDelivered)->count();
+
+            //Get pending orders count based on product type
+            $pending_orders_list = $this->getOrders(
+                implode(
+                    ',',
+                    [
+                        StatusTypes::AssignedToDelivery,
+                        StatusTypes::OrderShipped
+                    ]
+                )
+            )->get();
+            $watercan_list = [];
+            $others_list = [];
+            if ($pending_orders_list) {
+                foreach ($pending_orders_list as $key => $order) {
+                    // dd($order->orderDets);
+                    foreach ($order->orderDets as $key => $orderdet) {
+                        $item = [
+                            'product_type_id' => $orderdet->products->productType->id,
+                            'product_type_name' => $orderdet->products->productType->product_type_name,
+                            'qty' => $orderdet->qty,
+                        ];
+
+                        if ($orderdet->products->category->is_watercan) {
+                            $watercan_list[] = $item;
+                        } else {
+                            $others_list[] = $item;
+                        }
+                    }
+                }
+            }
+
+            $grouped_watercan_list = collect($watercan_list)->groupBy('product_type_id');
+
+            //Water cans list
+            $product_watercan_list = $grouped_watercan_list->map(function ($list) {
+                $total_qty = $list->sum('qty');
+                $firstItem = $list->first();
+
+                return [
+                    'product_type_id' => $firstItem['product_type_id'],
+                    'product_type_name' => $firstItem['product_type_name'],
+                    'qty' => $total_qty,
+                ];
+            })->values()->all();
+
+
+            //TODO::others list
+
+            //Logistics
+            //items delivery request 
+            //TODO::items delivery request 
+            $items_delivery = [];
+            //return cans request 
+            //TODO::return cans request 
+            $return_cans_request = [];
+
+            $hub_name = Hub::where('id', Auth::user()->ref_id)->pluck('hub_name')->first();
+
+            $hub_user_info = array(
+                'orders_to_assign' => $orders_to_assign,
+                'surrender_orders' => $surrender_orders,
+                'total_hub_orders' => $total_hub_orders,
+                'orders_assigned' => $orders_assigned,
+                'pending_orders_confirmation' => $pending_orders_confirmation,
+                'orders_not_delivered' => $orders_not_delivered,
+                'orders_delivered' => $orders_delivered,
+                'orders_by_product_types' => $product_watercan_list,
+                'items_delivery' => $items_delivery,
+                'return_cans_request' => $return_cans_request,
+                'delivery_person_list' => $this->getDPList(),
+                'qr_image' => $this->getHubQRImage(),
+                'hub_name' => $hub_name
+            );
+
+            $response = array(
+                'message' => "Success",
+                'data' => $hub_user_info,
+                'status' => true,
+            );
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+    public function getDPListOrdersInfo()
+    {
+        try {
+
+            $response = array(
+                'message' => "Success",
+                'data' => $this->getDPList(),
+                'status' => true,
+            );
+
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+}

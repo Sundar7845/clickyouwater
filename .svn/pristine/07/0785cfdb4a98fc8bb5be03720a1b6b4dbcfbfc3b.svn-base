@@ -1,0 +1,165 @@
+<?php
+
+namespace App\Http\Controllers\API;
+
+use App\Http\Controllers\Controller;
+use App\Http\Resources\CartProductDetails;
+use App\Http\Resources\CartSummaryResource;
+use App\Models\Cart;
+use App\Models\Products;
+use App\Traits\Common;
+use App\Traits\ResponseAPI;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class CartController extends Controller
+{
+    use Common;
+    use ResponseAPI;
+    public function addCart(Request $request)
+    {
+        $fields = $request->validate([
+            'product_id' => 'required',
+            'qty' => 'required',
+            'return_empty_cans_qty' => 'nullable'
+        ]);
+        try {
+
+            $fields['user_id'] = Auth::user()->id;
+
+            $cart = Cart::create($fields);
+
+            $response = [
+                'status' => true,
+                'data' => $cart,
+                'message' => "Added to cart successfully"
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+    public function getCartDetails()
+    {
+
+        try {
+
+            $cartDetails = Cart::with('products.brand')->where('user_id', Auth::user()->id)->get();
+            $cartResponse = CartProductDetails::collection($cartDetails);
+            $response = [
+                'status' => true,
+                'data' => $cartResponse,
+                'message' => "Cart Details Retrived successfully"
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    public function updateCart(Request $request, $id)
+    {
+        $fields = $request->validate([
+            'qty' => 'required',
+            'return_empty_cans_qty' => 'nullable'
+        ]);
+        try {
+
+
+            $cart = Cart::where('id', $id)->where('user_id', Auth::user()->id)->update($fields);
+            $updatedCart = Cart::where('id', $id)->where('user_id', Auth::user()->id)->first();
+
+            $response = [
+                'status' => true,
+                'data' => $updatedCart,
+                'message' => "Cart Updated successfully"
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+    public function deleteCart($id)
+    {
+
+        try {
+            $cart = Cart::where('id', $id)->where('user_id', Auth::user()->id)->delete();
+            $response = [
+                'status' => true,
+                'data' => [],
+                'message' => "Product Removed from Cart"
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    public function clearCart()
+    {
+        try {
+            $cart = Cart::where('user_id', Auth::user()->id)->delete();
+            $response = [
+                'status' => true,
+                'data' => [],
+                'message' => "Cart Cleared!"
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    public function getCartSummary()
+    {
+        $sub_total = 0.00;
+        $delivery_charge = 0.00;
+        $newcan_deposit_amt = 0.00;
+        $cgst = 0.00;
+        $sgst = 0.00;
+        try {
+            $carts = Cart::with('products')
+                ->where('user_id', Auth::user()->id)
+                ->get();
+            $cart_summary = [];
+            foreach ($carts as $cart) {
+                $products = Products::with('productType')
+                    ->where('id', $cart->product_id)->first();
+
+                $newcan_deposit_qty = ($cart->qty - $cart->return_empty_cans_qty);
+
+                $sub_total = $sub_total + ($products->customer_price * $cart->qty);
+                $delivery_charge = $delivery_charge + ($products->productType->delivery_charge * $cart->qty);
+                $newcan_deposit_amt = $newcan_deposit_amt + ($products->productType->newcan_deposit_amt * $newcan_deposit_qty);
+                $cgst = $cgst + ((($products->customer_price * $products->CGST) /  100) * $cart->qty);
+                $sgst = $sgst + ((($products->customer_price * $products->SGST) / 100) * $cart->qty);
+            }
+
+            $cart_summary = [
+                'sub_total' => number_format((float)$sub_total, 2, '.', ''),
+                'delivery_charge' => number_format((float)$delivery_charge, 2, '.', ''),
+                'newcan_deposit_amt' => number_format((float)$newcan_deposit_amt, 2, '.', ''),
+                'cgst' => number_format((float)$cgst, 2, '.', ''),
+                'sgst' => number_format((float)$sgst, 2, '.', ''),
+                'gst' => number_format((float)($cgst + $sgst), 2, '.', ''),
+                'total' => number_format((float)($sub_total + $delivery_charge + $newcan_deposit_amt + ($cgst + $sgst)), 2, '.', '')
+            ];
+            // dd($cart_summary);
+
+            $response = [
+                'status' => true,
+                'data' => $cart_summary,
+                'message' => "Success"
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+}

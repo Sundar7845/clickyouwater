@@ -1,0 +1,118 @@
+function BindCity() {
+    $("#ddlState").on("change", function () {
+        var state_id = this.value;
+        $("#ddlCity").html("");
+        $.ajax({
+            url: "get/cities",
+            type: "POST",
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+            data: {
+                state_id: state_id,
+                _token: $('meta[name="csrf-token"]').attr("content"),
+            },
+            dataType: "json",
+            success: function (result) {
+                $("#ddlCity").html('<option value="0">Select City</option>');
+                $.each(result, function (key, value) {
+                    $("#ddlCity").append(
+                        '<option value="' +
+                            value.id +
+                            '">' +
+                            value.city_name +
+                            "</option>"
+                    );
+                });
+            },
+        });
+    });
+}
+
+function confirmDelete(id, url, tblId) {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        customClass: {
+            confirmButton: "btn btn-primary me-3",
+            cancelButton: "btn btn-label-secondary",
+        },
+        buttonsStyling: false,
+    }).then(function (result) {
+        if (result.value) {
+            doDelete(id, url);
+            refreshDatatable(tblId);
+            Swal.fire({
+                icon: "success",
+                title: "Deleted!",
+                text: "Your file has been deleted.",
+                customClass: {
+                    confirmButton: "btn btn-success",
+                },
+            });
+        }
+    });
+}
+
+function confirmStatusChange(id, url, tblId, status) {
+    Swal.fire({
+        title: (status == 1 ? "Are you sure want to DeActivate the status?" : "Are you sure want to Activate the status?"),
+        text: "You won't be able to revert this!",
+        icon: (status == 1 ? "warning" : "error"),
+        showCancelButton: true,
+        confirmButtonText: (status == 1 ? "Yes, Activate it!" : "Yes, DeActivate it!"),
+        customClass: {
+            confirmButton: "btn btn-primary me-3",
+            cancelButton: "btn btn-label-danger"
+        },
+        buttonsStyling: false,
+    }).then(function (result) {
+        if (result.value) {
+            statusUpdate(id, url, status);
+            refreshDatatable(tblId);
+            Swal.fire({
+                icon: "success",
+                title: (status == 0 ? "DeActivated!!" : "Activated!"),
+                text: "Your file has been activated.",
+                customClass: {
+                    confirmButton: "btn btn-success",
+                },
+            });
+        }
+    });
+}
+
+function statusUpdate(id, url, status) {
+    $.ajax({
+        type: "POST",
+        url: url + id +'/'+ status,
+        data: {
+            status: status,
+            _token: $('meta[name="csrf-token"]').attr("content"),
+        },
+        dataType: "json",
+        success: function () {
+            return true;
+        },
+    });
+}
+
+function doDelete(id, url) {
+    $.ajax({
+        type: "GET",
+        url: url + id,
+        dataType: "json",
+        success: function () {
+            return true;
+        },
+    });
+}
+
+function refreshDatatable(tblId) {
+    $("#" + tblId)
+        .DataTable()
+        .ajax.reload();
+}

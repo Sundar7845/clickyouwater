@@ -1,0 +1,100 @@
+<?php
+
+namespace App\Http\Controllers\Admin\ProductsManagement;
+
+use App\Http\Controllers\Controller;
+use App\Models\ProductType;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class ProductTypeController extends Controller
+{
+    public function prodctType()
+    {
+        $productType = ProductType::get();
+        return view('admin.product_management.product_type.product_type', compact('productType'));
+    }
+
+    public function addProductType(Request $request)
+    {
+        $request->validate([
+            'txtProductType' => 'required',
+            'txtDeliveryCharge' => 'required',
+            'txtDeliveryDuration' => 'required',
+            'timeOrderBefore' => 'required',
+            'txtNewCanDeposit' => 'required',
+            'txtMinQty' => 'required',
+            'txtMaxQty' => 'required'
+        ]);
+
+        if ($request->txtProductTypeId == null) {
+            ProductType::create([
+                'product_type_name' => $request->txtProductType,
+                'delivery_charge' => $request->txtDeliveryCharge,
+                'delivery_duration' => $request->txtDeliveryDuration,
+                'order_before_time' => $request->timeOrderBefore,
+                'newcan_deposit_amt' => $request->txtNewCanDeposit,
+                'min_order_qty' => $request->txtMinQty,
+                'max_order_qty' => $request->txtMaxQty,
+                'is_active' => 1,
+                'created_by' => Auth::user()->id
+            ]);
+        } else {
+            ProductType::findorfail($request->txtProductTypeId)->update([
+                'product_type_name' => $request->txtProductType,
+                'delivery_charge' => $request->txtDeliveryCharge,
+                'delivery_duration' => $request->txtDeliveryDuration,
+                'order_before_time' => $request->timeOrderBefore,
+                'newcan_deposit_amt' => $request->txtNewCanDeposit,
+                'min_order_qty' => $request->txtMinQty,
+                'max_order_qty' => $request->txtMaxQty,
+                'is_active' => 1,
+                'updated_by' => Auth::user()->id
+            ]);
+        }
+
+        $notification = array(
+            'message' => 'Product Type Created Successfully',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->route('product-type')->with($notification);
+    }
+
+    public function deleteProductType($id)
+    {
+        $productType = ProductType::findorfail($id);
+        $productType->delete();
+        $productType->update([
+            'deleted_by' => Auth::user()->id
+        ]);
+
+        $notification = array(
+            'message' => 'Product Type Deleted Successfully',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->route('product-type')->with($notification);
+    }
+
+    public function getProductTypeById($id)
+    {
+        $productType = ProductType::where('id', $id)->first();
+        return response()->json([
+            'ProductType' => $productType
+        ]);
+    }
+
+    public function getProductTypeData()
+    {
+        $productType = ProductType::get();
+
+        return datatables()->of($productType)
+            ->addColumn('action', function ($row) {
+                $html = '<i class="text-primary ti ti-pencil me-1"
+                onclick="doEdit(' . $row->id . ');"></i> ';
+                $html .= '<i class="text-danger ti ti-trash me-1" id="confrim-color(' . $row->id . ')" onclick="confirmDelete(' . $row->id . ');"></i>';
+                return $html;
+            })->toJson();
+    }
+}

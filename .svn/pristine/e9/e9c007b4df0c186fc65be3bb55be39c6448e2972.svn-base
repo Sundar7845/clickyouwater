@@ -1,0 +1,122 @@
+<?php
+
+namespace App\Traits;
+
+use GuzzleHttp\Client;
+use GeometryLibrary\PolyUtil;
+use GoogleMaps\Facade\GoogleMapsFacade;
+
+trait Maps
+{
+    // private $api_key = 'AIzaSyCxSrT3mnTnRnbUSW1DGhTKAu2kGpdgm5Y';
+    public function getDistance($fromLatLng, $toLatLng)
+    {
+        $response = GoogleMapsFacade::load('directions')
+            ->setParam(['destination' => $toLatLng, 'origin' => $fromLatLng])
+            ->get();
+
+        // $url = 'https://maps.googleapis.com/maps/api/directions/json?destination=' . $toLatLng . '&origin=' . $fromLatLng . '&key=' . $this->api_key;
+
+        // $client = new Client();
+        // $response = $client->request('GET', $url);
+        // $data = json_decode($response->getBody(), true);
+
+        $data = json_decode($response, true);
+
+        $distance = $data['routes'][0]['legs'][0]['distance'];
+        $duration = $data['routes'][0]['legs'][0]['duration'];
+
+        $result = [
+            'distance' => $distance,
+            'duration' => $duration,
+        ];
+
+        return response()->json($result)->content();
+    }
+
+    public function getServiceAvailable()
+    {
+        // $response =  PolyUtil::containsLocation(
+        //     ['lat' => 11.064092, 'lng' => 77.001455], // point array [lat, lng]
+        //     [
+        //         ['lat' => 11.064502, 'lng' => 77.001192],
+        //         ['lat' => 11.06446, 'lng' => 77.001895],
+        //         ['lat' => 11.063907, 'lng' => 77.001815],
+        //         ['lat' => 11.063871, 'lng' => 77.00175],
+        //         ['lat' => 11.063844, 'lng' => 77.001503],
+        //         ['lat' => 11.063886, 'lng' => 77.001171],
+        //         ['lat' => 11.063939, 'lng' => 77.001123],
+        //         ['lat' => 11.064029, 'lng' => 77.001112],
+        //         ['lat' => 11.064339, 'lng' => 77.001149],
+        //         ['lat' => 11.064502, 'lng' => 77.001192],
+        //         ['lat' => 11.06446, 'lng' => 77.001895],
+        //         ['lat' => 11.063907, 'lng' => 77.001815],
+        //         ['lat' => 11.063871, 'lng' => 77.00175],
+        //         ['lat' => 11.063844, 'lng' => 77.001503],
+        //         ['lat' => 11.063886, 'lng' => 77.001171],
+        //         ['lat' => 11.063939, 'lng' => 77.001123],
+        //         ['lat' => 11.064029, 'lng' => 77.001112],
+        //         ['lat' => 11.064339, 'lng' => 77.001149],
+        //     ]
+        // );
+        // return $response;
+
+
+        // $response = GoogleMapsFacade::load('directions')
+        //     ->setParam([
+        //         'origin'          => 'place_id:ChIJ685WIFYViEgRHlHvBbiD5nE',
+        //         'destination'     => 'place_id:ChIJA01I-8YVhkgRGJb0fW4UX7Y',
+        //     ])
+        //    ->containsLocation(55.86483,-4.25161);
+
+        // return $response; // false  
+
+        // $coordinates = ['lat' => 11.064092, 'lng' => 77.001455];
+
+        // $polygonPath = [
+        //     ['lat' => 11.064502, 'lng' => 77.001192],
+        //     ['lat' => 11.06446, 'lng' => 77.001895],
+        //     ['lat' => 11.063907, 'lng' => 77.001815],
+        //     ['lat' => 11.063871, 'lng' => 77.00175],
+        //     ['lat' => 11.063844, 'lng' => 77.001503],
+        //     ['lat' => 11.063886, 'lng' => 77.001171],
+        //     ['lat' => 11.063939, 'lng' => 77.001123],
+        //     ['lat' => 11.064029, 'lng' => 77.001112],
+        //     ['lat' => 11.064339, 'lng' => 77.001149],
+        //     ['lat' => 11.064502, 'lng' => 77.001192],
+        //     ['lat' => 11.06446, 'lng' => 77.001895],
+        //     ['lat' => 11.063907, 'lng' => 77.001815],
+        //     ['lat' => 11.063871, 'lng' => 77.00175],
+        //     ['lat' => 11.063844, 'lng' => 77.001503],
+        //     ['lat' => 11.063886, 'lng' => 77.001171],
+        //     ['lat' => 11.063939, 'lng' => 77.001123],
+        //     ['lat' => 11.064029, 'lng' => 77.001112],
+        //     ['lat' => 11.064339, 'lng' => 77.001149],
+        // ];
+        // $numberOfVertexs = count($polygonPath) - 1;
+        // $inPoly = false;
+        // $lat = $coordinates['lat'];
+        // $lng = $coordinates['lng'];
+
+        // $lastVertex = $polygonPath[$numberOfVertexs];
+
+
+        // $x = $lat;
+        // $y = $lng;
+
+        // $inside = false;
+        // for ($i = 0, $j = count($polygonPath) - 1; $i < count($polygonPath); $j = $i++) {
+        //     $xi = $polygonPath[$i]['lat'];
+        //     $yi = $polygonPath[$i]['lng'];
+        //     $xj = $polygonPath[$j]['lat'];
+        //     $yj = $polygonPath[$j]['lng'];
+
+        //     $intersect = (($yi > $y) != ($yj > $y)) && ($x < ($xj - $xi) * ($y - $yi) / ($yj - $yi) + $xi);
+        //     if ($intersect) {
+        //         $inside = !$inside;
+        //     }
+        // }
+
+        // return $inside;
+    }
+}

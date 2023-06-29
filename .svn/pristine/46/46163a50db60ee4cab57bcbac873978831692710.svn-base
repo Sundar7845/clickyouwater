@@ -1,0 +1,66 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schema;
+
+class AlterUsersTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::table('users', function (Blueprint $table) {
+            $table->renameColumn('name', 'user_name');
+            $table->unsignedBigInteger('role_id');
+            $table->foreign('role_id')->references('id')->on('roles');
+            $table->string('display_name')->nullable();
+            $table->string('mobile')->nullable();
+            $table->timestamp('mobile_verified_at')->nullable();
+            $table->integer('is_active')->default(0);
+            $table->integer('OTP')->nullable()->after('is_active');
+            $table->timestamp('last_login')->nullable()->after('OTP');
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->foreign('created_by')->references('id')->on('users');
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->foreign('updated_by')->references('id')->on('users');
+            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->foreign('deleted_by')->references('id')->on('users');
+            $table->softDeletes();
+        });
+
+        Artisan::call('db:seed', [
+            '--class' => 'UserSeeder'
+        ]);
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::table('users', function (Blueprint $table) {
+            $table->renameColumn('user_name', 'name');
+            $table->dropForeign(['role_id']);
+            $table->dropColumn('role_id');
+            $table->dropColumn('display_name');
+            $table->dropColumn('mobile');
+            $table->dropColumn('mobile_verified_at');
+            $table->dropColumn('is_active');
+            $table->dropColumn('OTP');
+            $table->dropColumn('last_login');
+            $table->dropForeign(['created_by']);
+            $table->dropColumn('created_by');
+            $table->dropForeign(['updated_by']);
+            $table->dropColumn('updated_by');
+            $table->dropForeign(['deleted_by']);
+            $table->dropColumn('deleted_by');
+        });
+    }
+}

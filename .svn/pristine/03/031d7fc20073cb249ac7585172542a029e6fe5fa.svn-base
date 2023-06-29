@@ -1,0 +1,94 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Masters;
+
+use App\Enums\DocumentModulesType;
+use App\Http\Controllers\Controller;
+use App\Models\BillNoSetting;
+use App\Models\Ledger;
+use App\Models\LedgerType;
+use App\Models\State;
+use App\Traits\Common;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class LedgerController extends Controller
+{
+  use Common;
+  public function ledger()
+  {
+    $states = State::all();
+    $ledgertypes = LedgerType::all();
+    $data = BillNoSetting::first();
+    $ledPrefix = $data->ledger_prefix ?? 0;
+    $ledLength = $data->ledger_length ?? 0;
+    $ledLive = (int)($data->ledger_live ?? 0) + 1;
+    if ($ledLive) {
+      $ledNumber = $ledLive;
+    }
+    $leds = sprintf("%0{$ledLength}d", $ledNumber);
+    $ledExample = $ledPrefix . $leds;
+    return view('admin.masters.ledger.ledger', compact('states', 'ledgertypes', 'ledExample'));
+  }
+
+  public function addLedger(Request $request)
+  {
+
+    if ($request->hdLedgerId == null) {
+      $request->validate([
+        'ddlLedgertype' => 'required',
+        'txtLedgername' => 'required',
+        'txtmobile' => 'required|numeric|digits:10|unique:ledgers,mobile',
+        'ddlState' => 'required',
+        'ddlCity' => 'required',
+        'ddlArea' => 'required',
+        'txtAddress' => 'required',
+        'txtPincode' => 'required',
+        'txtCreditPeriod' => 'required',
+        //'txtSettlemnt' => 'required'
+      ]);
+      Ledger::create([
+        'ledger_code' => $request->txtLedgerCode,
+        'ledger_type_id' => $request->ddlLedgertype,
+        'ledger_name' => $request->txtLedgername,
+        'mobile' => $request->txtmobile,
+        'state_id' => $request->ddlState,
+        'city_id' => $request->ddlCity,
+        'area_id' => $request->ddlArea,
+        'street' => $request->txtAddress,
+        'pincode' => $request->txtPincode,
+        'credit_period' => $request->txtCreditPeriod,
+        'is_active' => 1,
+        'created_by' => Auth::user()->id
+      ]);
+
+      //Increase hublive count in settings table
+      $this->updateLiveCount(DocumentModulesType::Ledger, 1);
+
+      $notification = array(
+        'message' => 'Ledger Created Successfully',
+        'alert-type' => 'success'
+      );
+    } else {
+      Ledger::findorfail($request->hdLedgerId)->update([
+        'ledger_code' => $request->txtLedgerCode,
+        'ledger_type_id' => $request->ddlLedgertype,
+        'ledger_name' => $request->txtLedgername,
+        'mobile' => $request->txtmobile,
+        'state_id' => $request->ddlState,
+        'city_id' => $request->ddlCity,
+        'area_id' => $request->ddlArea,
+        'street' => $request->txtAddress,
+        'pincode' => $request->txtPincode,
+        'credit_period' => $request->txtCreditPeriod,
+        'updated_by' => Auth::user()->id
+      ]);
+
+      $notification = array(
+        'message' => 'Ledger Updated Successfully',
+        'alert-type' => 'success'
+      );
+    }
+    return redirect()->route('ledger')->with($notification);
+  }
+}

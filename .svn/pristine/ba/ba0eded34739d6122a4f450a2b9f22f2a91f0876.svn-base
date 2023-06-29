@@ -1,0 +1,69 @@
+$(document).ready(function () {
+    $("#tblProducttype").DataTable({
+        processing: true,
+        serverSide: true,
+        order: [[0, "ASC"]],
+        ajax: "producttype/data",
+        fnRowCallback: function (nRow, aData, iDisplayIndex) {
+            $("td:first", nRow).html(iDisplayIndex + 1);
+            return nRow;
+        },
+        columns: [
+            { data: "id" },
+            { data: "product_type_name" },
+            { data: "delivery_charge" },
+            { data: "delivery_duration" },
+            { data: "order_before_time" },
+            { data: "newcan_deposit_amt" },
+            { data: "min_order_qty" },
+            { data: "max_order_qty" },
+            { data: "action" },
+        ],
+    });
+    BindCity();
+});
+
+function doEdit(id) {
+    $("#txtProductTypeId").val(id);
+    $("#txtProductType").focus();
+    $("#btnSave").text("Update");
+    getProductTypeById(id);
+}
+
+function getProductTypeById(id) {
+    $.ajax({
+        type: "GET",
+        url: "getproducttype/" + id,
+        dataType: "json",
+        success: function (data) {
+            $("#txtProductType").val(data.ProductType.product_type_name);
+            $("#txtDeliveryCharge").val(data.ProductType.delivery_charge);
+            $("#txtDeliveryDuration").val(data.ProductType.delivery_duration);
+            $("#timeOrderBefore").val(data.ProductType.order_before_time);
+            $("#txtNewCanDeposit").val(data.ProductType.newcan_deposit_amt);
+            $("#txtMinQty").val(data.ProductType.min_order_qty);
+            $("#txtMaxQty").val(data.ProductType.max_order_qty);
+        },
+    });
+}
+
+function cancel() {
+    $("#txtProductTypeId").val("");
+    $("#txtProductType").val("");
+    $("#txtDeliveryCharge").val("");
+    $("#txtDeliveryDuration").val("");
+    $("#timeOrderBefore").val("");
+    $("#txtNewCanDeposit").val("");
+    $("#txtMinQty").val("");
+    $("#txtMaxQty").val("");
+    $("#txtProductType").focus();
+    $("#btnSave").text("Save");
+}
+
+function doDelete(id) {
+    confirmDelete(id, "delete/producttype/", "tblProducttype");
+}
+
+function doStatus() {
+    confirmStatusChange(id, "producttype/", "tblProducttype");
+}

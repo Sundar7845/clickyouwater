@@ -1,0 +1,176 @@
+<?php
+
+namespace App\Http\Controllers\Admin\CustomerManagement;
+
+use App\Http\Controllers\Controller;
+use App\Models\Customer;
+use App\Enums\MenuPermissionType;
+use App\Enums\RoleTypes;
+use App\Enums\StatusTypes;
+use App\Enums\WalletTransactionTypes;
+use App\Models\CustomerType;
+use App\Models\Hub;
+use App\Models\Order;
+use App\Models\User;
+use App\Models\UserReferralHistory;
+use App\Models\UserWallet;
+use App\Models\WalletTransactionType;
+use App\Traits\Common;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class CustomerController extends Controller
+{
+    use Common;
+    public function customers()
+    {
+        try {
+            $customer_types = CustomerType::get();
+            //Get states
+            $states = $this->getStates();
+            $hubs = Hub::get();
+            return view('admin.customer_management.customers',compact('customer_types','states','hubs'));
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function customersData(Request $request)
+    {
+        try {
+            $customerdata = "";
+            $query = Customer::join('users', 'users.ref_id', 'customers.id')
+                ->join('customer_types', 'customer_types.id', 'customers.customertype_id')
+                ->join('customer_addresses','customer_addresses.customer_id','customers.id')
+                ->select('users.*', 'customers.*', 'customer_types.*','customers.email','customer_addresses.*','customers.id',DB::raw("DATE_FORMAT(customers.created_at, '%d/%m/%Y') as formatted_reg_date"))
+                ->where('users.role_id', RoleTypes::Customer)
+                ->where('customer_addresses.is_default',1);
+
+                if ($request->customer_type_id > 0) {
+                    $query = $query->where('customers.customertype_id', $request->customer_type_id);
+                }else{
+                    $query = $query->where('customers.customertype_id', 1);
+                }
+                
+                if ($request->status_id != null) {
+                    $query = $query->where('users.is_active', $request->status_id);
+                }else{
+                    $query = $query->where('users.is_active', 1);
+                }
+            
+                if ($request->state_id > 0) {
+                    $query = $query->where('customer_addresses.state_id', $request->state_id);
+                }
+
+                if ($request->district_id > 0) {
+                    $query = $query->where('customer_addresses.city_id', $request->district_id);
+                }
+                        // if ($request->area_id > 0) {
+                        //     $query = $query->where('customer_addresses.state_id', $request->area_id);
+                        // }
+                        // if ($request->hub_id > 0) {
+                        //     $query = $query->where('hubs.state_id', $request->hub_id);
+                        // }
+
+                $customerdata = $query->get();
+                return datatables()->of($customerdata)->toJson();
+            } catch (\Exception $e) {
+                $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+                return $this->error($e->getMessage(), 200);
+            }
+    }
+
+    public function customersPerformance()
+    {
+        try {
+            return view('admin.customer_management.customer_performance');
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function customersSummary($id)
+    {
+        try {
+            $userid = $id;
+            $customers = Customer::select('customer_types.*','customers.*','customer_addresses.*')
+                ->join('customer_types','customer_types.id','customers.customertype_id')
+                ->join('customer_addresses','customer_addresses.customer_id','customers.id')
+                ->where('customers.id',$id)
+                ->where('customer_addresses.is_default',1)
+                ->first();
+        
+            $ordersCount = Order::join('users', 'users.id', 'orders.user_id')
+                ->join('customers', 'users.ref_id', 'customers.id')
+                ->where('users.ref_id', $id)
+                ->count('orders.user_id');
+
+            $rechargePoints = WalletTransactionType::join('user_wallets','user_wallets.wallet_transaction_type_id','wallet_transaction_types.id')
+                ->join('users','users.id','user_wallets.user_id')
+                ->join('customers', 'users.ref_id', 'customers.id')
+                ->where('users.ref_id', $id)
+                ->where('wallet_transaction_types.id',WalletTransactionTypes::WalletSuccess)
+                ->sum('user_wallets.amount');
+
+            $usedPoints = WalletTransactionType::join('user_wallets','user_wallets.wallet_transaction_type_id','wallet_transaction_types.id')
+                ->join('users','users.id','user_wallets.user_id')
+                ->join('customers', 'users.ref_id', 'customers.id')
+                ->where('users.ref_id', $id)
+                ->where('wallet_transaction_types.id',WalletTransactionTypes::Used)
+                ->sum('user_wallets.amount');
+
+            $earnedPoints = WalletTransactionType::join('user_wallets','user_wallets.wallet_transaction_type_id','wallet_transaction_types.id')
+                ->join('users','users.id','user_wallets.user_id')
+                ->join('customers', 'users.ref_id', 'customers.id')
+                ->where('users.ref_id', $id)
+                ->whereIn('wallet_transaction_types.id',[WalletTransactionTypes::Referral, WalletTransactionTypes::Offers])
+                ->sum('user_wallets.amount');
+
+            $cancelOrder = Order::join('users', 'users.id', 'orders.user_id')
+                ->join('customers', 'users.ref_id', 'customers.id')
+                ->where('users.ref_id', $id)
+                ->where('orders.status_id',StatusTypes::Cancelled)
+                ->count('orders.user_id');
+
+            $balancepoints = User::join('customers','customers.id','users.ref_id')
+                ->where('customers.id',$id)
+                ->where('users.ref_id',$id)
+                ->value('wallet_points');
+       
+            return view('admin.customer_management.summary',compact('customers','ordersCount','rechargePoints','earnedPoints','cancelOrder','balancepoints','usedPoints','userid'));
+
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function surrenderCan()
+    {
+        try {
+            return view('admin.customer_management.surrendercan');
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function activeStatus($id, $status)
+    {
+        try {
+            User::join('customers', 'customers.id', 'users.ref_id')
+            ->where('customers.id', $id)
+            ->where('users.ref_id', $id)
+            ->update([
+                'users.is_active' => $status,
+                'users.updated_by' => Auth::user()->id
+            ]);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, 'POST', $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function getRecentOrdersdata(Request $request){
+        
+       
+    }
+}

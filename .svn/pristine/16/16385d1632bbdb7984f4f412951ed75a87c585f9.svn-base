@@ -1,0 +1,85 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Masters;
+
+use App\Http\Controllers\Controller;
+use App\Models\Designation;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class DesignationController extends Controller
+{
+    public function designation()
+    {
+        $designation = Designation::get();
+        return view('admin.masters.designation.designation', compact('designation'));
+    }
+
+    public function addDesignation(Request $request)
+    {
+        $request->validate([
+            'txtDesignationName' => 'required'
+        ]);
+
+        if ($request->hdDesignationId == null) {
+            Designation::create([
+                'designation_name' => $request->txtDesignationName,
+                'created_by' => Auth::user()->id
+            ]);
+        } else {
+            Designation::findorfail($request->hdDesignationId)->update([
+                'designation_name' => $request->txtDesignationName
+            ]);
+        }
+
+        $notification = array(
+            'message' => 'Designation Created Successfully',
+            'alert-type' => 'success'
+        );
+        return redirect()->route('designation')->with($notification);
+    }
+
+    public function deleteDesignation($id)
+    {
+        $designation = Designation::findorfail($id);
+        $designation->delete();
+
+        $designation->Update([
+            'deleted_by' => Auth::user()->id
+        ]);
+
+        return response()->json([
+            'success' => 'Designation Deleted Successfully'
+        ]);
+    }
+
+    public function getDesignationById($id)
+    {
+        $designation = Designation::where('id',$id)->first();
+        return response()->json([
+            'designation' => $designation
+        ]);
+    }
+
+    public function getDesignationData(Request $request)
+    {
+
+        $designationData = Designation::get();
+
+        return datatables()->of($designationData)
+            ->addColumn('action', function ($row) {
+                $html = '<i class="text-primary ti ti-pencil me-1"
+                onclick="doEdit(' . $row->id . ');"></i> ';
+                $html .= '<i class="text-danger ti ti-trash me-1" id="confirm-color'. $row->id .'" onclick="showDelete(' . $row->id . ');"></i>';                
+                return $html;
+            })->toJson();
+    }
+
+    public function activeStatus($id, $status)
+    {
+        Designation::findorfail($id)->update([
+            'is_active' => $status,
+            'updated_by' => Auth::user()->id
+        ]);
+    }
+}

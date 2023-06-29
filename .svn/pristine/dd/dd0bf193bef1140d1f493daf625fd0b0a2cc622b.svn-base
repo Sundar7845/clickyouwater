@@ -1,0 +1,836 @@
+@extends('layouts.main_master')
+@section('content')
+@section('title')
+    @if (Auth::user()->role_id != 3 && Auth::user()->role_id != 4)
+        Dashboard | Click Your Water
+    @elseif(Auth::user()->role_id == 3)
+        Manufacture Dashboard | Click Your Water
+    @elseif(Auth::user()->role_id == 4)
+        Hub Dashboard | Click Your Water
+    @endif
+@endsection
+
+{{-- Admin Dashboard Content --}}
+@if (Auth::user()->role_id != 3 && Auth::user()->role_id != 4)
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="row">
+            <!-- Sales last year -->
+            <div class="col-xl-2 col-md-4 col-6 mb-4">
+                <div class="card">
+                    <div class="card-header pb-0">
+                        <h5 class="card-title mb-0">Sales</h5>
+                        <small class="text-muted">Last Year</small>
+                    </div>
+                    <div id="salesLastYear"></div>
+                    <div class="card-body pt-0">
+                        <div class="d-flex justify-content-between align-items-center mt-3 gap-3">
+                            <h4 class="mb-0">175k</h4>
+                            <small class="text-danger">-16.2%</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Sales Last month -->
+            <div class="col-xl-2 col-md-4 col-6 mb-4">
+                <div class="card">
+                    <div class="card-header pb-0">
+                        <h5 class="card-title mb-0">Sales</h5>
+                        <small class="text-muted">Last Month</small>
+                    </div>
+                    <div class="card-body">
+                        <div id="sessionsLastMonth"></div>
+                        <div class="d-flex justify-content-between align-items-center mt-3 gap-3">
+                            <h4 class="mb-0">45.1k</h4>
+                            <small class="text-success">+12.6%</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Total Profit -->
+            <div class="col-xl-2 col-md-4 col-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="badge p-2 bg-label-danger mb-2 rounded">
+                            <i class="ti ti-currency-rupee ti-md"></i>
+                        </div>
+                        <h5 class="card-title mb-1 pt-2">Total Profit</h5>
+                        <small class="text-muted">Last week</small>
+                        <p class="mb-2 mt-1">1.28k</p>
+                        <div class="pt-1">
+                            <span class="badge bg-label-secondary">-12.2%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Total Sales -->
+            <div class="col-xl-2 col-md-4 col-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="badge p-2 bg-label-info mb-2 rounded">
+                            <i class="ti ti-chart-bar ti-md"></i>
+                        </div>
+                        <h5 class="card-title mb-1 pt-2">Total Sales</h5>
+                        <small class="text-muted">Last week</small>
+                        <p class="mb-2 mt-1">₹4,673</p>
+                        <div class="pt-1">
+                            <span class="badge bg-label-secondary">+25.2%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Revenue Growth -->
+            <div class="col-xl-4 col-md-8 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div class="d-flex flex-column">
+                                <div class="card-title mb-auto">
+                                    <h5 class="mb-1 text-nowrap">Revenue Growth</h5>
+                                    <small>Weekly Report</small>
+                                </div>
+                                <div class="chart-statistics">
+                                    <h3 class="card-title mb-1">₹4,673</h3>
+                                    <span class="badge bg-label-success">+15.2%</span>
+                                </div>
+                            </div>
+                            <div id="revenueGrowth"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Sales last 6 months -->
+            <div class="col-md-6 col-xl-4 mb-4">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between">
+                        <div class="card-title mb-0">
+                            <h5 class="mb-0">Sales & Expenses</h5>
+                            <small class="text-muted">Last 6 Months</small>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="salesLastMonth"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- Earning Reports Tabs-->
+            <div class="col-12 col-xl-8 mb-4">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between">
+                        <div class="card-title mb-0">
+                            <h5 class="mb-0">Earning Reports</h5>
+                            <small class="text-muted">Yearly Earnings Overview</small>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <ul class="nav nav-tabs widget-nav-tabs pb-3 gap-4 mx-1 d-flex flex-nowrap" role="tablist">
+                            <li class="nav-item">
+                                <a href="javascript:void(0);"
+                                    class="nav-link btn active d-flex flex-column align-items-center justify-content-center"
+                                    role="tab" data-bs-toggle="tab" data-bs-target="#navs-orders-id"
+                                    aria-controls="navs-orders-id" aria-selected="true">
+                                    <div class="badge bg-label-secondary rounded p-2">
+                                        <i class="ti ti-shopping-cart ti-sm"></i>
+                                    </div>
+                                    <h6 class="tab-widget-title mb-0 mt-2">Purchase</h6>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="javascript:void(0);"
+                                    class="nav-link btn d-flex flex-column align-items-center justify-content-center"
+                                    role="tab" data-bs-toggle="tab" data-bs-target="#navs-sales-id"
+                                    aria-controls="navs-sales-id" aria-selected="false">
+                                    <div class="badge bg-label-secondary rounded p-2">
+                                        <i class="ti ti-chart-bar ti-sm"></i>
+                                    </div>
+                                    <h6 class="tab-widget-title mb-0 mt-2">Sales</h6>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="javascript:void(0);"
+                                    class="nav-link btn d-flex flex-column align-items-center justify-content-center"
+                                    role="tab" data-bs-toggle="tab" data-bs-target="#navs-income-id"
+                                    aria-controls="navs-income-id" aria-selected="false">
+                                    <div class="badge bg-label-secondary rounded p-2">
+                                        <i class="ti ti-chart-pie-2 ti-sm"></i>
+                                    </div>
+                                    <h6 class="tab-widget-title mb-0 mt-2">Expenses</h6>
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="tab-content p-0 ms-0 ms-sm-2">
+                            <div class="tab-pane fade show active" id="navs-orders-id" role="tabpanel">
+                                <div id="earningReportsTabsOrders"></div>
+                            </div>
+                            <div class="tab-pane fade" id="navs-sales-id" role="tabpanel">
+                                <div id="earningReportsTabsSales"></div>
+                            </div>
+                            <div class="tab-pane fade" id="navs-income-id" role="tabpanel">
+                                <div id="earningReportsTabsIncome"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Registered Users -->
+            <div class="col-lg-3 col-sm-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between">
+                            <h6 class="d-block mb-1 card-title">Registered Users</h6>
+                            <i class="text-primary ti ti-users ti-xl"></i>
+                        </div>
+                        <h4 class="card-title mb-1">{{ $totalUserCount }}</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-5">
+                                <div class="d-flex gap-2 align-items-center mb-2">
+                                    <p class="mb-0">Today</p>
+                                </div>
+                                <h5 class="mb-0 pt-1 text-nowrap">{{ $todayCount }}</h5>
+                            </div>
+                            <div class="col-2">
+                                <div class="divider divider-vertical"></div>
+                            </div>
+                            <div class="col-5 text-end">
+                                <div class="d-flex gap-2 justify-content-end align-items-center mb-2">
+                                    <p class="mb-0">This Month</p>
+                                </div>
+                                <h5 class="mb-0 pt-1 text-nowrap ms-lg-n3 ms-xl-0">{{ $thisMonthCount }}</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--/ Registered Users -->
+            <!-- Refferal Users -->
+            <div class="col-lg-3 col-sm-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between">
+                            <h6 class="d-block mb-1 card-title">Refferal Users</h6>
+                            <i class="text-primary ti ti-barcode ti-xl"></i>
+                        </div>
+                        <h4 class="card-title mb-1">{{ $refferalUserCount }}</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-5">
+                                <div class="d-flex gap-2 align-items-center mb-2">
+                                    <p class="mb-0">Today</p>
+                                </div>
+                                <h5 class="mb-0 pt-1 text-nowrap">{{ $refferalTodayCount }}</h5>
+                            </div>
+                            <div class="col-2">
+                                <div class="divider divider-vertical"></div>
+                            </div>
+                            <div class="col-5 text-end">
+                                <div class="d-flex gap-2 justify-content-end align-items-center mb-2">
+                                    <p class="mb-0">This Month</p>
+                                </div>
+                                <h5 class="mb-0 pt-1 text-nowrap ms-lg-n3 ms-xl-0">{{ $refferalthisMonthCount }}</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--/ Refferal Users -->
+            <!-- Offers -->
+            <div class="col-lg-3 col-sm-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between">
+                            <h6 class="d-block mb-1 card-title">Offers</h6>
+                            <i class="text-primary ti ti-discount-2 ti-xl"></i>
+                        </div>
+                        <h4 class="card-title mb-1">{{ $totaloffercount }}</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-5">
+                                <div class="d-flex gap-2 align-items-center mb-2">
+                                    <p class="mb-0">Today</p>
+                                </div>
+                                <h5 class="mb-0 pt-1 text-nowrap">{{ $todayoffercount }}</h5>
+                            </div>
+                            <div class="col-2">
+                                <div class="divider divider-vertical"></div>
+                            </div>
+                            <div class="col-5 text-end">
+                                <div class="d-flex gap-2 justify-content-end align-items-center mb-2">
+                                    <p class="mb-0">This Month</p>
+                                </div>
+                                <h5 class="mb-0 pt-1 text-nowrap ms-lg-n3 ms-xl-0">{{ $offerThisMonthCount }}</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--/ Offers -->
+            <!-- Manufactures -->
+            <div class="col-lg-3 col-sm-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between">
+                            <h6 class="d-block mb-1 card-title">Manufactures</h6>
+                            <i class="text-primary ti ti-home-2 ti-xl"></i>
+                        </div>
+                        <h4 class="card-title mb-1">{{ $manutotalcount }}</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-5">
+                                <div class="d-flex gap-2 align-items-center mb-2">
+                                    <p class="mb-0">Today</p>
+                                </div>
+                                <h5 class="mb-0 pt-1 text-nowrap">{{ $mantodaycount }}</h5>
+                            </div>
+                            <div class="col-2">
+                                <div class="divider divider-vertical"></div>
+                            </div>
+                            <div class="col-5 text-end">
+                                <div class="d-flex gap-2 justify-content-end align-items-center mb-2">
+                                    <p class="mb-0">This Month</p>
+                                </div>
+                                <h5 class="mb-0 pt-1 text-nowrap ms-lg-n3 ms-xl-0">{{ $manThisMonthCount }}</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--/ Manufactures -->
+            <!-- Hubs -->
+            <div class="col-lg-3 col-sm-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between">
+                            <h6 class="d-block mb-1 card-title">Hubs</h6>
+                            <i class="text-primary ti ti-home-2 ti-xl"></i>
+                        </div>
+                        <h4 class="card-title mb-1">{{ $totalhubcount }}</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-5">
+                                <div class="d-flex gap-2 align-items-center mb-2">
+                                    <p class="mb-0">Today</p>
+                                </div>
+                                <h5 class="mb-0 pt-1 text-nowrap">{{ $hubtodaycount }}</h5>
+                            </div>
+                            <div class="col-2">
+                                <div class="divider divider-vertical"></div>
+                            </div>
+                            <div class="col-5 text-end">
+                                <div class="d-flex gap-2 justify-content-end align-items-center mb-2">
+                                    <p class="mb-0">This Month</p>
+                                </div>
+                                <h5 class="mb-0 pt-1 text-nowrap ms-lg-n3 ms-xl-0">{{ $hubThisMonthCount }}</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--/ Hubs -->
+
+            <!-- Delivery Persons -->
+            <div class="col-lg-3 col-sm-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between">
+                            <h6 class="d-block mb-1 card-title">Delivery Persons</h6>
+                            <i class="text-primary ti ti-users ti-xl"></i>
+                        </div>
+                        <h4 class="card-title mb-1">{{ $totaldeliverypersoncount }}</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-5">
+                                <div class="d-flex gap-2 align-items-center mb-2">
+                                    <p class="mb-0">Today</p>
+                                </div>
+                                <h5 class="mb-0 pt-1 text-nowrap">{{ $deliverypersontodaycount }}</h5>
+                            </div>
+                            <div class="col-2">
+                                <div class="divider divider-vertical"></div>
+                            </div>
+                            <div class="col-5 text-end">
+                                <div class="d-flex gap-2 justify-content-end align-items-center mb-2">
+                                    <p class="mb-0">This Month</p>
+                                </div>
+                                <h5 class="mb-0 pt-1 text-nowrap ms-lg-n3 ms-xl-0">{{ $deliverypersonThisMonthCount }}
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--/ Delivery Persons -->
+            <!-- Logistic Partners -->
+            <div class="col-lg-3 col-sm-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between">
+                            <h6 class="d-block mb-1 card-title">Logistic Partners</h6>
+                            <i class="text-primary ti ti-users ti-xl"></i>
+                        </div>
+                        <h4 class="card-title mb-1">{{ $totallogisticpartnercount }}</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-5">
+                                <div class="d-flex gap-2 align-items-center mb-2">
+                                    <p class="mb-0">Today</p>
+                                </div>
+                                <h5 class="mb-0 pt-1 text-nowrap">{{ $logisticpartnertodaycount }}</h5>
+                            </div>
+                            <div class="col-2">
+                                <div class="divider divider-vertical"></div>
+                            </div>
+                            <div class="col-5 text-end">
+                                <div class="d-flex gap-2 justify-content-end align-items-center mb-2">
+                                    <p class="mb-0">This Month</p>
+                                </div>
+                                <h5 class="mb-0 pt-1 text-nowrap ms-lg-n3 ms-xl-0">
+                                    {{ $logisticpartnerThisMonthCount }}</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--/ Logistic Partners -->
+            <!-- Drivers -->
+            <div class="col-lg-3 col-sm-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between">
+                            <h6 class="d-block mb-1 card-title">Drivers</h6>
+                            <i class="text-primary ti ti-users ti-xl"></i>
+                        </div>
+                        <h4 class="card-title mb-1">{{ $totallogisticdrivercount }}</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-5">
+                                <div class="d-flex gap-2 align-items-center mb-2">
+                                    <p class="mb-0">Today</p>
+                                </div>
+                                <h5 class="mb-0 pt-1 text-nowrap">{{ $logisticdrivertodaycount }}</h5>
+                            </div>
+                            <div class="col-2">
+                                <div class="divider divider-vertical"></div>
+                            </div>
+                            <div class="col-5 text-end">
+                                <div class="d-flex gap-2 justify-content-end align-items-center mb-2">
+                                    <p class="mb-0">This Month</p>
+                                </div>
+                                <h5 class="mb-0 pt-1 text-nowrap ms-lg-n3 ms-xl-0">{{ $logisticdriverThisMonthCount }}
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--/ Drivers -->
+            <!-- Delayed Delivery Cans -->
+            {{-- <div class="col-lg-3 col-sm-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between">
+                        <h6 class="d-block mb-1 card-title">Delayed Delivery Cans</h6>
+                        <i class="text-primary ti ti-droplet-filled-2 ti-xl"></i>
+                    </div>
+                    <h4 class="card-title mb-1">16</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-5">
+                            <div class="d-flex gap-2 align-items-center mb-2">
+                                <p class="mb-0">Today</p>
+                            </div>
+                            <h5 class="mb-0 pt-1 text-nowrap">2</h5>
+                        </div>
+                        <div class="col-2">
+                            <div class="divider divider-vertical"></div>
+                        </div>
+                        <div class="col-5 text-end">
+                            <div class="d-flex gap-2 justify-content-end align-items-center mb-2">
+                                <p class="mb-0">This Month</p>
+                            </div>
+                            <h5 class="mb-0 pt-1 text-nowrap ms-lg-n3 ms-xl-0">16</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> --}}
+            <!--/ Delayed Delivery Cans -->
+            <!-- Today Earnings -->
+            <div class="col-lg-3 col-sm-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between">
+                            <h6 class="d-block mb-1 card-title">Today Earnings</h6>
+                            <i class="text-primary ti ti-currency-rupee ti-xl"></i>
+                        </div>
+                        <h4 class="card-title mb-1">₹ {{ $totalEarnings }}</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-5">
+                                <div class="d-flex gap-2 align-items-center mb-2">
+                                    <p class="mb-0">Today</p>
+                                </div>
+                                <h5 class="mb-0 pt-1 text-nowrap">₹ {{ $todayEarnings }}</h5>
+                            </div>
+                            <div class="col-2">
+                                <div class="divider divider-vertical"></div>
+                            </div>
+                            <div class="col-5 text-end">
+                                <div class="d-flex gap-2 justify-content-end align-items-center mb-2">
+                                    <p class="mb-0">This Month</p>
+                                </div>
+                                <h5 class="mb-0 pt-1 text-nowrap ms-lg-n3 ms-xl-0">₹ {{ $thisMonthEarnings }}</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--/ Today Earnings -->
+            <!-- Free Cans -->
+            {{-- <div class="col-lg-3 col-sm-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between">
+                        <h6 class="d-block mb-1 card-title">Free Cans</h6>
+                        <i class="text-primary ti ti-droplet ti-xl"></i>
+                    </div>
+                    <h4 class="card-title mb-1">23</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-5">
+                            <div class="d-flex gap-2 align-items-center mb-2">
+                                <p class="mb-0">Today</p>
+                            </div>
+                            <h5 class="mb-0 pt-1 text-nowrap">3</h5>
+                        </div>
+                        <div class="col-2">
+                            <div class="divider divider-vertical"></div>
+                        </div>
+                        <div class="col-5 text-end">
+                            <div class="d-flex gap-2 justify-content-end align-items-center mb-2">
+                                <p class="mb-0">This Month</p>
+                            </div>
+                            <h5 class="mb-0 pt-1 text-nowrap ms-lg-n3 ms-xl-0">23</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> --}}
+            <!--/ Free Cans -->
+            <!-- Orders -->
+            <div class="col-lg-3 col-sm-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between">
+                            <h6 class="d-block mb-1 card-title">Orders</h6>
+                            <i class="text-primary ti ti-arrows-sort ti-xl"></i>
+                        </div>
+                        <h4 class="card-title mb-1">{{ $totalOrdersCount }}</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-5">
+                                <div class="d-flex gap-2 align-items-center mb-2">
+                                    <p class="mb-0">Today</p>
+                                </div>
+                                <h5 class="mb-0 pt-1 text-nowrap">{{ $todayOrdersCount }}</h5>
+                            </div>
+                            <div class="col-2">
+                                <div class="divider divider-vertical"></div>
+                            </div>
+                            <div class="col-5 text-end">
+                                <div class="d-flex gap-2 justify-content-end align-items-center mb-2">
+                                    <p class="mb-0">This Month</p>
+                                </div>
+                                <h5 class="mb-0 pt-1 text-nowrap ms-lg-n3 ms-xl-0">{{ $thisMonthOrdersCount }}</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--/ Orders -->
+
+            {{-- <!-- Queries Attended -->
+        <div class="col-lg-3 col-sm-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between">
+                        <h6 class="d-block mb-1 card-title">Pending Queries</h6>
+                        <i class="text-primary ti ti-brand-messenger ti-xl"></i>
+                    </div>
+                    <h4 class="card-title mb-1">18</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-5">
+                            <div class="d-flex gap-2 align-items-center mb-2">
+                                <p class="mb-0">Attended</p>
+                            </div>
+                            <h5 class="mb-0 pt-1 text-nowrap">20</h5>
+                            <small class="text-muted">6%</small>
+                        </div>
+                        <div class="col-2">
+                            <div class="divider divider-vertical"></div>
+                        </div>
+                        <div class="col-5 text-end">
+                            <div class="d-flex gap-2 justify-content-end align-items-center mb-2">
+                                <p class="mb-0">Raised</p>
+                            </div>
+                            <h5 class="mb-0 pt-1 text-nowrap ms-lg-n3 ms-xl-0">13</h5>
+                            <small class="text-muted">12%</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--/ Queries Attended --> --}}
+            <!-- Recent Orders -->
+            <div class="col-lg-12 mb-4 mb-lg-0">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between">
+                        <h5 class="card-title m-0 me-2">Recent Orders</h5>
+                    </div>
+                    <div class="card-datatable table-responsive pt-0">
+                        <table id="tblAdminDashboardOrders" class="table">
+                            <thead class="border-bottom">
+                                <tr>
+                                    <th>S NO</th>
+                                    <th>ORDER ID</th>
+                                    <th>DATE</th>
+                                    <th>CUSTOMER NAME</th>
+                                    <th>HUB NAME</th>
+                                    <th>QTY</th>
+                                    <th>AMOUNT</th>
+                                    <th>PAYMENT STATUS</th>
+                                    <th>ORDER STATUS</th>
+                                    <th>ACTION</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                              
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{-- End Admin Dashboard Content --}}
+
+
+    {{-- Manufacture Dashboard Content --}}
+@elseif(Auth::user()->role_id == 3)
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="row">
+            <h3>Orders</h3>
+            <div class="col-lg-4 col-sm-6 mb-4">
+                <div class="card ">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div class="card-title mb-0">
+                            <h5 class="mb-0 me-2">100</h5>
+                            <small>Today's Orders</small>
+                        </div>
+                        <div class="card-icon">
+                            <span class="badge bg-label-primary rounded-pill p-2">
+                                <i class="ti ti-shopping-cart ti-sm"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-sm-6 mb-4">
+                <div class="card">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div class="card-title mb-0">
+                            <h5 class="mb-0 me-2">100</h5>
+                            <small>This Month Orders</small>
+                        </div>
+                        <div class="card-icon">
+                            <span class="badge bg-label-warning rounded-pill p-2">
+                                <i class="ti ti-shopping-cart ti-sm"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-sm-6 mb-4">
+                <div class="card">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div class="card-title mb-0">
+                            <h5 class="mb-0 me-2">250</h5>
+                            <small>Total Orders</small>
+                        </div>
+                        <div class="card-icon">
+                            <span class="badge bg-label-success rounded-pill p-2">
+                                <i class="ti ti-shopping-cart ti-sm"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <h3>Brand Wise Orders</h3>
+            <div class="col-lg-4 col-sm-6 mb-4">
+                <div class="card">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div class="card-title mb-0">
+                            <h5 class="mb-0 me-2">20</h5>
+                            <small>Today's Orders</small>
+                        </div>
+                        <div class="card-icon">
+                            <span class="badge bg-label-secondary rounded-pill p-2">
+                                <i class="ti ti-shopping-cart ti-sm"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-sm-6 mb-4">
+                <div class="card">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div class="card-title mb-0">
+                            <h5 class="mb-0 me-2">130</h5>
+                            <small>This Month Orders</small>
+                        </div>
+                        <div class="card-icon">
+                            <span class="badge bg-label-info rounded-pill p-2">
+                                <i class="ti ti-shopping-cart ti-sm"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-sm-6 mb-4">
+                <div class="card">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div class="card-title mb-0">
+                            <h5 class="mb-0 me-2">220</h5>
+                            <small>Total Orders</small>
+                        </div>
+                        <div class="card-icon">
+                            <span class="badge bg-label-dark rounded-pill p-2">
+                                <i class="ti ti-shopping-cart ti-sm"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{-- End Manufacture Dashboard Content --}}
+
+
+    {{-- Hub Dashboard Content --}}
+@elseif(Auth::user()->role_id == 4)
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="row">
+            <h3>Orders</h3>
+            <div class="col-lg-4 col-sm-6 mb-4">
+                <div class="card ">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div class="card-title mb-0">
+                            <h5 class="mb-0 me-2">100</h5>
+                            <small>Today's Orders</small>
+                        </div>
+                        <div class="card-icon">
+                            <span class="badge bg-label-primary rounded-pill p-2">
+                                <i class="ti ti-shopping-cart ti-sm"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-sm-6 mb-4">
+                <div class="card">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div class="card-title mb-0">
+                            <h5 class="mb-0 me-2">100</h5>
+                            <small>This Month Orders</small>
+                        </div>
+                        <div class="card-icon">
+                            <span class="badge bg-label-warning rounded-pill p-2">
+                                <i class="ti ti-shopping-cart ti-sm"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-sm-6 mb-4">
+                <div class="card">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div class="card-title mb-0">
+                            <h5 class="mb-0 me-2">250</h5>
+                            <small>Total Orders</small>
+                        </div>
+                        <div class="card-icon">
+                            <span class="badge bg-label-success rounded-pill p-2">
+                                <i class="ti ti-shopping-cart ti-sm"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <h3>Brand Wise Orders</h3>
+            <div class="col-lg-4 col-sm-6 mb-4">
+                <div class="card">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div class="card-title mb-0">
+                            <h5 class="mb-0 me-2">20</h5>
+                            <small>Today's Orders</small>
+                        </div>
+                        <div class="card-icon">
+                            <span class="badge bg-label-secondary rounded-pill p-2">
+                                <i class="ti ti-shopping-cart ti-sm"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-sm-6 mb-4">
+                <div class="card">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div class="card-title mb-0">
+                            <h5 class="mb-0 me-2">130</h5>
+                            <small>This Month Orders</small>
+                        </div>
+                        <div class="card-icon">
+                            <span class="badge bg-label-info rounded-pill p-2">
+                                <i class="ti ti-shopping-cart ti-sm"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-sm-6 mb-4">
+                <div class="card">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div class="card-title mb-0">
+                            <h5 class="mb-0 me-2">220</h5>
+                            <small>Total Orders</small>
+                        </div>
+                        <div class="card-icon">
+                            <span class="badge bg-label-dark rounded-pill p-2">
+                                <i class="ti ti-shopping-cart ti-sm"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{-- End Hub Dashboard Content --}}
+@endif
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/dashboards-crm.js') }}"></script>
+<script src="{{ asset('assets/js/admin/admindashboard/dashboard.js') }}"></script>
+@endsection

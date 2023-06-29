@@ -1,0 +1,131 @@
+<?php
+
+namespace App\Http\Controllers\Admin\OrderManagement;
+
+use App\Http\Controllers\Controller;
+use App\Models\Hub;
+use App\Models\HubManufactureConfig;
+use App\Models\Manufacturer;
+use App\Models\ManufactureStock;
+use App\Traits\Common;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class ManufacturerOrdersController extends Controller
+{
+  use Common;
+  public function manufacturerOrders()
+  {
+    $states = $this->getStates();
+    return view('admin.order_management.manufacturer_orders.manufacturer_orders', compact('states'));
+  }
+
+  public function manOrders()
+  {
+
+    //Manufacturer Cans Order Count
+    $manfacturerCansOrderData = ManufactureStock::select('manufacture_stocks.*', 'categories.category_name', 'products.product_name')
+      ->join('products', 'products.id', 'manufacture_stocks.product_id')
+      ->join('categories', 'categories.id', 'products.category_id')
+      ->join('users', 'users.ref_id', 'manufacture_stocks.manufacture_id')
+      ->where('users.id', Auth::user()->id)
+      ->where('users.role_id', Auth::user()->role_id)
+      ->where('categories.is_watercan', 1)
+      ->where('manufacture_stocks.order_qty', '>', 0)
+      ->get();
+    $manufacturerCansOrderCount = $manfacturerCansOrderData->count();
+
+    //Manufacturer Others Order Count
+    $manfacturerOthersOrderData = ManufactureStock::select('manufacture_stocks.*', 'categories.category_name', 'products.product_name')
+      ->join('products', 'products.id', 'manufacture_stocks.product_id')
+      ->join('categories', 'categories.id', 'products.category_id')
+      ->join('users', 'users.ref_id', 'manufacture_stocks.manufacture_id')
+      ->where('users.id', Auth::user()->id)
+      ->where('users.role_id', Auth::user()->role_id)
+      ->where('categories.is_watercan', 0)
+      ->where('manufacture_stocks.order_qty', '>', 0)
+      ->get();
+    $manfacturerOthersOrderCount = $manfacturerOthersOrderData->count();
+
+    return view('admin.order_management.manufacturer_orders.man_orders', compact('manufacturerCansOrderCount', 'manfacturerOthersOrderCount'));
+  }
+
+  public function getManufactures(Request $request)
+  {
+    try {
+      $manufactures = Manufacturer::where('city_id', $request->city_id)->where('is_active', 1)->get();
+      return response()->json([
+        'manufactures' => $manufactures
+      ]);
+    } catch (\Exception $e) {
+      $this->Log(__FUNCTION__, 'GET', $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+    }
+  }
+
+  public function manufactureOrderData(Request $request)
+  {
+    try {
+
+      $mfOrder = "";
+      $query = Manufacturer::select('manufacturers.*', 'hubs.id as hub_id', 'hubs.hub_name', 'states.state_name', 'cities.city_name')
+        ->join('hub_manufacture_configs', 'hub_manufacture_configs.manufacturer_id', 'manufacturers.id')
+        ->join('hubs', 'hubs.id', 'hub_manufacture_configs.hub_id')
+        ->join('states', 'states.id', 'manufacturers.state_id')
+        ->join('cities', 'cities.id', 'manufacturers.city_id')
+        ->where('manufacturers.is_active', 1)
+        ->where('hubs.is_active', 1);
+
+      if ($request->state_id > 0) {
+        $query = $query->where('manufacturers.state_id', $request->state_id);
+      }
+      if ($request->city_id > 0) {
+        $query = $query->where('manufacturers.city_id', $request->city_id);
+      }
+      if ($request->hub_id > 0) {
+        $query = $query->where('hub_manufacture_configs.hub_id', $request->hub_id);
+      }
+
+      $mfOrder = $query->get();
+      // dd($mfOrder);
+      return datatables()->of($mfOrder)
+        ->addColumn('action', function ($row) {
+          $html = '<a href="/manufacturerorderlist/' . $row->hub_id . '" class="btn btn-xs btn-primary">View</a>';
+          return $html;
+        })
+        ->toJson();
+    } catch (\Exception $e) {
+      $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+    }
+  }
+
+  public function manufacturerOrderList($id)
+  {
+    try {
+      $hub_id = $id;
+      $hub_name = Hub::where('id', $id)->where('is_active', 1)->pluck('hub_name')->first();
+      $manufacturer_name = Manufacturer::join('hub_manufacture_configs', 'hub_manufacture_configs.manufacturer_id', 'manufacturers.id')->join('hubs', 'hubs.id', 'hub_manufacture_configs.hub_id')->where('hub_manufacture_configs.hub_id', $hub_id)->pluck('manufacturers.manufacturer_name')->first();
+
+      return view('admin.order_management.manufacturer_orders.maufactureorder_detail', compact('hub_name', 'hub_id', 'manufacturer_name'));
+    } catch (\Exception $e) {
+      $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+    }
+  }
+
+  public function ManufacturerOrderDetail(Request $request)
+  {
+    try {
+      $manufacturerAllOrder = "";
+      $query = $this->getAllOrders("Manufacture", 0, $request->hub_id);
+      $manufacturerAllOrder = $query->get();
+      // dd($manufacturerAllOrder);
+      return datatables()->of($manufacturerAllOrder)
+        ->addColumn('action', function ($row) {
+          $html = '<a href="/orderdetail/' . $row->id . '" class="btn btn-xs btn-primary">View</a>';
+          return $html;
+        })
+        ->toJson();
+    } catch (\Exception $e) {
+      $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+    }
+  }
+}

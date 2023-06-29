@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Masters;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class StateController extends Controller
+{
+    public function State()
+    {
+        return view('Admin.masters.state.state');
+    }
+}

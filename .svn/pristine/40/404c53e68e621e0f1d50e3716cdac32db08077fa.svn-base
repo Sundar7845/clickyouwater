@@ -1,0 +1,492 @@
+<?php
+
+namespace App\Http\Controllers\API\Manufacture;
+
+use App\Enums\RoleTypes;
+use App\Enums\StatusTypes;
+use App\Http\Controllers\Controller;
+use App\Models\CustomerStock;
+use App\Models\Manufacturer;
+use App\Models\ManufactureStock;
+use App\Models\ManufactureStockHistory;
+use App\Models\Products;
+use App\Models\StateBrandAllocation;
+use App\Models\StockInProduction;
+use App\Traits\Common;
+use App\Traits\ResponseAPI;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class ManufactureController extends Controller
+{
+    //
+    use ResponseAPI;
+    use Common;
+
+    public function getMFUserInfo()
+    {
+        try {
+            //orders can count
+            $orders_can_count = ManufactureStock::where('manufacture_id', Auth::user()->ref_id)->sum('order_qty');
+            //orders other items count
+            $orders_others_count = 0;
+            //cans in production count
+            $cans_production_count = StockInProduction::where('manufacture_id', Auth::user()->ref_id)->sum('qty');
+
+            //Logistics 
+            //TODO::items booked request 
+            $items_booked = [];
+
+            $manufacturer_name = Manufacturer::where('id', Auth::user()->ref_id)->pluck('manufacturer_name')->first();
+
+            $mf_user_info = array(
+                'orders_can_count' => (int)$orders_can_count,
+                'orders_others_count' => (int)$orders_others_count,
+                'cans_production_count' => (int)$cans_production_count,
+                'items_booked' => $items_booked,
+                'qr_image' => $this->getManufactureQRImage(),
+                'manufacturer_name' => $manufacturer_name
+            );
+
+            $response = array(
+                'message' => "Success",
+                'data' => $mf_user_info,
+                'status' => true,
+            );
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    public function getWaterCanStocks()
+    {
+        try {
+            $stocks = ManufactureStock::where('manufacture_id', Auth::user()->ref_id)->get();
+            $stock_list = [];
+            if ($stocks) {
+                foreach ($stocks as $key => $stock) {
+                    if ($stock->products->is_emptycan_return == 1 && $stock->products->category->is_watercan == 1) {
+                        $stock_list[] = [
+                            'product_id' => $stock->product_id,
+                            'product_name' => $stock->products->product_name,
+                            'product_type_id' => $stock->products->product_type_id,
+                            'product_type_name' => $stock->products->productType->product_type_name,
+                            'brand_id' => $stock->products->brand_id,
+                            'brand_name' => $stock->products->brand->brand_name,
+                            'category_id' => $stock->products->category_id,
+                            'category_name' => $stock->products->category->category_name,
+                            'order_qty' => $stock->order_qty,
+                            'filled_qty' => $stock->filled_qty,
+                            'empty_qty' => $stock->empty_qty,
+                            'damaged_qty' => $stock->damaged_qty,
+                            'extra_qty' => ($stock->filled_qty > $stock->order_qty ? ($stock->filled_qty - $stock->order_qty) : 0),
+                            'low_stock' => ($stock->order_qty > $stock->filled_qty ? ($stock->order_qty - $stock->filled_qty) : 0),
+                        ];
+                    }
+                }
+            }
+
+            //TODO:: if stock results need to group then consider below statements
+            // $stockList = collect($stock_list);
+            // $groupedStocks = $stockList->groupBy('product_type_id');
+
+            $response = array(
+                'message' => "Success",
+                'data' => $stock_list,
+                'status' => true,
+            );
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    public function addStockToProduction(Request $request)
+    {
+        // dd($request->all());
+        DB::beginTransaction();
+        try {
+
+            $manufacture_id = $this->getRefId(Auth::user()->id, RoleTypes::Manufacturer);
+            foreach ($request->stocks as $value) {
+                StockInProduction::updateOrCreate([
+                    'manufacture_id' => $manufacture_id,
+                    'product_id' => $value['product_id'],
+                ], [
+                    'manufacture_id' => $manufacture_id,
+                    'product_id' => $value['product_id'],
+                    'qty' => $value['qty'],
+                ]);
+
+                $mf_stock = ManufactureStock::where('manufacture_id', $manufacture_id)
+                    ->where('product_id', $value['product_id'])->first();
+                if ($mf_stock) {
+                    $mf_stock->empty_qty -= $value['qty'];
+                    $mf_stock->save();
+                }
+                $product = Products::find($value['product_id']);
+                ManufactureStockHistory::Create([
+                    'manufacture_id' => $manufacture_id,
+                    'product_type_id' => $product->product_type_id,
+                    'brand_id' => $product->brand_id,
+                    'category_id' => $product->category_id,
+                    'product_id' => $product->id,
+                    'mf_filling_outward_qty' => $value['qty']
+                ]);
+            }
+
+            $response = array(
+                'message' => "Success",
+                'data' => [],
+                'status' => true,
+            );
+            DB::commit();
+            return response($response, 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    public function getProductionStocks()
+    {
+        try {
+            $stocks = StockInProduction::where('manufacture_id', Auth::user()->ref_id)->get();
+            $stock_list = [];
+            if ($stocks) {
+                foreach ($stocks as $key => $stock) {
+                    if ($stock->products->is_emptycan_return == 1 && $stock->products->category->is_watercan == 1) {
+                        $stock_list[] = [
+                            'product_id' => $stock->product_id,
+                            'product_name' => $stock->products->product_name,
+                            'product_type_id' => $stock->products->product_type_id,
+                            'product_type_name' => $stock->products->productType->product_type_name,
+                            'brand_id' => $stock->products->brand_id,
+                            'brand_name' => $stock->products->brand->brand_name,
+                            'category_id' => $stock->products->category_id,
+                            'category_name' => $stock->products->category->category_name,
+                            'qty' => $stock->qty
+                        ];
+                    }
+                }
+            }
+
+            $response = array(
+                'message' => "Success",
+                'data' => $stock_list,
+                'status' => true,
+            );
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    public function updateStockReadyForDelivery(Request $request)
+    {
+        // dd($request->all());
+        DB::beginTransaction();
+        try {
+
+            $manufacture_id = $this->getRefId(Auth::user()->id, RoleTypes::Manufacturer);
+            foreach ($request->stocks as $value) {
+                $prod_stock = StockInProduction::where('manufacture_id', $manufacture_id)
+                    ->where('product_id', $value['product_id'])->first();
+                $prod_stock->qty -= $value['qty'];
+                $prod_stock->save();
+
+                $mf_stock = ManufactureStock::where('manufacture_id', $manufacture_id)
+                    ->where('product_id', $value['product_id'])->first();
+                if ($mf_stock) {
+                    $mf_stock->filled_qty += $value['qty'];
+                    $mf_stock->save();
+                }
+                $product = Products::find($value['product_id']);
+                ManufactureStockHistory::Create([
+                    'manufacture_id' => $manufacture_id,
+                    'product_type_id' => $product->product_type_id,
+                    'brand_id' => $product->brand_id,
+                    'category_id' => $product->category_id,
+                    'product_id' => $product->id,
+                    'mf_production_inward_qty' => $value['qty']
+                ]);
+            }
+
+            $response = array(
+                'message' => "Success",
+                'data' => [],
+                'status' => true,
+            );
+            DB::commit();
+            return response($response, 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+    public function removeStockFromProduction(Request $request)
+    {
+        // dd($request->all());
+        DB::beginTransaction();
+        try {
+
+            $manufacture_id = $this->getRefId(Auth::user()->id, RoleTypes::Manufacturer);
+            foreach ($request->stocks as $value) {
+                $prod_stock = StockInProduction::where('manufacture_id', $manufacture_id)
+                    ->where('product_id', $value['product_id'])->first();
+                $prod_stock->qty -= $value['qty'];
+                $prod_stock->save();
+
+                $mf_stock = ManufactureStock::where('manufacture_id', $manufacture_id)
+                    ->where('product_id', $value['product_id'])->first();
+                if ($mf_stock) {
+                    if ($request->is_empty == 1) {
+                        $mf_stock->empty_qty += $value['qty'];
+                    } else {
+                        $mf_stock->damaged_qty += $value['qty'];
+                    }
+                    $mf_stock->save();
+                }
+
+                $product = Products::find($value['product_id']);
+
+                $manufactureStockData = [
+                    'manufacture_id' => $manufacture_id,
+                    'product_type_id' => $product->product_type_id,
+                    'brand_id' => $product->brand_id,
+                    'category_id' => $product->category_id,
+                    'product_id' => $product->id,
+                ];
+
+                $manufactureStockData[($request->is_empty == 1) ? 'mf_filling_outward_return_qty' : 'mf_damage_qty'] = $value['qty'];
+
+                ManufactureStockHistory::create($manufactureStockData);
+            }
+
+            $response = array(
+                'message' => "Success",
+                'data' => [],
+                'status' => true,
+            );
+            DB::commit();
+            return response($response, 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    public function updateDamagedCanStocks(Request $request)
+    {
+        // dd($request->all());
+        DB::beginTransaction();
+        try {
+
+            $manufacture_id = $this->getRefId(Auth::user()->id, RoleTypes::Manufacturer);
+            foreach ($request->filled_stocks as $value) {
+
+                $mf_stock = ManufactureStock::where('manufacture_id', $manufacture_id)
+                    ->where('product_id', $value['product_id'])->first();
+                if ($mf_stock) {
+                    $mf_stock->filled_qty -= $value['qty'];
+                    $mf_stock->damaged_qty += $value['qty'];
+                    $mf_stock->save();
+                }
+                $product = Products::find($value['product_id']);
+                ManufactureStockHistory::Create([
+                    'manufacture_id' => $manufacture_id,
+                    'product_type_id' => $product->product_type_id,
+                    'brand_id' => $product->brand_id,
+                    'category_id' => $product->category_id,
+                    'product_id' => $product->id,
+                    'mf_damage_qty' => $value['qty']
+                ]);
+            }
+
+            foreach ($request->empty_stocks as $value) {
+
+                $mf_stock = ManufactureStock::where('manufacture_id', $manufacture_id)
+                    ->where('product_id', $value['product_id'])->first();
+                if ($mf_stock) {
+                    $mf_stock->empty_qty -= $value['qty'];
+                    $mf_stock->damaged_qty += $value['qty'];
+                    $mf_stock->save();
+                }
+
+                $product = Products::find($value['product_id']);
+                ManufactureStockHistory::Create([
+                    'manufacture_id' => $manufacture_id,
+                    'product_type_id' => $product->product_type_id,
+                    'brand_id' => $product->brand_id,
+                    'category_id' => $product->category_id,
+                    'product_id' => $product->id,
+                    'mf_damage_qty' => $value['qty']
+                ]);
+            }
+
+            $response = array(
+                'message' => "Success",
+                'data' => [],
+                'status' => true,
+            );
+            DB::commit();
+            return response($response, 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    public function getOtherItemStocks($category_id)
+    {
+        # code...
+        try {
+            $stock_list = [];
+            $manufacture = Manufacturer::where('id', $this->getRefId(Auth::user()->id, RoleTypes::Manufacturer))->first();
+
+            $brands = StateBrandAllocation::where('state_id', $manufacture->state_id)
+                ->where('city_id', $manufacture->city_id)
+                ->value('brand_id');
+
+            // dd($brands);
+            $productsQuery = Products::with('brand', 'category', 'productType')
+                ->whereIn('brand_id', explode(",", $brands))
+                ->where('is_active', 1)
+                ->when($category_id, function ($query, $category_id) {
+                    return $query->where('category_id', $category_id);
+                })
+                ->whereHas('brand', function ($query) {
+                    $query->where('is_active', 1);
+                })
+                ->whereHas('category', function ($query) {
+                    $query->where('is_active', 1)->where('is_watercan', 0);
+                })
+                ->whereHas('productType', function ($query) {
+                    $query->where('is_active', 1);
+                });
+
+            $products = $productsQuery->get();
+
+            // Append base URL to product_image field
+            foreach ($products as $product) {
+                $cus_stock = ManufactureStock::where('product_id', $product->id)->first();
+                // dd($cus_stock);
+                $stock_list[] = [
+                    'product_id' => $product->id,
+                    'product_name' => $product->product_name,
+                    'product_type_id' => $product->product_type_id,
+                    'product_type_name' => $product->productType->product_type_name,
+                    'brand_id' => $product->brand_id,
+                    'brand_name' => $product->brand->brand_name,
+                    'category_id' => $product->category_id,
+                    'category_name' => $product->category->category_name,
+                    'order_qty' => (is_null($cus_stock) ? 0 : $cus_stock->order_qty),
+                    'stock_qty' => (is_null($cus_stock) ? 0 : $cus_stock->filled_qty)
+                ];
+            }
+
+
+            $response = [
+                'message' => "Success",
+                'data' => $stock_list,
+                'status' => true
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), 1, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+    public function addOtherItemsStock(Request $request)
+    {
+        // dd($request->all());
+        DB::beginTransaction();
+        try {
+
+            $manufacture_id = $this->getRefId(Auth::user()->id, RoleTypes::Manufacturer);
+            foreach ($request->stocks as $value) {
+                $mf_stock = ManufactureStock::where('manufacture_id', $manufacture_id)
+                    ->where('product_id', $value['product_id'])->first();
+                if ($mf_stock) {
+                    $mf_stock->filled_qty += $value['qty'];
+                    $mf_stock->save();
+                } else {
+                    ManufactureStock::Create([
+                        'manufacture_id' => $manufacture_id,
+                        'product_id' => $value['product_id'],
+                        'filled_qty' => $value['qty']
+                    ]);
+                }
+                $product = Products::find($value['product_id']);
+                ManufactureStockHistory::Create([
+                    'manufacture_id' => $manufacture_id,
+                    'product_type_id' => $product->product_type_id,
+                    'brand_id' => $product->brand_id,
+                    'category_id' => $product->category_id,
+                    'product_id' => $product->id,
+                    'mf_otheritems_inward_qty' => $value['qty']
+                ]);
+            }
+
+            $response = array(
+                'message' => "Success",
+                'data' => [],
+                'status' => true,
+            );
+            DB::commit();
+            return response($response, 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+
+    public function removeOtherItemsStock(Request $request)
+    {
+        // dd($request->all());
+        DB::beginTransaction();
+        try {
+
+            $manufacture_id = $this->getRefId(Auth::user()->id, RoleTypes::Manufacturer);
+            foreach ($request->stocks as $value) {
+                $mf_stock = ManufactureStock::where('manufacture_id', $manufacture_id)
+                    ->where('product_id', $value['product_id'])->first();
+                if ($mf_stock) {
+                    $mf_stock->filled_qty -= $value['qty'];
+                    $mf_stock->save();
+                }
+                $product = Products::find($value['product_id']);
+                ManufactureStockHistory::Create([
+                    'manufacture_id' => $manufacture_id,
+                    'product_type_id' => $product->product_type_id,
+                    'brand_id' => $product->brand_id,
+                    'category_id' => $product->category_id,
+                    'product_id' => $product->id,
+                    'mf_otheritems_removed_qty' => $value['qty']
+                ]);
+            }
+
+            $response = array(
+                'message' => "Success",
+                'data' => [],
+                'status' => true,
+            );
+            DB::commit();
+            return response($response, 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+}

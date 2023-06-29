@@ -1,0 +1,272 @@
+<?php
+
+namespace App\Http\Controllers\Admin\DeliveryPersonManagement;
+
+use App\Http\Controllers\Controller;
+use App\Models\Area;
+use App\Models\BillNoSetting;
+use App\Models\City;
+use App\Models\DeliveryPerson;
+use App\Models\DocumentConfig;
+use App\Models\FuelType;
+use App\Models\Hub;
+use App\Models\State;
+use App\Models\User;
+use App\Models\VehicleBrand;
+use App\Models\VehicleType;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Intervention\Image\Facades\Image;
+
+class DeliveryPersonController extends Controller
+{
+    public function deliveryPerson($id = NULL)
+    {
+
+        if ($id) {
+            $deliveryPerson = DeliveryPerson::find($id);
+            $states = State::all();
+            $hubs = Hub::all();
+            $cities = City::where('state_id', $deliveryPerson->state_id)->get();
+            $areas = Area::where('city_id', $deliveryPerson->city_id)->first();
+            $deliveryExample = $deliveryPerson->delivery_person_code;
+            $documents = DocumentConfig::join('document_modules', 'document_modules.id', 'document_configs.documentmodule_id')
+                ->join('document_types', 'document_types.id', 'document_configs.documenttype_id')
+                ->where('documentmodule_id', 4)->where('is_active', 1)
+                ->select('document_configs.*', 'document_modules.module_name', 'document_types.documenttype_name')
+                ->get();
+            return view('admin.delivery_person_management.delivery_person', compact('states', 'documents', 'deliveryPerson', 'hubs',   'deliveryExample', 'cities', 'areas'));
+        }
+        $deliveryPerson = '';
+        $hubs = Hub::get();
+        $states = State::orderBy('state_name', 'ASC')->get();
+        $delivery = DeliveryPerson::first();
+        $data = BillNoSetting::first();
+        $fueltypes = FuelType::all();
+        $vehicletypes = VehicleType::all();
+        $vehiclebrands = VehicleBrand::all();
+        $delPrefix = $data->deliveryperson_prefix ?? 0;
+        $delLength = $data->deliveryperson_length ?? 0;
+        $delLive = (int)($data->deliveryperson_live ?? 0) + 1;
+        if ($delLive) {
+            $delNumber = $delLive;
+        }
+        $man = sprintf("%0{$delLength}d", $delNumber);
+        $delExample = $delPrefix . $man;
+        $documents = DocumentConfig::join('document_modules', 'document_modules.id', 'document_configs.documentmodule_id')
+            ->join('document_types', 'document_types.id', 'document_configs.documenttype_id')
+            ->where('documentmodule_id', 4)->where('is_active', 1)
+            ->select('document_configs.*', 'document_modules.module_name', 'document_types.documenttype_name')
+            ->get();
+        return view('admin.delivery_person_management.delivery_person', compact('delExample', 'documents', 'deliveryPerson', 'delivery', 'states', 'hubs','fueltypes','vehicletypes','vehiclebrands'));
+    }
+
+    public function deliveryPersonCreate(Request $request)
+    {
+
+
+        DB::beginTransaction();
+        try {
+
+            if ($request->hdDelPerId == null) {
+
+                $request->validate([
+                    'txtDeliveryPersonId' => 'required',
+                    'txtDeliveryPersonName' => 'required',
+                    'txtDeliveryPersonMobile' => 'required|numeric|digits:10|unique:delivery_people,mobile',
+                    'deliveryPersonEmail' => 'required|email|unique:delivery_people,email',
+                    'ddlState' => 'required',
+                    'ddlCity' => 'required',
+                    'ddlArea' => 'required',
+                    'txtDoorNo' => 'required',
+                    'txtPincode' => 'required',
+                    'ddlHub' => 'required',
+                    'fileDelPersonImage' => 'required',
+                    'password' => 'required|min:6|confirmed'
+                ]);
+
+                $image = $request->file('fileDelPersonImage');
+                $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
+                image::make($image)->save('upload/deliveryperson/' . $name_gen);
+                $save_url = 'upload/deliveryperson/' . $name_gen;
+
+                $id = DeliveryPerson::insertGetId([
+                    'delivery_person_code' => $request->txtDeliveryPersonId,
+                    'delivery_person_name' => $request->txtDeliveryPersonName,
+                    'mobile' => $request->txtDeliveryPersonMobile,
+                    'email' => $request->deliveryPersonEmail,
+                    'state_id' => $request->ddlState,
+                    'city_id' => $request->ddlCity,
+                    'area_id' => $request->ddlArea,
+                    'address' => $request->txtDoorNo,
+                    'pincode' => $request->txtPincode,
+                    'hub_id' => $request->ddlHub,
+                    'password' => Hash::make($request->password),
+                    'delivery_person_image' => $save_url,
+                    'is_active' => 1,
+                    'created_by' => Auth::user()->id,
+                ]);
+
+                $data = BillNoSetting::first();
+                $data->deliveryperson_live = $data->deliveryperson_live + 1;
+                $data->save();
+
+                User::create([
+                    'ref_id' => $id,
+                    'user_name' => $request->txtDeliveryPersonMobile,
+                    'email' => $request->deliveryPersonEmail,
+                    'password' => Hash::make($request->password),
+                    'role_id' => 6,
+                    'is_active' => 1,
+                    'display_name' => $request->txtDeliveryPersonName,
+                    'mobile' =>  $request->txtDeliveryPersonMobile,
+                    'created_by' => Auth::user()->id
+                ]);
+
+                $notification = array(
+                    'message' => 'Delivery Person Created Successfully',
+                    'alert-type' => 'success'
+                );
+            } else {
+
+                $request->validate([
+                    'txtDeliveryPersonId' => 'required',
+                    'txtDeliveryPersonName' => 'required',
+                    'txtDeliveryPersonMobile' => 'required|numeric|digits:10|unique:delivery_people,mobile,' . $request->hdDelPerId,
+                    'deliveryPersonEmail' => 'required|email|unique:delivery_people,email,' . $request->hdDelPerId,
+                    'ddlState' => 'required',
+                    'ddlCity' => 'required',
+                    'ddlArea' => 'required',
+                    'txtDoorNo' => 'required',
+                    'txtPincode' => 'required',
+                    'ddlHub' => 'required',
+                    'password' => 'required|min:6|confirmed'
+                ]);
+
+                $oldImage = $request->hdDeliveryPerImg;
+
+                if ($request->file('fileDelPersonImage')) {
+                    @unlink($oldImage);
+                    $image = $request->file('fileDelPersonImage');
+                    $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
+                    Image::make($image)->save('upload/deliveryperson/' . $name_gen);
+                    $save_url = 'upload/deliveryperson/' . $name_gen;
+                }
+
+                DeliveryPerson::findorfail($request->hdDelPerId)->update([
+                    'delivery_person_code' => $request->txtDeliveryPersonId,
+                    'delivery_person_name' => $request->txtDeliveryPersonName,
+                    'mobile' => $request->txtDeliveryPersonMobile,
+                    'email' => $request->deliveryPersonEmail,
+                    'state_id' => $request->ddlState,
+                    'city_id' => $request->ddlCity,
+                    'area_id' => $request->ddlArea,
+                    'address' => $request->txtDoorNo,
+                    'pincode' => $request->txtPincode,
+                    'hub_id' => $request->ddlHub,
+                    'password' => Hash::make($request->password),
+                    'delivery_person_image' => $save_url ?? $oldImage,
+                    'is_active' => 1,
+                    'created_by' => Auth::user()->id,
+                ]);
+
+                $notification = array(
+                    'message' => 'Delivery Person Updated Successfully',
+                    'alert-type' => 'success'
+                );
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            $notification = array(
+                'message' => 'Delivery Person Not Created!',
+                'alert-type' => 'error'
+            );
+        }
+        return redirect()->route('deliverypersonlist')->with($notification);
+    }
+
+    public function getdeliveryPersonData(Request $request)
+    {
+        $deliverypersonData = "";
+        $query = DB::table('delivery_people')
+            ->join('hubs', 'hubs.id', '=', 'delivery_people.hub_id')
+            ->select('delivery_people.*', 'hubs.hub_name')
+            ->where('delivery_people.is_active', 1);
+
+        if ($request->state_id > 0) {
+            $query = $query->where('delivery_people.state_id', $request->state_id);
+        }
+        if ($request->city_id > 0) {
+            $query = $query->where('delivery_people.city_id', $request->city_id);
+        }
+        if ($request->area_id > 0) {
+            $query = $query->where('delivery_people.area_id', $request->area_id);
+        }
+        if ($request->hub_id > 0) {
+            $query = $query->where('delivery_people.hub_id', $request->hub_id);
+        }
+        $deliverypersonData = $query->get();
+
+        return datatables()->of($deliverypersonData)
+            ->addColumn('action', function ($row) {
+                $html = '<a href="deliveryperson/' . $row->id . '"><i class="text-primary ti ti-pencil me-1"></i></a> ';
+                $html .= '<i class="text-danger ti ti-trash me-1" id="confrim-color(' . $row->id . ')" onclick="showDelete(' . $row->id . ');"></i>';
+                return $html;
+            })->toJson();
+    }
+
+    public function activeStatus($id, $status)
+    {
+        DeliveryPerson::findorfail($id)->update([
+            'is_active' => $status,
+            'updated_by' => Auth::user()->id
+        ]);
+    }
+
+    public function getDeliveryPersonById($id)
+    {
+        $deliveryperson = DeliveryPerson::select('delivery_people.*')->where('delivery_people.id', $id)->first();
+        return response()->json([
+            'deliveryperson' => $deliveryperson
+        ]);
+    }
+
+    public function Deletedeliverypersonlist($id)
+    {
+
+        $deliveryPerson = DeliveryPerson::findorfail($id);
+        $deliveryPerson->delete();
+
+        $deliveryPerson->Update([
+            'deleted_by' => Auth::user()->id
+        ]);
+
+        $notification = array(
+            'message' => 'Delivery Person Deleted Successfully',
+            'alert' => 'success'
+        );
+        return response()->json([
+            'responseData' => $notification
+        ]);
+    }
+
+    public function deliveryPersonList()
+    {
+        $states = State::orderBy('state_name', 'ASC')->get();
+        $hubs = Hub::get();
+
+        return view('admin.delivery_person_management.delivery_person_list', compact('states', 'hubs'));
+    }
+
+    public function DeliveryListFilter(Request $request)
+    {
+        $state_id = $request->state_id;
+        $deliveryPerson = DeliveryPerson::where('state_id', $state_id)->get();
+        return response()->json(array(
+            'data' => $deliveryPerson
+        ));
+    }
+}

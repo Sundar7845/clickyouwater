@@ -1,0 +1,177 @@
+<?php
+
+use App\Http\Controllers\API\AddressController;
+use App\Http\Controllers\API\Auth\AuthController;
+use App\Http\Controllers\API\BrandsController;
+use App\Http\Controllers\API\CanController;
+use App\Http\Controllers\API\CartController;
+use App\Http\Controllers\API\CategoryController;
+use App\Http\Controllers\API\CouponController as APICouponController;
+use App\Http\Controllers\API\CustomerProfile;
+use App\Http\Controllers\API\Delivery\DeliveryPersonController;
+use App\Http\Controllers\API\Delivery\DeliveryPersonOrdersController;
+use App\Http\Controllers\API\Hub\HubController;
+use App\Http\Controllers\API\Hub\HubOrdersController;
+use App\Http\Controllers\API\Manufacture\ManufactureController;
+use App\Http\Controllers\API\OrdersController;
+use App\Http\Controllers\API\PaymentMethodsController;
+use App\Http\Controllers\API\ProductsController;
+use App\Http\Controllers\API\QuickCartController;
+use App\Http\Controllers\API\ReferralController;
+use App\Http\Controllers\API\SettingsController;
+use App\Http\Controllers\API\SurrenderOrdersController;
+use App\Http\Controllers\API\WalletController;
+use App\Http\Controllers\Notification\PushNotificationController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register API routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| is assigned the "api" middleware group. Enjoy building your API!
+|
+*/
+
+Route::post('/signup', [AuthController::class, 'signup']);
+Route::get('/sendOTP/{mobile}', [AuthController::class, 'sendOTP']);
+Route::post('/verifyMobile', [AuthController::class, 'verifyMobile']);
+Route::get('/getStates/{id?}', [AddressController::class, 'getState']);
+Route::get('/getCities/{id?}', [AddressController::class, 'getCitie']);
+Route::get('/getAreas/{id?}', [AddressController::class, 'getArea']);
+Route::post('/login', [AuthController::class, 'login']);
+
+//Get Admin Settings
+Route::get('/getAdminSettings', [SettingsController::class, 'getAdminSettings']);
+
+// Protected routes
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/verifyOTP', [AuthController::class, 'verifyOTP']);
+    Route::get('/checkUserActive', [CustomerProfile::class, 'checkUserActive']);
+    Route::get('/getUserInfo', [CustomerProfile::class, 'getUserInfo']);
+    Route::post('/updateUserInfo', [CustomerProfile::class, 'updateUserInfo']);
+    Route::post('/userFeedback', [CustomerProfile::class, 'userFeedback']);
+    Route::get('/getNotifications', [CustomerProfile::class, 'getNotifications']);
+    Route::get('/getCustomerAddress/{id?}', [AddressController::class, 'getCustomerAddress']);
+    Route::get('/setDefaultAddress/{id?}', [AddressController::class, 'setDefaultAddress']);
+    Route::get('/deleteAddress/{id?}', [AddressController::class, 'deleteAddress']);
+    Route::post('/addEditAddress/{id?}', [AddressController::class, 'addEditAddress']);
+    Route::post('/checkServiceAvailable', [AddressController::class, 'checkServiceAvailable']);
+    Route::get('/getProductTypes', [ProductsController::class, 'getProductTypes']);
+
+    Route::post('/getProducts', [ProductsController::class, 'getProducts']);
+
+    Route::post('/getProductDetails', [ProductsController::class, 'getProductDetails']);
+    Route::get('/verifyReferral/{id?}', [ReferralController::class, 'verifyReferral']);
+    Route::get('/getReferralSettings', [ReferralController::class, 'getReferralSettings']);
+
+    Route::get('/getReasons/{id}', [SettingsController::class, 'getReasons']);
+    Route::get('/getReasonsTypes', [SettingsController::class, 'getReasonsTypes']);
+    Route::get('/getBanners', [SettingsController::class, 'getBanners']);
+    Route::post('/getTrackingStatus', [SettingsController::class, 'getTrackingStatus']);
+
+    Route::post('/getCartDetails', [CartController::class, 'getCartDetails']);
+    Route::post('/addCart', [CartController::class, 'addCart']);
+    Route::post('/updateCart/{id}', [CartController::class, 'updateCart']);
+    Route::get('/deleteCart/{id}', [CartController::class, 'deleteCart']);
+    Route::get('/clearCart', [CartController::class, 'clearCart']);
+    Route::get('/getCartSummary/{address_id}', [CartController::class, 'getCartSummary']);
+
+    Route::post('/getQuickCartDetails', [QuickCartController::class, 'getQuickCartDetails']);
+    Route::post('/addQuickCart', [QuickCartController::class, 'addQuickCart']);
+    Route::post('/updateQuickCart/{id}', [QuickCartController::class, 'updateQuickCart']);
+    Route::get('/deleteQuickCart', [QuickCartController::class, 'deleteQuickCart']);
+    Route::get('/getQuickCartSummary/{address_id}', [QuickCartController::class, 'getQuickCartSummary']);
+
+
+    Route::post('/placeOrder', [OrdersController::class, 'placeOrder']);
+    Route::post('/updatePaymentStatus', [OrdersController::class, 'updatePaymentStatus']);
+    Route::post('/updateOrderStatus', [OrdersController::class, 'updateOrderStatus']);
+    Route::post('/cancelOrder', [OrdersController::class, 'cancelOrder']);
+    Route::post('/getOrderHistory', [OrdersController::class, 'getOrderHistory']);
+    Route::post('/getBuyAgainProduct', [OrdersController::class, 'getBuyAgainProduct']);
+    Route::get('/getOrderDetails/{id}', [OrdersController::class, 'getOrderDetails']);
+    Route::post('/downloadInvoice', [OrdersController::class, 'downloadInvoice']);
+    Route::post('/updateInvoiceDownloaded', [OrdersController::class, 'updateInvoiceDownloaded']);
+    Route::post('/updateOrderDeliveryRating', [OrdersController::class, 'updateOrderDeliveryRating']);
+
+    //Surrender
+
+    Route::post('/placeSurrenderOrder', [SurrenderOrdersController::class, 'placeSurrenderOrder']);
+    Route::get('/getSurrenderOrderHistory', [SurrenderOrdersController::class, 'getSurrenderOrderHistory']);
+    Route::get('/getSurrenderOrderDetails/{id}', [SurrenderOrdersController::class, 'getSurrenderOrderDetails']);
+    Route::get('/cancelSurrenderRequest/{id}', [SurrenderOrdersController::class, 'cancelSurrenderRequest']);
+    Route::post('/getSurrenderTrackingStatus', [SurrenderOrdersController::class, 'getSurrenderTrackingStatus']);
+
+    //Payment Methods
+    Route::get('/getPaymentMethods/{id}', [PaymentMethodsController::class, 'getPaymentMethods']);
+    Route::get('/getPaymentGatewaySettings/{id}', [PaymentMethodsController::class, 'getPaymentGatewaySettings']);
+    //Wallet
+    Route::get('/getWalletHistory', [WalletController::class, 'getWalletHistory']);
+    Route::post('/addWallet', [WalletController::class, 'addWallet']);
+    Route::post('/updateWalletPaymentStatus', [WalletController::class, 'updateWalletPaymentStatus']);
+    Route::get('/checkBrandAvailability/{id?}', [BrandsController::class, 'checkBrandAvailability']);
+    Route::post('/verifyCoupon', [APICouponController::class, 'verifyCoupon']);
+
+    //Cans In hand API and Cans Details
+    Route::get('/getCansInHand', [CanController::class, 'getCansInHand']);
+
+
+    //Delivery App
+    Route::group(['prefix' => 'delivery'], function () {
+        Route::get('/getDeliveryPersonInfo/{user_id?}', [DeliveryPersonController::class, 'getDeliveryPersonInfo']);
+        Route::post('/updateDPProfileImg', [DeliveryPersonController::class, 'updateDPProfileImg']);
+        Route::post('/getDeliveryHistory', [DeliveryPersonController::class, 'getDeliveryHistory']);
+        Route::post('/updateDeliveryPersonCheckInStatus', [DeliveryPersonController::class, 'updateDeliveryPersonCheckInStatus']);
+        Route::get('/updateDeliveryPersonCheckOutStatus', [DeliveryPersonController::class, 'updateDeliveryPersonCheckOutStatus']);
+        Route::get('/updateHighlightedOrder/{order_id}', [DeliveryPersonController::class, 'updateHighlightedOrder']);
+        Route::get('/acceptAllDPOrders', [DeliveryPersonController::class, 'acceptAllDPOrders']);
+        Route::post('/updateDeliveryDetails', [DeliveryPersonController::class, 'updateDeliveryDetails']);
+        Route::post('/acceptDPOrders', [DeliveryPersonController::class, 'acceptDPOrders']);
+        Route::post('/rejectDPOrder', [DeliveryPersonController::class, 'rejectDPOrder']);
+        Route::post('/updateOrderCouldNotDeliverStatus', [DeliveryPersonController::class, 'updateOrderCouldNotDeliverStatus']);
+        Route::post('/confirmDelivery', [DeliveryPersonController::class, 'confirmDelivery']);
+        Route::get('/getEmptyCansToCollectList', [DeliveryPersonOrdersController::class, 'getEmptyCansToCollectList']);
+        Route::get('/getDPItemsList', [DeliveryPersonOrdersController::class, 'getDPItemsList']);
+        Route::post('/getDPOrders', [DeliveryPersonOrdersController::class, 'getDPOrders']);
+        Route::get('/getDPOrderDetails/{id}', [DeliveryPersonOrdersController::class, 'getDPOrderDetails']);
+    });
+
+    //Hub App
+    Route::group(['prefix' => 'hub'], function () {
+        Route::post('/getHubOrders', [HubOrdersController::class, 'getHubOrders']);
+        Route::post('/assignOrder', [HubOrdersController::class, 'assignOrder']);
+        Route::post('/unassignOrder', [HubOrdersController::class, 'unassignOrder']);
+        Route::get('/unassignAllOrders/{delivery_user_id?}', [HubOrdersController::class, 'unassignAllOrders']);
+        Route::get('/searchHubOrders/{order_no?}', [HubOrdersController::class, 'searchHubOrders']);
+        Route::get('/getHubOrderDetails/{order_id}', [HubOrdersController::class, 'getHubOrderDetails']);
+        Route::get('/getOrderStatusHistory/{order_id}', [HubOrdersController::class, 'getOrderStatusHistory']);
+        Route::get('/getHubUserInfo', [HubController::class, 'getHubUserInfo']);
+        Route::get('/getDPListOrdersInfo', [HubController::class, 'getDPListOrdersInfo']);
+    });
+
+    //Manufacturer App
+    Route::group(['prefix' => 'manufacturer'], function () {
+        Route::get('/getMFUserInfo', [ManufactureController::class, 'getMFUserInfo']);
+        Route::get('/getWaterCanStocks', [ManufactureController::class, 'getWaterCanStocks']);
+        Route::post('/addStockToProduction', [ManufactureController::class, 'addStockToProduction']);
+        Route::get('/getProductionStocks', [ManufactureController::class, 'getProductionStocks']);
+        Route::post('/updateStockReadyForDelivery', [ManufactureController::class, 'updateStockReadyForDelivery']);
+        Route::post('/removeStockFromProduction', [ManufactureController::class, 'removeStockFromProduction']);
+        Route::post('/updateDamagedCanStocks', [ManufactureController::class, 'updateDamagedCanStocks']);
+    });
+});
+Route::get('/getBrands/{id?}', [BrandsController::class, 'getBrands']);
+
+Route::get('/getCategories', [CategoryController::class, 'getCategories']);
+Route::get('/getCustomerType', [CustomerProfile::class, 'getCustomerType']);
+Route::get('/getAddressType', [AddressController::class, 'getAddressType']);
+Route::post('/send-notification', [PushNotificationController::class, 'sendNotification']);
+
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
+});

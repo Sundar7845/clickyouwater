@@ -1,0 +1,66 @@
+<?php
+
+namespace App\Http\Resources;
+
+use DateTime;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class OrderDetailsResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
+     */
+    public function toArray($request)
+    {
+        return [
+            'order_id' => $this->id,
+            'order_no' => $this->order_no,
+            'invoice_no' => $this->invoice_no,
+            'delivery_address' => $this->delivery_address,
+            'delivery_desc' => $this->desc,
+            'delivery_charge' => $this->delivery_charge,
+            'coupon_code' => $this->coupon_code,
+            'total_discount_amount' => $this->total_discount_amount,
+            'total_igst_amount' => $this->total_igst_amount,
+            'total_sgst_amount' => $this->total_sgst_amount,
+            'total_cgst_amount' => $this->total_cgst_amount,
+            'total_qty' => $this->total_qty,
+            'wallet_points_used' => $this->wallet_points_used,
+            'deposit_amount' => $this->deposit_amount,
+            'total_tax_amount' => $this->total_tax_amount,
+            'sub_total' => $this->sub_total,
+            'taxable_amount' => $this->taxable_amount,
+            'roundoff' => $this->roundoff,
+            'grand_total' => $this->grand_total,
+            'status_id' => $this->status_id,
+            'is_cancel' => $this->is_cancel,
+            'transaction_date' => DateTime::createFromFormat('Y-m-d H:i:s', $this->transaction_date)->format('d M,y'),
+            'transaction_amount' => $this->transaction_amount,
+            'transaction_status' => $this->transaction_status,
+            'transaction_id' => $this->transaction_id,
+            'payment_method' => $this->payment_method,
+            'payment_through' => $this->payment_through,
+            'invoice_path' => ((DateTime::createFromFormat('Y-m-d H:i:s', $this->transaction_date)
+                ->diff(DateTime::createFromFormat('Y-m-d H:i:s', now()))
+                ->days) <= 30 ? $this->invoice_path : null),
+            'is_invoice_downloaded' => $this->is_invoice_downloaded,
+            'order_details' => $this->orderDets->map(function ($orderdet) {
+                return [
+                    'product_name' => $orderdet->products->product_name,
+                    'quantity' => $orderdet->qty,
+                ];
+            }),
+            'order_history' => $this->userOrderHistories->sortBy('created_at')->map(function ($orderHistory) {
+                return [
+                    'status_name' => $orderHistory->status->status,
+                    'status_msg' => $orderHistory->status->status_msg,
+                    'current_status' => ($orderHistory->status_id == $this->status_id) ? true : false,
+                    'date' => DateTime::createFromFormat('Y-m-d H:i:s', $orderHistory->created_at)->format('d M,y, h:i A'),
+                ];
+            }),
+        ];
+    }
+}

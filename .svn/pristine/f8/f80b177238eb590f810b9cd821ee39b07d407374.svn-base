@@ -1,0 +1,46 @@
+<?php
+
+namespace App\Traits;
+
+use App\Models\City;
+use App\Models\Menu;
+use App\Models\UserRolePermission;
+
+trait Common
+{
+    public function getCities($state_id)
+    {
+        return City::where("state_id", $state_id)->get(["city_name", "id"]);
+    }
+
+    public function checkUserPermission($user_id)
+    {
+        $userPermission = UserRolePermission::select('menu_id')->where('user_id', $user_id)->get()->toArray();
+        $getMenuId = explode(',', $userPermission['menu_id'] ?? 0);
+        $checkpermission = Menu::whereIn('id', [$getMenuId])->first();
+        if ($checkpermission) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function fileUpload($fileinput, $filepath, $fileName)
+    {
+        // $fileName = $fileinput->getClientOriginalName();
+        $fileinput->move(public_path($filepath), $fileName);
+        return $filepath . '/' . $fileName;
+    }
+
+    public function generateRandom($digit)
+    {
+        switch ($digit) {
+            case 8:
+                return mt_rand(10000000, 99999999);
+            case 16:
+                return mt_rand(1000000000000000, 9999999999999999);
+            default:
+                return mt_rand(100000, 999999);
+        }
+    }
+}

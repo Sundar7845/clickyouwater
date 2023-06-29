@@ -1,0 +1,26 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\MainProductType;
+use Illuminate\Database\Seeder;
+
+class MainProductTypeSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        $data = [
+            ['product_type_name' => 'Elite'],
+            ['product_type_name' => 'Premium'],
+            ['product_type_name' => 'Classic'],
+            ['product_type_name' => 'Regular']
+        ];
+
+        MainProductType::insert($data);
+    }
+}

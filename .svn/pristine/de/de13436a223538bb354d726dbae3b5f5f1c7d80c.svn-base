@@ -1,0 +1,22 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class HubReturnItemsDet extends Model
+{
+    use HasFactory;
+    protected $fillable = [
+        'hub_return_items_id',
+        'product_id',
+        'qty',
+        'received_qty'
+    ];
+
+    public function hubReturnItems()
+    {
+        return $this->belongsTo(HubReturnItems::class);
+    }
+}

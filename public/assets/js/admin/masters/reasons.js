@@ -1,0 +1,77 @@
+$(document).ready(function () {
+    $("#tblRecentTypeMasters").DataTable({
+        processing: true,
+        serverSide: true,
+        responsive: true,
+        order: [[0, "ASC"]],
+        ajax: "reasons/data",
+        fnRowCallback: function (nRow, aData, iDisplayIndex) {
+            $("td:first", nRow).html(iDisplayIndex + 1);
+            return nRow;
+        },
+
+        columns: [
+            { data: "id", orderable: false },
+            { data: "reason_type" },
+            { data: "reason" },
+            { data: "action", orderable: false },
+        ],
+    });
+});
+
+function doEdit(id) {
+    $("#hdReasonId").val(id);
+    $("#ddlreasonType").focus();
+    $("#btnSave").text("Update");
+    getReasonsById(id);
+}
+
+function getReasonsById(id) {
+    $("#pageloader").fadeIn();
+    $.ajax({
+        type: "GET",
+        url: "getreasons/" + id,
+        dataType: "json",
+        success: function (data) {
+            $("#ddlreasonType").val(data.reasons.reason_type_id).trigger("change");
+            $("#txtReson").val(data.reasons.reason);
+            $("#pageloader").fadeOut();
+        },
+    });
+}
+
+function cancel() {
+    $("#hdReasonId").val("");
+    $("#ddlreasonType").val("").trigger("change");
+    $("#txtReson").val("");
+    $("#btnSave").text("Save");
+    $("#ddlreasonType").focus();
+}
+
+function showDelete(id) {
+    confirmDelete(id, "delete/reasons/", "tblRecentTypeMasters");
+}
+
+
+//jquery Validation
+$(function () {
+    $("#reasons").validate({
+        rules: {
+            ddlreasonType: "required",
+            txtReson: "required",
+        },
+        errorPlacement: function (error, element) {
+            if (element.is(":radio")) {
+                error.appendTo(element.parents(".form-group"));
+            } else {
+                // This is the default behavior
+                // error.insertAfter(element);
+                if (element.siblings(".error").html() == undefined) {
+                    error.appendTo(element.parent().next(".error"));
+                } else {
+                    error.appendTo(element.siblings(".error"));
+                }
+            }
+        },
+    });
+});

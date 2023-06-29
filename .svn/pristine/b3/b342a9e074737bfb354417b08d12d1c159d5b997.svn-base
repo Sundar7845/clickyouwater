@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Accounts;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class DebitNoteController extends Controller
+{
+    public function debitNote()
+    {
+        return view('Admin.accounts.debit_note.debit_note');
+    }
+
+    public function debitNoteList()
+    {
+        return view('Admin.accounts.debit_note.debit_note_list');
+    }
+}

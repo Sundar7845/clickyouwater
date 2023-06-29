@@ -1,0 +1,24 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class DocumentConfig extends Model
+{
+    use HasFactory, SoftDeletes;
+
+    protected $fillable = [
+        'documenttype_id',
+        'documentmodule_id',
+        'is_mandatory',
+        'is_active'
+    ];
+
+    public function documentType()
+    {
+        return $this->belongsTo(DocumentType::class);
+    }
+}

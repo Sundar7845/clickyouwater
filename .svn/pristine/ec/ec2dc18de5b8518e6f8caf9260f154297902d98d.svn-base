@@ -1,0 +1,54 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class ProductType extends Model
+{
+    use HasFactory, SoftDeletes;
+
+    protected $fillable = [
+        'product_type_name',
+        'delivery_charge',
+        'delivery_duration',
+        'order_before_time',
+        'newcan_deposit_amt',
+        'min_order_qty',
+        'max_order_qty',
+        'desc',
+        'is_active',
+        'created_by',
+        'updated_by',
+        'deleted_by'
+    ];
+
+    protected $dates = ['deleted_at'];
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::bootSoftDeletes();
+    }
+
+    public static function bootSoftDeletes()
+    {
+        static::deleting(function ($productTypes) {
+            if ($productTypes->products()->count() > 0) {
+                throw new \Exception('Cannot delete product type because there are associated products.');
+            }
+        });
+
+        static::restoring(function ($category) {
+            // add any restoring logic here if necessary
+        });
+    }
+
+    public function products()
+    {
+        return $this->hasMany(Products::class, 'product_type_id','id');
+    }
+}

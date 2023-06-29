@@ -1,0 +1,46 @@
+
+$(document).ready(function() {
+   
+});
+
+function doMaintenanceMode(id) {
+    var status = $("#chkmaintenance" + id).is(":checked");
+    confirmMaintenanceModeChange(id, "maintenancemode/",1, (status == true ? 1 : 0), "chkmaintenance");
+  }
+
+  function confirmMaintenanceModeChange(id, url, tblId, status, chkswitch) {
+    Swal.fire({
+        title:
+            status == 1
+                ? "Are you sure want to Activate the Maintenance Mode?"
+                : "Are you sure want to DeActivate the Maintenance Mode?",
+        text: "You won't be able to revert this!",
+        icon: status == 1 ? "warning" : "error",
+        showCancelButton: true,
+        confirmButtonText:
+            status == 1 ? "Yes, Activate it!" : "Yes, DeActivate it!",
+        customClass: {
+            confirmButton: "btn btn-success me-3",
+            cancelButton: "btn btn-danger",
+        },
+        buttonsStyling: false,
+    }).then(function (result) {
+        if (result.value) {
+            statusUpdate(id, url, status);
+            Swal.fire({
+                icon: "success",
+                title: status == 0 ? "DeActivated!" : "Activated!",
+                text:
+                    status == 0
+                        ? "Your file has been deactivated."
+                        : "Your file has been activated.",
+                customClass: {
+                    confirmButton: "btn btn-success",
+                },
+            });
+        } else {
+            $("#" + chkswitch + id).prop("checked", status == 1 ? false : true);
+        }
+        refreshDatatable(tblId);
+    });
+}

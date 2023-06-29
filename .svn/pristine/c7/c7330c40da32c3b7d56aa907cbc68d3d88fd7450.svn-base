@@ -1,0 +1,95 @@
+<?php
+
+namespace App\Http\Controllers\API;
+
+use App\Enums\StatusTypes;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\AddressResource;
+use App\Http\Resources\UserAddressResource;
+use App\Models\CustomerAddress;
+use App\Models\CustomerStock;
+use App\Models\Order;
+use App\Models\OrderDet;
+use App\Models\Products;
+use App\Traits\Common;
+use App\Traits\ResponseAPI;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class CanController extends Controller
+{
+    use Common;
+    use ResponseAPI;
+    public function getCansInHand()
+    {
+
+        try {
+
+            $total_emptycan = 0;
+            $address_details = [];
+
+            $cus_address = CustomerAddress::where('customer_id', Auth::user()->ref_id)
+                ->get();
+
+            // dd($cus_address);
+            if ($cus_address) {
+                foreach ($cus_address as $key => $address) {
+                    $formattedAddress = UserAddressResource::collection($this->getCustomerAddress_details($address->id));
+                    $formattedAddress = $formattedAddress->values(); // Convert the collection to an array
+
+                    $cus_stock = CustomerStock::where('address_id', $address->id)->get();
+                    if ($cus_stock) {
+
+                        $data_address_product_wise = [];
+                        $address_empty_can = 0;
+                        $address_surrender_can = 0;
+
+                        foreach ($cus_stock as $key => $stock) {
+                            $surrender_can = $this->getSurrenderCan($address->id, $stock->product_id, Auth::user()->id);
+                            $address_empty_can += (int)$stock->empty_qty;
+                            $address_surrender_can += (int)$surrender_can;
+                            $data_address_product_wise[] = [
+                                'empty_can' => $stock->empty_qty,
+                                'product_id' => $stock->product_id,
+                                'product_name' => $stock->products->product_name,
+                                'deposit_amount' => $stock->products->productType->newcan_deposit_amt,
+                                'surrender_can' => $surrender_can,
+                            ];
+                        }
+                    }
+                    $total_emptycan += $address_empty_can;
+                    $address_details[] = [
+                        'address' => $formattedAddress,
+                        'empty_can' => $address_empty_can,
+                        'surrender_can' => $address_surrender_can,
+                        'product_wise' => $data_address_product_wise
+                    ];
+                }
+            }
+
+            // dd($address_details);
+
+            $response = [
+                'status' => true,
+                'data' => [
+                    "total_can_in_hand" => $total_emptycan,
+                    "address_wise" => $address_details,
+                ],
+                'message' => "Success"
+            ];
+            return response($response, 200);
+
+            // $response = [
+            //     'status' => true,
+            //     'data' => $this->getCansInHandAddressWise(),
+            //     'message' => "Success"
+            // ];
+            // return response($response, 200);
+        } catch (\Exception $e) {
+
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname(), 1);
+            return $this->error($e->getMessage(), 200);
+        }
+    }
+}

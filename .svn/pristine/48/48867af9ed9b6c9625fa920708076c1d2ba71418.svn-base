@@ -1,0 +1,176 @@
+$(document).ready(function() {
+    ImgUpload();
+    $('#tblBrands').DataTable({
+        processing: true,
+        serverSide: true,
+        order: [[0, "ASC"]],
+        ajax: "brands/data",
+        fnRowCallback: function (nRow, aData, iDisplayIndex) {
+            $("td:first", nRow).html(iDisplayIndex + 1);
+            return nRow;
+        },
+        
+        columns: [
+            { data: "id" },
+            {
+                data: "brand_image",
+                render: function (data) {
+                    return '<img src="' + data + '" class="avatar" width="50" height="50"/>';
+                }
+            },
+            { data: "product_type_name" },
+            { data: "brand_name" },
+            { data: "is_active",
+            render: function (data, type, row) {
+                return `<label class="switch">
+                <input onclick="doStatus(${row.id});" id="chkBrand${row.id}" type="checkbox" class="switch-input"
+                name="chkBrand" '  ${(data == 1 ? "checked" : "")} ' />
+                <span class="switch-toggle-slider">
+                    <span class="switch-on"></span>
+                    <span class="switch-off"></span>
+                </span>
+                </label>`;
+                }
+            },
+            { data: "action", orderable: false }
+        ],
+    });
+});
+
+
+function doStatus(id) {
+  var status = $("#chkBrand" + id).is(":checked");
+  confirmStatusChange(id, "brands/", "tblBrands", (status == true ? 1 : 0), "chkBrand");
+}
+
+function doEdit(id) {
+    $("#hdBrandId").val(id);
+    $("#txtBrantsName").focus();
+    $("#btnSave").text("Update");
+    getBrandsTypeById(id);
+
+}
+
+function getBrandsTypeById(id) {
+    $.ajax({
+        type: "GET",
+        url: "getbrands/" + id,
+        dataType: "json",
+        success: function (data) {
+          console.log(data);
+            $("#txtBrantsName").val(data.brand.brand_name);
+            $("#ddlproductType").val(data.brand.producttype_id).trigger('change');
+            var img = "<div class='upload__img-box'><div style='background-image: url(" + data.brand.brand_image + ")' data-number='" + $(".upload__img-close").length + "' data-file='" + data.brand.brand_name + "' class='img-bg'><div class='upload__img-close'></div></div></div>";
+             $(".upload__img-wrap").html(img);
+             $("#hdBrandImg").val(data.brand.brand_image);
+             ImgUpload();
+        },
+    });
+}
+
+function cancel() {
+    $("#hdBrandId").val("");
+    $("#txtBrantsName").val("");
+    $("#BrandsImage").val("");
+    $("#ddlproductType").val("").trigger('change');
+    $(".upload__img-wrap").html("");
+    $("#btnSave").text("Save");
+    $("#ddlproductType").focus();
+}
+
+function ImgUpload() {
+    var imgWrap = "";
+    var imgArray = [];
+
+    $("#BrandsImage").each(function () {
+      $(this).on('change', function (e) {
+        imgWrap = $(this).closest('.upload__box').find('.upload__img-wrap');
+        var maxLength = $(this).attr('data-max_length');
+
+        var files = e.target.files;
+        var filesArr = Array.prototype.slice.call(files);
+        var iterator = 0;
+        filesArr.forEach(function (f, index) {
+
+          if (!f.type.match('image.*')) {
+            return;
+          }
+
+          if (imgArray.length > maxLength) {
+            return false
+          } else {
+            var len = 0;
+            for (var i = 0; i < imgArray.length; i++) {
+              if (imgArray[i] !== undefined) {
+                len++;
+              }
+            }
+            if (len > maxLength) {
+              return false;
+            } else {
+              imgArray.push(f);
+
+              var reader = new FileReader();
+              reader.onload = function (e) {
+                var html = "<div class='upload__img-box'><div style='background-image: url(" + e.target.result + ")' data-number='" + $(".upload__img-close").length + "' data-file='" + f.name + "' class='img-bg'><div class='upload__img-close'></div></div></div>";
+                imgWrap.html(html);
+                iterator++;
+              }
+              reader.readAsDataURL(f);
+            }
+          }
+        });
+      });
+    });
+
+    $('body').on('click', ".upload__img-close", function (e) {
+      var file = $(this).parent().data("file");
+      for (var i = 0; i < imgArray.length; i++) {
+        if (imgArray[i].name === file) {
+          imgArray.splice(i, 1);
+          break;
+        }
+      }
+      $(this).parent().parent().remove();
+    });
+}
+
+function deleteimg(id) {
+  $.ajax({
+          url: "/product/multiimg/delete/"+id,
+          type:"GET",
+          dataType:"json",
+          success:function(response) {
+              console.log(response);
+          }
+  });
+}
+
+function showDelete(id) {
+    confirmDelete(id, "delete/brands/", "tblBrands");
+}
+
+// jquery Validation
+$(function () {
+
+  $("form[name='brands']").validate({
+
+      rules: {
+        ddlproductType: "required",
+        txtBrantsName: "required",
+      },
+      errorPlacement: function (error, element) {
+        if (element.is(":radio")) {
+            error.appendTo(element.parents(".form-group"));
+        } else {
+            // This is the default behavior
+            // error.insertAfter(element);
+            if (element.siblings(".error").html() == undefined) {
+                error.appendTo(element.parent().next(".error"));
+            } else {
+                error.appendTo(element.siblings(".error"));
+            }
+        }
+    },
+  });
+});

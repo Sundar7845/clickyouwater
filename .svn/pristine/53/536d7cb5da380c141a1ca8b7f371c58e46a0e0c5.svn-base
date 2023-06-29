@@ -1,0 +1,288 @@
+@extends('layouts.main_master') @section('content')
+@section('title')
+    Dashboard | Manufacturer
+@endsection
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-1 mb-4">
+        Manufacturer Details
+    </h4>
+    <div class="row mb-4">
+        <div class="col-md-12 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-header p-0">
+                        <h4>Basic Company Info</h4>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3 mt-3">
+                                <strong>Manufacturer ID : </strong>
+                                <span>MFTGLB001</span>
+                            </div>
+                            <div class="mb-3 mt-3">
+                                <strong>Manufacturer Name : </strong>
+                                <span>Manufacturer 1</span>
+                            </div>
+                            <div class="mb-3 mt-3">
+                                <strong>Mobile/Landline Number : </strong>
+                                <span>9876543210 / 0422-2485685</span>
+                            </div>
+                            <div class="mb-3 mt-3">
+                                <strong>Official Email : </strong>
+                                <span>xyz@gmail.com</span>
+                            </div>
+                            <div class="mb-3 mt-3">
+                                <strong>Latitude : </strong>
+                                <span>11.016844</span>
+                            </div>
+                            <div class="mb-3 mt-3">
+                                <strong>Longtitude : </strong>
+                                <span>76.955833</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3 mt-3">
+                                <strong>Geo Location : </strong>
+                                <span>Coimbatore, Tamilnadu 641035, India</span>
+                            </div>
+                            <div class="mb-3 mt-3">
+                                <strong>Credit Period : </strong>
+                                <span>30 days</span>
+                            </div>
+                            <div class="mb-3 mt-3">
+                                <strong>Settlement Period : </strong>
+                                <span>20 days</span>
+                            </div>
+                            <div class="mb-3 mt-3">
+                                <strong>Years of Experience : </strong>
+                                <span>3 Years</span>
+                            </div>
+                            <div class="mb-3 mt-3">
+                                <strong>No of Brands : </strong>
+                                <span>10</span>
+                            </div>
+                            <div class="mb-3 mt-3">
+                                <strong>Annual Turn Over : </strong>
+                                <span>₹50000</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3 mt-3">
+                                <strong>Security Deposit : </strong>
+                                <span>₹10000</span>
+                            </div>
+                            <div class="mb-3 mt-3">
+                                <strong>Third Party Tie-Up : </strong>
+                                <span>YES</span>
+                            </div>
+                            <div class="mb-3 mt-3">
+                                <strong>No of Third Party Brands : </strong>
+                                <span>20</span>
+                            </div>
+                            <div class="mb-3 mt-3">
+                                <strong>Third Party Brand Name : </strong>
+                                <span>brand 1 , brand 2 , brand 3</span>
+                            </div>
+                            <div class="mb-3 mt-3">
+                                <strong>Third Party Turn Over : </strong>
+                                <span>₹100000</span>
+                            </div>
+                            <div class="mb-3 mt-3">
+                                <strong>Total Turn Over : </strong>
+                                <span>₹500000</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-md-4 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-header p-0">
+                        <h4>Address Info</h4>
+                    </div>
+                    <div class="row">
+                        <div class="mb-3 mt-3">
+                            <span>12,xyz</span><br>
+                            <span>saravanampatti</span><br>
+                            <span>Coimbatore</span><br>
+                            <span>Tamilnadu - 641001</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8 mb-4 mb-md-0">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-header p-0">
+                        <h4>Contact Info</h4>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3 mt-3">
+                                <strong>Proprietor Name : </strong>
+                                <span>Proprietor 1</span>
+                            </div>
+                            <div class="mb-3 mt-3">
+                                <strong>Proprietor Mobile : </strong>
+                                <span>9638527410</span>
+                            </div>
+                            <div class="mb-2 mt-3">
+                                <strong>Proprietor Email : </strong>
+                                <span>xyz@gmail.com</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3 mt-3">
+                                <strong>Contact Person Name : </strong>
+                                <span>Contact Person 1</span>
+                            </div>
+                            <div class="mb-3 mt-3">
+                                <strong>Contact Person Mobile : </strong>
+                                <span>9638527410</span>
+                            </div>
+                            <div class="mb-2 mt-3">
+                                <strong>Contact Person Email : </strong>
+                                <span>xyz@gmail.com</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="card-header p-0">
+                    <h4>Documents</h4>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 mb-4 mb-md-0">
+                        <table id="document" class="table">
+                            <thead class="border-bottom">
+                                <tr>
+                                    <th>S.No</th>
+                                    <th>Document Name</th>
+                                    <th>View</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>GST Reg</td>
+                                    <td>
+                                        <a href="{{asset('water.pdf')}}" target="_blank" class="badge bg-label-warning border-0">View</a>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-label-warning">Pending</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>FSSAI Cert</td>
+                                    <td>
+                                        <a href="{{asset('water.pdf')}}" target="_blank" class="badge bg-label-warning border-0">View</a>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-label-danger">Rejected</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>BIS (Buareu of Ind stand)</td>
+                                    <td>
+                                        <a href="{{asset('water.pdf')}}" target="_blank" class="badge bg-label-warning border-0">View</a>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-label-warning">Pending</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>MOU</td>
+                                    <td>
+                                        <a href="{{asset('water.pdf')}}" target="_blank" class="badge bg-label-warning border-0">View</a>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-label-danger">Rejected</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>Agreement</td>
+                                    <td>
+                                        <a href="{{asset('water.pdf')}}" target="_blank" class="badge bg-label-warning border-0">View</a>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-label-warning">Pending</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td>Brand Tie-up</td>
+                                    <td>
+                                        <a href="{{asset('water.pdf')}}" target="_blank" class="badge bg-label-warning border-0">View</a>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-label-danger">Rejected</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td>Proprietor / Director PAN</td>
+                                    <td>
+                                        <a href="{{asset('water.pdf')}}" target="_blank" class="badge bg-label-warning border-0">View</a>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-label-warning">Pending</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>8</td>
+                                    <td>Proprietor / Director Aadhar</td>
+                                    <td>
+                                        <a href="{{asset('water.pdf')}}" target="_blank" class="badge bg-label-warning border-0">View</a>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-label-danger">Rejected</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>9</td>
+                                    <td>PWD</td>
+                                    <td>
+                                        <a href="{{asset('water.pdf')}}" target="_blank" class="badge bg-label-warning border-0">View</a>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-label-warning">Pending</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>10</td>
+                                    <td>Pollution</td>
+                                    <td>
+                                        <a href="{{asset('water.pdf')}}" target="_blank" class="badge bg-label-warning border-0">View</a>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-label-danger">Rejected</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- / Content -->
+@endsection
+@section('footer')
+@endsection

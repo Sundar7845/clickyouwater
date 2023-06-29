@@ -1,0 +1,256 @@
+<?php
+
+namespace App\Http\Controllers\Admin\ManufacturerManagement;
+
+use App\Http\Controllers\Controller;
+use App\Models\Area;
+use App\Models\BillNoSetting;
+use App\Models\City;
+use App\Models\Country;
+use App\Models\Department;
+use App\Models\Designation;
+use App\Models\Manufacturer;
+use App\Models\State;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class ManufacturerController extends Controller
+{
+    public function manufacturer($id = NULL)
+    {
+        if ($id) {
+            $man = Manufacturer::find($id);
+            $states = State::all();
+            $citys = City::where('state_id', $man->state_id)->get();
+            $areas = Area::where('city_id', $man->city_id)->get();
+            $manExample = $man->manufacturer_id;
+            return view('admin.manufacturer_management.manufacturer', compact('states', 'man', 'manExample', 'citys', 'areas'));
+        }
+        $data = BillNoSetting::first();
+        $manPrefix = $data->manufacture_prefix ?? 0;
+        $ManLength = $data->manufacture_length ?? 0;
+        $manLive = (int)($data->manufacture_live ?? 0) + 1;
+        if ($manLive) {
+            $manNumber = $manLive;
+        }
+        $man = sprintf("%0{$ManLength}d", $manNumber);
+        $manExample = $manPrefix . $man;
+        $states = State::all();
+        return view('admin.manufacturer_management.manufacturer', compact('states', 'manExample'));
+    }
+
+    public function manufactureCreate(Request $request)
+    {
+
+        $request->validate([
+            "txtManufacturerId" => 'required',
+            "txtManufacturerName" => "required",
+            "txtMobile" => "required",
+            "txtOffEmail" => "required",
+            "txtLatitude" => "required",
+            "txtLongtitude" => "required",
+            "txtGeoLocation" => "required",
+            "txtCreditPeriod" => "required",
+            "txtSettlementPeriod" => "required",
+            "yearOfExp" => "required",
+            "txtNoOfBrands" => "required",
+            "txtAnnualTurnOver" => "required",
+            "txtSecurityDeposit" => "required",
+            // "chkThirdpartyTieup" => "required",
+            // "txtThirdpartyBrands" => "required",
+            // "txtThirdpartyBrandName" => "required",
+            // "txtThirdPartyTurnover" => "required",
+            // "txtTotalTurnover" => "required",
+            "ddlState" => "required",
+            "ddlCity" => "required",
+            "ddlArea" => "required",
+            "txtAddress" => "required",
+            "txtPincode" => "required",
+            "txtProprietorName" => "required",
+            "txtProprietorMobile" => "required",
+            "txtProprietorEmail" => "required",
+            "txtContactPersonName" => "required",
+            "txtContactPersonMobile" => "required",
+            "txtContactPersonEmail" => "required"
+        ]);
+        DB::beginTransaction();
+
+        try {
+        // Manufacturer::create([
+        //     "manufacturer_id" => $request->txtManufacturerId,
+        //     "manufacturer_name" => $request->txtManufacturerName,
+        //     "mobile" => $request->txtMobile,
+        //     "official_email" => $request->txtOffEmail,
+        //     "latitude" => $request->txtLatitude,
+        //     "longtitude" => $request->txtLongtitude,
+        //     "geo_location" => $request->txtGeoLocation,
+        //     "credit_period" => $request->txtCreditPeriod,
+        //     "settlement_period" => $request->txtSettlementPeriod,
+        //     "years_of_experience" => $request->yearOfExp,
+        //     "no_of_brands" => $request->txtNoOfBrands,
+        //     "annual_turn_over" => $request->txtAnnualTurnOver,
+        //     "security_deposit" => $request->txtSecurityDeposit,
+        //     "is_thirdparty_tieup" => $request->chkThirdpartyTieup ?? 0,
+        //     "no_of_thirdparty_brands" => $request->txtThirdpartyBrands ?? 0,
+        //     "thirdparty_brand_name" => $request->txtThirdpartyBrandName ?? 0,
+        //     "thirdparty_turnover" => $request->txtThirdPartyTurnover ?? 0,
+        //     "total_turnover" => $request->txtTotalTurnover ?? 0,
+        //     "state_id" => $request->ddlState,
+        //     "city_id" => $request->ddlCity,
+        //     "area_id" => $request->ddlArea,
+        //     "address" => $request->txtAddress,
+        //     "pincode" => $request->txtPincode,
+        //     "proprietor_name" => $request->txtProprietorName,
+        //     "proprietor_mobile" => $request->txtProprietorMobile,
+        //     "proprietor_email" => $request->txtProprietorEmail,
+        //     "contact_person_name" => $request->txtContactPersonName,
+        //     "contact_person_mobile" => $request->txtContactPersonMobile,
+        //     "contact_person_email" => $request->txtContactPersonEmail,
+        //     'created_by' => Auth::user()->id
+        // ]);
+        $data=[
+            "manufacturer_id" => $request->txtManufacturerId,
+            "manufacturer_name" => $request->txtManufacturerName,
+            "mobile" => $request->txtMobile,
+            "official_email" => $request->txtOffEmail,
+            "latitude" => $request->txtLatitude,
+            "longtitude" => $request->txtLongtitude,
+            "geo_location" => $request->txtGeoLocation,
+            "credit_period" => $request->txtCreditPeriod,
+            "settlement_period" => $request->txtSettlementPeriod,
+            "years_of_experience" => $request->yearOfExp,
+            "no_of_brands" => $request->txtNoOfBrands,
+            "annual_turn_over" => $request->txtAnnualTurnOver,
+            "security_deposit" => $request->txtSecurityDeposit,
+            "is_thirdparty_tieup" => $request->chkThirdpartyTieup ?? 0,
+            "no_of_thirdparty_brands" => $request->txtThirdpartyBrands ?? 0,
+            "thirdparty_brand_name" => $request->txtThirdpartyBrandName ?? 0,
+            "thirdparty_turnover" => $request->txtThirdPartyTurnover ?? 0,
+            "total_turnover" => $request->txtTotalTurnover ?? 0,
+            "state_id" => $request->ddlState,
+            "city_id" => $request->ddlCity,
+            "area_id" => $request->ddlArea,
+            "address" => $request->txtAddress,
+            "pincode" => $request->txtPincode,
+            "proprietor_name" => $request->txtProprietorName,
+            "proprietor_mobile" => $request->txtProprietorMobile,
+            "proprietor_email" => $request->txtProprietorEmail,
+            "contact_person_name" => $request->txtContactPersonName,
+            "contact_person_mobile" => $request->txtContactPersonMobile,
+            "contact_person_email" => $request->txtContactPersonEmail,
+            'created_by' => Auth::user()->id
+        ];
+        DB::table('manufacturers')->insert($data);
+        $data = BillNoSetting::first();
+        $data->manufacture_live = $data->manufacture_live + 1;
+        $data->save();
+
+        $notification = array(
+            'message' => 'Manufacturer Created Successfully',
+            'alert-type' => 'success'
+        );
+        DB::commit(); // Commit the transaction
+        } catch (\Exception $e) {
+            DB::rollback(); // Roll back the transaction if an error occurs
+        }
+        return redirect()->route('manufacturer-list')->with($notification);
+    }
+    public function manufactureUpdate(Request $request)
+    {
+        # code...
+        $request->validate([
+            "txtManufacturerId" => 'required',
+            "txtManufacturerName" => "required",
+            "txtMobile" => "required",
+            "txtOffEmail" => "required",
+            "txtLatitude" => "required",
+            "txtLongtitude" => "required",
+            "txtGeoLocation" => "required",
+            "txtCreditPeriod" => "required",
+            "txtSettlementPeriod" => "required",
+            "yearOfExp" => "required",
+            "txtNoOfBrands" => "required",
+            "txtAnnualTurnOver" => "required",
+            "txtSecurityDeposit" => "required",
+            // "chkThirdpartyTieup" => "required",
+            // "txtThirdpartyBrands" => "required",
+            // "txtThirdpartyBrandName" => "required",
+            // "txtThirdPartyTurnover" => "required",
+            // "txtTotalTurnover" => "required",
+            "ddlState" => "required",
+            "ddlCity" => "required",
+            "ddlArea" => "required",
+            "txtAddress" => "required",
+            "txtPincode" => "required",
+            "txtProprietorName" => "required",
+            "txtProprietorMobile" => "required",
+            "txtProprietorEmail" => "required",
+            "txtContactPersonName" => "required",
+            "txtContactPersonMobile" => "required",
+            "txtContactPersonEmail" => "required"
+        ]);
+        $fillable = $request->all();
+        $fillable['updated_by'] = Auth::user()->id;
+
+        unset($fillable['_token']);
+
+        $affectedRows = Manufacturer::where("id", $request->id)->update($fillable);
+        return redirect()->route('manufacturer-list')->with('success', 'Manufacturer Updated successfully!');
+    }
+    public function manufacturerList()
+    {
+        $states = State::all();
+        $manufacturer = Manufacturer::all();
+        return view('admin.manufacturer_management.manufacturerlist', compact('states', 'manufacturer'));
+    }
+    public function manufacturerData()
+    {
+        $manufacturerData = Manufacturer::get();
+
+        return datatables()->of($manufacturerData)
+            ->addColumn('action', function ($row) {
+                $html = '<a href="manufacturer/' . $row->id . '"><i class="text-primary ti ti-pencil me-1"></i></a> ';
+                $html .= '<i class="text-danger ti ti-trash me-1" id="confirm-color' . $row->id . '" onclick="showDelete(' . $row->id . ');"></i>';
+                return $html;
+            })->toJson();
+    }
+
+    public function activeStatus($id, $status)
+    {
+        Manufacturer::findorfail($id)->update([
+            'is_active' => $status,
+            'updated_by' => Auth::user()->id
+        ]);
+    }
+
+    public function deleteManufacturer($id)
+    {
+        $manufacturer = Manufacturer::findorfail($id);
+        $manufacturer->delete();
+
+        $manufacturer->Update([
+            'deleted_by' => Auth::user()->id
+        ]);
+
+        return response()->json([
+            'success' => 'Manufacturer Deleted Successfully'
+        ]);
+    }
+
+    public function manufacturerDocumentView()
+    {
+        return view('admin.manufacturer_management.manufacture_document');
+    }
+
+    public function view()
+    {
+        return view('admin.manufacturer_management.manufacture_view');
+    }
+    public function get_manufacturerlist(Request $request)
+    {
+        dd($request->all());
+        # code...
+    }
+}

@@ -1,0 +1,377 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Masters;
+
+use App\Http\Controllers\Controller;
+use App\Models\Area;
+use App\Models\BillNoSetting;
+use App\Models\City;
+use Illuminate\Http\Request;
+use App\Models\Country;
+use App\Models\Department;
+use App\Models\Designation;
+use App\Models\DocumentConfig;
+use App\Models\Employee;
+use App\Models\State;
+use App\Models\User;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class EmployeeController extends Controller
+{
+    public function employee($id = NULL)
+    {
+        $country = Country::get();
+        $designation = Designation::all();
+        $departments = Department::all();
+        $user = User::all();
+        $employees = '';
+        if ($id) {
+
+            $employees = Employee::find($id);
+            $permanent_state = State::where('country_id', $employees->permanent_country_id)->get();
+            $permanent_city = City::where('state_id', $employees->permanent_state_id)->get();
+            $permanent_area = Area::where('city_id', $employees->permanent_city_id)->get();
+            $comm_state = State::where('country_id', $employees->comm_country_id)->get();
+            $comm_city = City::where('state_id', $employees->comm_state_id)->get();
+            $comm_area = Area::where('city_id', $employees->comm_city_id)->get();
+            $manExample = $employees->employee_code;
+            $documents = DocumentConfig::join('document_modules', 'document_modules.id', 'document_configs.documentmodule_id')
+                ->join('document_types', 'document_types.id', 'document_configs.documenttype_id')
+                ->where('documentmodule_id', 6)->where('is_active', 1)
+                ->select('document_configs.*', 'document_modules.module_name', 'document_types.documenttype_name')
+                ->get();
+            return view('admin.masters.employee.employee', compact('country', 'documents', 'manExample', 'designation', 'departments', 'user', 'employees', 'permanent_state', 'permanent_city', 'permanent_area', 'comm_area', 'comm_state', 'comm_city'));
+        }
+        $data = BillNoSetting::first();
+        $manPrefix = $data->employee_prefix ?? 0;
+        $ManLength = $data->employee_length ?? 0;
+        $manLive = (int)($data->employee_live ?? 0) + 1;
+        if ($manLive) {
+            $manNumber = $manLive;
+        }
+        $man = sprintf("%0{$ManLength}d", $manNumber);
+        $manExample = $manPrefix . $man;
+        $documents = DocumentConfig::join('document_modules', 'document_modules.id', 'document_configs.documentmodule_id')
+            ->join('document_types', 'document_types.id', 'document_configs.documenttype_id')
+            ->where('documentmodule_id', 6)->where('is_active', 1)
+            ->select('document_configs.*', 'document_modules.module_name', 'document_types.documenttype_name')
+            ->get();
+        return view('admin.masters.employee.employee', compact('country', 'documents', 'designation', 'departments', 'user', 'employees', 'manExample'));
+    }
+
+    public function employeeList()
+    {
+        $employees = DB::table('employees')
+            ->join('departments', 'departments.id', '=', 'employees.department_id')
+            ->join('designations', 'designations.id', '=', 'employees.designation_id')
+            ->select('employees.id', 'employees.employee_code', 'employees.employee_name', 'employees.mobile1', 'employees.email1', 'departments.department_name', 'designations.designation_name')
+            ->get();
+        return view('admin.masters.employee.employee_list', compact('employees'));
+    }
+    public function employeeCreate(Request $request)
+    {
+        DB::beginTransaction();
+
+        try {
+            $request->validate([
+                'txtEmployeeName'         =>  'required',
+                'txtFatherSpouseName'     =>  'required',
+                'rdGender'                =>  'required',
+                'rdMarital'                =>  'required',
+                'dtdob'                   =>  'required',
+                'txtNationality'          =>  'required',
+                'txtNationalityStatus'    =>  'required',
+                'email1'                  =>  'required|email|unique:employees,email1',
+                'email2'                  =>  'required|email|unique:employees,email2',
+                'fileProfileImg'          =>  'required',
+                'ddlCommCountry'          =>  'required',
+                'ddlCommState'            =>  'required',
+                'ddlCommCity'             =>  'required',
+                'ddlCommArea'             =>  'required',
+                'txtCommAddress'          =>  'required',
+                'txtCommPincode'          =>  'required',
+                'ddlPermCountry'          =>  'required',
+                'ddlPermState'            =>  'required',
+                'ddlPermCity'             =>  'required',
+                'ddlPermArea'             =>  'required',
+                'txtPermAddress'          =>  'required',
+                'txtPermPincode'          =>  'required',
+                'txtMobile1'              =>  'required|numeric|digits:10|unique:employees,mobile1',
+                'txtRelation1'            =>  'required',
+                'txtMobile2'              =>  'required|numeric|digits:10|unique:employees,mobile2',
+                'txtRelation2'            =>  'required',
+                'numPrevCompanyExp'       =>  'required',
+                'txtPrevCompanyName'      =>  'required',
+                'txtPrevCompanyRef'       =>  'required',
+                'txtAccountName'          =>  'required',
+                'txtAccountNumber'        =>  'required',
+                'txtBankName'             =>  'required',
+                'txtBranchName'           =>  'required',
+                'txtBranchIfsc'           =>  'required',
+                //'fileAadhar'              =>  'required',
+                // 'filePan'                 =>  'required',
+                // 'filePassport'            =>  'required',
+                'txtEmployeeCode'         =>  'required',
+                'ddlDepartment'           =>  'required',
+                'ddlDesignation'          =>  'required',
+                'ddlReportingTo'          =>  'required',
+                'txtPackage'              =>  'required',
+                'dtDateOfJoin'            =>  'required',
+                'CompanyMailId'           =>  'required|email|unique:employees,company_mail_id',
+                'txtCompanyMobile'        =>  'required|numeric|digits:10|unique:employees,company_mobile_no',
+                'ddloriginalGiven'        =>  'required',
+                'ddlOriginalReceived'     =>  'required',
+                'ddlOriginalsVerified'    =>  'required',
+
+            ]);
+
+            $employee = Employee::insertGetId([
+                'employee_code' => $request->txtEmployeeCode,
+                'employee_name' => $request->txtEmployeeName,
+                'profile_img' => $fileName,
+                'father_spouse_name' => $request->txtFatherSpouseName,
+                'gender' => $request->rdGender,
+                'marital_status' => $request->rdMarital,
+                'dob' => $request->dtdob,
+                'nationality' => $request->txtNationality,
+                'nationality_status' => $request->txtNationalityStatus,
+                'permanent_address' => $request->txtPermAddress,
+                'permanent_area_id' => $request->ddlPermArea,
+                'permanent_city_id' => $request->ddlPermCity,
+                'permanent_state_id' => $request->ddlPermState,
+                'permanent_country_id' => $request->ddlPermCountry,
+                'permanent_pincode' => $request->txtPermPincode,
+                'comm_address' => $request->txtCommAddress,
+                'comm_area_id' => $request->ddlCommArea,
+                'comm_city_id' => $request->ddlCommCity,
+                'comm_state_id' => $request->ddlCommState,
+                'comm_country_id' => $request->ddlCommCountry,
+                'comm_pincode' => $request->ddlCommCountry,
+                'mobile1' => $request->txtMobile1,
+                'mobile2' => $request->txtMobile2,
+                'email1' => $request->email1,
+                'email2' => $request->email2,
+                'prev_company_exp_yrs' => $request->numPrevCompanyExp,
+                'prev_company_name' => $request->txtPrevCompanyName,
+                'prev_company_ref_by' => $request->txtPrevCompanyRef,
+                'bank_name' => $request->txtBankName,
+                'account_name' => $request->txtAccountName,
+                'account_number' => $request->txtAccountNumber,
+                'branch_name' => $request->txtBranchName,
+                'ifsc_code' => $request->txtBranchIfsc,
+                'department_id' => $request->ddlDepartment,
+                'designation_id' => $request->ddlDesignation,
+                'reporting_to' => $request->ddlReportingTo,
+                'package' => $request->txtPackage,
+                'date_of_join' => $request->dtDateOfJoin,
+                'company_mail_id' => $request->CompanyMailId,
+                'company_mobile_no' => $request->txtCompanyMobile,
+                'originals_given_by' => $request->ddloriginalGiven,
+                'originals_verified_by' => $request->ddlOriginalsVerified,
+                'authorised_by' => $request->ddlOriginalReceived,
+                'is_active' => 1,
+                'created_by' => Auth::user()->id,
+            ]);
+
+            if ($request->hasFile('fileProfileImg')) {
+                $path = $request->file('fileProfileImg')->store('temp');
+                $file = $request->file('fileProfileImg');
+                $fileName = $file->getClientOriginalName();
+                $file->move(public_path('uploads'), $fileName);
+                $fileName = 'uploads/' . $employee . $fileName;
+            } else {
+                $fileName = "default";
+            }
+
+            $data = BillNoSetting::first();
+            $data->employee_live = $data->employee_live + 1;
+            $data->save();
+            DB::commit();
+            $notification = array(
+                'message' => 'Manufacturer Created Successfully',
+                'alert-type' => 'success'
+            ); // Commit the transaction
+        } catch (\Exception $e) {
+            DB::rollback();
+            $notification = array(
+                'message' => 'Something Went Wrong!',
+                'alert-type' => 'warning'
+            );
+            return redirect()->route('employee')->with($notification);
+            // Roll back the transaction if an error occurs
+        }
+        return redirect()->route('employee-list')->with($notification);
+    }
+    public function employeeUpdate(Request $request)
+    {
+        $request->validate([
+            'txtEmployeeName'         =>  'required',
+            'txtFatherSpouseName'     =>  'required',
+            'rdGender'                =>  'required',
+            'dtdob'                   =>  'required',
+            'txtNationality'          =>  'required',
+            'txtNationalityStatus'    =>  'required',
+            'email1'                  =>  'required',
+            'email2'                  =>  'required',
+            //  'fileProfileImg'          =>  'required',
+            'ddlCommCountry'          =>  'required',
+            'ddlCommState'            =>  'required',
+            'ddlCommCity'             =>  'required',
+            'ddlCommArea'             =>  'required',
+            'txtCommAddress'          =>  'required',
+            'txtCommPincode'          =>  'required',
+            'ddlPermCountry'          =>  'required',
+            'ddlPermState'            =>  'required',
+            'ddlPermCity'             =>  'required',
+            'ddlPermArea'             =>  'required',
+            'txtPermAddress'          =>  'required',
+            'txtPermPincode'          =>  'required',
+            'txtMobile1'              =>  'required',
+            'txtRelation1'            =>  'required',
+            'txtMobile2'              =>  'required',
+            'txtRelation2'            =>  'required',
+            'numPrevCompanyExp'       =>  'required',
+            'txtPrevCompanyName'      =>  'required',
+            'txtPrevCompanyRef'       =>  'required',
+            'txtAccountName'          =>  'required',
+            'txtAccountNumber'        =>  'required',
+            'txtBankName'             =>  'required',
+            'txtBranchName'           =>  'required',
+            'txtBranchIfsc'           =>  'required',
+            // 'fileAadhar'              =>  'required',
+            // 'filePan'                 =>  'required',
+            // 'filePassport'            =>  'required',
+            'txtEmployeeCode'         =>  'required',
+            'ddlDepartment'           =>  'required',
+            'ddlDesignation'          =>  'required',
+            'ddlReportingTo'          =>  'required',
+            'txtPackage'              =>  'required',
+            'dtDateOfJoin'            =>  'required',
+            'CompanyMailId'           =>  'required',
+            'txtCompanyMobile'        =>  'required',
+            'ddloriginalGiven'        =>  'required',
+            'ddlOriginalReceived'     =>  'required',
+            'ddlOriginalsVerified'    =>  'required',
+
+        ]);
+        $oldImage = $request->hdEmployeeImg;
+
+        Employee::where("id", $request->hdEmployeeId)->update([
+            'employee_code' => $request->txtEmployeeCode,
+            'employee_name' => $request->txtEmployeeName,
+            'profile_img' => $oldImage,
+            'father_spouse_name' => $request->txtFatherSpouseName,
+            'gender' => $request->rdGender,
+            'marital_status' => $request->rdMarital,
+            'dob' => $request->dtdob,
+            'nationality' => $request->txtNationality,
+            'nationality_status' => $request->txtNationalityStatus,
+            'permanent_address' => $request->txtPermAddress,
+            'permanent_area_id' => $request->ddlPermArea,
+            'permanent_city_id' => $request->ddlPermCity,
+            'permanent_state_id' => $request->ddlPermState,
+            'permanent_country_id' => $request->ddlPermCountry,
+            'permanent_pincode' => $request->txtPermPincode,
+            'comm_address' => $request->txtCommAddress,
+            'comm_area_id' => $request->ddlCommArea,
+            'comm_city_id' => $request->ddlCommCity,
+            'comm_state_id' => $request->ddlCommState,
+            'comm_country_id' => $request->ddlCommCountry,
+            'comm_pincode' => $request->ddlCommCountry,
+            'mobile1' => $request->txtMobile1,
+            'mobile2' => $request->txtMobile2,
+            'email1' => $request->email1,
+            'email2' => $request->email2,
+            'prev_company_exp_yrs' => $request->numPrevCompanyExp,
+            'prev_company_name' => $request->txtPrevCompanyName,
+            'prev_company_ref_by' => $request->txtPrevCompanyRef,
+            'bank_name' => $request->txtBankName,
+            'account_name' => $request->txtAccountName,
+            'account_number' => $request->txtAccountNumber,
+            'branch_name' => $request->txtBranchName,
+            'ifsc_code' => $request->txtBranchIfsc,
+            'department_id' => $request->ddlDepartment,
+            'designation_id' => $request->ddlDesignation,
+            'reporting_to' => $request->ddlReportingTo,
+            'package' => $request->txtPackage,
+            'date_of_join' => $request->dtDateOfJoin,
+            'company_mail_id' => $request->CompanyMailId,
+            'company_mobile_no' => $request->txtCompanyMobile,
+            'originals_given_by' => $request->ddloriginalGiven,
+            'originals_verified_by' => $request->ddlOriginalsVerified,
+            'authorised_by' => $request->ddlOriginalReceived,
+            'is_active' => 1,
+            'updated_by' => Auth::user()->id
+        ]);
+
+        if ($request->hasFile('profile_img')) {
+            $path = $request->file('profile_img')->store('temp');
+            $file = $request->file('profile_img');
+            $fileName = $file->getClientOriginalName();
+            $file->move(public_path('uploads'), $fileName);
+            $fileName = 'uploads/' . $request->hdEmployeeId . $fileName;
+            $fillable['profile_img'] = $fileName;
+        }
+
+        $notification = array(
+            'message' => 'Employee Updated Successfully!',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->route('employee-list')->with($notification);
+    }
+
+    public function getEmployeeData()
+    {
+        $employee = Employee::select('employees.*', 'departments.department_name', 'designations.designation_name')
+            ->join('departments', 'departments.id', 'employees.department_id')
+            ->join('designations', 'designations.id', 'employees.designation_id')->get();
+
+        return datatables()->of($employee)
+            ->addColumn('action', function ($row) {
+                $html = '<a href="/employee/' . $row->id . '"><i class="text-primary ti ti-pencil me-1"
+                ></i></a>';
+                $html .= '<i class="text-danger ti ti-trash me-1" id="confrim-color(' . $row->id . ')"
+                onclick="showDelete(' . $row->id . ');"></i>';
+                return $html;
+            })->toJson();
+    }
+
+    public function deleteEmp($id)
+    {
+        try {
+            $employee = Employee::findorfail($id);
+            $employee->delete();
+            $employee->update([
+                'deleted_by' => Auth::user()->id
+            ]);
+
+            $notification = array(
+                'message' => 'Employee Deleted Successfully',
+                'alert' => 'success'
+            );
+            return response()->json([
+                'responseData' => $notification
+            ]);
+        } catch (QueryException $e) {
+
+            $notification = array(
+                'message' => 'Employee could not be deleted',
+                'alert' => 'error'
+            );
+            return response()->json([
+                'responseData' => $notification
+            ]);
+        }
+    }
+
+    public function activeStatus($id, $status)
+    {
+        Employee::findorfail($id)->update([
+            'is_active' => $status,
+            'updated_by' => Auth::user()->id
+        ]);
+    }
+}
